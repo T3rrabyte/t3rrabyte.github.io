@@ -1,0 +1,88 @@
+Name						Link										Note(s)
+
+Mantle						https://www.curseforge.com/minecraft/mc-mods/mantle
+	Natura					https://www.curseforge.com/minecraft/mc-mods/natura
+	Tinkers' Construct			https://www.curseforge.com/minecraft/mc-mods/tinkers-construct
+		Tinkers' Tool Leveling		https://www.curseforge.com/minecraft/mc-mods/tinkers-tool-leveling
+		Construct's Armory		https://www.curseforge.com/minecraft/mc-mods/constructs-armory
+			Armory Expansion	https://www.curseforge.com/minecraft/mc-mods/armory-expansion
+		Tinkers' JEI			https://www.curseforge.com/minecraft/mc-mods/tinkers-jei
+		Tinkers' Complement		https://www.curseforge.com/minecraft/mc-mods/tinkers-complement
+Pam's Harvestcraft				https://www.curseforge.com/minecraft/mc-mods/pams-harvestcraft
+	Just Enough Harvestcraft		https://www.curseforge.com/minecraft/mc-mods/just-enough-harvestcraft
+Pam's Brewcraft					https://www.curseforge.com/minecraft/mc-mods/pams-brewcraft
+	Just Enough Brewcraft			https://www.curseforge.com/minecraft/mc-mods/just-enough-brewcraft
+JourneyMap					https://www.curseforge.com/minecraft/mc-mods/journeymap
+Dynmap						https://www.curseforge.com/minecraft/mc-mods/dynmapforge
+WanionLib					https://www.curseforge.com/minecraft/mc-mods/wanionlib
+	UniDict					https://www.curseforge.com/minecraft/mc-mods/unidict
+Refined Storage					https://www.curseforge.com/minecraft/mc-mods/refined-storage
+	Refined Storage Addons			https://www.curseforge.com/minecraft/mc-mods/refined-storage-addons
+CoFH World					https://www.curseforge.com/minecraft/mc-mods/cofh-world
+	Thermal Foundation			https://www.curseforge.com/minecraft/mc-mods/thermal-foundation
+		Thermal Expansion		https://www.curseforge.com/minecraft/mc-mods/thermal-expansion
+		Thermal Dynamics		https://www.curseforge.com/minecraft/mc-mods/thermal-dynamics
+Redstone Flux					https://www.curseforge.com/minecraft/mc-mods/redstone-flux
+	CoFH Core				https://www.curseforge.com/minecraft/mc-mods/cofh-core				Required for Thermal Foundation.
+CodeChicken Lib					https://www.curseforge.com/minecraft/mc-mods/codechicken-lib-1-8		Required for Thermal Expansion and Thermal Dynamics.
+	Ender Storage				https://www.curseforge.com/minecraft/mc-mods/ender-storage-1-8
+	Chicken Chunks				https://www.curseforge.com/minecraft/mc-mods/chicken-chunks-1-8
+	AbyssalCraft				https://www.curseforge.com/minecraft/mc-mods/abyssalcraft
+		AbyssalCraft Integration	https://www.curseforge.com/minecraft/mc-mods/abyssalcraft-integration
+Botania						https://www.curseforge.com/minecraft/mc-mods/botania
+Cucumber Library				https://www.curseforge.com/minecraft/mc-mods/cucumber
+	Mystical Agriculture			https://www.curseforge.com/minecraft/mc-mods/mystical-agriculture
+		Mystical Aggraditions		https://www.curseforge.com/minecraft/mc-mods/mystical-agradditions
+FoamFix						https://www.curseforge.com/minecraft/mc-mods/foamfix-optimization-mod
+BetterFPS					https://www.curseforge.com/minecraft/mc-mods/betterfps
+FastWorkbench					https://www.curseforge.com/minecraft/mc-mods/fastworkbench
+FastFurnace					https://www.curseforge.com/minecraft/mc-mods/fastfurnace
+RandomPatches					https://www.curseforge.com/minecraft/mc-mods/randompatches
+	RandomPatches Integration		https://www.curseforge.com/minecraft/mc-mods/randompatches-integration
+RandomTweaks					https://www.curseforge.com/minecraft/mc-mods/randomtweaks
+Phosphor					https://www.curseforge.com/minecraft/mc-mods/phosphor-forge
+VanillaFix					https://www.curseforge.com/minecraft/mc-mods/vanillafix
+Mouse Tweaks					https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks
+Inventory Tweaks				https://www.curseforge.com/minecraft/mc-mods/inventory-tweaks
+Ore Excavation					https://www.curseforge.com/minecraft/mc-mods/ore-excavation
+AutoRegLib					https://www.curseforge.com/minecraft/mc-mods/autoreglib
+	Quark					https://www.curseforge.com/minecraft/mc-mods/quark
+Just Enough Items				https://www.curseforge.com/minecraft/mc-mods/jei
+	Just Enough Resources			https://www.curseforge.com/minecraft/mc-mods/just-enough-resources-jer
+		JER Ore Integration		https://www.curseforge.com/minecraft/mc-mods/jer-ore-integration
+Hwyla						https://www.curseforge.com/minecraft/mc-mods/hwyla
+	Wawla					https://www.curseforge.com/minecraft/mc-mods/wawla
+	Waila Harvestability			https://www.curseforge.com/minecraft/mc-mods/waila-harvestability
+Bookshelf					https://www.curseforge.com/minecraft/mc-mods/bookshelf
+	Dark Utilities				https://www.curseforge.com/minecraft/mc-mods/dark-utilities
+AttributeFix					https://www.curseforge.com/minecraft/mc-mods/attributefix
+NoMoreRecipeConflict				https://www.curseforge.com/minecraft/mc-mods/stimmedcow-nomorerecipeconflict
+Biomes O' Plenty				https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty
+Serene Seasons					https://www.curseforge.com/minecraft/mc-mods/serene-seasons
+The Twilight Forest				https://www.curseforge.com/minecraft/mc-mods/the-twilight-forest
+ConnectedTexturesMod				https://www.curseforge.com/minecraft/mc-mods/ctm				For use with The Twilight Forest.
+Extra Utilities					https://www.curseforge.com/minecraft/mc-mods/extra-utilities
+	No Tema Stahp				https://www.curseforge.com/minecraft/mc-mods/no-tema-stahp
+OpenModsLib					https://www.curseforge.com/minecraft/mc-mods/openmodslib
+	OpenBlocks				https://www.curseforge.com/minecraft/mc-mods/openblocks
+OpenComputers					https://www.curseforge.com/minecraft/mc-mods/opencomputers
+	OpenGlasses				https://www.curseforge.com/minecraft/mc-mods/openglasses2
+Commons0815					https://www.curseforge.com/minecraft/mc-mods/commons0815			Required for OpenGlasses.
+Baubles						https://www.curseforge.com/minecraft/mc-mods/baubles
+	Bountiful Baubles			https://www.curseforge.com/minecraft/mc-mods/bountifulbaubles
+Guidebook					https://www.curseforge.com/minecraft/mc-mods/guidebook				Required for Linking Through the Ages.
+Mystcraft					https://www.curseforge.com/minecraft/mc-mods/mystcraft
+	Linking Through the Ages		https://www.curseforge.com/minecraft/mc-mods/ltta
+	More Mystcraft				https://www.curseforge.com/minecraft/mc-mods/more-mystcraft
+	Mystcraft Info				https://www.curseforge.com/minecraft/mc-mods/mystcraft-info
+	Myst Library				https://www.curseforge.com/minecraft/mc-mods/mystlibrary
+		Pages				https://www.curseforge.com/minecraft/mc-mods/pages
+AppleSkin					https://www.curseforge.com/minecraft/mc-mods/appleskin
+AppleCore					https://www.curseforge.com/minecraft/mc-mods/applecore
+	The Spice of Life: Carrot Edition	https://www.curseforge.com/minecraft/mc-mods/spice-of-life-carrot-edition
+WrapUp						https://www.curseforge.com/minecraft/mc-mods/wrapup
+	JAOPCA					https://www.curseforge.com/minecraft/mc-mods/jaopca
+		JAOPCAAgriculture		https://www.curseforge.com/minecraft/mc-mods/jaopcaagriculture
+Shadowfacts' Forgelin				https://www.curseforge.com/minecraft/mc-mods/shadowfacts-forgelin
+	Ex Nihilo: Creatio			https://www.curseforge.com/minecraft/mc-mods/ex-nihilo-creatio
+		Ex Compressum			https://www.curseforge.com/minecraft/mc-mods/ex-compressum

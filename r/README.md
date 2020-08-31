@@ -1,0 +1,1 @@
+Redirect pages directory.

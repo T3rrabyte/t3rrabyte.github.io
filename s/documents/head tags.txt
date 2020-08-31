@@ -1,0 +1,32 @@
+<title>Title</title>
+
+<meta charset="UTF-8" />
+<meta name="author" content="Travis Martin" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Google Search Console Verification -->
+<meta name="google-site-verification" content="yk_YjhmCAsBVbtcTEFOQu1a_GHBSWmWj78tKydV1-5w" />
+
+<link rel="icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/s/styles/sidenav.css" />
+<link rel="stylesheet" href="/s/styles/slideshow.css" />
+<link rel="stylesheet" href="/s/styles/standard.css" />
+<link rel="stylesheet" href="/s/styles/tabs.css" />
+<link rel="stylesheet" href="/s/styles/topnav.css" />
+<link rel="stylesheet" href="/s/styles/variables.css" />
+<link rel="stylesheet" href="/s/styles/xanycki.css" />
+
+<script src="/s/scripts/addLoadEvent.min.js"></script>
+<script src="/s/scripts/slideshow.min.js"></script>
+<script src="/s/scripts/tabs.min.js"></script>
+<script src="/s/scripts/topnav.min.js"></script>
+<!-- Load topnav. -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script> $(function() { $("#topnav").load("/topnav.html", () => { }); }); </script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() { dataLayer.push(arguments); }
+	gtag('js', new Date());
+	gtag('config', 'UA-145902983-1');
+</script>

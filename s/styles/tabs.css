@@ -1,0 +1,40 @@
+div.tab {
+	overflow: hidden;
+	border: 1px solid var(--moderate-hex);
+	background-color: var(--moderate-hex);
+	color: var(--light-hex);
+}
+
+div.tab button.tablinks {
+	background-color: inherit;
+	color: var(--light-hex);
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+}
+
+div.tab button.tablinks:hover {
+	background-color: var(--light-hex);
+	color: var(--moderate-hex);
+}
+
+div.tab button.active {
+	background-color: var(--light-hex);
+	color: var(--moderate-hex);
+}
+
+div.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	border: 1px solid var(--moderate-hex);
+	border-top: none;
+	animation: fadeEffect 1s;
+	text-align: center;
+}
+
+@keyframes fadeEffect {
+	from { opacity: 0; } to { opacity: 1; }
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+
+<head>
+	<title>Xanycki's Art</title>
+
+	<meta charset="UTF-8" />
+	<meta name="author" content="Travis Martin" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link rel="icon" href="/favicon.ico" />
+	<link rel="stylesheet" href="/s/styles/slideshow.css" />
+	<link rel="stylesheet" href="/s/styles/standard.css" />
+	<link rel="stylesheet" href="/s/styles/variables.css" />
+	<link rel="stylesheet" href="/s/styles/xanycki.css" />
+
+	<script src="/s/scripts/addLoadEvent.min.js"></script>
+	<script src="/s/scripts/slideshow.min.js"></script>
+	<script src="/s/scripts/topnav.min.js"></script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-145902983-1');
+	</script>
+	<script>
+		addLoadEvent(() => setupSlideshow(
+			[
+				"/s/images/xanycki/IMG_0001.PNG", "/s/images/xanycki/IMG_0003.PNG", "/s/images/xanycki/IMG_0020.PNG",
+				"/s/images/xanycki/IMG_0052.JPG", "/s/images/xanycki/IMG_0054.JPG", "/s/images/xanycki/IMG_0055.JPG",
+				"/s/images/xanycki/IMG_0058.JPG", "/s/images/xanycki/IMG_0094.PNG", "/s/images/xanycki/IMG_0099.JPG",
+				"/s/images/xanycki/IMG_0137.PNG", "/s/images/xanycki/IMG_0205.JPG", "/s/images/xanycki/IMG_0218.PNG",
+				"/s/images/xanycki/IMG_0230.PNG", "/s/images/xanycki/IMG_0244.PNG", "/s/images/xanycki/IMG_0334.PNG",
+				"/s/images/xanycki/IMG_0723.PNG", "/s/images/xanycki/IMG_1025.HEIC", "/s/images/xanycki/IMG_1046.JPG",
+				"/s/images/xanycki/IMG_1131.PNG", "/s/images/xanycki/IMG_1159.PNG", "/s/images/xanycki/IMG_1211.PNG",
+				"/s/images/xanycki/IMG_1343.PNG", "/s/images/xanycki/IMG_1465.PNG", "/s/images/xanycki/IMG_1473.PNG",
+				"/s/images/xanycki/IMG_1709.JPG", "/s/images/xanycki/IMG_1710.JPG", "/s/images/xanycki/IMG_1775.JPG"
+			]
+		));
+		document.onkeydown = event => slideshowKeyboardInput(event);
+	</script>
+</head>
+
+<body>
+	<h1>Xanycki</h1>
+	
+	<div id="slideshow"></div><br/>
+	<div id="slideshowController"></div><br/>
+
+	<!-- Links to media sites. -->
+	<a class="buttonlink" href="https://twitter.com/xanycki">Twitter</a>
+	<a class="buttonlink" href="https://www.twitch.tv/xanycki">Twitch</a>
+	<a class="buttonlink" href="https://toyhou.se/Xanycki">TOYHOU.SE</a>
+	<a class="buttonlink" href="https://artfight.net/~Xanycki">Art Fight</a>
+	<a class="buttonlink" href="https://www.sudomemo.net/user/51951DB0A0E79A0C@DSi/">Sudomemo</a>
+</body>
+
+</html>
