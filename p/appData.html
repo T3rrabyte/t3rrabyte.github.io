@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+
+<head>
+	<title>AppData</title>
+
+	<meta charset="UTF-8" />
+	<meta name="author" content="Travis Martin" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link rel="icon" href="/favicon.ico" />
+	<link rel="stylesheet" href="/s/styles/standard.css" />
+	<link rel="stylesheet" href="/s/styles/tabs.css" />
+	<link rel="stylesheet" href="/s/styles/variables.css" />
+
+	<script src="/s/scripts/addLoadEvent.min.js"></script>
+	<script src="/s/scripts/tabs.min.js"></script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-145902983-1');
+	</script>
+
+	<style>
+		.snippet {
+			font-family: courier;
+			background-color: var(--moderate-hex);
+			text-align: left;
+		}
+	</style>
+</head>
+<body>
+	<h1>Application Data</h1>
+	<p>Application data from my programs is always stored in <span class="snippet">~/.t3</span>, where <span class="snippet">~</span> is the home directory.</p>
+
+	<div class="tab">
+		<button class="tablinks" onclick="openTab(event, 'C#')">C#</button>
+		<button class="tablinks" onclick="openTab(event, 'Java')">Java</button>
+		<button class="tablinks" onclick="openTab(event, 'Node.js')">Node.js</button>
+		<button class="tablinks" onclick="openTab(event, 'Python')">Python</button>
+		<button class="tablinks" onclick="openTab(event, 'QB64')">QB64</button>
+	</div>
+	<div class="tabcontent" id="C#">
+		<h1>C#</h1>
+		<pre class="snippet">
+string path = Environment.GetEnvironmentVariable("USERPROFILE") + "/.t3";
+		</pre>
+	</div>
+	<div class="tabcontent" id="Java">
+		<h1>Java</h1>
+		<pre class="snippet">
+String path = System.getProperty("user.home") + "/.t3";
+		</pre>
+	</div>
+	<div class="tabcontent" id="Node.js">
+		<h1>Node.js</h1>
+		<pre class="snippet">
+const path = require('os').homedir() + '/.t3';
+		</pre>
+	</div>
+	<div class="tabcontent" id="Python">
+		<h1>Python</h1>
+		<pre class="snippet">
+from pathlib import Path
+path = str(Path.home()) + '/.t3'
+		</pre>
+	</div>
+	<div class="tabcontent" id="QB64">
+		<h1>QB64</h1>
+		<pre class="snippet">
+DECLARE DYNAMIC LIBRARY "shell32"
+    FUNCTION SHGetFolderPathA (BYVAL a, BYVAL b&, BYVAL c%&, BYVAL d, BYVAL e%&)
+END DECLARE
+path$ = STRING$(260, 0)
+a = SHGetFolderPathA(0, &H28, 0, 0, _OFFSET(path$))
+path$ = LEFT$(path$, INSTR(path$, CHR$(0)) - 1) + "/.t3"
+PRINT path$
+		</pre>
+	</div>
+</body>
+
+</html>
