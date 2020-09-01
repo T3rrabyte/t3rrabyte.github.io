@@ -1,5 +1,6 @@
 https://lakuna.pw/404.html
 https://lakuna.pw/index.html
+https://lakuna.pw/p/appData.html
 https://lakuna.pw/p/data.html
 https://lakuna.pw/p/dosArchive.html
 https://lakuna.pw/p/links.html
