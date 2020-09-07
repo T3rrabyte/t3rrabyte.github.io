@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="/s/styles/topnav.css" />
 	<link rel="stylesheet" href="/s/styles/variables.css" />
 	
+	<script src="/s/scripts/addLoadEvent.min.js"></script>
 	<script src="/s/scripts/topnav.min.js"></script>
 	<!-- Load topnav. -->
 	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -26,12 +27,24 @@
 		gtag('js', new Date());
 		gtag('config', 'UA-145902983-1');
 	</script>
+
+	<script>
+		addLoadEvent(() => {
+			const href = location.href;
+			const hrefSpan = document.getElementById("href");
+			hrefSpan.innerHTML = href;
+
+			// Try to redirect old links to their new locations.
+			if (href.includes("lakuna.pw/l/")) { location.href = href.replace("lakuna.pw/l/", "lakuna.pw/p/"); }
+		});
+	</script>
 </head>
 
 <body>
 	<div id="topnav"></div>
 
 	<h1>404 - Missing Page</h1>
+	<p>You searched for <b id="href"></b>.</p>
 	<p>To view a full list of pages on this website, please view the <a href="/sitemap.txt">sitemap</a>.</p>
 	<p>If you believe a page should be here that isn't, please contact <a href="mailto:travis@lakuna.pw">travis@lakuna.pw</a>.</p>
 </body>
