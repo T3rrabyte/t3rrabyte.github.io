@@ -40,17 +40,18 @@
 	<br/>
 
 	<!--
-		Tag			title									Designer			Developer				Publisher				Year	Status	Note
+		Tag			title									Designer			Developer				Publisher			Year	Status	Note
+		CYBIS		PLATO									*5					*5						*5					1960	ACTIVE	PLATO emulator.
 		SPACEWAR	Spacewar!								Steve Russel		Steve Russel			N/A					1962	ACTIVE	DOS port: 1985 by Bill Seiler.
-		DND			Dungeons of the Necromancer's Domain	Gary Whisenhunt		Gary Whisenhunt			N/A					1975	ACTIVE	***
+		DND			Dungeons of the Necromancer's Domain	Gary Whisenhunt		Gary Whisenhunt			N/A					1975	ACTIVE	*3
 		ADVENTUR	Colossal Cave Adventure					William Crowther	William Crowther		N/A					1976	ACTIVE	DOS port: 1990 by Kevin Black.
-		OUBLIETE	Oubliette								Jim Schwaiger		Jim Schwaiger			N/A					1977	ACTIVE	**
-		ZORK1		Zork I									*					Infocom					Infocom				1977	ACTIVE	Released in 1980.
-		ZORK2		Zork II: The Wizard of Frobozz			*					Infocom					Infocom				1977	ACTIVE	Released in 1981.
-		ZORK3		Zork III: The Dungeon Master			*					Infocom					Infocom				1977	ACTIVE	Released in 1982.
+		OUBLIETE	Oubliette								Jim Schwaiger		Jim Schwaiger			N/A					1977	ACTIVE	*2
+		ZORK1		Zork I									*1					Infocom					Infocom				1977	ACTIVE	Released in 1980.
+		ZORK2		Zork II: The Wizard of Frobozz			*1					Infocom					Infocom				1977	ACTIVE	Released in 1981.
+		ZORK3		Zork III: The Dungeon Master			*1					Infocom					Infocom				1977	ACTIVE	Released in 1982.
 		INVADERS	Space Invaders							Tomohiro Nishikado	Taito					Taito				1978	ACTIVE	DOS port: 1995 by Paul Reid.
 		ROGUE		Rogue: Exploring the Dungeons of Doom	Michael Toy			A.I. Design				Epyx				1980	ACTIVE	DOS port: 1984.
-		WIZRDRY1	****									Andrew Greenberg	Sir-Tech				Sir-Tech			1981	ACTIVE	DOS port: 1984.
+		WIZRDRY1	*4										Andrew Greenberg	Sir-Tech				Sir-Tech			1981	ACTIVE	DOS port: 1984.
 		WIZRDRY2	Wizardry II: The Knight of Diamonds		Andrew Greenberg	Sir-Tech				Sir-Tech			1982	ACTIVE
 		WIZRDRY3	Wizardry III: Legacy of Llylgamyn		Andrew Greenberg	Sir-Tech				Sir-Tech			1983	ACTIVE
 		TETRIS		Tetris									Alexey Pajitnov		AcademySoft				AcademySoft			1984	ACTIVE
@@ -79,15 +80,22 @@
 		CIVILI2		Sid Meier's Civilization II				Sid Meier			MicroProse				MicroProse			1996	REMOVED
 		SETTLER2	The Settlers II: Veni, Vidi, Vici		Thomas Hauser		Blue Byte				Blue Byte			1996	REMOVED
 		KEEPER		Dungeon Keeper							Peter Molyneux		Bullfrog Productions	Electronic Arts		1997	REMOVED
+		TOHOU1		Highly Responsive to Prayers			Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
+		TOHOU2		Story of Eastern Wonderland				Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
+		TOHOU3		Phantasmagoria of Dim. Dream			Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
+		TOHOU4		Lotus Land Story						Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1998	ACTIVE	For the PC-98.
+		TOHOU5		Mystic Square							Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1998	ACTIVE	For the PC-98.
 
-		* Tim Anderson, Marc Blank, Dave Lebling, and Bruce Daniels of the MIT Dynamic Modelling Group.
-		** dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Influenced Moria (1975) by Kevet Duncombe for the PLATO system -> Influenced Oubliette (1977) by Jim Schwaiger, John Gaby, Bencherd DeLong, and Jerry Bucksath for the PLATO system -> Ported to DOS by Bear Systems.
-		*** dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Adapted to other systems as DND (1976) by Daniel Lawrence -> Adapted to DOS and expanded by Bill Knight.
-		**** Wizardry: Proving Grounds of the Mad Overlord
+		*1 Tim Anderson, Marc Blank, Dave Lebling, and Bruce Daniels of the MIT Dynamic Modelling Group.
+		*2 dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Influenced Moria (1975) by Kevet Duncombe for the PLATO system -> Influenced Oubliette (1977) by Jim Schwaiger, John Gaby, Bencherd DeLong, and Jerry Bucksath for the PLATO system -> Ported to DOS by Bear Systems.
+		*3 dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Adapted to other systems as DND (1976) by Daniel Lawrence -> Adapted to DOS and expanded by Bill Knight.
+		*4 Wizardry: Proving Grounds of the Mad Overlord
+		*5 University of Illinois
 	-->
 
 	<div class="tab">
 		<button class="tablinks" onclick="openTab(event, 'ADVENTUR')">Adventure</button>
+		<button class="tablinks" onclick="openTab(event, 'CYBIS')">CYBIS</button>
 		<button class="tablinks" onclick="openTab(event, 'DND')">DND</button>
 		<button class="tablinks" onclick="openTab(event, 'DOOM')">Doom</button>
 		<button class="tablinks" onclick="openTab(event, 'DUNE')">Dune</button>
@@ -100,6 +108,7 @@
 		<button class="tablinks" onclick="openTab(event, 'SCORCH')">Scorched Earth</button>
 		<button class="tablinks" onclick="openTab(event, 'SPACEWAR')">Spacewar!</button>
 		<button class="tablinks" onclick="openTab(event, 'TETRIS')">Tetris</button>
+		<button class="tablinks" onclick="openTab(event, 'TOUHOU')">Touhou</button>
 		<button class="tablinks" onclick="openTab(event, 'WINDOWS3')">Windows 3</button>
 		<button class="tablinks" onclick="openTab(event, 'WIZARDRY')">Wizardry</button>
 		<button class="tablinks" onclick="openTab(event, 'ZORK')">Zork</button>
@@ -108,6 +117,10 @@
 		<a class="buttonlink" href="https://www.dropbox.com/s/860hicq9l45bi62/ADVENTUR.7z?dl=0">Colossal Cave Adventure</a>
 		<p>Initially developed for the PDP-10 by William Crowther in 1976. Expanded upon and re-released in 1977 by Don Woods. Ported to DOS by Kevin Black in 1990.</p>
 		<p>Xyzzy</p>
+	</div>
+	<div class="tabcontent" id="CYBIS">
+		<a class="buttonlink" href="https://www.dropbox.com/s/cf09bbimllsb1ap/CYBIS.7z?dl=0">CYBIS (PLATO), NOS 2.7, DtCyber (CDC Cyber mainframe emulation)</a>
+		<p>It is highly recommended that you use <a href="https://www.cyber1.org/pterm.asp">Pterm</a> and connect to either <a href="https://www.cyber1.org/">cyber1</a> or <a href="https://irata.online/">IRATA.ONLINE</a> instead of actually emulating your own PLATO system, so that you have access to the old lessons.</p>
 	</div>
 	<div class="tabcontent" id="DND">
 		<a class="buttonlink" href="https://www.dropbox.com/s/d4cobuwasmzjqra/DND.7z?dl=0">Dungeons of the Necromancer's Domain</a>
@@ -159,6 +172,14 @@
 	</div>
 	<div class="tabcontent" id="TETRIS">
 		<a class="buttonlink" href="https://www.dropbox.com/s/9iiwjf42ldy4eal/TETRIS.7z?dl=0">Tetris</a>
+	</div>
+	<div class="tabcontent" id="TOUHOU">
+		<a class="buttonlink" href="https://www.dropbox.com/s/qvu2mmezef9tpwx/TOUHOU1.7z?dl=0">Highly Responsive to Prayers</a>
+		<a class="buttonlink" href="https://www.dropbox.com/s/0zki8ldjhtx2c75/TOUHOU2.7z?dl=0">Story of Eastern Wonderland</a>
+		<a class="buttonlink" href="https://www.dropbox.com/s/igshbdavq8aw2n1/TOUHOU3.7z?dl=0">Phantasmagoria of Dim. Dream</a>
+		<a class="buttonlink" href="https://www.dropbox.com/s/0dl4v1pscclhven/TOUHOU4.7z?dl=0">Lotus Land Story</a>
+		<a class="buttonlink" href="https://www.dropbox.com/s/abpjfhdpyacq4eo/TOUHOU5.7z?dl=0">Mystic Square</a>
+		<p>Note: these entries are for the PC-98, not DOS. The recommended PC-98 emulator is <a href="https://sites.google.com/site/np21win/download">Neko Project 21/W</a>.</p>
 	</div>
 	<div class="tabcontent" id="WINDOWS3">
 		<a class="buttonlink" href="https://www.dropbox.com/s/tllr2olzztbz4pd/WINDOWS3.7z?dl=0">Windows 3.11 for Workgroups</a>
