@@ -4,6 +4,7 @@ https://lakuna.pw/p/appData.html
 https://lakuna.pw/p/data.html
 https://lakuna.pw/p/dosArchive.html
 https://lakuna.pw/p/links.html
+https://lakuna.pw/p/lolItemRework.html
 https://lakuna.pw/p/magic.html
 https://lakuna.pw/p/massiveCraft.html
 https://lakuna.pw/p/minecraft.html
