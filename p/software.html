@@ -1,145 +1,70 @@
 <!DOCTYPE html>
 
-<html lang="en-US">
+<html lang='en-US' class='theme-console'>
 
 <head>
+	<script src='/s/js/loader.min.js'></script>
 	<title>Software</title>
-
-	<meta charset="UTF-8" />
-	<meta name="author" content="Travis Martin" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="description" content="A portfolio of all of my software." />
-
-	<link rel="icon" href="/favicon.ico" />
-	<link rel="stylesheet" href="/s/styles/standard.css" />
-	<link rel="stylesheet" href="/s/styles/tabs.css" />
-	<link rel="stylesheet" href="/s/styles/topnav.css" />
-	<link rel="stylesheet" href="/s/styles/variables.css" />
-	
-	<script src="/s/scripts/addLoadEvent.min.js"></script>
-	<script src="/s/scripts/tabs.min.js"></script>
-	<script src="/s/scripts/topnav.min.js"></script>
-	<!-- Load topnav. -->
-	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<script> $(function() { $("#topnav").load("/topnav.html", () => { }); }); </script>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
-		gtag('config', 'UA-145902983-1');
-	</script>
-	<script>
-		addLoadEvent(() => {
-			const SECONDS_PER_YEAR = 31556952; // Exact
-			const SECONDS_PER_MONTH = 2629746; // Average
-
-			const timeProgrammingSpan = document.getElementById("timeProgramming");
-
-			const helloWorldDate = new Date("2014-02-14T12:00:00"); // First code written just before Valentine's day, 2014.
-			const totalSecondsProgramming = Math.floor((new Date() - helloWorldDate) / 1000);
-
-			const yearsProgramming = Math.floor(totalSecondsProgramming / SECONDS_PER_YEAR);
-			const monthsProgramming = Math.floor((totalSecondsProgramming - (yearsProgramming * SECONDS_PER_YEAR)) / SECONDS_PER_MONTH);
-
-			timeProgrammingSpan.textContent = yearsProgramming + " years, " + monthsProgramming + " month(s)";
-		});
-	</script>
+	<meta name='description' content='Travis Martin#&0039;s software portfolio.' />
+	<meta charset='utf-8' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
+	<link rel='stylesheet' href='/s/css/dropdown.css' />
+	<link rel='stylesheet' href='/s/css/tab.css' />
 </head>
-
 <body>
-	<div id="topnav"></div>
+	<div id='topnav'></div>
+	<div id='botnav'></div>
 
-	<header><h1>Software</h1></header>
-	<br/>
+	<!-- Page Content -->
+	<h1>Software</h1>
+	<hr/>
 
-	<div class="tab">
-		<button class="tablinks" onclick="openTab(event, 'StreamMarker')">StreamMarker</button>
-		<button class="tablinks" onclick="openTab(event, 'Diplomat')">Diplomat</button>
-		<button class="tablinks" onclick="openTab(event, 'Steam')">Steam Workshop</button>
-		<button class="tablinks" onclick="openTab(event, 'DiscordBot')">Discord Bot</button>
-		<button class="tablinks" onclick="openTab(event, 'LocalKeys')">LocalKeys</button>
-		<button class="tablinks" onclick="openTab(event, 'HardwareTest')">HardwareTest</button>
-		<button class="tablinks" onclick="openTab(event, 'Umbra')">Umbra</button>
-		<button class="tablinks" onclick="openTab(event, 'Commissions')">Commissions</button>
-	</div>
-	<div class="tabcontent" id="StreamMarker">
-		<h3>StreamMarker</h3>
-		<p>Background tool that allows Twitch streamers to mark times in their livestream with a hotkey for easier post-stream editing.</p>
-		<a class="buttonlink" href="https://github.com/T3rrabyte/StreamMarker/releases/latest">Download</a>
-	</div>
-	<div class="tabcontent" id="Diplomat">
-		<h3>Diplomat</h3>
-		<p>Experimental probability-based companion tool for the Diplomacy board game.</p>
-		<a class="buttonlink" href="https://github.com/T3rrabyte/Diplomat/releases/latest">Download</a>
-	</div>
-	<div class="tabcontent" id="Steam">
-		<h3>Steam Workshop Mods</h3>
-		<p>I make mods for some of the games I play, and they can be found on the Steam workshop.</p>
-		<a class="buttonlink" href="https://steamcommunity.com/id/T3rrabyte/myworkshopfiles/">Steam Workshop</a>
-		
-	</div>
-	<div class="tabcontent" id="DiscordBot">
-		<h3>Lakuna</h3>
-		<p>My Discord bot!</p>
-		<a class="buttonlink" href="https://top.gg/bot/719642314930257930">Discord Bot List</a>
-		<a class="buttonlink" href="https://discord.com/oauth2/authorize?client_id=719642314930257930&permissions=268561472&scope=bot">Invite to Discord</a>
-	</div>
-	<div class="tabcontent" id="LocalKeys">
-		<h3>LocalKeys</h3>
-		<p>Network keylogger.</p>
-		<a class="buttonlink" href="https://github.com/T3rrabyte/LocalKeys/releases/latest">Download</a>
-	</div>
-	<div class="tabcontent" id="HardwareTest">
-		<h3>HardwareTest</h3>
-		<p>Small program which exports system specs to a CSV file for easy sharing.</p>
-		<a class="buttonlink" href="https://github.com/T3rrabyte/HardwareTest/releases/latest">Download</a>
-	</div>
-	<div class="tabcontent" id="Umbra">
-		<h3>Umbra</h3>
-		<p>The Umbra Framework, for making lightweight HTML5 games.</p>
-		<a class="buttonlink" href="https://umbra-framework.readthedocs.io/en/latest/">Documentation</a>
-		<a class="buttonlink" href="https://github.com/T3rrabyte/Umbra/releases/latest">Download</a>
-	</div>
-	<div class="tabcontent" id="Commissions">
-		<h3>Software Commissions</h3>
-		<p>I have <b id="timeProgramming"></b> of experience programming, and a year of experience professionally writing pharmacy software for PDX.</p>
-		<br/>
-
-		<h3>What I can offer:</h3>
-		<p>A good, working program with clean code in a relatively short amount of time for a relatively small amount of money. Commissions are prioritized over long-term projects. If the program is simple enough, it might even be free. Below is a list of languages and frameworks that I am proficient in and what they can do, to give you an idea of what you can ask for.</p>
-		<ul>
-			<li>Java: Commonly used for desktop applications. Useful over some other languages because it is platform-independent. Examples of programs written in this language include Minecraft and all of its mods.</li>
-			<li>HTML: Used in conjunction with CSS to build websites. HTML websites are static, and can therefore be published for no extra cost. This website is written in HTML.</li>
-			<li>Python: Often used for automation, machine learning, and working with large amounts of data. In layman's terms, this is for "AI" and number crunching. My StreamMarker application is written in Python.</li>
-			<li>Node.js: Used to write any complex website, such as those which access an API and/or store information about users. There are other use cases, but they overlap with Python for the most part. Discord bots are frequently written in Node.js.</li>
-			<li>Electron: Used to write applications which can be used in a variety of desktop environments. The use cases for this application are similar to those for Java, but Electron will look and act cleaner.</li>
-			<li>Ionic: Similar to Electron, but designed to work in mobile environments.</li>
-			<li>C#: Most notably used within Unity to develop video games. Chances are, most of the games you play are written in this language.</li>
-			<li>BASIC: On the off-chance that you want a program compatible with computers from the early 60s to late 90s, this is the language it'll have to be done in. This language has a number of limitations, and is useful almost exclusively for its significant backwards-compatibility.</li>
-		</ul>
-		<p>Other languages I know don't have many practical use cases beyond those listed above, so it is unlikely that you will need me to use them. Additionally, I am always willing to learn another language if the situation calls for it, or upon request for the program to be written in a specific language. I am a fast learner, but this will still take longer than use of a language listed above.</p>
-		<p>I am <b>not</b> willing to write a program which is specifically intended to harm someone. I'm fine with writing an application for use in a practical joke, but I don't want to do anything with a lasting negative impact.</p>
-		<br/>
-
-		<h3>Pricing</h3>
-		<p>Any application which requires a server to run on (frequently Node.js) must have a server supplied by the client. Any application which is designed for use on an Apple device will likely require extra time to write due to restrictions enforced by Apple. Machine learning algorithms beyond a certain scope must be trained by the client due to hardware limitations on my end. Aside from these specific cases, pricing will be determined on an individual basis, depending on the complexity of the program and how long it takes me to write it.</p>
-		<p>If I doubt your ability to pay for the application, I may ask you to pay a small percentage of the price up-front. Otherwise, all transactions will be completed after the application is written.</p>
-		<br/>
-
-		<h3>Licensing</h3>
-		<p>Unless specifically negotiated otherwise, commissions will be licensed using the GNU AGPLv3. If you don't intend to mess with the code at all, this won't matter to you.</p>
-		<br/>
-
-		<h3>Contact</h3>
-		<p>To order a commission, please send an email to <a href="mailto:commissions@lakuna.pw">commissions@lakuna.pw</a> which includes the following information:</p>
-		<ol>
-			<li>Preferred method of contact (email address, phone number, et cetera).</li>
-			<li>An overview of the software that you want to have written.</li>
-			<li>Any special requirements that you have for the program.</li>
-			<li>How much you are willing to pay, and optionally your preferred price.</li>
-		</ol>
+	<div class='tab'>
+		<div id='StreamMarker'>
+			<h2>StreamMarker</h2>
+			<a class='buttonlink' href='https://github.com/T3rrabyte/StreamMarker/releases/latest'>Download</a>
+			<p>Background tool that allows Twitch streamers to mark times in their livestream with a hotkey.</p>
+			<p>Written in Node.js.</p>
+		</div>
+		<div id='Diplomat'>
+			<h2>Diplomat</h2>
+			<a class='buttonlink' href='https://github.com/T3rrabyte/Diplomat/releases/latest'>Download</a>
+			<p>Companion tool for the Diplomacy board game which utilizes experimental probability to inform your decisions.</p>
+			<p>Written in Python.</p>
+		</div>
+		<div id='Mods'>
+			<h2>Mods</h2>
+			<a class='buttonlink' href='https://steamcommunity.com/id/T3rrabyte/myworkshopfiles/'>Steam Workshop</a>
+			<p>Mods that I've written for games on Steam can be found on the Steam Workshop.</p>
+			<p>Written in C#.</p>
+		</div>
+		<div id='Discord_Bot'>
+			<h2>Lakuna Discord Bot</h2>
+			<a class='buttonlink' href='https://top.gg/bot/719642314930257930'>Discord Bot List</a>
+			<a class='buttonlink' href='https://discord.com/oauth2/authorize?client_id=719642314930257930&permissions=268561472&scope=bot'>Invite to Discord</a>
+			<p>A general-purpose Discord chat bot.</p>
+			<p>Written in Node.js.</p>
+		</div>
+		<div id='LocalKeys'>
+			<h2>LocalKeys</h2>
+			<a class='buttonlink' href='https://github.com/T3rrabyte/LocalKeys/releases/latest'>Download</a>
+			<p>Background application which hosts your keylogs on your local network. If somebody is trying to convince you to install this and you don't know what it does, you probably shouldn't install it; this program can easily be used as a form of malware.</p>
+			<p>Written in Node.js.</p>
+		</div>
+		<div id='HardwareTest'>
+			<h2>HardwareTest</h2>
+			<a class='buttonlink' href='https://github.com/T3rrabyte/HardwareTest/releases/latest'>Download</a>
+			<p>Tiny program which exports your system's hardware specs to a CSV file for easy sharing. Don't send the output file to anybody you don't trust, as it may contain personal information.</p>
+			<p>Written in C#.</p>
+		</div>
+		<div id='Umbra'>
+			<h2>Umbra</h2>
+			<a class='buttonlink' href='https://github.com/T3rrabyte/Umbra/releases/latest'>Download</a>
+			<a class='buttonlink' href='https://umbra-framework.readthedocs.io/en/latest/'>Documentation</a>
+			<p>The Umbra Framework for lightweight HTML5 video games. Specifically designed for the JS13KGames Game Jam.</p>
+			<p>Written in JavaScript.</p>
+		</div>
 	</div>
 </body>
 

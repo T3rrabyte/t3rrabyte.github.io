@@ -1,117 +1,33 @@
 <!DOCTYPE html>
 
-<html lang="en-US">
+<html lang='en-US' class='theme-dark'>
 
 <head>
-	<title>Minecraft Server</title>
-
-	<meta charset="UTF-8" />
-	<meta name="author" content="Travis Martin" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="description" content="The Lakuna Minecraft server and modpack homepage." />
-
-	<link rel="icon" href="/favicon.ico" />
-	<link rel="stylesheet" href="/s/styles/standard.css" />
-	<link rel="stylesheet" href="/s/styles/tabs.css" />
-	<link rel="stylesheet" href="/s/styles/topnav.css" />
-	<link rel="stylesheet" href="/s/styles/variables.css" />
-	
-	<script src="/s/scripts/addLoadEvent.min.js"></script>
-	<script src="/s/scripts/tabs.min.js"></script>
-	<script src="/s/scripts/topnav.min.js"></script>
-	<!-- Load topnav. -->
-	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<script> $(function() { $("#topnav").load("/topnav.html", () => { }); }); </script>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
-		gtag('config', 'UA-145902983-1');
-	</script>
+	<script src='/s/js/loader.min.js'></script>
+	<title>Minecraft</title>
+	<meta name='description' content='The lakuna.pw Minecraft server.' />
+	<meta charset='utf-8' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
+	<link rel='stylesheet' href='/s/css/dropdown.css' />
 </head>
-
 <body>
-	<div id="topnav"></div>
+	<div id='topnav'></div>
+	<div id='botnav'></div>
 
-	<header><h1>Minecraft Server</h1></header>
-	<br/>
-	<h2>Latest update: r8 - 7/4/2020</h2>
-	<!-- <h3>IP: mc.lakuna.pw</h2> -->
-	<!-- <a href="https://mcsrvstat.us/server/mc.lakuna.pw"><img alt="status" src="http://status.mclive.eu/Lakuna/mc.lakuna.pw/25565/banner.png" class="fullWidth" /></a> -->
-	<h3>The server is currently offline due to a lack of interest. However, you can still use the custom modpack using the same directions below.</h3>
-	<br/>
-	<br/>
+	<!-- Page Content -->
+	<h1>Minecraft Server</h1>
+	<p style='text-align: center;'>Latest update: 7/4/20</p>
+	<hr/>
 
-	<a class="buttonlink" href="/s/mc/mods.txt">Mod List</a>
-	<!-- <a class="buttonlink" href="http://mc.lakuna.pw:9727">Dynmap</a> -->
-	<br/>
+	<h3><b>IP: mc.lakuna.pw</b></h3>
+	<a href='https://mcsrvstat.us/server/mc.lakuna.pw'><img src='http://status.mclive.eu/Lakuna/mc.lakuna.pw/25565/banner.png' style='margin: 0 auto; display: block; max-width: 512px; width: 100%;' /></a>
+	<hr/>
 
-	<div class="tab">
-		<button class="tablinks" onclick="openTab(event, 'HowTo')">How to Join</button>
-		<button class="tablinks" onclick="openTab(event, 'ManualConnect')">Manual Connect</button>
-		<button class="tablinks" onclick="openTab(event, 'Changelog')">Changelog</button>
-	</div>
-	<div class="tabcontent" id="HowTo">
-		<h3>How to Join</h3>
-		<br/>
+	<a class='buttonlink' href='/s/mc/mods.txt'>Mod List</a>
 
-		<p>Ensure that you have a <b>64-bit</b> copy of <b>Java 8</b> installed. 32-bit Java allows a maximum of 1 gigabyte of allocated memory, which makes modded Minecraft nearly impossible. Versions of Java newer than 8 don't work with versions of Forge prior to Minecraft 1.13. The 64-bit installer for Java 8 can be found <a href="https://www.java.com/en/download/manual.jsp">here</a> (for Windows users, click <b>Windows Offline (64-bit)</b>).</p>
-		<p>Download the recommended version of MCUpdater <a href="https://files.mcupdater.com/">here</a>. MCUpdater is the client you will use to run Minecraft with my modpack.</p>
-		<p>Upon launching MCUpdater, it will ask you to log in to Minecraft. Note that, although it asks for your username, <b>you must log in using your email address</b>.</p>
-		<p>In the top-left corner of MCUpdater, click the green circle with a plus inside of it to add a pack. Use the following URL as the ServerPack XML:</p>
-		<h3><a href="https://lakuna.pw/s/mc/pack.xml">https://lakuna.pw/s/mc/pack.xml</a></h3>
-		<p>Click <b>Update</b> in the bottom-right corner of MCUpdater to download the mods, then you can connect to the server using the <b>Launch Minecraft</b> button.</p>
-	</div>
-	<div class="tabcontent" id="ManualConnect">
-		<h3>Manual Connect</h3>
-		<br/>
-
-		<p>If you cannot get MCUpdater to work, you can download all of the mods independently and join the server through a normal Forge profile on the Minecraft launcher. This will be tedious and time-consuming.</p>
-		<p>First, install Forge normally on <a href="http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html">their website</a>. The server uses Forge version <b>14.23.5.2844</b>.</p>
-		<p>Navigate to the <a href="https://lakuna.pw/s/mc/pack.xml">ServerPack XML</a>. Each mod that the server uses has an entry in the XML file, including a URL to the mod's main jar file. Download each mod from the given link.</p>
-		<p>Install the downloaded mods normally. You can then connect to the server at IP <b>mc.lakuna.pw</b>.</p>
-	</div>
-	<div class="tabcontent" id="Changelog">
-		<h3>Changelog</h3>
-		<hr/>
-		<h4>r8 - 7/4/2020</h4>
-		<p>Removed CraftTweaker.</p>
-		<p>Added Dynmap.</p>
-		<hr/>
-		<h4>r7 - 7/4/2020</h4>
-		<p>Removed Hunger Overhaul.</p>
-		<p>Removed The Spice of Life.</p>
-		<hr/>
-		<h4>r6 - 7/4/2020</h4>
-		<p>Added Guidebook.</p>
-		<p>Added Linking Through the Ages.</p>
-		<p>Added More Mystcraft.</p>
-		<p>Added Mystcraft Info.</p>
-		<p>Added Myst Library.</p>
-		<p>Added Pages.</p>
-		<hr/>
-		<h4>r5 - 7/2/2020</h4>
-		<p>Modify configuration files to remove excessive amounts of food from dungeon loot.</p>
-		<p>Modify configuration files to make the food system more satisfying.</p>
-		<p>Full world wipe to fix inconsistencies from revision 3.</p>
-		<hr/>
-		<h4>r4 - 6/26/2020</h4>
-		<p>Add MD5 checksums for config files added last revision.</p>
-		<hr/>
-		<h4>r3 - 6/25/2020</h4>
-		<p>Disabled Hunger Overhaul's rebalanced food replenishment values.</p>
-		<p>Rebalanced Spice of Life: Carrot Edition's maximum health milestones.</p>
-		<p>Added AbyssalCraft.</p>
-		<p>Added Chicken Chunks.</p>
-		<hr/>
-		<h4>r2 - 6/24/2020</h4>
-		<p>Removed Advanced Rocketry.</p>
-		<hr/>
-		<h4>r1 - 6/23/2020</h4>
-		<p>Initial release.</p>
-	</div>
+	<h3>Connect using <a href='https://files.mcupdater.com/'>MCUpdater</a></h3>
+	<h4>ServerPack XML: <a href='/s/mc/pack.xml'>https://lakuna.pw/s/mc/pack.xml</a></h4>
 </body>
 
 </html>

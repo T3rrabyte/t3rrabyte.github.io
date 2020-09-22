@@ -1,0 +1,59 @@
+@use 'modules/variables' as v;
+@use 'modules/themify' as t;
+@use 'modules/themes';
+
+body {
+	@include t.themify(themes.$themes) {
+		div.dropdown {
+			float: left;
+			overflow: hidden;
+
+			& > button.dropdown-button {
+				font-size: v.$drop-button-font-size;
+				background-color: t.themed('foreground-hex');
+				color: t.themed('accent-hex');
+				padding: v.$drop-button-padding;
+			}
+
+			& > div.dropdown-content {
+				display: none;
+				position: absolute;
+				background-color: t.themed('foreground-hex');
+				color: t.themed('accent-hex');
+				min-width: v.$drop-menu-width;
+				z-index: 1;
+
+				&.up { bottom: 0px; }
+
+				& > a, & > button {
+					float: none;
+					background-color: t.themed('foreground-hex');
+					color: t.themed('accent-hex');
+					padding: v.$drop-menu-padding;
+					text-decoration: none;
+					display: block;
+					text-align: left;
+					margin: 0px;
+				}
+			}
+
+			&:hover {
+				& > button.dropdown-button {
+					background-color: t.themed('accent-hex');
+					color: t.themed('foreground-hex');
+				}
+
+				& > div.dropdown-content {
+					display: block;
+
+					& > a, & > button {
+						&:hover, &:focus {
+							background-color: t.themed('accent-hex');
+							color: t.themed('foreground-hex');
+						}
+					}
+				}
+			}
+		}
+	}
+}

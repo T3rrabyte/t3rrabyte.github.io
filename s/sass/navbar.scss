@@ -1,0 +1,79 @@
+@use 'modules/variables' as v;
+@use 'modules/themify' as t;
+@use 'modules/themes';
+
+body {
+	@include t.themify(themes.$themes) {
+		div#topnav, div#botnav {
+			overflow: hidden;
+			background-color: t.themed('foreground-hex');
+			color: t.themed('accent-hex');
+
+			& > a {
+				float: left;
+				display: block;
+				text-align: center;
+				text-decoration: none;
+				background-color: t.themed('foreground-hex');
+				color: t.themed('accent-hex');
+
+				&:hover, &:focus {
+					background-color: t.themed('accent-hex');
+					color: t.themed('foreground-hex');
+				}
+			}
+		}
+
+		div#topnav {
+			a, button {
+				font-size: v.$topnav-font-size;
+				padding: v.$topnav-padding;
+
+				&#topnav-collapse {
+					float: right;
+					display: none;
+				}
+			}
+
+			@media (max-width: v.$mobile-breakpoint) {
+				a, button, div {
+					&:not(:first-child) { display: none }
+					&#topnav-collapse { display: block; }
+				}
+
+				&.expanded {
+					position: relative;
+
+					// Show all links and buttons, even those in dropdowns.
+					a, button {
+						float: none;
+						display: block;
+						text-align: left;
+
+						&#topnav-collapse {
+							position: absolute;
+							right: 0;
+							top: 0;
+						}
+					}
+
+					// Display dropdown contents in list with other elements.
+					div { display: contents; }
+				}
+			}
+		}
+
+		div#botnav {
+			a, button {
+				font-size: v.$botnav-font-size;
+				padding: v.$botnav-padding;
+			}
+
+			@media (max-width: v.$mobile-breakpoint) {
+				a, button, div {
+					&:not(:first-child) { display: none }
+				}
+			}
+		}
+	}
+}

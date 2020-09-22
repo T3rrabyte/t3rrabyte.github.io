@@ -1,203 +1,227 @@
 <!DOCTYPE html>
 
-<html lang="en-US">
+<html lang='en-US' class='theme-dark'>
 
 <head>
+	<script src='/s/js/loader.min.js'></script>
 	<title>DOS+ Archive</title>
-
-	<meta charset="UTF-8" />
-	<meta name="author" content="Travis Martin" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta name="description" content="A collection of ancient programs, primarily for DOS." />
-
-	<link rel="icon" href="/favicon.ico" />
-	<link rel="stylesheet" href="/s/styles/standard.css" />
-	<link rel="stylesheet" href="/s/styles/tabs.css" />
-	<link rel="stylesheet" href="/s/styles/topnav.css" />
-	<link rel="stylesheet" href="/s/styles/variables.css" />
-	
-	<script src="/s/scripts/addLoadEvent.min.js"></script>
-	<script src="/s/scripts/tabs.min.js"></script>
-	<script src="/s/scripts/topnav.min.js"></script>
-	<!-- Load topnav. -->
-	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<script> $(function() { $("#topnav").load("/topnav.html", () => { }); }); </script>
-	<!-- Global site tag (gtag.js) - Google Analytics -->
-	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145902983-1"></script>
-	<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag() { dataLayer.push(arguments); }
-		gtag('js', new Date());
-		gtag('config', 'UA-145902983-1');
-	</script>
+	<meta name='description' content='Archive of programs for DOS and other old systems.' />
+	<meta charset='utf-8' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
+	<link rel='stylesheet' href='/s/css/dropdown.css' />
+	<link rel='stylesheet' href='/s/css/tab.css' />
 </head>
-
 <body>
-	<div id="topnav"></div>
+	<div id='topnav'></div>
+	<div id='botnav'></div>
 
-	<header><h1>DOS+ Archive</h1></header>
-	<h2>Specific information about software in the list can be found in the source code for this page.</h2>
-	<br/>
+	<!-- Page Content -->
+	<h1>DOS+ Archive</h1>
+	<hr/>
 
 	<!--
-		Tag			title									Designer			Developer				Publisher			Year	Status	Note
-		CYBIS		PLATO									*5					*5						*5					1960	ACTIVE	PLATO emulator.
-		SPACEWAR	Spacewar!								Steve Russel		Steve Russel			N/A					1962	ACTIVE	DOS port: 1985 by Bill Seiler.
-		DND			Dungeons of the Necromancer's Domain	Gary Whisenhunt		Gary Whisenhunt			N/A					1975	ACTIVE	*3
-		ADVENTUR	Colossal Cave Adventure					William Crowther	William Crowther		N/A					1976	ACTIVE	DOS port: 1990 by Kevin Black.
-		OUBLIETE	Oubliette								Jim Schwaiger		Jim Schwaiger			N/A					1977	ACTIVE	*2
-		ZORK1		Zork I									*1					Infocom					Infocom				1977	ACTIVE	Released in 1980.
-		ZORK2		Zork II: The Wizard of Frobozz			*1					Infocom					Infocom				1977	ACTIVE	Released in 1981.
-		ZORK3		Zork III: The Dungeon Master			*1					Infocom					Infocom				1977	ACTIVE	Released in 1982.
-		INVADERS	Space Invaders							Tomohiro Nishikado	Taito					Taito				1978	ACTIVE	DOS port: 1995 by Paul Reid.
-		ROGUE		Rogue: Exploring the Dungeons of Doom	Michael Toy			A.I. Design				Epyx				1980	ACTIVE	DOS port: 1984.
-		WIZRDRY1	*4										Andrew Greenberg	Sir-Tech				Sir-Tech			1981	ACTIVE	DOS port: 1984.
-		WIZRDRY2	Wizardry II: The Knight of Diamonds		Andrew Greenberg	Sir-Tech				Sir-Tech			1982	ACTIVE
-		WIZRDRY3	Wizardry III: Legacy of Llylgamyn		Andrew Greenberg	Sir-Tech				Sir-Tech			1983	ACTIVE
-		TETRIS		Tetris									Alexey Pajitnov		AcademySoft				AcademySoft			1984	ACTIVE
-		WIZRDRY4	Wizardry IV: The Return of Werdna		Andrew Greenberg	Sir-Tech				Sir-Tech			1987	ACTIVE
-		WIZRDRY5	Wizardry V: Heart of the Maelstrom		Andrew Greenberg	Sir-Tech				Sir-Tech			1988	ACTIVE
-		QBASIC45	QuickBasic 4.5 EN						John Kemeny			Microsoft				Microsoft			1988	ACTIVE	Original: BASIC, 1964.
-		CIVILI1		Sid Meier's Civilization				Sid Meier			MicroProse				MicroProse			1991	REMOVED
-		SCORCH		Scorched Earth							Wendell Hicken		Wendell Hicken			Wendell Hicken		1991	ACTIVE
-		WINDOWS3	Windows 3.11 for Workgroups				Microsoft			Microsoft				Microsoft			1992	ACTIVE	Operating system.
-		DUNE1		Dune									Frank Herbert		Cryo					Virgin Games		1992	ACTIVE
-		DUNE2		Dune II: The Building of a Dynasty		Frank Herbert		Westwood Studios		Virgin Games		1992	ACTIVE
-		DOOM		Doom									John Romero			id Software				id Software			1993	ACTIVE
-		SIMCIT2K	SimCity 2000							Will Wright			Maxis					Maxis				1993	REMOVED
-		SETTLER1	The Settlers							Volker Wertich		Blue Byte				Blue Byte			1993	REMOVED
-		ORION		Master of Orion							Steve Barcia		Simtex					MicroProse			1993	REMOVED
-		MYST		Myst									Rand & Robyn Miller	Cyan					Broderbund			1993	REMOVED
-		XCOM		UFO: Enemy Unknown						Julian Gollop		Mythos Games			MicroProse			1994	REMOVED	First game of the X-COM franchise.
-		ELDRSCRL	The Elder Scrolls: Arena				Vijay Lakshman		Bethesda Softworks		Bethesda			1994	REMOVED
-		WARCRFT1	Warcraft: Orcs & Humans					Allen Adham			Blizzard Entertainment	Blizzard			1994	REMOVED
-		WARCRFT2	Warcraft II: Tides of Darkness			Ron Millar			Blizzard Entertainment	Blizzard			1995	REMOVED
-		COMNCONQ	Command & Conquer						Erik Yeo			Westwood Studios		Virgin Interactive	1995	REMOVED
-		S3VIDEO		S3 864 1.41B5							S3 Graphics			S3 Graphics				S3 Graphics			1995	ACTIVE	Audio driver software.
-		SB16		Sound Blaster 16 Creative Audio			Creative Technology	Creative Technology		Creative Technology	1996	ACTIVE	Video driver software.
-		WORMS		Worms United							Andy Davidson		Team17					MicroProse			1996	REMOVED	Collection of Worms (1995) and its expansions.
-		WRCRFT2B	Warcraft II: Beyond the Dark Portal		Jim DuBois			Blizzard Entertainment	Blizzard			1996	REMOVED	Expansion pack for Warcraft II: Tides of Darkness.
-		CIVILI2		Sid Meier's Civilization II				Sid Meier			MicroProse				MicroProse			1996	REMOVED
-		SETTLER2	The Settlers II: Veni, Vidi, Vici		Thomas Hauser		Blue Byte				Blue Byte			1996	REMOVED
-		KEEPER		Dungeon Keeper							Peter Molyneux		Bullfrog Productions	Electronic Arts		1997	REMOVED
-		TOHOU1		Highly Responsive to Prayers			Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
-		TOHOU2		Story of Eastern Wonderland				Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
-		TOHOU3		Phantasmagoria of Dim. Dream			Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1997	ACTIVE	For the PC-98.
-		TOHOU4		Lotus Land Story						Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1998	ACTIVE	For the PC-98.
-		TOHOU5		Mystic Square							Jun'ya Ōta			Jun'ya Ōta				Amusement Makers	1998	ACTIVE	For the PC-98.
-
-		*1 Tim Anderson, Marc Blank, Dave Lebling, and Bruce Daniels of the MIT Dynamic Modelling Group.
-		*2 dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Influenced Moria (1975) by Kevet Duncombe for the PLATO system -> Influenced Oubliette (1977) by Jim Schwaiger, John Gaby, Bencherd DeLong, and Jerry Bucksath for the PLATO system -> Ported to DOS by Bear Systems.
-		*3 dnd (1975) by Gary Whisenhunt and Ray Wood for the PLATO system -> Adapted to other systems as DND (1976) by Daniel Lawrence -> Adapted to DOS and expanded by Bill Knight.
-		*4 Wizardry: Proving Grounds of the Mad Overlord
-		*5 University of Illinois
+	Removed Tabs:
+	Civilization I & II
+	Sim City 2000
+	The Settlers I & II
+	Master of Orion
+	Myst
+	UFO: Enemy Unknown
+	The Elder Scrolls: Arena
+	Warcraft I & II
+	Command and Conquer
+	Worms United
+	Dungeon Keeper
 	-->
 
-	<div class="tab">
-		<button class="tablinks" onclick="openTab(event, 'ADVENTUR')">Adventure</button>
-		<button class="tablinks" onclick="openTab(event, 'CYBIS')">CYBIS</button>
-		<button class="tablinks" onclick="openTab(event, 'DND')">DND</button>
-		<button class="tablinks" onclick="openTab(event, 'DOOM')">Doom</button>
-		<button class="tablinks" onclick="openTab(event, 'DUNE')">Dune</button>
-		<button class="tablinks" onclick="openTab(event, 'INVADERS')">Space Invaders</button>
-		<button class="tablinks" onclick="openTab(event, 'OUBLIETE')">Oubliette</button>
-		<button class="tablinks" onclick="openTab(event, 'QBASIC45')">QBasic</button>
-		<button class="tablinks" onclick="openTab(event, 'ROGUE')">Rogue</button>
-		<button class="tablinks" onclick="openTab(event, 'S3VIDEO')">S3</button>
-		<button class="tablinks" onclick="openTab(event, 'SB16')">SB16</button>
-		<button class="tablinks" onclick="openTab(event, 'SCORCH')">Scorched Earth</button>
-		<button class="tablinks" onclick="openTab(event, 'SPACEWAR')">Spacewar!</button>
-		<button class="tablinks" onclick="openTab(event, 'TETRIS')">Tetris</button>
-		<button class="tablinks" onclick="openTab(event, 'TOUHOU')">Touhou</button>
-		<button class="tablinks" onclick="openTab(event, 'WINDOWS3')">Windows 3</button>
-		<button class="tablinks" onclick="openTab(event, 'WIZARDRY')">Wizardry</button>
-		<button class="tablinks" onclick="openTab(event, 'ZORK')">Zork</button>
-	</div>
-	<div class="tabcontent" id="ADVENTUR">
-		<a class="buttonlink" href="https://www.dropbox.com/s/860hicq9l45bi62/ADVENTUR.7z?dl=0">Colossal Cave Adventure</a>
-		<p>Initially developed for the PDP-10 by William Crowther in 1976. Expanded upon and re-released in 1977 by Don Woods. Ported to DOS by Kevin Black in 1990.</p>
-		<p>Xyzzy</p>
-	</div>
-	<div class="tabcontent" id="CYBIS">
-		<a class="buttonlink" href="https://www.dropbox.com/s/cf09bbimllsb1ap/CYBIS.7z?dl=0">CYBIS (PLATO), NOS 2.7, DtCyber (CDC Cyber mainframe emulation)</a>
-		<p>It is highly recommended that you use <a href="https://www.cyber1.org/pterm.asp">Pterm</a> and connect to either <a href="https://www.cyber1.org/">cyber1</a> or <a href="https://irata.online/">IRATA.ONLINE</a> instead of actually emulating your own PLATO system, so that you have access to the old lessons.</p>
-	</div>
-	<div class="tabcontent" id="DND">
-		<a class="buttonlink" href="https://www.dropbox.com/s/d4cobuwasmzjqra/DND.7z?dl=0">Dungeons of the Necromancer's Domain</a>
-		<p>Port of <a href="http://crpgaddict.blogspot.com/2015/03/game-180-dnd-1984.html">DND</a> to DOS by Bill Knight in 1984. DND, in turn, was a port of <a href="http://crpgaddict.blogspot.com/2012/02/game-69-game-of-dungeonsdnd-1975.html">dnd</a> to multiple systems by Daniel Lawrence in 1976. The original dnd was developed by Gary Whisenhunt and Ray Wood in 1974.</p>
-		<p>dnd is the first interactive game to include bosses.</p>
-		<p>dnd is the second-earliest surviving role-playing video game, behind only <a href="http://crpgaddict.blogspot.com/2011/12/game-68-dungeonpedit5-1975.html">pedit5</a> (which was never ported to DOS). pedit5 is believed to have been preceded as a role-playing game only by a game called m199h, but no copies of that game survive.</p>
-		<p>dnd drew inspiration directly from Dungeons & Dragons, which was released earlier in the year it began development.</p>
-	</div>
-	<div class="tabcontent" id="DOOM">
-		<a class="buttonlink" href="https://www.dropbox.com/s/0ni656s5nutx4zj/DOOM.7z?dl=0">Doom</a>
-		<p>"It runs Doom."</p>
-	</div>
-	<div class="tabcontent" id="DUNE">
-		<a class="buttonlink" href="https://www.dropbox.com/s/ztcz9mjsbqkc2ie/DUNE1.7z?dl=0">Dune</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/8qpyq5jkuyibkwc/DUNE2.7z?dl=0">Dune II</a>
-		<p>Dune II was the game that established the real-time strategy genre, although it was not the first.</p>
-	</div>
-	<div class="tabcontent" id="INVADERS">
-		<a class="buttonlink" href="https://www.dropbox.com/s/xao8u5nmksk4iss/INVADERS.7z?dl=0">Space Invaders</a>
-		<p>Developed by Taito and published by Atari, Inc. in 1978. Ported to DOS in 1995 by Paul Reid.</p>
-	</div>
-	<div class="tabcontent" id="OUBLIETE">
-		<a class="buttonlink" href="https://www.dropbox.com/s/wvxt8x8ww6cgwre/OUBLITTE.7z?dl=0">Oubliette</a>
-		<p><a href="http://crpgaddict.blogspot.com/2010/07/backtracking-oubliette-1983.html">This version</a> is a port of the original <a href="http://crpgaddict.blogspot.com/2013/10/game-12-oubliette-1977.html">Oubliette</a> to DOS by Bear Systems in 1983. The original Oubliette was inspired directly by <a href="http://crpgaddict.blogspot.com/2013/11/game-121-moria-1975.html">Moria</a>, and was developed in 1977 by Jim Schwaiger, John Gaby, Bencherd DeLong, and Jerry Bucksath. Moria was developed in 1975 by Kevet Duncombe, and was influenced by <a href="http://crpgaddict.blogspot.com/2012/02/game-69-game-of-dungeonsdnd-1975.html">dnd</a>, which was developed in 1974 by Gary Whisenhunt and Ray Wood.</p>
-	</div>
-	<div class="tabcontent" id="QBASIC45">
-		<a class="buttonlink" href="https://www.dropbox.com/s/zqonbpaozjd7ht6/QB45.7z?dl=0">QuickBasic 4.5 EN</a>
-		<p>Microsoft's version of the original <a href="https://en.wikipedia.org/wiki/BASIC">BASIC</a>, developed in 1964 by John Kemeny and Thomas Kurtz.</p>
-	</div>
-	<div class="tabcontent" id="ROGUE">
-		<a class="buttonlink" href="https://www.dropbox.com/s/xmnhbp8di5qgsef/ROGUE.7z?dl=0">Rogue: Exploring the Dungeons of Doom</a>
-		<p>This version is a port of the original <a href="http://crpgaddict.blogspot.com/2010/02/rogue-most-difficult-crpg-ive-played.html">Rogue</a> to DOS by Epyx in 1984. The original game was written for Unix-based mainframe computers in 1980.</p>
-		<p>Rogue was the defining game for the Roguelike genre.</p>
-	</div>
-	<div class="tabcontent" id="S3VIDEO">
-		<a class="buttonlink" href="https://www.dropbox.com/s/0s559c54sq0d2a0/S3VIDEO.7z?dl=0">S3 864 1.41B5</a>
-	</div>
-	<div class="tabcontent" id="SB16">
-		<a class="buttonlink" href="https://www.dropbox.com/s/hd467ffecaedd4m/SB16.7z?dl=0">Sound Blaster 16 Creative Audio Driver</a>
-	</div>
-	<div class="tabcontent" id="SCORCH">
-		<a class="buttonlink" href="https://www.dropbox.com/s/0cm4hn1hf9jhu8d/SCORCH.7z?dl=0">Scorched Earth</a>
-	</div>
-	<div class="tabcontent" id="SPACEWAR">
-		<a class="buttonlink" href="https://www.dropbox.com/s/3nv5xtn8tmcfy22/SPACEWAR.7z?dl=0">Spacewar!</a>
-		<p>Developed by Steve Russel in 1962 for the PDP-1 at MIT. Ported to DOS by Bill Seiler in 1985.</p>
-		<p>First known video game to be played at multiple computer installations.</p>
-		<p>First game added to the game canon at the Library of Congress.</p>
-	</div>
-	<div class="tabcontent" id="TETRIS">
-		<a class="buttonlink" href="https://www.dropbox.com/s/9iiwjf42ldy4eal/TETRIS.7z?dl=0">Tetris</a>
-	</div>
-	<div class="tabcontent" id="TOUHOU">
-		<a class="buttonlink" href="https://www.dropbox.com/s/qvu2mmezef9tpwx/TOUHOU1.7z?dl=0">Highly Responsive to Prayers</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/0zki8ldjhtx2c75/TOUHOU2.7z?dl=0">Story of Eastern Wonderland</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/igshbdavq8aw2n1/TOUHOU3.7z?dl=0">Phantasmagoria of Dim. Dream</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/0dl4v1pscclhven/TOUHOU4.7z?dl=0">Lotus Land Story</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/abpjfhdpyacq4eo/TOUHOU5.7z?dl=0">Mystic Square</a>
-		<p>Note: these entries are for the PC-98, not DOS. The recommended PC-98 emulator is <a href="https://sites.google.com/site/np21win/download">Neko Project 21/W</a>.</p>
-	</div>
-	<div class="tabcontent" id="WINDOWS3">
-		<a class="buttonlink" href="https://www.dropbox.com/s/tllr2olzztbz4pd/WINDOWS3.7z?dl=0">Windows 3.11 for Workgroups</a>
-		<p><a href="https://www.howtogeek.com/230359/how-to-install-windows-3.1-in-dosbox-set-up-drivers-and-play-16-bit-games/">Installation Guide</a></p>
-	</div>
-	<div class="tabcontent" id="WIZARDRY">
-		<a class="buttonlink" href="https://www.dropbox.com/s/3030jmsuiyul5i3/WIZRDRY1.7z?dl=0">Wizardry: Proving Grounds of the Mad Overlord</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/np4f49sz91exjyb/WIZRDRY2.7z?dl=0">Wizardry II: The Knight of Diamonds</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/8tewu2rb802xn81/WIZRDRY3.7z?dl=0">Wizardry III: Legacy of Llylgamyn</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/tvw5itgjvrxuz16/WIZRDRY4.7z?dl=0">Wizardry IV: The Return of Werdna</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/f33o2k6fkbcr1cw/WIZRDRY5.7z?dl=0">Wizardry V: Heart of the Maelstrom</a>
-		<p><a href="http://crpgaddict.blogspot.com/2010/02/game-5-wizardry-proving-grounds-of-mad.html">Wizardry</a> is notable for being one of two main influencers of the role-playing genre, along with <a href="http://crpgaddict.blogspot.com/2010/02/game-4-ultima-i.html">Ultima</a>.</p>
-	</div>
-	<div class="tabcontent" id="ZORK">
-		<a class="buttonlink" href="https://www.dropbox.com/s/ug271yipcaql8sl/ZORK1.7z?dl=0">Zork: The Great Underground Empire - Part I</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/7of5nqlh7pos21c/ZORK2.7z?dl=0">Zork II: The Wizard of Frobozz</a>
-		<a class="buttonlink" href="https://www.dropbox.com/s/do5q69hhc1zoauu/ZORK3.7z?dl=0">Zork III: The Dungeon Master</a>
-		<p>Written between 1977 and 1979 on a PDP-10 by Tim Anderson, Marc Blank, Bruce Daniels, and Dave Lebling of the MIT Dynamic Modeling Group.</p>
+	<div class='tab'>
+		<div id='Adventure'>
+			<h1>Adventure</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/860hicq9l45bi62/ADVENTUR.7z?dl=0'>Download</a>
+			<p>Colossal Cave Adventure (A.K.A. "ADVENT," "Colossal Cave," or "Adventure") was developed between 1975 and 1977 by Will Crowther in FORTRAN for the PDP-10 mainframe, and expanded in 1977 by Don Woods. This version was ported to DOS in 1990 by Kevin Black.</p>
+			<p>Adventure is the first known work of interactive fiction, the first text adventure game, and the precursor for the adventure game genre.</p>
+			<p>Xyzzy is the magic word.</p>
+		</div>
+		<div id='CYBIS'>
+			<h1>CYBIS</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/cf09bbimllsb1ap/CYBIS.7z?dl=0'>Download</a>
+			<p>Credit for this package goes to Tom Hunter, Paul Koning, Nat Kannan, and Gerard van der Grinten.</p>
+			<p>This package contains an emulator for CYBIS, running on top of NOS (an operating system), running on a DtCYBER (version 5.5.1) emulation of a CDC CYBER mainframe. Also included are usage guides for PLATO, CYBIS, and the TUTOR programming language, and a copy of Pterm version 5.0.8. All contents are available for Windows, macOS, and Linux.</p>
+			<p>PLATO (<b>P</b>rogrammed <b>L</b>ogic for <b>A</b>utomatic <b>T</b>eaching <b>O</b>perations) was the first generalized computer-assisted instruction system. Starting in 1960, it ran on the University of Illinois' ILLIAC I. By the late 1970s, PLATO supported several thousand graphics terminals worldwide. Pterm (<b>P</b>LATO <b>term</b>inal emulator) is an emulator for one of those graphics terminals, and is required to connect to the system. Many modern concepts were originally developed on PLATO, including forums, message boards, email, chat rooms, instant messaging, remote screen sharing, and multiplayer video games.</p>
+			<p>ILLIAC I was the first of the ILLIAC (<b>ILLI</b>nois <b>A</b>utomatic <b>C</b>omputer) series of computers built in 1952 by the University of Illinois. ILLIAC I was the first computer built and owned entirely by a United States educational institution.</p>
+			<p>PLATO was developed at CERL (<b>C</b>omputer-based <b>E</b>duction <b>R</b>esearch <b>L</b>aboratory) at the University of Illinois. In 1976, CDC (<b>C</b>ontrol <b>D</b>ata <b>C</b>orporation) purchased the commercial rights to PLATO. The rights to the name were sold, and the product was rebranded to CYBIS (<b>CY</b>ber-<b>B</b>ased <b>I</b>nstructional <b>S</b>ystem).</p>
+			<p>Eventually, University Online (later VCampus) acquired CYBIS from CDC. The contents of this package became available after VCampus went out of business and its assets were transferred to its former CEO Nat Kannan.</p>
+			<p>TUTOR (A.K.A. "PLATO Author Language"), is a programming language developed for use on the PLATO system at the University of Illinois. TUTOR was initially designed by Paul Tenczar. Programs written in TUTOR are called "lessons," since the language was designed for computer assisted/managed instruction.</p>
+			<p>It is highly recommended that you use Pterm to connect to either <a href='https://cyber1.org'>Cyber1</a> or <a href='https://irata.online'>IRATA.ONLINE</a> instead of your own emulation, so that you have access to the old lessons.</p>
+		</div>
+		<div id='DND'>
+			<h1>Dungeons of the Necromancer's Domain</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/d4cobuwasmzjqra/DND.7z?dl=0'>Download</a>
+			<p>dnd (A.K.A. "The Game of Dungeons") was one of the first role-playing video games. The name is derived from the abbreviation "D&D" of the tabletop game Dungeons & Dragons, which released in 1974. dnd was developed by Gary Whisenhunt and Ray Wood in the TUTOR programming language for the PLATO system in 1974 and 1975, and released in 1975. For more information about TUTOR and PLATO, see <a href='?tab=CYBIS'>the CYBIS tab</a>. Dirk Pellett and Flint Pellett made substantial enhancements to the game from 1976 to 1985.</p>
+			<p>dnd was the first interactive game to feature what would later be referred to as "bosses."</p>
+			<p>In 1977, Daniel Lawrence rewrote dnd in BASIC (<b>B</b>eginners' <b>A</b>ll-purpose <b>S</b>ymbolic <b>I</b>nstruction <b>C</b>ode) for the PDP-10 as DND. In 1982, he reworked and re-released the game as Telengard. In 1983, DEC (<b>D</b>igital <b>E</b>quipment <b>C</b>orporation, A.K.A. "Digital") rewrote DND in Pascal. Due to the availability of the BASIC source code, DND was later ported and adapted to newer systems and programming languages.</p>
+			<p>In 1984, Bill Knight published DND for DOS. In 1988, he retitled and re-released it as Dungeons of the Necromancer's Domain (which is the download available here).</p>
+			<p>dnd is the second-earliest surviving role-playing video game, behind only pedit5 (A.K.A. "The Dungeon"). pedit5 is believed to have been preceeded only by a game called "m199h," but no copies of that game survive. Some accounts claim that pedit5 may have actually preceeded m199h. dnd was directly inspired by pedit5, and most other early RPGs were directly inspired by dnd.</p>
+		</div>
+		<div id='Doom'>
+			<h1>Doom</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/0ni656s5nutx4zj/DOOM.7z?dl=0'>Download</a>
+			<p>Doom was designed by John Romero, Tom Hall, and Sandy Petersen, and developed by id Software in 1993 for MS-DOS.</p>
+			<p>Doom helped to define the FPS genre, and pioneered such technologies as 3D graphics, networked multiplayer, and modding.</p>
+			<p>In 1997, id Software released the game's source code. This, along with the 2.39 megabyte file size of the original game, led to enthusiasts porting the game to a variety of devices - many of which were never designed for gaming (such as an ATM). Hence the phrase, "it runs Doom."</p>
+		</div>
+		<div id='Dune'>
+			<div class='tab'>
+				<div id='Dune'>
+					<h1>Dune</h1>
+					<a class='buttonlink' href='https://www.dropbox.com/s/ztcz9mjsbqkc2ie/DUNE1.7z?dl=0'>Download</a>
+					<p>Dune was developed by Cryo Interactive and published by Virgin Games in 1992 for MS-DOS. It is based on Frank Herbert's science fiction novel of the same name.</p>
+					<p>Dune was one of the first floppy games converted to CD format.</p>
+				</div>
+				<div id='Dune_II'>
+					<h1>Dune II</h1>
+					<a class='buttonlink' href='https://www.dropbox.com/s/8qpyq5jkuyibkwc/DUNE2.7z?dl=0'>Download</a>
+					<p>Dune II: The Building of a Dynasty (A.K.A. "Dune II: (The) Battle for Arrakis," or "Dune II") was developed by Westwood Studios and published by Virgin Interactive in 1992. It is based on David Lynch's movie of the same name, which is an adaptation of Frank Herbert's novel of the same name.</p>
+					<p>Although it wasn't the first RTS game, Dune II was the primary defining game for the RTS genre.</p>
+				</div>
+			</div>
+		</div>
+		<div id='Invaders'>
+			<h1>Space Invaders</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/xao8u5nmksk4iss/INVADERS.7z?dl=0'>Download</a>
+			<p>Space Invaders was created as an arcade game in 1978 by Tomohiro Nishikado. It was manufactured and sold by Taito. This version was ported to MS-DOS by Paul S. Reid in 1995.</p>
+			<p>Space Invaders was the first fixed shooter, and defined the shoot 'em up genre.</p>
+		</div>
+		<div id='Oubliette'>
+			<h1>Oubliette</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/wvxt8x8ww6cgwre/OUBLITTE.7z?dl=0'>Download</a>
+			<p>pedit5 is the earliest surviving RPG (preceeded only by the now-lost "m119h"). dnd was directly inspired by pedit5, and is the second-earliest surviving RPG. For more context on the early history of this game, see <a href='?tab=DND'>the DND tab</a>. In 1975, Kevet Duncombe and Jim Battin developed Moria for the PLATO system. Moria was directly inspired by dnd - the developers claim not to have read J.R.R. Tolkien's works or known about Dungeons & Dragons when they began working on the game. Moria allowed players to play in groups of up to ten, and featured dynamically-generated dungeons and a wireframe first-person display. Oubliette was directly inspired by Moria.</p>
+			<p>Oubliette was developed by Jim Schwaiger, John Gaby, Bencherd DeLong, and Jerry Bucksath, and published on the PLATO system in 1977. For more information about PLATO, see <a href='?tab=CYBIS'>the CYBIS tab</a>. It was known for being so difficult that it was impossible to play alone.</p>
+			<p>This version was ported to DOS in 1983 by Bear Systems.</p>
+		</div>
+		<div id='QBasic'>
+			<h1>QBasic 4.5</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/zqonbpaozjd7ht6/QB45.7z?dl=0'>Download</a>
+			<p>QBasic is Microsoft's version of QuickBASIC, which was based on the 1964 programming language BASIC. BASIC was developed in 1964 by John Kemeny and Thomas Kurtz.</p>
+		</div>
+		<div id='Rogue'>
+			<h1>Rogue</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/xmnhbp8di5qgsef/ROGUE.7z?dl=0'>Download</a>
+			<p>Rogue (A.K.A. "Rogue: Exploring the Dungeons of Doom") was developed by Michael Toy and Glenn Wichman (and later Ken Arnold) in 1980 for Unix-based mainframe systems.</p>
+			<p>This version was ported to DOS by Epyx in 1984.</p>
+			<p>Rogue was the defining game for the Roguelike genre (hence the name - literally "like Rogue").</p>
+		</div>
+		<div id='S3'>
+			<h1>S3 864 1.41B5</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/0s559c54sq0d2a0/S3VIDEO.7z?dl=0'>Download</a>
+			<p>S3 video driver for the graphics card emulated in DOSBox.</p>
+		</div>
+		<div id='SB16'>
+			<h1>SoundBlaster 16 Creative Audio Driver</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/hd467ffecaedd4m/SB16.7z?dl=0'>Download</a>
+			<p>SoundBlaster audio driver for the audio card emulated in DOSBox.</p>
+		</div>
+		<div id='Scorched_Earth'>
+			<h1>Scorched Earth</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/0cm4hn1hf9jhu8d/SCORCH.7z?dl=0'>Download</a>
+			<p>Scorched Earth was developed by Wendell Hicken in 1991 for DOS.</p>
+		</div>
+		<div id='Spacewar'>
+			<h1>Spacewar!</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/3nv5xtn8tmcfy22/SPACEWAR.7z?dl=0'>Download</a>
+			<p>Spacewar! was developed by Steve Russell (later Martin Graetz, Wayne Wiitanen, Bob Saunders, and Steve Piner) in 1962 for the PDP-1 at the Massachusetts Institute of Technology. It was later spread to several installations of the PDP-1 computer, making it the first video game to be played at multiple computers.</p>
+			<p>Spacewar! directly inspired the first two commercial arcade video games, Galaxy Game (1971) and Computer Space (1971), as well as Orbitwar (PLATO, 1974) and Asteroids (1979).</p>
+			<p>Spacewar! was the first game on the game canon at the Library of Congress.</p>
+			<p>The first-ever video game tournament was the "Intergalactic Spacewar! Olympics," held on October 19, 1972 and hosted by Rolling Stone.</p>
+			<p>This version was ported to DOS by Bill Seiler in 1985, and is very faithful to the original.</p>
+		</div>
+		<div id='Tetris'>
+			<h1>Tetris</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/9iiwjf42ldy4eal/TETRIS.7z?dl=0'>Download</a>
+			<p>Tetris was developed in 1984 by Alexey Pajitnov for the Electronica 60.</p>
+			<p>This version ported to DOS by Spectrum HoloByte in 1984.</p>
+		</div>
+		<div id='Touhou'>
+			<h1>Touhou Project</h1>
+			<div class='tab'>
+				<div id='Touhou_I'>
+					<h2>Highly Responsive to Prayers</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/qvu2mmezef9tpwx/TOUHOU1.7z?dl=0'>Download</a>
+				</div>
+				<div id='Touhou_II'>
+					<h2>Story of Eastern Wonderland</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/0zki8ldjhtx2c75/TOUHOU2.7z?dl=0'>Download</a>
+				</div>
+				<div id='Touhou_III'>
+					<h2>Phantasmagoria of Dim. Dream</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/igshbdavq8aw2n1/TOUHOU3.7z?dl=0'>Download</a>
+				</div>
+				<div id='Touhou_IV'>
+					<h2>Lotus Land Story</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/0dl4v1pscclhven/TOUHOU4.7z?dl=0'>Download</a>
+				</div>
+				<div id='Touhou_V'>
+					<h2>Mystic Square</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/abpjfhdpyacq4eo/TOUHOU5.7z?dl=0'>Download</a>
+				</div>
+			</div>
+			<p>The first five Touhou games, developed for the PC-98 by ZUN (Jun'ya Ōta) between 1997 and 1998.</p>
+			<p>The recommended PC-98 emulator is <a href='https://sites.google.com/site/np21win/download'>Neko Project 21/W</a>.</p>
+		</div>
+		<div id='Windows_3'>
+			<h1>Windows 3.11 for Workgroups</h1>
+			<a class='buttonlink' href='https://www.dropbox.com/s/tllr2olzztbz4pd/WINDOWS3.7z?dl=0'>Download</a>
+			<p><a href='https://www.howtogeek.com/230359/how-to-install-windows-3.1-in-dosbox-set-up-drivers-and-play-16-bit-games/'>Installation guide.</a>
+		</div>
+		<div id='Wizardry'>
+			<h1>Wizardry</h1>
+			<div class='tab'>
+				<div id='Wizardry_I'>
+					<h2>Wizardry: Proving Grounds of the Mad Overlord</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/3030jmsuiyul5i3/WIZRDRY1.7z?dl=0'>Download</a>
+				</div>
+				<div id='Wizardry_II'>
+					<h2>Wizardry II: The Knight of Diamonds</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/np4f49sz91exjyb/WIZRDRY2.7z?dl=0'>Download</a>
+				</div>
+				<div id='Wizardry_III'>
+					<h2>Wizardry III: Legacy of Llylgamyn</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/8tewu2rb802xn81/WIZRDRY3.7z?dl=0'>Download</a>
+				</div>
+				<div id='Wizardry_IV'>
+					<h2>Wizardry IV: The Return of Werdna</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/tvw5itgjvrxuz16/WIZRDRY4.7z?dl=0'>Download</a>
+				</div>
+				<div id='Wizardry_V'>
+					<h2>Wizardry V: Heart of the Maelstrom</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/f33o2k6fkbcr1cw/WIZRDRY5.7z?dl=0'>Download</a>
+				</div>
+			</div>
+			<p>Wizardry was created by Andrew C. Greenberg and Robert Woodhead, and developed and published by Sir-Tech from 1981-2001. Only games one through five of the original series were released for DOS.</p>
+			<p>Wizardry (along with Ultima) was one of the main influencers of role-playing games. It was the direct influence for such titles as Final Fantasy and Dragon Quest. Wizardry's main influence was <a href='?tab=Oubliette'>Oubliette (PLATO)</a>.</p>
+		</div>
+		<div id='Zork'>
+			<h1>Zork</h1>
+			<div class='tab'>
+				<div id='Zork_I'>
+					<h2>Zork: The Great Underground Empire - Part I</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/ug271yipcaql8sl/ZORK1.7z?dl=0'>Download</a>
+					<p>Later known as "Zork I."</p>
+				</div>
+				<div id='Zork_II'>
+					<h2>Zork II: The Wizard of Frobozz</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/7of5nqlh7pos21c/ZORK2.7z?dl=0'>Download</a>
+				</div>
+				<div id='Zork_III'>
+					<h2>Zork III: The Dungeon Master</h2>
+					<a class='buttonlink' href='https://www.dropbox.com/s/do5q69hhc1zoauu/ZORK3.7z?dl=0'>Download</a>
+				</div>
+			</div>
+			<p>Zork was written between 1977 and 1979 using MDL (<b>M</b>odel <b>D</b>evelopment <b>L</b>anguage or <b>M</b>ore <b>D</b>atatypes than <b>L</b>isp, A.K.A. "muddle"; a descendant of the LISP language) on a PDP-10 by Tim Anderson, Marc Blank, Bruce Daniels, and Deve Lebling of the MIT Dynamic Modeling Group.</p>
+			<p>When Zork was published comercially, it was split up into three games.</p>
+			<p>Zork is one of the earliest interactive fiction games, drawing roots directly from the original game of its genre, <a href='?tab=Adventure'>Adventure</a>.</p>
+		</div>
 	</div>
 </body>
 

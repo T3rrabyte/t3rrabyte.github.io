@@ -1,0 +1,96 @@
+// Load Google Fonts.
+@import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu%20Mono');
+
+// COLORS
+
+// Main theme colors.
+$green-hex:					#50c878;					// Emerald
+$blue-hex:					#5078c8;					// Moderate blue
+$red-hex:					#c80815;					// Venetian Red
+
+// Old main theme colors.
+$old-green-hex:				#a4c639;					// Android Green
+$old-blue-hex:				#20b2aa;					// Light Sea Green
+$old-red-hex:				#c80815;					// Venetian Red
+
+// Neutral colors.
+$dark-hex:					#222222;					// Off-black
+$mid-hex:					#333333;					// Dark gray
+$light-hex:					#fffff0;					// Ivory
+
+// Old neutral colors.
+$old-dark-hex:				#000000;					// Black
+$old-mid-hex:				#536878;					// Payne Gray
+$old-light-hex:				#ffffff;					// White
+
+// Interface colors.
+$success-hex:				#32cd32;					// Lime Green
+$warning-hex:				#fdee00;					// Aureolin
+$error-hex:					#ff2400;					// Scarlet
+$info-hex:					#007fff;					// Azure
+
+// Xanycki's colors.
+$xan-yellow-hex:			#ffe791;					// Light yellow
+$xan-orange-hex:			#ffa94d;					// Light orange
+$xan-magenta-hex:			#1e0218;					// Dark magenta
+$xan-pink-hex:				#450e23;					// Dark pink
+
+// FONTS
+
+// Font Sizes
+$font-size:					14pt;						// Standard font size.
+
+// Font Families
+$font-sans:					'Ubuntu', sans-serif;		// Sans-serif font.
+$font-mono:					'Ubuntu Mono', monospace;	// Monospaced font.
+$font-courier:				courier, monospace;			// Courier.
+
+// PADDING
+
+// Sizing
+$mobile-breakpoint:			700px;						// Maximum screen width to be considered mobile.
+
+// Spacing
+$table-cell-padding:		2px;						// Padding within a cell on a table.
+$button-padding:			14px 16px;					// Padding around button elements.
+$header-footer-margin:		8px;						// Margin between the header, the footer, and their end of the document.
+
+// SPECIAL ELEMENTS
+
+// Topnav
+$topnav-font-size:			17pt;						// Font size of elements within the topnav.
+$topnav-padding:			12px;						// Padding around each link in the topnav.
+
+// Sidenav
+$sidenav-width:				150px;						// Width of a sidenav element.
+$sidenav-sink:				-160px;						// Distance for the sidenav to sink off the screen.
+$sidenav-font-size:			17pt;						// Font size of elements within the sidenav.
+$sidenav-padding:			15px;						// Padding around sidenav elements.
+$sidenav-spacing-top:		5px;						// Vertical distance between side tabs.
+$sidenav-margin-top:		60px;						// Vertical distance between the sidenav and the top of the screen.
+$sidenav-transition:		0.3s;						// Duration of the sidenav slide-out transition.
+$sidenav-main-margin:		$sidenav-width + 2 * $sidenav-padding + $sidenav-sink;
+
+// Botnav
+$botnav-font-size:			10pt;						// Font size of elements within the botnav.
+$botnav-padding:			6px;						// Padding around each link in the botnav.
+
+// Slideshow
+$slide-width:				512px;						// Maximum width of an image in a slideshow.
+$slide-dot-size:			15px;						// Width and height of a slideshow control dot.
+$slide-dot-margin:			0px 2px;					// Margin for slideshow control dots.
+
+// Tab
+$tab-button-padding:		14px 16px;					// Padding around each button on a tab.
+$tab-content-padding:		6px 12px;					// Padding around the content for a tab.
+
+// Dropdown menu
+$drop-button-padding:		16px;						// Padding around buttons that open dropdown menus.
+$drop-button-font-size:		16pt;						// Font size on buttons that open dropdown menus.
+$drop-menu-width:			160px;						// Minimum width of a dropdown menu.
+$drop-menu-padding:			12px 16px;					// Padding around elements in a dropdown menu.
+
+// Filter
+$filter-button-padding:		14px 16px;					// Padding around filter buttons.
+$filter-item-padding:		6px 12px;					// Padding around filter items.
+$filter-item-margin:		2px;						// Margin between filter items.

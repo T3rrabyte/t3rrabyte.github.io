@@ -1,0 +1,88 @@
+@use 'modules/variables' as v;
+@use 'modules/themify' as t;
+@use 'modules/themes';
+
+body {
+	@include t.themify(themes.$themes) {
+		// Body
+		font-size: v.$font-size;
+		background-color: t.themed('background-hex');
+		color: t.themed('font-hex');
+		font-family: t.themed('font');
+
+		// Setup flex so that the header and footer don't block content and stick to their side of the page.
+		display: flex;
+		min-height: 100vh;
+		flex-direction: column;
+
+		// Header and Footer
+		header, footer {
+			position: sticky;
+			flex: 0 0 auto;
+		}
+
+		// Header
+		header { top: v.$header-footer-margin; }
+
+		// Main
+		main { flex: 1 0 auto; }
+
+		// Footer
+		footer { bottom: v.$header-footer-margin; }
+
+		// Headings.
+		h1, h2, h3, h4, h5, h6 { text-align: center; }
+
+		// Highlighted Elements
+		h1, h2, h3, h4, h5, h6, b, i, svg, a, a:visited, em { color: t.themed('highlight-hex'); }
+
+		// Horizontal Rules
+		hr { border-color: t.themed('highlight-hex'); }
+
+		// Buttons
+		button {
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: v.$button-padding;
+			background-color: t.themed('foreground-hex');
+			color: t.themed('accent-hex');
+			font-family: t.themed('font'); // Apparently changing the body font doesn't affect buttons.
+
+			&:hover, &:focus {
+				background-color: t.themed('accent-hex');
+				color: t.themed('foreground-hex');
+			}
+		}
+
+		// Buttonlinks
+		a.buttonlink {
+			display: block;
+			background-color: t.themed('foreground-hex');
+			color: t.themed('accent-hex');
+			text-align: center;
+			padding: v.$button-padding;
+			text-decoration: none;
+
+			&:hover, &:focus {
+				background-color: t.themed('accent-hex');
+				color: t.themed('foreground-hex');
+			}
+		}
+
+		// Tables
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			border: 1px solid t.themed('foreground-hex');
+
+			th { color: t.themed('highlight-hex'); }
+
+			th, td {
+				border-collapse: collapse;
+				padding: v.$table-cell-padding;
+				border: 1px solid t.themed('foreground-hex');
+			}
+		}
+	}
+}

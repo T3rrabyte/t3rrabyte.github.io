@@ -1,0 +1,45 @@
+@use 'variables';
+
+// Themes
+$themes: (
+	light: (
+		background-hex:		variables.$light-hex,		// Background color.
+		foreground-hex:		variables.$dark-hex,		// Foreground color.
+		font-hex:			variables.$dark-hex,		// Text color on background.
+		accent-hex:			variables.$light-hex,		// Text color on foreground.
+		highlight-hex:		variables.$blue-hex,		// Text color outside of normal paragraphs.
+		font:				variables.$font-sans		// Font.
+	),
+	dark: (
+		background-hex:		variables.$dark-hex,		// Background color.
+		foreground-hex:		variables.$mid-hex,			// Foreground color.
+		font-hex:			variables.$light-hex,		// Text color on background.
+		accent-hex:			variables.$light-hex,		// Text color on foreground.
+		highlight-hex:		variables.$green-hex,		// Text color outside of normal paragraphs.
+		font:				variables.$font-sans		// Font.
+	),
+	console: (
+		background-hex:		variables.$dark-hex,		// Background color.
+		foreground-hex:		variables.$mid-hex,			// Foreground color.
+		font-hex:			variables.$light-hex,		// Text color on background.
+		accent-hex:			variables.$light-hex,		// Text color on foreground.
+		highlight-hex:		variables.$green-hex,		// Text color outside of normal paragraphs.
+		font:				variables.$font-mono		// Font.
+	),
+	xanycki: (
+		background-hex:		variables.$xan-magenta-hex,	// Background color.
+		foreground-hex:		variables.$xan-pink-hex,	// Foreground color.
+		font-hex:			variables.$xan-yellow-hex,	// Text color on background.
+		accent-hex:			variables.$xan-yellow-hex,	// Text color on foreground.
+		highlight-hex:		variables.$xan-orange-hex,	// Text color outside of normal paragraphs.
+		font:				variables.$font-sans		// Font.
+	),
+	old: (
+		background-hex:		variables.$old-green-hex,	// Background color.
+		foreground-hex:		variables.$old-dark-hex,	// Foreground color.
+		font-hex:			variables.$old-dark-hex,	// Text color on background.
+		accent-hex:			variables.$old-light-hex,	// Text color on foreground.
+		highlight-hex:		variables.$old-dark-hex,	// Text color outside of normal paragraphs.
+		font:				variables.$font-courier		// Font.
+	)
+)

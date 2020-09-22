@@ -1,0 +1,38 @@
+@use 'modules/variables' as v;
+@use 'modules/themify' as t;
+@use 'modules/themes';
+
+body {
+	@include t.themify(themes.$themes) {
+		div.slideshow {
+			box-sizing: border-box;
+
+			& > div.slideshow-content {
+				& > img.slide {
+					margin: 0 auto;
+					width: 100%;
+					max-width: v.$slide-width;
+					display: none;
+
+					&.active { display: block; }
+				}
+			}
+
+			& > div.slideshow-controller {
+				text-align: center;
+
+				& > span.dot {
+					cursor: pointer;
+					width: v.$slide-dot-size;
+					height: v.$slide-dot-size;
+					margin: v.$slide-dot-margin;
+					background-color: t.themed('foreground-hex');
+					border-radius: 50%;
+					display: inline-block;
+
+					&.active, &:hover { background-color: t.themed('accent-hex'); }
+				}
+			}
+		}
+	}
+}

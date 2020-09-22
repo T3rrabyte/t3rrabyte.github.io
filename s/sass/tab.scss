@@ -1,0 +1,39 @@
+@use 'modules/variables' as v;
+@use 'modules/themify' as t;
+@use 'modules/themes';
+
+body {
+	@include t.themify(themes.$themes) {
+		div.tab {
+			& > div.tab-controller {
+				overflow: hidden;
+				border: 1px solid t.themed('foreground-hex');
+				background-color: t.themed('foreground-hex');
+				color: t.themed('accent-hex');
+
+				& > button.tab-button {
+					background-color: t.themed('foreground-hex');
+					color: t.themed('accent-hex');
+					padding: v.$tab-button-padding;
+					float: left;
+
+					&:hover, &.active {
+						background-color: t.themed('accent-hex');
+						color: t.themed('foreground-hex');
+					}
+				}
+			}
+
+			& > div.tab-content {
+				& > div.tab-panel {
+					display: none;
+					padding: v.$tab-content-padding;
+					border: 1px solid t.themed('foreground-hex');
+					border-top: none;
+
+					&.active { display: block; }
+				}
+			}
+		}
+	}
+}
