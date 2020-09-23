@@ -94,9 +94,11 @@ const changeDropdownDisplay = () => {
 
 	// Get necessary elements.
 	const botnav = document.querySelector(`div#${BOTNAV_ID}`);
-	if (!botnav) { return console.error('Botnav script loaded without botnav element.'); }
+	if (!botnav) { return console.log('Not loading theme dropdown because botnav not present..'); }
+
 	const themeDropdown = botnav.querySelector(`:scope > div#${THEME_DROPDOWN_ID}`);
 	if (!themeDropdown) { return console.warn('Theme dropdown not found in botnav.'); }
+
 	if (!themeDropdown.button) {
 		console.log('Setting theme dropdown button.');
 		themeDropdown.button = themeDropdown.querySelector(`:scope > button.${DROPDOWN_CONTROL_ITEM_CLASS}`);

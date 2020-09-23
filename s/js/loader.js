@@ -19,7 +19,7 @@ const TOPNAV_ID = 'topnav';
 const BOTNAV_ID = 'botnav';
 const TOPNAV_HTML = '/s/html/topnav.html';
 const BOTNAV_HTML = '/s/html/botnav.html';
-const TOPNAV_SCRIPT = '/s/js/topnav.js';
+const TOPNAV_SCRIPT = '/s/js/topnav.min.js';
 const NAVBAR_STYLE = '/s/css/navbar.css';
 
 // Sidenav
@@ -30,7 +30,7 @@ const SIDENAV_STYLE = '/s/css/sidenav.css';
 const DROPDOWN_CLASS = 'dropdown';
 const DROPDOWN_CONTROLLER_CLASS = 'dropdown-button';
 const DROPDOWN_CONTENT_CLASS = 'dropdown-content';
-const DROPDOWN_SCRIPT = '/s/js/dropdown.js';
+const DROPDOWN_SCRIPT = '/s/js/dropdown.min.js';
 const DROPDOWN_STYLE = '/s/css/dropdown.css';
 
 // Themes
@@ -46,7 +46,7 @@ const SLIDESHOW_CONTROLLER_CLASS = 'slideshow-controller';
 const SLIDESHOW_CONTENT_CLASS = 'slideshow-content';
 const SLIDESHOW_CONTROL_ITEM_CLASS = 'dot';
 const SLIDESHOW_ITEM_CLASS = 'slide';
-const SLIDESHOW_SCRIPT = '/s/js/slideshow.js';
+const SLIDESHOW_SCRIPT = '/s/js/slideshow.min.js';
 const SLIDESHOW_STYLE = '/s/css/slideshow.css';
 
 // Tabs
@@ -55,7 +55,7 @@ const TAB_CONTROLLER_CLASS = 'tab-controller';
 const TAB_CONTENT_CLASS = 'tab-content';
 const TAB_CONTROL_ITEM_CLASS = 'tab-button';
 const TAB_ITEM_CLASS = 'tab-panel';
-const TAB_SCRIPT = '/s/js/tab.js';
+const TAB_SCRIPT = '/s/js/tab.min.js';
 const TAB_STYLE = '/s/css/tab.css';
 
 // Filter
@@ -64,7 +64,7 @@ const FILTER_CONTROLLER_CLASS = 'filter-controller';
 const FILTER_CONTENT_CLASS = 'filter-content';
 const FILTER_CONTROL_ITEM_CLASS = 'filter-button'
 const FILTER_ITEM_CLASS = 'filter-item';
-const FILTER_SCRIPT = '/s/js/filter.js';
+const FILTER_SCRIPT = '/s/js/filter.min.js';
 const FILTER_STYLE = '/s/css/filter.css';
 
 // Key Codes
@@ -265,12 +265,14 @@ addLoadEvent(() => {
 
 // Load jQuery, then load navbars if present.
 addLoadEvent(() => loadScript(JQUERY_CDN, () => {
-	// Load topnav.
 	const topnav = document.querySelector(`div#${TOPNAV_ID}`);
+	const botnav = document.querySelector(`div#${BOTNAV_ID}`);
+
+	// Load topnav.
 	if (topnav) {
 		$('#topnav').load(TOPNAV_HTML, () => {
 			console.log('Loaded topnav.');
-			loadDropdown(); // In case there are dropdowns in the topnav but not the page body.
+			if (!botnav) { loadDropdown(); } // In case there are dropdowns in the topnav but not the page body.
 
 			const header = document.querySelector('header');
 			if (header && !header.contains(topnav)) {
@@ -284,7 +286,6 @@ addLoadEvent(() => loadScript(JQUERY_CDN, () => {
 	}
 
 	// Load botnav.
-	const botnav = document.querySelector(`div#${BOTNAV_ID}`);
 	if (botnav) {
 		$('#botnav').load(BOTNAV_HTML, () => {
 			console.log('Loaded botnav.');
@@ -299,6 +300,8 @@ addLoadEvent(() => loadScript(JQUERY_CDN, () => {
 			loadStyle(NAVBAR_STYLE, () => console.warn('The navbar stylesheet should be included in the head to avoid flashing.'));
 		});
 	}
+
+	if (!botnav && !topnav) { loadDropdown(); }
 }));
 
 // Load Font Awesome.
