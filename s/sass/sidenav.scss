@@ -12,8 +12,10 @@ body {
 			top: 0px;
 			left: 0px;
 			margin-top: v.$sidenav-margin-top;
+			pointer-events: none;
 
 			& > a {
+				pointer-events: auto;
 				position: relative;
 				left: v.$sidenav-sink;
 				display: block;
