@@ -115,6 +115,14 @@ const loadStyle = (href, onload) => {
 
 // # Load events.
 
+// Warn user if images aren't lazy-loaded.
+addLoadEvent(() => {
+	const images = document.querySelectorAll('img');
+	for (let i = 0; i < images.length; i++) {
+		if (images[i].loading != 'lazy') { console.warn('Image not lazy-loaded.'); }
+	}
+});
+
 // Load placeholder/standard metadata if it doesn't already exist.
 addLoadEvent(() => {
 	const pageName = () => location.pathname.split('/').pop().split('.').shift().toUpperCase();
@@ -133,7 +141,7 @@ addLoadEvent(() => {
 		const description = document.createElement('meta');
 		description.name = 'description';
 		description.content = 'Lakuna - ' + pageName();
-		document.head.append(description)
+		document.head.append(description);
 	}
 
 	// Character set.
