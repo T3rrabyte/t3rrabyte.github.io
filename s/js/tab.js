@@ -1,8 +1,8 @@
-const openTab = (allTab, tabContentId) => {
-	const tabContent = allTab.content.querySelector(`:scope > div#${tabContentId}`);
+const openTab = (tab, tabContentId) => {
+	const tabContent = tab.content.querySelector(`:scope > div#${tabContentId}`);
 	if (tabContent) {
-		const tabContents = allTab.content.querySelectorAll(`:scope > div.${TAB_CONTENT_CLASS}`);
-		const tabButtons = allTab.buttonContainer.querySelectorAll(`:scope > button.${TAB_BUTTON_CLASS}`);
+		const tabContents = tab.content.querySelectorAll(`:scope > div.${TAB_ITEM_CLASS}`);
+		const tabButtons = tab.controller.querySelectorAll(`:scope > button.${TAB_CONTROL_ITEM_CLASS}`);
 
 		for (let i = 0; i < tabContents.length; i++) {
 			const tabContent = tabContents[i];
@@ -19,50 +19,50 @@ const openTab = (allTab, tabContentId) => {
 }
 
 // onload
-const allTabs = document.querySelectorAll(`div.${TAB_CLASS}`);
-for (let i = 0; i < allTabs.length; i++) {
-	const allTab = allTabs[i];
+const tabs = document.querySelectorAll(`div.${TAB_CLASS}`);
+for (let i = 0; i < tabs.length; i++) {
+	const tab = tabs[i];
 
-	// Get all tab content.
-	allTab.content = allTab.querySelector(`:scope > div.${ALL_TAB_CONTENT_CLASS}`);
-	if (!allTab.content) {
-		console.log('Adding all tab content container.');
-		allTab.content = document.createElement('div');
-		allTab.content.className = ALL_TAB_CONTENT_CLASS;
-		allTab.append(allTab.content);
+	// Get tab content.
+	tab.content = tab.querySelector(`:scope > div.${TAB_CONTENT_CLASS}`);
+	if (!tab.content) {
+		console.log('Adding tab content container.');
+		tab.content = document.createElement('div');
+		tab.content.className = TAB_CONTENT_CLASS;
+		tab.append(tab.content);
 	}
 
-	// Get all tab button container.
-	allTab.buttonContainer = allTab.querySelector(`:scope > div.${ALL_TAB_BUTTON_CLASS}`);
-	if (!allTab.buttonContainer) {
+	// Get tab button container.
+	tab.controller = tab.querySelector(`:scope > div.${TAB_CONTROLLER_CLASS}`);
+	if (!tab.controller) {
 		console.log('Adding tab button container.');
-		allTab.buttonContainer = document.createElement('div');
-		allTab.buttonContainer.className = ALL_TAB_BUTTON_CLASS;
-		allTab.prepend(allTab.buttonContainer);
+		tab.controller = document.createElement('div');
+		tab.controller.className = TAB_CONTROLLER_CLASS;
+		tab.prepend(tab.controller);
 	}
 
-	// Move divs in the all tab into all tab content.
-	const divs = allTab.querySelectorAll(':scope > div');
+	// Move divs in the tab into tab content.
+	const divs = tab.querySelectorAll(':scope > div');
 	for (let j = 0; j < divs.length; j++) {
 		const div = divs[j];
-		if (div == allTab.buttonContainer || div == allTab.content) { continue; }
-		console.log('Moving div into all tab content.');
-		allTab.content.append(div);
+		if (div == tab.controller || div == tab.content) { continue; }
+		console.log('Moving div into tab content.');
+		tab.content.append(div);
 	};
 
-	// Add tab content class to divs within all tab content.
-	const toBeTabContents = allTab.content.querySelectorAll(':scope > div');
+	// Add tab item class to divs within tab content.
+	const toBeTabContents = tab.content.querySelectorAll(':scope > div');
 	for (let j = 0; j < toBeTabContents.length; j++) {
 		const tabContent = toBeTabContents[j];
 
-		if (!tabContent.classList.contains(TAB_CONTENT_CLASS)) {
+		if (!tabContent.classList.contains(TAB_ITEM_CLASS)) {
 			console.log('Adding tab content class to tab content.');
-			tabContent.classList.add(TAB_CONTENT_CLASS);
+			tabContent.classList.add(TAB_ITEM_CLASS);
 		}
 	}
 
-	// Create tab button for each tab content.
-	const tabContents = allTab.content.querySelectorAll(`:scope > div.${TAB_CONTENT_CLASS}`);
+	// Create tab button for each tab item.
+	const tabContents = tab.content.querySelectorAll(`:scope > div.${TAB_ITEM_CLASS}`);
 	for (let j = 0; j < tabContents.length; j++) {
 		const tabContent = tabContents[j];
 		let linkedId = '';
@@ -78,26 +78,26 @@ for (let i = 0; i < allTabs.length; i++) {
 		}
 
 		const tabButton = document.createElement('button');
-		tabButton.className = TAB_BUTTON_CLASS;
-		tabButton.onclick = () => openTab(allTab, linkedId);
+		tabButton.className = TAB_CONTROL_ITEM_CLASS;
+		tabButton.onclick = () => openTab(tab, linkedId);
 		tabButton.linkedId = linkedId;
 		tabButton.innerHTML = linkedId.replace(/_/g, ' ');
-		allTab.buttonContainer.append(tabButton);
+		tab.controller.append(tabButton);
 	}
 
 	// Delete elements within the tab that don't fit.
 	const nodes = [];
-	for (let j = 0; j < allTab.children.length; j++) {
-		const child = allTab.children[j];
-		if (child == allTab.content || child == allTab.buttonContainer) { continue; }
+	for (let j = 0; j < tab.children.length; j++) {
+		const child = tab.children[j];
+		if (child == tab.content || child == tab.controller) { continue; }
 		nodes.push(child);
 	}
 	nodes.forEach((node) => {
-		console.warn('Removing extaneous node from all tab.');
-		allTab.removeChild(node);
+		console.warn('Removing extaneous node from tab.');
+		tab.removeChild(node);
 	});
 
 	// Set current tab.
 	const tabQueryParam = new URLSearchParams(location.search).get('tab');
-	if (tabQueryParam) { openTab(allTab, tabQueryParam); }
+	if (tabQueryParam) { openTab(tab, tabQueryParam); }
 }

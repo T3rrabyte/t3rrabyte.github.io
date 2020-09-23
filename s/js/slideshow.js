@@ -1,11 +1,3 @@
-// Key codes.
-const DECREMENT_KEYCODE = 37;
-const INCREMENT_KEYCODE = 39;
-
-// Miscellaneous.
-const DELAY = 5000;
-const MOBILE_BREAKPOINT = 700;
-
 const setSlide = (slideshow, index, stopAuto) => {
 	if (stopAuto) { clearInterval(slideshow.interval); }
 	slideshow.index = index;
@@ -19,8 +11,8 @@ const incrementSlide = (slideshow, amount, stopAuto) => {
 }
 
 const updateSlideshowDisplay = (slideshow) => {
-	const slides = slideshow.content.querySelectorAll(`:scope > img.${SLIDE_CLASS}`);
-	const dots = slideshow.controller.querySelectorAll(`:scope > span.${SLIDESHOW_CONTROLLER_DOT_CLASS}`);
+	const slides = slideshow.content.querySelectorAll(`:scope > img.${SLIDESHOW_ITEM_CLASS}`);
+	const dots = slideshow.controller.querySelectorAll(`:scope > span.${SLIDESHOW_CONTROL_ITEM_CLASS}`);
 
 	if (slideshow.index > slides.length) { slideshow.index = 1; }
 	if (slideshow.index < 1) { slideshow.index = slides.length; }
@@ -76,9 +68,9 @@ for (let i = 0; i < slideshows.length; i++) {
 	for (let j = 0; j < toBeSlides.length; j++) {
 		const slide = toBeSlides[j];
 
-		if (!slide.classList.contains(SLIDE_CLASS)) {
+		if (!slide.classList.contains(SLIDESHOW_ITEM_CLASS)) {
 			console.log('Adding slide class to slide.');
-			slide.classList.add(SLIDE_CLASS);
+			slide.classList.add(SLIDESHOW_ITEM_CLASS);
 		}
 	}
 
@@ -92,10 +84,10 @@ for (let i = 0; i < slideshows.length; i++) {
 	}
 
 	// Create a control dot for each slide.
-	const slides = slideshow.content.querySelectorAll(`:scope > img.${SLIDE_CLASS}`);
-	for (let j = 1; j < images.length + 1; j++) {
+	const slides = slideshow.content.querySelectorAll(`:scope > img.${SLIDESHOW_ITEM_CLASS}`);
+	for (let j = 1; j < slides.length + 1; j++) {
 		const dot = document.createElement('span');
-		dot.className = SLIDESHOW_CONTROLLER_DOT_CLASS;
+		dot.className = SLIDESHOW_CONTROL_ITEM_CLASS;
 		dot.onclick = () => setSlide(slideshow, j, true);
 		slideshow.controller.append(dot);
 	}
@@ -115,7 +107,7 @@ for (let i = 0; i < slideshows.length; i++) {
 	// Start the automatic slideshow.
 	slideshow.index = 1;
 	setSlide(slideshow, slideshow.index, false);
-	slideshow.interval = setInterval(incrementSlide, DELAY, slideshow, 1, false);
+	slideshow.interval = setInterval(incrementSlide, SLIDESHOW_DELAY, slideshow, 1, false);
 }
 
 document.onkeydown = (event) => slideshowKeyboardInput(event);

@@ -3,7 +3,7 @@ const toggleFilter = (filter, filterClassName, allClassNames) => {
 		filter.activeClasses.splice(filter.activeClasses.indexOf(filterClassName), 1);
 	} else { filter.activeClasses.push(filterClassName); }
 
-	const filterButtons = filter.controller.querySelectorAll(`button.${FILTER_CONTROLLER_BUTTON_CLASS}`);
+	const filterButtons = filter.controller.querySelectorAll(`button.${FILTER_CONTROL_ITEM_CLASS}`);
 	const filterItems = filter.content.querySelectorAll(`div.${FILTER_ITEM_CLASS}`);
 
 	for (let i = 0; i < filterButtons.length; i++) {
@@ -82,7 +82,7 @@ for (let i = 0; i < filters.length; i++) {
 	for (let j = 0; j < filterClassNames.length; j++) {
 		const linkedClassName = filterClassNames[j];
 		const button = document.createElement('button');
-		button.className = FILTER_CONTROLLER_BUTTON_CLASS;
+		button.className = FILTER_CONTROL_ITEM_CLASS;
 		button.onclick = () => toggleFilter(filter, linkedClassName, filterClassNames);
 		button.linkedClassName = linkedClassName;
 		button.innerHTML = linkedClassName.replace(/_/g, ' ');
@@ -103,5 +103,9 @@ for (let i = 0; i < filters.length; i++) {
 
 	// Set current filter.
 	const filterQueryParam = new URLSearchParams(location.search).get('filter');
-	if (filterQueryParam) { toggleFilter(filter, filterQueryParam, filterClassNames); }
+	if (filterQueryParam) { toggleFilter(filter, filterQueryParam, filterClassNames); } else {
+		// Toggle filter twice to show all results.
+		toggleFilter(filter);
+		toggleFilter(filter);
+	}
 }
