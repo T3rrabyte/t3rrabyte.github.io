@@ -3,69 +3,83 @@
 <html lang='en-US' class='theme-console'>
 
 <head>
-	<script src='/s/js/loader.min.js'></script>
+	<script src='/s/js/loader.js'></script>
 	<title>Software</title>
 	<meta name='description' content='Travis Martin#&0039;s software portfolio.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
 	<link rel='stylesheet' href='/s/css/standard.css' />
 	<link rel='stylesheet' href='/s/css/navbar.css' />
 	<link rel='stylesheet' href='/s/css/dropdown.css' />
 	<link rel='stylesheet' href='/s/css/tab.css' />
+	<link rel='icon' href='/favicon.ico' />
+	<script src='/s/js/topnav.js'></script>
 </head>
 <body>
-	<div id='topnav'></div>
-	<div id='botnav'></div>
+	<header>
+		<div id='topnav'></div>
+	</header>
 
-	<!-- Page Content -->
-	<h1>Software</h1>
-	<hr/>
+	<main>
+		<!-- Page Content -->
+		<h1>Software</h1>
+		<hr/>
 
-	<div class='tab'>
-		<div id='StreamMarker'>
-			<h2>StreamMarker</h2>
-			<a class='buttonlink' href='https://github.com/T3rrabyte/StreamMarker/releases/latest'>Download</a>
-			<p>Background tool that allows Twitch streamers to mark times in their livestream with a hotkey.</p>
-			<p>Written in Node.js.</p>
+		<div class='tab'>
+			<div class='tab-controller'></div>
+			<div class='tab-content'>
+				<div id='StreamMarker' class='tab-panel'>
+					<h2>StreamMarker</h2>
+					<a class='buttonlink' href='https://github.com/T3rrabyte/StreamMarker/releases/latest'>Download</a>
+					<p>Background tool that allows Twitch streamers to mark times in their livestream with a hotkey.</p>
+					<p>Written in Node.js.</p>
+				</div>
+				<div id='Diplomat' class='tab-panel'>
+					<h2>Diplomat</h2>
+					<a class='buttonlink' href='https://github.com/T3rrabyte/Diplomat/releases/latest'>Download</a>
+					<p>Companion tool for the Diplomacy board game which utilizes experimental probability to inform your decisions.</p>
+					<p>Written in Python.</p>
+				</div>
+				<div id='Mods' class='tab-panel'>
+					<h2>Mods</h2>
+					<a class='buttonlink' href='https://steamcommunity.com/id/T3rrabyte/myworkshopfiles/'>Steam Workshop</a>
+					<p>Mods that I've written for games on Steam can be found on the Steam Workshop.</p>
+					<p>Written in C#.</p>
+				</div>
+				<div id='Discord_Bot' class='tab-panel'>
+					<h2>Lakuna Discord Bot</h2>
+					<a class='buttonlink' href='https://top.gg/bot/719642314930257930'>Discord Bot List</a>
+					<a class='buttonlink' href='https://discord.com/oauth2/authorize?client_id=719642314930257930&permissions=268561472&scope=bot'>Invite to Discord</a>
+					<p>A general-purpose Discord chat bot.</p>
+					<p>Written in Node.js.</p>
+				</div>
+				<div id='LocalKeys' class='tab-panel'>
+					<h2>LocalKeys</h2>
+					<a class='buttonlink' href='https://github.com/T3rrabyte/LocalKeys/releases/latest'>Download</a>
+					<p>Background application which hosts your keylogs on your local network. If somebody is trying to convince you to install this and you don't know what it does, you probably shouldn't install it; this program can easily be used as a form of malware.</p>
+					<p>Written in Node.js.</p>
+				</div>
+				<div id='HardwareTest' class='tab-panel'>
+					<h2>HardwareTest</h2>
+					<a class='buttonlink' href='https://github.com/T3rrabyte/HardwareTest/releases/latest'>Download</a>
+					<p>Tiny program which exports your system's hardware specs to a CSV file for easy sharing. Don't send the output file to anybody you don't trust, as it may contain personal information.</p>
+					<p>Written in C#.</p>
+				</div>
+				<div id='Umbra' class='tab-panel'>
+					<h2>Umbra</h2>
+					<a class='buttonlink' href='https://github.com/T3rrabyte/Umbra/releases/latest'>Download</a>
+					<a class='buttonlink' href='https://umbra-framework.readthedocs.io/en/latest/'>Documentation</a>
+					<p>The Umbra Framework for lightweight HTML5 video games. Specifically designed for the JS13KGames Game Jam.</p>
+					<p>Written in JavaScript.</p>
+				</div>
+			</div>
 		</div>
-		<div id='Diplomat'>
-			<h2>Diplomat</h2>
-			<a class='buttonlink' href='https://github.com/T3rrabyte/Diplomat/releases/latest'>Download</a>
-			<p>Companion tool for the Diplomacy board game which utilizes experimental probability to inform your decisions.</p>
-			<p>Written in Python.</p>
-		</div>
-		<div id='Mods'>
-			<h2>Mods</h2>
-			<a class='buttonlink' href='https://steamcommunity.com/id/T3rrabyte/myworkshopfiles/'>Steam Workshop</a>
-			<p>Mods that I've written for games on Steam can be found on the Steam Workshop.</p>
-			<p>Written in C#.</p>
-		</div>
-		<div id='Discord_Bot'>
-			<h2>Lakuna Discord Bot</h2>
-			<a class='buttonlink' href='https://top.gg/bot/719642314930257930'>Discord Bot List</a>
-			<a class='buttonlink' href='https://discord.com/oauth2/authorize?client_id=719642314930257930&permissions=268561472&scope=bot'>Invite to Discord</a>
-			<p>A general-purpose Discord chat bot.</p>
-			<p>Written in Node.js.</p>
-		</div>
-		<div id='LocalKeys'>
-			<h2>LocalKeys</h2>
-			<a class='buttonlink' href='https://github.com/T3rrabyte/LocalKeys/releases/latest'>Download</a>
-			<p>Background application which hosts your keylogs on your local network. If somebody is trying to convince you to install this and you don't know what it does, you probably shouldn't install it; this program can easily be used as a form of malware.</p>
-			<p>Written in Node.js.</p>
-		</div>
-		<div id='HardwareTest'>
-			<h2>HardwareTest</h2>
-			<a class='buttonlink' href='https://github.com/T3rrabyte/HardwareTest/releases/latest'>Download</a>
-			<p>Tiny program which exports your system's hardware specs to a CSV file for easy sharing. Don't send the output file to anybody you don't trust, as it may contain personal information.</p>
-			<p>Written in C#.</p>
-		</div>
-		<div id='Umbra'>
-			<h2>Umbra</h2>
-			<a class='buttonlink' href='https://github.com/T3rrabyte/Umbra/releases/latest'>Download</a>
-			<a class='buttonlink' href='https://umbra-framework.readthedocs.io/en/latest/'>Documentation</a>
-			<p>The Umbra Framework for lightweight HTML5 video games. Specifically designed for the JS13KGames Game Jam.</p>
-			<p>Written in JavaScript.</p>
-		</div>
-	</div>
+	</main>
+
+	<footer>
+		<div id='botnav'></div>
+	</footer>
 </body>
 
 </html>
