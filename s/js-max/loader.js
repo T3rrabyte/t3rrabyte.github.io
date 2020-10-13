@@ -1,7 +1,7 @@
 // # Constants
 
 // Google Analytics
-const ANALYTICS_ID = 'UA-145902983-1';
+const ANALYTICS_ID = 'UA-145902983-3';
 
 // CDN URLs
 const JQUERY_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js';
