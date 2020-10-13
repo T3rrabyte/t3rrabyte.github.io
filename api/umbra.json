@@ -7,11 +7,11 @@
 			"versions": [
 				{
 					"name": "production",
-					"url": "https://raw.githubusercontent.com/T3rrabyte/Umbra/master/releases/1.0/production.js"
+					"url": "https://raw.githubusercontent.com/T3Lakuna/Umbra/master/releases/1.0/production.js"
 				},
 				{
 					"name": "development",
-					"url": "https://raw.githubusercontent.com/T3rrabyte/Umbra/master/releases/1.0/development.js"
+					"url": "https://raw.githubusercontent.com/T3Lakuna/Umbra/master/releases/1.0/development.js"
 				}
 			]
 		}
