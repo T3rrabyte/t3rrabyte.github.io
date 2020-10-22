@@ -14,6 +14,15 @@
 					"url": "https://raw.githubusercontent.com/T3Lakuna/Umbra/master/releases/1.0/development.js"
 				}
 			]
+		},
+		{
+			"release": 0.0,
+			"versions": [
+				{
+					"name": "development",
+					"url": "https://raw.githubusercontent.com/T3Lakuna/Umbra/master/umbra.js"
+				}
+			]
 		}
 	]
 }
