@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ServerPack version="3.3" xmlns="http://www.mcupdater.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com http://files.mcupdater.com/ServerPackv2.xsd">
-	<Server id="lakuna" name="Lakuna" version="1.12.2" newsUrl="https://lakuna.pw/p/minecraft" iconUrl="https://lakuna.pw/s/mc/icon.png" revision="8" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
+	<Server id="lakuna-1" name="Lakuna" version="1.12.2" newsUrl="https://lakuna.pw/p/minecraft" iconUrl="https://lakuna.pw/s/mc/1/icon.png" revision="8" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
 		<Loader type="Forge" version="1.12.2-14.23.5.2844" loadOrder="0" />
 		<Module name="Mantle" id="mantle" depends="" side="BOTH">
 			<URL priority="0">https://media.forgecdn.net/files/2713/386/Mantle-1.12-1.3.3.55.jar</URL>
@@ -285,7 +285,7 @@
 			<ModType>Regular</ModType>
 			<MD5>dfcfa70d244f0435a5ff2b28037a324b</MD5>
 			<ConfigFile>
-				<URL priority="0">https://lakuna.pw/s/mc/packfiles/quark.cfg</URL>
+				<URL priority="0">https://lakuna.pw/s/mc/1/packfiles/quark.cfg</URL>
 				<Path>config/quark.cfg</Path>
 				<MD5>1ae2ef57e4945ebec1482b780bc8e3f0</MD5>
 			</ConfigFile>
@@ -356,7 +356,7 @@
 			<ModType>Regular</ModType>
 			<MD5>4c1d23b8a58b6aaa9a5204fae3f18393</MD5>
 			<ConfigFile>
-				<URL priority="0">https://lakuna.pw/s/mc/packfiles/biomesoplenty/gameplay.cfg</URL>
+				<URL priority="0">https://lakuna.pw/s/mc/1/packfiles/biomesoplenty/gameplay.cfg</URL>
 				<Path>config/biomesoplenty/gameplay.cfg</Path>
 				<MD5>b9dee5c69c4addd042df9a71d64f7074</MD5>
 			</ConfigFile>
@@ -493,7 +493,7 @@
 			<ModType>Regular</ModType>
 			<MD5>644c0f7f51a19fd1dce0cf4bdadfc52c</MD5>
 			<ConfigFile>
-				<URL priority="0">https://lakuna.pw/s/mc/packfiles/solcarrot.cfg</URL>
+				<URL priority="0">https://lakuna.pw/s/mc/1/packfiles/solcarrot.cfg</URL>
 				<Path>config/solcarrot.cfg</Path>
 				<MD5>49369d60ec3497c36204d48fb2440dcc</MD5>
 			</ConfigFile>
