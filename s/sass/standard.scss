@@ -39,6 +39,15 @@ body {
 		// Horizontal Rules
 		hr { border-color: t.themed('highlight-hex'); }
 
+		// Text Areas
+		textarea {
+			width: 100%;
+			font-size: inherit;
+			background-color: inherit;
+			color: inherit;
+			font-family: inherit;
+		}
+
 		// Buttons
 		button {
 			border: none;
