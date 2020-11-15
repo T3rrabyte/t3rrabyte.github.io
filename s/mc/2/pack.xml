@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ServerPack version="3.3" xmlns="http://www.mcupdater.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com http://files.mcupdater.com/ServerPackv2.xsd">
-	<Server id="lakuna-2" name="Lakuna Industrial" version="1.12.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="2" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
+	<Server id="lakuna-2" name="Lakuna Industrial" version="1.12.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="1" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
 		<Loader type="Forge" version="1.12.2-14.23.5.2854" loadOrder="0" />
 		<Module name="Mantle" id="mantle" depends="" side="BOTH">
 			<URL priority="0">https://media.forgecdn.net/files/2713/386/Mantle-1.12-1.3.3.55.jar</URL>
@@ -360,6 +360,12 @@
 			<Required>true</Required>
 			<ModType>Regular</ModType>
 			<MD5>ef89fab62d1914ea0e25d2c31b453695</MD5>
+		</Module>
+		<Module name="ConnectedTexturesMod" id="connectedTexturesMod" depends="" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2915/363/CTM-MC1.12.2-1.0.2.31.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>77a8bb5486c97e3eaa6f45e5bd768864</MD5>
 		</Module>
 		<Module name="Extra Utilities" id="extraUtilities" depends="" side="BOTH">
 			<URL priority="0">https://media.forgecdn.net/files/2678/374/extrautils2-1.12-1.9.9.jar</URL>
