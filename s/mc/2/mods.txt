@@ -76,7 +76,6 @@ Industrial Craft				https://www.curseforge.com/minecraft/mc-mods/industrial-craf
 Mekanism					https://www.curseforge.com/minecraft/mc-mods/mekanism
 	Mekanism Generators			https://www.curseforge.com/minecraft/mc-mods/mekanism-generators
 	Mekanism Tools				https://www.curseforge.com/minecraft/mc-mods/mekanism-tools
-	Mekanism Additions			https://www.curseforge.com/minecraft/mc-mods/mekanism-additions
 Buildcraft					https://www.curseforge.com/minecraft/mc-mods/buildcraft
 EnderCore					https://www.curseforge.com/minecraft/mc-mods/endercore
 	Ender IO				https://www.curseforge.com/minecraft/mc-mods/ender-io
@@ -103,4 +102,3 @@ McJtyLib					https://www.curseforge.com/minecraft/mc-mods/mcjtylib
 	RFTools					https://www.curseforge.com/minecraft/mc-mods/rftools
 		RFTools Control			https://www.curseforge.com/minecraft/mc-mods/rftools-control
 		RFTools Dimensions		https://www.curseforge.com/minecraft/mc-mods/rftools-dimensions
-Optifine					https://optifine.net

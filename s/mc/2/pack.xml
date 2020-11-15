@@ -1,15 +1,629 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ServerPack version="3.3" xmlns="http://www.mcupdater.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com http://files.mcupdater.com/ServerPackv2.xsd">
-	<Server id="lakuna-2" name="Lakuna" version="1.15.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="1" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
-		<Loader type="Forge" version="1.15.2-31.2.46" loadOrder="0" />
-		<!--
-		<Module name="" id="" depends="" side="BOTH">
-			<URL priority="0"></URL>
+	<Server id="lakuna-2" name="Lakuna" version="1.12.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="1" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
+		<Loader type="Forge" version="1.12.2-14.23.5.2844" loadOrder="0" />
+		<Module name="Mantle" id="mantle" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2713/386/Mantle-1.12-1.3.3.55.jar</URL>
 			<Required>true</Required>
 			<ModType>Regular</ModType>
-			<MD5></MD5>
+			<MD5>1026f5f8d3c4997831decd9023ca65a6</MD5>
 		</Module>
-		-->
+		<Module name="Natura" id="natura" depends="mantle" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2711/439/natura-1.12.2-4.3.2.69.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>2310e87658a493970605d416a504e0f9</MD5>
+		</Module>
+		<Module name="Tinkers' Construct" id="tinkersConstruct" depends="mantle" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2902/483/TConstruct-1.12.2-2.13.0.183.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>710d64342d41042b7d6ced891448e727</MD5>
+		</Module>
+		<Module name="TAIGA" id="taiga" depends="tinkersConstruct" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2626/416/taiga-1.12.2-1.3.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>8eeb4e35446fb5a879dae5f4e02fc2b0</MD5>
+		</Module>
+		<Module name="Tinkers' Tool Leveling" id="tinkersToolLeveling" depends="tinkersConstruct" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2630/860/TinkerToolLeveling-1.12.2-1.1.0.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>f9253fe86c6649afbf49d221c71ba19a</MD5>
+		</Module>
+		<Module name="Construct's Armory" id="constructsArmory" depends="tinkersConstruct" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2962/662/conarm-1.12.2-1.2.5.9.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>a91589e2f96fc28bc05c2dac88d4a95d</MD5>
+		</Module>
+		<Module name="Armory Expansion" id="armoryExpansion" depends="constructsArmory" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2925/154/armoryexpansion-1.4.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>8f0c1e2132892c72af510f1ccfe8a688</MD5>
+		</Module>
+		<Module name="Tinkers' JEI" id="tinkersJei" depends="tinkersConstruct justEnoughItems" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2701/203/tinkersjei-1.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>b2b7946fdd352745f75a9676f0df51a3</MD5>
+		</Module>
+		<Module name="Tinkers' Complement" id="tinkersComplement" depends="tinkersConstruct" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2843/439/TinkersComplement-1.12.2-0.4.3.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>905f6590b33d4b3ba80d973f3979d0d0</MD5>
+		</Module>
+		<Module name="Pam's Harvestcraft" id="pamsHarvestcraft" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2904/825/Pam%27s+HarvestCraft+1.12.2zg.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>e8e1ac67accdeea50116e1e92e592397</MD5>
+		</Module>
+		<Module name="Just Enough Harvestcraft" id="justEnoughHarvestcraft" depends="pamsHarvestcraft justEnoughItems" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2849/443/just-enough-harvestcraft-1.12.2-1.7.0.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>a4d06849e3ba31081d8a5e7d5222bf81</MD5>
+		</Module>
+		<Module name="Pam's Brewcraft" id="pamsBrewcraft" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2824/333/Pam%27s+BrewCraft+1.12.2-1.0.1.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>34c122b6d8fa67444f82556047da9404</MD5>
+		</Module>
+		<Module name="Just Enough Brewcraft" id="justEnoughBrewcraft" depends="pamsBrewcraft justEnoughItems" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2824/423/just-enough-brewcraft-1.12.2-1.0.1.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>04d12a6c9c4d043a56ebdba209b359f0</MD5>
+		</Module>
+		<Module name="JourneyMap" id="journeyMap" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2916/2/journeymap-1.12.2-5.7.1.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>8160b970fc14cff30dff2785bb9f964c</MD5>
+		</Module>
+		<Module name="Dynmap" id="dynmap" depends="" side="SERVER">
+			<URL priority="0">https://media.forgecdn.net/files/2975/96/Dynmap-3.0.1-forge-1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>fcacedf1e191aebc6fe461d54dbfd475</MD5>
+		</Module>
+		<Module name="WanionLib" id="wanionLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2807/433/WanionLib-1.12.2-2.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>98eaacdc2b62a0d1bd47fefa2308713c</MD5>
+		</Module>
+		<Module name="UniDict" id="uniDict" depends="wanionLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2880/863/UniDict-1.12.2-2.9.6.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>997757ba2a263a6da929f4735455c018</MD5>
+		</Module>
+		<Module name="Refined Storage" id="refinedStorage" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2940/914/refinedstorage-1.6.16.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0b5e41f29c3ceb1db560531fef9f55a2</MD5>
+		</Module>
+		<Module name="Refined Storage Addons" id="refinedStorageAddons" depends="refinedStorage" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2941/10/refinedstorageaddons-0.4.5.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d840373cb0ce3752e92c3840f64d8d90</MD5>
+		</Module>
+		<Module name="CoFH World" id="cofhWorld" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/434/CoFHWorld-1.12.2-1.4.0.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>f2bfd74e76b71bdee8a20a9243dd5cdf</MD5>
+		</Module>
+		<Module name="Redstone Flux" id="redstoneFlux" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/436/RedstoneFlux-1.12-2.1.1.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>93b1715f05be1878da93fca36dd37f2a</MD5>
+		</Module>
+		<Module name="CoFH Core" id="cofhCore" depends="redstoneFlux" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/433/CoFHCore-1.12.2-4.6.6.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>f147d3b87f97bb317e1c37cba0dde002</MD5>
+		</Module>
+		<Module name="Redstone Arsenal" id="redstoneArsenal" depends="cofhCore" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2939/416/RedstoneArsenal-1.12.2-2.6.6.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d2ca2d7e0987a9f3d1cb82898942bb78</MD5>
+		</Module>
+		<Module name="Thermal Foundation" id="thermalFoundation" depends="cofhWorld cofhCore" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2926/428/ThermalFoundation-1.12.2-2.6.7.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>6eca041bbf28949b60ecf1179d561156</MD5>
+		</Module>
+		<Module name="Thermal Expansion" id="thermalExpansion" depends="thermalFoundation codeChickenLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2926/431/ThermalExpansion-1.12.2-5.5.7.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0bf91e166b05e83d22455a9c7ec395bb</MD5>
+		</Module>
+		<Module name="Thermal Dynamics" id="thermalDynamics" depends="thermalFoundation codeChickenLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/505/ThermalDynamics-1.12.2-2.5.6.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>38a0c024f5775b0cf783de839033f8db</MD5>
+		</Module>
+		<Module name="Thermal Cultivation" id="thermalCultivation" depends="thermalFoundation" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/437/ThermalCultivation-1.12.2-0.3.6.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>28970430074736ae6efbe4f7c353b30a</MD5>
+		</Module>
+		<Module name="Thermal Innovation" id="thermalInnovation" depends="thermalFoundation" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2920/441/ThermalInnovation-1.12.2-0.3.6.1-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>320accf690ccc1c8a23679beb63fb615</MD5>
+		</Module>
+		<Module name="CodeChicken Lib" id="codeChickenLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2779/848/CodeChickenLib-1.12.2-3.2.3.358-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>3b5e44db5ac96fb23a439590b6731a31</MD5>
+		</Module>
+		<Module name="Ender Storage" id="enderStorage" depends="codeChickenLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2755/787/EnderStorage-1.12.2-2.4.6.137-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>c66000e24e8c11675db554c644b31bda</MD5>
+		</Module>
+		<Module name="Chicken Chunks" id="chickenChunks" depends="codeChickenLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2755/785/ChickenChunks-1.12.2-2.4.2.74-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>f6bf337a09fcfa19aedc840f19cac222</MD5>
+		</Module>
+		<Module name="GregTech Community Edition" id="gregTech" depends="codeChickenLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3107/885/gregtech-1.12.2-1.10.5.582.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>e6d5aec674065efe2a7711017b7f63b7</MD5>
+		</Module>
+		<Module name="FoamFix" id="foamFix" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2845/668/foamfix-0.10.10-1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>bba94f1ee252fcfbd2d52779f5c2f2b1</MD5>
+		</Module>
+		<Module name="BetterFPS" id="betterFps" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2483/393/BetterFps-1.4.8.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d36f4d3c0f96e99a9a1ad2e8eeda1fc4</MD5>
+		</Module>
+		<Module name="FastWorkbench" id="fastWorkbench" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2716/379/FastWorkbench-1.12.2-1.7.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>2a0e8335926fd413521d2432c91842a9</MD5>
+		</Module>
+		<Module name="FastFurnace" id="fastFurnace" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2706/111/FastFurnace-1.12.2-1.3.1.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>b84cc8a587dbd35fef2dbc3e0b9435aa</MD5>
+		</Module>
+		<Module name="RandomPatches" id="randomPatches" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2943/191/randompatches-1.12.2-1.21.0.3.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>1c7fc41b27b2f18210272ba3aa90eb99</MD5>
+		</Module>
+		<Module name="RandomPatches Integration" id="randomPatchesIntegration" depends="randomPatches" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2735/727/rpintegration-1.12.2-1.5.1.0.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>704d34104daf16c9d82aaa6f53ea9579</MD5>
+		</Module>
+		<Module name="RandomTweaks" id="randomTweaks" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2948/679/randomtweaks-1.12.2-2.8.0.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>81cbd0f0a556712e04c4640912b6ab59</MD5>
+		</Module>
+		<Module name="Phosphor" id="phosphor" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2747/710/phosphor-1.12.2-0.2.6%2Bbuild50-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>9892af4ac4f8ca4222138a245592227c</MD5>
+		</Module>
+		<Module name="VanillaFix" id="vanillaFix" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2915/154/VanillaFix-1.0.10-150.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>a74aaab68100e03f54e35d1007d50169</MD5>
+		</Module>
+		<Module name="Mouse Tweaks" id="mouseTweaks" depends="" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2671/937/MouseTweaks-2.10-mc1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>e4dcbf47c3f99a780681e3a3a9fcf9e9</MD5>
+		</Module>
+		<Module name="Inventory Tweaks" id="inventoryTweaks" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2482/481/InventoryTweaks-1.63.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>1e2e33e5710394252abc4b014bc3dcbd</MD5>
+		</Module>
+		<Module name="Ore Excavation" id="oreExcavation" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2897/369/OreExcavation-1.4.150.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>868369238ff464e7bd081d6d5fc17224</MD5>
+		</Module>
+		<Module name="AutoRegLib" id="autoRegLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2746/11/AutoRegLib-1.3-32.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>4e5a4b881c27b1e4502a9a16c00882ad</MD5>
+		</Module>
+		<Module name="Quark" id="quark" depends="autoRegLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2924/91/Quark-r1.6-179.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>dfcfa70d244f0435a5ff2b28037a324b</MD5>
+			<ConfigFile>
+				<URL priority="0">https://lakuna.pw/s/mc/1/packfiles/quark.cfg</URL>
+				<Path>config/quark.cfg</Path>
+				<MD5>1ae2ef57e4945ebec1482b780bc8e3f0</MD5>
+			</ConfigFile>
+		</Module>
+		<Module name="Just Enough Items" id="justEnoughItems" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2803/400/jei_1.12.2-4.15.0.291.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>cfdbfecefb1bdc5a3fbbcecbfecb0545</MD5>
+		</Module>
+		<Module name="Just Enough Resources" id="justEnoughResources" depends="justEnoughItems" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2728/585/JustEnoughResources-1.12.2-0.9.2.60.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>87a4666549a60d8fb423883dd4ee6232</MD5>
+		</Module>
+		<Module name="JER Ore Integration" id="jerOreIntegration" depends="justEnoughResources" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2576/706/JEROreIntegration-1.12.2-1.1.0.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>f22991aefd8e9819bd03086fa23ae229</MD5>
+		</Module>
+		<Module name="Hwyla" id="hwyla" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2568/751/Hwyla-1.8.26-B41_1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>bca1c069d9171d331d211d24e8a3b770</MD5>
+		</Module>
+		<Module name="Wawla" id="wawla" depends="hwyla" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2916/368/Wawla-1.12.2-2.6.275.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>3762f87395a87af86e9552c6d7ca7e06</MD5>
+		</Module>
+		<Module name="Waila Harvestability" id="wailaHarvestability" depends="hwyla" side="CLIENT">
+			<URL priority="0">https://media.forgecdn.net/files/2481/605/WailaHarvestability-mc1.12-1.1.12.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0bd8765ff3064be336cb1b09208e410c</MD5>
+		</Module>
+		<Module name="Bookshelf" id="bookshelf" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2836/960/Bookshelf-1.12.2-2.3.590.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>85a44d3299449545e435f5ec55fc914b</MD5>
+		</Module>
+		<Module name="Dark Utilities" id="darkUtilities" depends="bookshelf" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2813/586/DarkUtils-1.12.2-1.8.230.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>672e81d68ebdf0ac8a4cd9f78a38a770</MD5>
+		</Module>
+		<Module name="AttributeFix" id="attributeFix" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2643/711/AttributeFix-1.12.2-1.0.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d1d921d9bb092ee3b5fd193abe95db32</MD5>
+		</Module>
+		<Module name="NoMoreRecipeConflict" id="noMoreRecipeConflict" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2671/230/NoMoreRecipeConflict-0.13(1.12.2).jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>95ca245f9c463dfa7467575e37d6cb2e</MD5>
+		</Module>
+		<Module name="Biomes O' Plenty" id="biomesOPlenty" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2842/510/BiomesOPlenty-1.12.2-7.0.1.2444-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>4c1d23b8a58b6aaa9a5204fae3f18393</MD5>
+			<ConfigFile>
+				<URL priority="0">https://lakuna.pw/s/mc/1/packfiles/biomesoplenty/gameplay.cfg</URL>
+				<Path>config/biomesoplenty/gameplay.cfg</Path>
+				<MD5>b9dee5c69c4addd042df9a71d64f7074</MD5>
+			</ConfigFile>
+		</Module>
+		<Module name="Serene Seasons" id="sereneSeasons" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2799/213/SereneSeasons-1.12.2-1.2.18-universal.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>ef89fab62d1914ea0e25d2c31b453695</MD5>
+		</Module>
+		<Module name="Extra Utilities" id="extraUtilities" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2678/374/extrautils2-1.12-1.9.9.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>1ea591619e6d5204bf077214868772ef</MD5>
+		</Module>
+		<Module name="No Tema Stahp" id="noTemaStahp" depends="extraUtilities" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2690/69/NoTemaStahp-1.12.2-1.0.3.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>5f56c5ad6c1af0a2d0b9b8c250801686</MD5>
+		</Module>
+		<Module name="OpenModsLib" id="openModsLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2699/55/OpenModsLib-1.12.2-0.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>9c0606c553fbdf86e2f459c1cc40414d</MD5>
+		</Module>
+		<Module name="OpenBlocks" id="openBlocks" depends="openModsLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2699/56/OpenBlocks-1.12.2-1.8.1.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>cd7f642f983669c6ae94d6a999d0d6e9</MD5>
+		</Module>
+		<Module name="OpenComputers" id="openComputers" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2828/357/OpenComputers-MC1.12.2-1.7.5.192.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>1da9dd8478ba6d682f2787746776e18a</MD5>
+		</Module>
+		<Module name="OpenGlasses" id="openGlasses" depends="openComputers commons0815" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2842/55/OpenGlasses-MC1.12.2-2.2-50.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d88304f35084139d7ee9707303d65847</MD5>
+		</Module>
+		<Module name="Commons0815" id="commons0815" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2842/54/Commons0815-1.12.2-1.3.7.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>ad28ee7548a8f8adc54ab28cc3f0e8f6</MD5>
+		</Module>
+		<Module name="AppleSkin" id="appleSkin" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2496/585/AppleSkin-mc1.12-1.0.9.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0e0af1e6f80ea2ee7ecfc2f8f44b897b</MD5>
+		</Module>
+		<Module name="WrapUp" id="wrapUp" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2486/198/WrapUp-1.12-1.1.3.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d6e426631f7d9eb1f86ef0523870811a</MD5>
+		</Module>
+		<Module name="JAOPCA" id="jaopca" depends="wrapUp" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2722/779/JAOPCA-1.12.2-2.2.8.103.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d1405dc3bb9d465185ac637e09f0221b</MD5>
+		</Module>
+		<Module name="JAOPCAAgriculture" id="jaopcaAgriculture" depends="jaopca" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2766/557/JAOPCAAgriculture-1.12.2-1.2.1.16.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>ef7bb9b309017e96c308a11e257624fb</MD5>
+		</Module>
+		<Module name="Shadowfacts' Forgelin" id="shadowfactsForgelin" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2785/465/Forgelin-1.8.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>2da79fce72265eab0541e565636d389d</MD5>
+		</Module>
+		<Module name="Ex Nihilo: Creatio" id="exNihiloCreatio" depends="shadowfactsForgelin" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2817/545/exnihilocreatio-1.12.2-0.4.7.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>170d2946ffca047b8b427a4755f6d752</MD5>
+		</Module>
+		<Module name="Ex Compressum" id="exCompressum" depends="exNihiloCreatio" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2966/941/ExCompressum_1.12.2-3.0.32.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>de7c058a0969e151a8866cd357997b41</MD5>
+		</Module>
+		<Module name="Industrial Craft" id="industrialCraft" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2746/892/industrialcraft-2-2.8.170-ex112.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d4f952c94cacdd280abbb73f072b2424</MD5>
+		</Module>
+		<Module name="Mekanism" id="mekanism" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2835/175/Mekanism-1.12.2-9.8.3.390.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>e622b8365b9a1190b3b6cc042854e870</MD5>
+		</Module>
+		<Module name="Mekanism Generators" id="mekanismGenerators" depends="mekanism" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2835/177/MekanismGenerators-1.12.2-9.8.3.390.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d75ddb11a6c1353b046c70d8904fe61e</MD5>
+		</Module>
+		<Module name="Mekanism Tools" id="mekanismTools" depends="mekanism" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2835/178/MekanismTools-1.12.2-9.8.3.390.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0095f13a729ce5873319e36e29a5b5e1</MD5>
+		</Module>
+		<Module name="BuildCraft" id="buildCraft" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3072/651/buildcraft-all-7.99.24.7.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>43a54b9d7bb1ecf2819ba19718fb7abd</MD5>
+		</Module>
+		<Module name="EnderCore" id="enderCore" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2972/849/EnderCore-1.12.2-0.5.76.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>6164be012de6ee761e37f54a74074125</MD5>
+		</Module>
+		<Module name="Ender IO" id="enderIo" depends="enderCore" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3068/701/EnderIO-1.12.2-5.2.61.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>158cb696bbc9431ed2eaeaa6806474ee</MD5>
+		</Module>
+		<Module name="Ender IO Zoo" id="enderIoZoo" depends="enderIo" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3068/699/EnderIO-zoo-1.12.2-5.2.61.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>6cd8377de3a5b9cf1206b26c19a5b507</MD5>
+		</Module>
+		<Module name="Ender IO Endergy" id="enderIoEndergy" depends="enderIo" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3068/700/EnderIO-endergy-1.12.2-5.2.61.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>eccd92bde1625a741234beaa3c9b2992</MD5>
+		</Module>
+		<Module name="Stellar Fluid Conduits" id="stellarFluidConduits" depends="enderIo" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2997/46/stellarfluidconduit-1.12.2-1.0.3.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>3a32b7eca669d633fc7804e294ee564e</MD5>
+		</Module>
+		<Module name="Gas Conduits" id="gasConduits" depends="enderIo" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/3060/489/GasConduits-1.12.2-1.2.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>b8719bc0055ed4a3496b29816ff75b10</MD5>
+		</Module>
+		<Module name="Iron Chests" id="ironChests" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2747/935/ironchest-1.12.2-7.0.72.847.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>743179bc3a8f50751efbb019acc759a9</MD5>
+		</Module>
+		<Module name="Iron Backpacks" id="ironBackpacks" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2564/573/IronBackpacks-1.12.2-3.0.8-12.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>9fd50b1827b711704c69789aa94ac2ca</MD5>
+		</Module>
+		<Module name="Project Red - Base" id="projectRedBase" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/545/ProjectRed-1.12.2-4.9.4.120-Base.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>1380ad8d4ffbc3f1189078473f6f10f9</MD5>
+		</Module>
+		<Module name="Project Red - Integration" id="projectRedIntegration" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/548/ProjectRed-1.12.2-4.9.4.120-integration.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>0d8259b233ab89d2171b6337167e7e6f</MD5>
+		</Module>
+		<Module name="Project Red - Mechanical" id="projectRedMechanical" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/550/ProjectRed-1.12.2-4.9.4.120-mechanical.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>cafa40d180f86081e748d15ba5a0ffc9</MD5>
+		</Module>
+		<Module name="Project Red - Lighting" id="projectRedLighting" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/549/ProjectRed-1.12.2-4.9.4.120-lighting.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>b9ead4f7e70dd4c0f68cd8c690249753</MD5>
+		</Module>
+		<Module name="Project Red - Compat" id="projectRedCompat" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/546/ProjectRed-1.12.2-4.9.4.120-compat.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>56c34f44395c918926fc5751f82d70b9</MD5>
+		</Module>
+		<Module name="Project Red - World" id="projectRedWorld" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/551/ProjectRed-1.12.2-4.9.4.120-world.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>2ac24154b87ff4fbc97e5330c2ca11f7</MD5>
+		</Module>
+		<Module name="Project Red - Fabrication" id="projectRedFabrication" depends="projectRedBase" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/547/ProjectRed-1.12.2-4.9.4.120-fabrication.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>eabf2010d23f3cfc583cd809a7b0febf</MD5>
+		</Module>
+		<Module name="BiblioCraft" id="biblioCraft" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2574/880/BiblioCraft%5bv2.4.5%5d%5bMC1.12.2%5d.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>5b9f1a1543a1fdf687fe4761e3d63ed4</MD5>
+		</Module>
+		<Module name="BdLib" id="bdLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2518/31/bdlib-1.14.3.12-mc1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>d2b8ba08414ac12737eb5ecbf92a19d9</MD5>
+		</Module>
+		<Module name="Forestry" id="forestry" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2684/780/forestry_1.12.2-5.8.2.387.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>367a01e7ff21262fa3dfc71e8fbd7332</MD5>
+		</Module>
+		<Module name="Binnie's Mods" id="binniesMods" depends="forestry" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2916/129/binnie-mods-1.12.2-2.5.1.203.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>8bc1a0ca53d9ceca7a9ba91a6d75406e</MD5>
+		</Module>
+		<Module name="Gendustry" id="gendustry" depends="forestry bdLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2516/215/gendustry-1.6.5.8-mc1.12.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>81b4720925043e1b4c198cabca9bd87f</MD5>
+		</Module>
+		<Module name="Chisel" id="chisel" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2915/375/Chisel-MC1.12.2-1.0.2.45.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>54afc298f94e708f0e1cdf399200b2cb</MD5>
+		</Module>
+		<Module name="McJtyLib" id="mcJtyLib" depends="" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2745/846/mcjtylib-1.12-3.5.4.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>45ac9983da9fd2bc7fe3446b9f4287c1</MD5>
+		</Module>
+		<Module name="RFTools" id="rfTools" depends="mcJtyLib" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2861/573/rftools-1.12-7.73.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>3af6f5864243b044a8dd6f2cb1a4b0cf</MD5>
+		</Module>
+		<Module name="RFTools Control" id="rfToolsControl" depends="rfTools" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2705/813/rftoolsctrl-1.12-2.0.2.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>640e2b3241acde04684bd904829959ad</MD5>
+		</Module>
+		<Module name="RFTools Dimensions" id="rfToolsDimensions" depends="rfTools" side="BOTH">
+			<URL priority="0">https://media.forgecdn.net/files/2707/390/rftoolsdim-1.12-5.71.jar</URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5>ee4db68d6afee08ec383f525a331ef53</MD5>
+		</Module>
 	</Server>
 </ServerPack>
