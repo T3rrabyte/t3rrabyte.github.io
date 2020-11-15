@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ServerPack version="3.3" xmlns="http://www.mcupdater.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com http://files.mcupdater.com/ServerPackv2.xsd">
-	<Server id="lakuna-2" name="Lakuna" version="1.12.2" newsUrl="https://lakuna.pw/p/minecraft" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="8" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
-		<Loader type="Forge" version="1.12.2-14.23.5.2844" loadOrder="0" />
+	<Server id="lakuna-2" name="Lakuna" version="1.15.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="1" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="" autoConnect="true">
+		<Loader type="Forge" version="1.15.2-31.2.46" loadOrder="0" />
+		<!--
+		<Module name="" id="" depends="" side="BOTH">
+			<URL priority="0"></URL>
+			<Required>true</Required>
+			<ModType>Regular</ModType>
+			<MD5></MD5>
+		</Module>
+		-->
 	</Server>
 </ServerPack>
