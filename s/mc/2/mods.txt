@@ -58,6 +58,8 @@ AttributeFix					https://www.curseforge.com/minecraft/mc-mods/attributefix
 NoMoreRecipeConflict				https://www.curseforge.com/minecraft/mc-mods/stimmedcow-nomorerecipeconflict
 Biomes O' Plenty				https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty
 Serene Seasons					https://www.curseforge.com/minecraft/mc-mods/serene-seasons
+ConnectedTexturesMod				https://www.curseforge.com/minecraft/mc-mods/ctm
+	Chisel					https://www.curseforge.com/minecraft/mc-mods/chisel
 Extra Utilities					https://www.curseforge.com/minecraft/mc-mods/extra-utilities
 	No Tema Stahp				https://www.curseforge.com/minecraft/mc-mods/no-tema-stahp
 OpenModsLib					https://www.curseforge.com/minecraft/mc-mods/openmodslib
@@ -85,19 +87,20 @@ EnderCore					https://www.curseforge.com/minecraft/mc-mods/endercore
 		Gas Conduits			https://www.curseforge.com/minecraft/mc-mods/gas-conduits
 Iron Chests					https://www.curseforge.com/minecraft/mc-mods/iron-chests
 Iron Backpacks					https://www.curseforge.com/minecraft/mc-mods/iron-backpacks
-Project Red - Base				https://www.curseforge.com/minecraft/mc-mods/project-red-base
-	Project Red - Integration		https://www.curseforge.com/minecraft/mc-mods/project-red-integration
-	Project Red - Mechanical		https://www.curseforge.com/minecraft/mc-mods/project-red-mechanical
-	Project Red - Lighting			https://www.curseforge.com/minecraft/mc-mods/project-red-lighting
-	Project Red - Compat			https://www.curseforge.com/minecraft/mc-mods/project-red-compat
-	Project Red - World			https://www.curseforge.com/minecraft/mc-mods/project-red-world
-	Project Red - Fabrication		https://www.curseforge.com/minecraft/mc-mods/project-red-fabrication
+Forge MultiPart CBE				https://www.curseforge.com/minecraft/mc-mods/forge-multipart-cbe		Required for Project Red - Base.
+MrTJPCore					https://www.curseforge.com/minecraft/mc-mods/mrtjpcore
+	Project Red - Base			https://www.curseforge.com/minecraft/mc-mods/project-red-base
+		Project Red - Integration	https://www.curseforge.com/minecraft/mc-mods/project-red-integration
+		Project Red - Mechanical	https://www.curseforge.com/minecraft/mc-mods/project-red-mechanical
+		Project Red - Lighting		https://www.curseforge.com/minecraft/mc-mods/project-red-lighting
+		Project Red - Compat		https://www.curseforge.com/minecraft/mc-mods/project-red-compat
+		Project Red - World		https://www.curseforge.com/minecraft/mc-mods/project-red-world
+		Project Red - Fabrication	https://www.curseforge.com/minecraft/mc-mods/project-red-fabrication
 BiblioCraft					https://www.curseforge.com/minecraft/mc-mods/bibliocraft
 BdLib						https://www.curseforge.com/minecraft/mc-mods/bdlib				Required for Gendustry.
 Forestry					https://www.curseforge.com/minecraft/mc-mods/forestry
 	Binnie's Mods				https://www.curseforge.com/minecraft/mc-mods/binnies-mods
 	Gendustry				https://www.curseforge.com/minecraft/mc-mods/gendustry
-Chisel						https://www.curseforge.com/minecraft/mc-mods/chisel
 McJtyLib					https://www.curseforge.com/minecraft/mc-mods/mcjtylib
 	RFTools					https://www.curseforge.com/minecraft/mc-mods/rftools
 		RFTools Control			https://www.curseforge.com/minecraft/mc-mods/rftools-control
