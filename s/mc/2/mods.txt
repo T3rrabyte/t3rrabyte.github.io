@@ -104,3 +104,5 @@ McJtyLib					https://www.curseforge.com/minecraft/mc-mods/mcjtylib
 	RFTools					https://www.curseforge.com/minecraft/mc-mods/rftools
 		RFTools Control			https://www.curseforge.com/minecraft/mc-mods/rftools-control
 		RFTools Dimensions		https://www.curseforge.com/minecraft/mc-mods/rftools-dimensions
+LibVulpes					https://www.curseforge.com/minecraft/mc-mods/libvulpes
+	Advanced Rocketry			https://www.curseforge.com/minecraft/mc-mods/advanced-rocketry
