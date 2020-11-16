@@ -31,7 +31,6 @@ Redstone Flux					https://www.curseforge.com/minecraft/mc-mods/redstone-flux
 CodeChicken Lib					https://www.curseforge.com/minecraft/mc-mods/codechicken-lib-1-8		Required for Thermal Expansion and Thermal Dynamics.
 	Ender Storage				https://www.curseforge.com/minecraft/mc-mods/ender-storage-1-8
 	Chicken Chunks				https://www.curseforge.com/minecraft/mc-mods/chicken-chunks-1-8
-	GregTech Community Edition		https://www.curseforge.com/minecraft/mc-mods/gregtechce
 FoamFix						https://www.curseforge.com/minecraft/mc-mods/foamfix-optimization-mod
 BetterFPS					https://www.curseforge.com/minecraft/mc-mods/betterfps
 FastWorkbench					https://www.curseforge.com/minecraft/mc-mods/fastworkbench
