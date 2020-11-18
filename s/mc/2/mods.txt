@@ -14,11 +14,8 @@ Pam's Harvestcraft				https://www.curseforge.com/minecraft/mc-mods/pams-harvestc
 Pam's Brewcraft					https://www.curseforge.com/minecraft/mc-mods/pams-brewcraft
 	Just Enough Brewcraft			https://www.curseforge.com/minecraft/mc-mods/just-enough-brewcraft
 JourneyMap					https://www.curseforge.com/minecraft/mc-mods/journeymap
-Dynmap						https://www.curseforge.com/minecraft/mc-mods/dynmapforge
 WanionLib					https://www.curseforge.com/minecraft/mc-mods/wanionlib
 	UniDict					https://www.curseforge.com/minecraft/mc-mods/unidict
-Refined Storage					https://www.curseforge.com/minecraft/mc-mods/refined-storage
-	Refined Storage Addons			https://www.curseforge.com/minecraft/mc-mods/refined-storage-addons
 CoFH World					https://www.curseforge.com/minecraft/mc-mods/cofh-world				Required for Thermal Foundation.
 Redstone Flux					https://www.curseforge.com/minecraft/mc-mods/redstone-flux
 	CoFH Core				https://www.curseforge.com/minecraft/mc-mods/cofh-core
@@ -106,3 +103,4 @@ McJtyLib					https://www.curseforge.com/minecraft/mc-mods/mcjtylib
 		RFTools Dimensions		https://www.curseforge.com/minecraft/mc-mods/rftools-dimensions
 LibVulpes					https://www.curseforge.com/minecraft/mc-mods/libvulpes
 	Advanced Rocketry			https://www.curseforge.com/minecraft/mc-mods/advanced-rocketry
+Applied Energistics 2				https://www.curseforge.com/minecraft/mc-mods/applied-energistics-2
