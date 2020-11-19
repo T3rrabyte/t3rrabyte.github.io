@@ -3,23 +3,42 @@
 <html lang='en-US' class='theme-xanycki'>
 
 <head>
-	<script src='/s/js/loader.js'></script>
+	<!-- Google Analytics -->
+	<script src='https://www.googletagmanager.com/gtag/js?id=UA-145902983-3'></script>
+	<script>
+		dataLayer = dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-145902983-3');
+	</script>
+
 	<title>Xanycki</title>
 	<meta name='description' content='Xanycki&0039;s art and links.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
-	<link rel='stylesheet' href='/s/css/standard.css' />
-	<link rel='stylesheet' href='/s/css/navbar.css' />
+
+	<meta property='og:title' content='Lakuna' />
+	<meta property='og:type' content='website' />
+	<meta property='og:image' content='/s/img/triquetra-circle.png' />
+	<meta property='og:url' content='https://lakuna.pw' />
+
 	<link rel='stylesheet' href='/s/css/dropdown.css' />
-	<link rel='stylesheet' href='/s/css/slideshow.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
 	<link rel='stylesheet' href='/s/css/sidenav.css' />
+	<link rel='stylesheet' href='/s/css/slideshow.css' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
 	<link rel='icon' href='/favicon.ico' />
+
+	<script src='https://kit.fontawesome.com/d0b9853910.js'></script>
+	<script src='/s/js/load.js'></script>
+	<script src='/s/js/slideshow.js'></script>
+	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
 </head>
 <body>
 	<header>
-		<div id='topnav'></div>
+		<div id='topnav' load='/s/html/topnav.html'></div>
 	</header>
 
 	<main>
@@ -30,8 +49,7 @@
 			<a href='https://toyhou.se/Xanycki'>TOYHOU.SE</a>
 			<a href='https://www.sudomemo.net/user/51951DB0A0E79A0C@DSi/'>Sudomemo</a>
 		</div>
-
-		<!-- Page Content -->
+		
 		<h1>Xanycki</h1>
 		<hr/>
 
@@ -70,7 +88,7 @@
 	</main>
 
 	<footer>
-		<div id='botnav'></div>
+		<div id='botnav' load='/s/html/botnav.html'></div>
 	</footer>
 </body>
 

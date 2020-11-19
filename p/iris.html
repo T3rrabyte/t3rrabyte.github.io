@@ -3,25 +3,42 @@
 <html lang='en-US' class='theme-dark'>
 
 <head>
-	<script src='/s/js/loader.js'></script>
+	<!-- Google Analytics -->
+	<script src='https://www.googletagmanager.com/gtag/js?id=UA-145902983-3'></script>
+	<script>
+		dataLayer = dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-145902983-3');
+	</script>
+
 	<title>IRIS</title>
 	<meta name='description' content='Item rework impact survey.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
-	<link rel='stylesheet' href='/s/css/standard.css' />
-	<link rel='stylesheet' href='/s/css/navbar.css' />
+
+	<meta property='og:title' content='Lakuna' />
+	<meta property='og:type' content='website' />
+	<meta property='og:image' content='/s/img/triquetra-circle.png' />
+	<meta property='og:url' content='https://lakuna.pw' />
+
 	<link rel='stylesheet' href='/s/css/dropdown.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
 	<link rel='icon' href='/favicon.ico' />
+
+	<script src='https://kit.fontawesome.com/d0b9853910.js'></script>
+	<script src='/s/js/load.js'></script>
+	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
 </head>
 <body>
 	<header>
-		<div id='topnav'></div>
+		<div id='topnav' load='/s/html/topnav.html'></div>
 	</header>
 
 	<main>
-		<!-- Page Content -->
 		<h1>Item Rework Impact Survey (IRIS)</h1>
 		<p style='text-align: center;'>For League of Legends preseason 11.</p>
 		<hr/>
@@ -62,7 +79,7 @@
 	</main>
 
 	<footer>
-		<div id='botnav'></div>
+		<div id='botnav' load='/s/html/botnav.html'></div>
 	</footer>
 </body>
 

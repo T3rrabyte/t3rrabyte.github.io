@@ -3,41 +3,55 @@
 <html lang='en-US' class='theme-dark'>
 
 <head>
-	<script src='/s/js/loader.js'></script>
+	<!-- Google Analytics -->
+	<script src='https://www.googletagmanager.com/gtag/js?id=UA-145902983-3'></script>
+	<script>
+		dataLayer = dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+		gtag('config', 'UA-145902983-3');
+	</script>
+	
 	<title>404</title>
 	<meta name='description' content='Page not found.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
-	<link rel='stylesheet' href='/s/css/standard.css' />
-	<link rel='stylesheet' href='/s/css/navbar.css' />
+
+	<meta property='og:title' content='Lakuna' />
+	<meta property='og:type' content='website' />
+	<meta property='og:image' content='/s/img/triquetra-circle.png' />
+	<meta property='og:url' content='https://lakuna.pw' />
+
 	<link rel='stylesheet' href='/s/css/dropdown.css' />
+	<link rel='stylesheet' href='/s/css/navbar.css' />
+	<link rel='stylesheet' href='/s/css/standard.css' />
 	<link rel='icon' href='/favicon.ico' />
+
+	<script src='https://kit.fontawesome.com/d0b9853910.js'></script>
+	<script src='/s/js/load.js'></script>
+	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
 	<script>
-		addLoadEvent(() => {
-			const href = location.href;
-			const hrefSpan = document.getElementById('href');
-			hrefSpan.innerHTML = href;
+		const href = location.href;
+		addLoadEvent(() => document.getElementById('href').innerHTML = href);
 
-			// Try to redirect old links to their new locations.
-			if (href.includes('lakuna.pw/l/')) { location.href = href.replace('lakuna.pw/l/', 'lakuna.pw/p/'); }
-			else if (href.includes('lakuna.pw/p/programming')) { location.href = href.replace('lakuna.pw/p/programming', 'lakuna.pw/p/software'); }
-			else if (href.includes('lakuna.pw/p/lolItemRework')) { location.href = href.replace('lakuna.pw/p/lolItemRework', 'lakuna.pw/p/iris'); }
-			else if (href.includes('lakuna.pw/p/massiveCraft')) { location.href = href.replace('lakuna.pw/p/massiveCraft', 'lakuna.pw/p/massivecraft'); }
-			else if (href.includes('lakuna.pw/p/dosArchive')) { location.href = href.replace('lakuna.pw/p/dosArchive', 'lakuna.pw/p/dos'); }
-			else if (href.includes('lakuna.pw/p/magic')) { location.href = href.replace('lakuna.pw/p/magic', 'lakuna.pw/p/mtg'); }
-			else if (href.includes('lakuna.pw/p/minecraft')) { location.href = href.replace('lakuna.pw/p/minecraft', 'lakuna.pw/p/mc'); }
-		});
+		// Try to redirect old links to their new locations.
+		if (href.includes('lakuna.pw/l/')) { location.href = href.replace('lakuna.pw/l/', 'lakuna.pw/p/'); }
+		else if (href.includes('lakuna.pw/p/programming')) { location.href = href.replace('lakuna.pw/p/programming', 'lakuna.pw/p/software'); }
+		else if (href.includes('lakuna.pw/p/lolItemRework')) { location.href = href.replace('lakuna.pw/p/lolItemRework', 'lakuna.pw/p/iris'); }
+		else if (href.includes('lakuna.pw/p/massiveCraft')) { location.href = href.replace('lakuna.pw/p/massiveCraft', 'lakuna.pw/p/massivecraft'); }
+		else if (href.includes('lakuna.pw/p/dosArchive')) { location.href = href.replace('lakuna.pw/p/dosArchive', 'lakuna.pw/p/dos'); }
+		else if (href.includes('lakuna.pw/p/magic')) { location.href = href.replace('lakuna.pw/p/magic', 'lakuna.pw/p/mtg'); }
+		else if (href.includes('lakuna.pw/p/minecraft')) { location.href = href.replace('lakuna.pw/p/minecraft', 'lakuna.pw/p/mc'); }
 	</script>
 </head>
 <body>
 	<header>
-		<div id='topnav'></div>
+		<div id='topnav' load='/s/html/topnav.html'></div>
 	</header>
 
 	<main>
-		<!-- Page Content -->
 		<h1>404 - Page Not Found</h1>
 		<hr/>
 
@@ -47,7 +61,7 @@
 	</main>
 
 	<footer>
-		<div id='botnav'></div>
+		<div id='botnav' load='/s/html/botnav.html'></div>
 	</footer>
 </body>
 
