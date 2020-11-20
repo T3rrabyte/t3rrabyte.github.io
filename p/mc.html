@@ -34,6 +34,14 @@
 	<script src='/s/js/tab.js'></script>
 	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
+	<script>
+		const req = new XMLHttpRequest();
+		req.addEventListener('load', (res) => {
+			console.log(res);
+		});
+		req.open('GET', 'https://api.mcsrvstat.us/mc.lakuna.pw');
+		req.send();
+	</script>
 </head>
 <body>
 	<header>
