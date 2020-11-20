@@ -1,1 +1,1 @@
-addLoadEvent=t=>{const o=onload;onload="function"!=typeof o?t:()=>{o(),t()}},addLoadEvent(()=>{document.querySelectorAll("*").forEach(t=>{const o=t.getAttribute("load");if(o)try{fetch(o).then(t=>t.text()).then(o=>t.innerHTML=o)}catch(t){console.warn(`Failed to load HTML from ${o}: ${t}`)}})});
+addLoadEvent=t=>{const e=onload;onload="function"!=typeof e?t:()=>{e(),t()}},addLoadEvent(()=>{document.querySelectorAll("*").forEach(t=>{const e=t.getAttribute("load");e&&fetch(e).then(t=>t.text()).then(e=>t.innerHTML=e)})});
