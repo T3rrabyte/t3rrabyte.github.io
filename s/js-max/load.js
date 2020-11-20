@@ -14,6 +14,12 @@ addLoadEvent = (event) => {
 addLoadEvent(() => {
 	document.querySelectorAll('*').forEach((element) => {
 		const load = element.getAttribute('load');
-		if (load) { fetch(load).then((response) => response.text()).then((response) => element.innerHTML = response); }
+		if (load) {
+			try {
+				fetch(load).then((response) => response.text()).then((response) => element.innerHTML = response);
+			} catch (error) {
+				console.warn(`Failed to load HTML from ${load}: ${error}`);
+			}
+		}
 	});
 });
