@@ -37,9 +37,14 @@
 	<script>
 		const req = new XMLHttpRequest();
 		req.addEventListener('load', (res) => {
-			console.log(res);
+			res = JSON.parse(res.target.response);
+			if (!res.online) { return; }
+
+			document.getElementById('server-ip').innerHTML = `Server IP: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
+			document.getElementById('server-mods').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
+			document.getElementById('server-players').innerHTML = `${res.players.online} / ${res.players.max} Online`;
 		});
-		req.open('GET', 'https://api.mcsrvstat.us/mc.lakuna.pw');
+		req.open('GET', 'https://api.mcsrvstat.us/2/mc.lakuna.pw');
 		req.send();
 	</script>
 </head>
@@ -51,24 +56,27 @@
 	<main>
 		<h1>Minecraft</h1>
 		<hr/>
+
+		<h2 id='server-ip'></h2>
+		<p id='server-mods' style='text-align: center;'></p>
+		<p id='server-players' style='text-align: center;'></p>
 		
 		<div class='tab'>
 			<div class='tab-controller'></div>
 			<div class='tab-content'>
-				<div id='Server' class='tab-panel'>
-					<h2>Minecraft Server</h2>
-					<hr/>
-
-					<h3>IP: mc.lakuna.pw</h3>
-					<p>Connect using the <a href='https://mcupdater.com/'>MCUpdater</a> serverpack URL: <a href='/s/mc/2/pack.xml'>https://www.lakuna.pw/s/mc/2/pack.xml</a>.</p>
+				<div id='Industrial_Modpack' class='tab-panel'>
+					<h2>Industrial Modpack</h2>
+					<p style='text-align: center;'><a href='https://mcupdater.com/'>MCUpdater</a> serverpack URL: <a href='/s/mc/2/pack.xml'>https://www.lakuna.pw/s/mc/2/pack.xml</a>.</p>
 					<hr/>
 
 					<a class='buttonlink' href='/s/mc/2/mods.txt'>Mod List</a>
 				</div>
 				<div id='Old_Modpack' class='tab-panel'>
 					<h2>Old Modpack</h2>
+					<p style='text-align: center;'><a href='https://mcupdater.com/'>MCUpdater</a> serverpack URL: <a href='/s/mc/1/pack.xml'>https://www.lakuna.pw/s/mc/1/pack.xml</a>.</p>
+					<hr/>
+
 					<a class='buttonlink' href='/s/mc/1/mods.txt'>Mod List</a>
-					<p>You can still access the modpack used on the old server. Use the following pack URL in <a href='https://mcupdater.com/'>MCUpdater</a>: <a href='/s/mc/1/pack.xml'>https://www.lakuna.pw/s/mc/1/pack.xml</a>.</p>
 				</div>
 				<div id='pack_png' class='tab-panel'>
 					<h2>pack.png</h2>
@@ -78,9 +86,8 @@
 					<img src='/s/img/pack.png' alt='pack.png with SEUS Renewed v1.0.1' style='width: 100%; max-width: 1920px; display: block; margin: auto;' loading='lazy' />
 					<hr/>
 
-					<p>For those of you who are less technologically-inclined, you can download an NBT-edited world <a href='https://www.dropbox.com/s/fppawy4etxo5se8/pack.png.7z?dl=0'>here</a> to see pack.png for yourself. Put the contained <b>World1</b> folder into your <b>.minecraft/saves</b> folder, then run Minecraft version <b>old_alpha a1.2.2a</b>.</p>
+					<p>For those of you who are less technologically-inclined, you can download an NBT-edited world <a href='https://www.dropbox.com/s/fppawy4etxo5se8/pack.png.7z?dl=0'>here</a> to see pack.png for yourself. Put the contained <b>World1</b> folder into your <b>.minecraft/saves</b> folder, then run Minecraft version <b>old_alpha a1.2.2a</b><a href='https://pastebin.com/CmsEKDev'>*</a>.</p>
 					<p>To play the world in a newer version of Minecraft, you must first generate the world in Alpha 1.2.2 (which uses the Alpha level format), then load it in any version which uses the Region file format (Beta 1.3 - 1.2), then finally in any version which uses the Anvil file format (1.2.1+).</p>
-					<p>You can get to the original screenshot coordinates by teleporting to (x 49.16, y 64, z 0.72, yaw -119.23, pitch -8.297).</p>
 				</div>
 				<div id='Skychest' class='tab-panel'>
 					<h2>Skychest</h2>
