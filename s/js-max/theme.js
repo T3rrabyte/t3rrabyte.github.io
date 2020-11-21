@@ -1,23 +1,3 @@
-// Credit: Simon Willison.
-addLoadEvent = (event) => {
-	const old = onload;
-	if (typeof old != 'function') {
-		onload = event;
-	} else {
-		onload = () => {
-			old();
-			event();
-		}
-	}
-}
-
-let pageDefaultTheme;
-addLoadEvent(() => {
-	pageDefaultTheme = Array.from(document.documentElement.classList).find((className) => className.startsWith('theme-'));
-	const selectedTheme = localStorage.getItem('theme');
-	if (selectedTheme) { setTheme(selectedTheme); }
-});
-
 const setTheme = (theme) => {
 	document.documentElement.classList.forEach((className) => {
 		if (className.startsWith('theme-')) { document.documentElement.classList.remove(className); }
@@ -31,3 +11,9 @@ const setTheme = (theme) => {
 		localStorage.removeItem('theme');
 	}
 };
+
+const pageDefaultTheme = Array.from(document.documentElement.classList).find((className) => className.startsWith('theme-'));
+const selectedTheme = localStorage.getItem('theme');
+if (selectedTheme) {
+	if (selectedTheme == 'auto') { localStorage.removeItem('theme'); } else { setTheme(selectedTheme); }
+}
