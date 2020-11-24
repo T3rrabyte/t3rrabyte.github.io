@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ServerPack version="3.3" xmlns="http://www.mcupdater.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mcupdater.com http://files.mcupdater.com/ServerPackv2.xsd">
-	<Server id="lakuna-2" name="Lakuna Industrial" version="1.12.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="6" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="mc.lakuna.pw" autoConnect="true">
+	<Server id="lakuna-2" name="Lakuna Industrial" version="1.12.2" newsUrl="https://lakuna.pw/p/mc" iconUrl="https://lakuna.pw/s/mc/2/icon.png" revision="7" mainClass="net.minecraft.launchwrapper.Launch" serverAddress="mc.lakuna.pw" autoConnect="true">
 		<Loader type="Forge" version="1.12.2-14.23.5.2854" loadOrder="0" />
 		<Module name="Mantle" id="mantle" depends="" side="BOTH">
 			<URL priority="0">https://media.forgecdn.net/files/2713/386/Mantle-1.12-1.3.3.55.jar</URL>
@@ -641,18 +641,6 @@
 			<Required>true</Required>
 			<ModType>Regular</ModType>
 			<MD5>b8667d60a761d5b5ae3c8a15192f9e28</MD5>
-		</Module>
-		<Module name="Gases Framework" id="gasesFramework" depends="" side="BOTH">
-			<URL priority="0">https://media.forgecdn.net/files/2638/325/gasesframework-1.12.2-2.0.0-pre1.jar</URL>
-			<Required>true</Required>
-			<ModType>Regular</ModType>
-			<MD5>ad05424a51e57c3de1b5764c33a27fe5</MD5>
-		</Module>
-		<Module name="Glenn's Gases" id="glennsGases" depends="gasesFramework" side="BOTH">
-			<URL priority="0">https://media.forgecdn.net/files/2638/322/gases-1.12.2-2.0.0-pre1.jar</URL>
-			<Required>true</Required>
-			<ModType>Regular</ModType>
-			<MD5>ee797b5eda47a7f74bcba5dc75600b8b</MD5>
 		</Module>
 	</Server>
 </ServerPack>

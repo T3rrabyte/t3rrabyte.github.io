@@ -104,5 +104,3 @@ McJtyLib					https://www.curseforge.com/minecraft/mc-mods/mcjtylib
 LibVulpes					https://www.curseforge.com/minecraft/mc-mods/libvulpes
 	Advanced Rocketry			https://www.curseforge.com/minecraft/mc-mods/advanced-rocketry
 Applied Energistics 2				https://www.curseforge.com/minecraft/mc-mods/applied-energistics-2
-Gases Framework					https://www.curseforge.com/minecraft/mc-mods/gases-framework
-	Glenn's Gases				https://www.curseforge.com/minecraft/mc-mods/glenns-gases
