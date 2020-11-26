@@ -1,0 +1,10 @@
+{
+	"homepage": "lakuna.pw",
+	"1.16.4": {
+		"1.0": "Initial release."
+	},
+	"promos": {
+		"1.16.4-latest": "1.0",
+		"1.16.4-recommended": "1.0"
+	}
+}
