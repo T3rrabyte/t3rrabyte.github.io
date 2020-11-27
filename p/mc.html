@@ -40,8 +40,8 @@
 			res = JSON.parse(res.target.response);
 			if (!res.online) { return; }
 
-			document.getElementById('server-ip').innerHTML = `Server IP: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
-			document.getElementById('server-mods').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
+			document.getElementById('server-hostname').innerHTML = `Hostname: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
+			document.getElementById('server-type').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
 			document.getElementById('server-players').innerHTML = `${res.players.online} / ${res.players.max} Online`;
 		});
 		req.open('GET', 'https://api.mcsrvstat.us/2/mc.lakuna.pw');
@@ -57,8 +57,9 @@
 		<h1>Minecraft</h1>
 		<hr/>
 
-		<h2 id='server-ip'></h2>
-		<p id='server-mods' style='text-align: center;'></p>
+		<h2>IP: mc.lakuna.pw</h2>
+		<p id='server-hostname' style='text-align: center;'></p>
+		<p id='server-type' style='text-align: center;'></p>
 		<p id='server-players' style='text-align: center;'></p>
 		
 		<div class='tab'>
