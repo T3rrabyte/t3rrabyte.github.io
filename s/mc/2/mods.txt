@@ -70,7 +70,7 @@ WrapUp						https://www.curseforge.com/minecraft/mc-mods/wrapup
 Shadowfacts' Forgelin				https://www.curseforge.com/minecraft/mc-mods/shadowfacts-forgelin
 	Ex Nihilo: Creatio			https://www.curseforge.com/minecraft/mc-mods/ex-nihilo-creatio
 		Ex Compressum			https://www.curseforge.com/minecraft/mc-mods/ex-compressum
-Industrial Craft				https://www.curseforge.com/minecraft/mc-mods/industrial-craft
+IndustrialCraft 2				https://www.curseforge.com/minecraft/mc-mods/industrial-craft
 Mekanism					https://www.curseforge.com/minecraft/mc-mods/mekanism
 	Mekanism Generators			https://www.curseforge.com/minecraft/mc-mods/mekanism-generators
 	Mekanism Tools				https://www.curseforge.com/minecraft/mc-mods/mekanism-tools
