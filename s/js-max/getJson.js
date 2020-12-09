@@ -7,6 +7,8 @@ const getJson = (url) => new Promise((resolve, reject) => {
 			reject(error);
 		}
 	});
+	req.addEventListener('error', (err) => reject(err));
+	req.addEventListener('abort', (err) => reject(err));
 	req.open('GET', url);
 	req.send();
 });
