@@ -30,22 +30,19 @@
 	<link rel='icon' href='/favicon.ico' />
 
 	<script src='https://kit.fontawesome.com/d0b9853910.js'></script>
+	<script src='/s/js/getJson.js'></script>
 	<script src='/s/js/load.js'></script>
 	<script src='/s/js/tab.js'></script>
 	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
 	<script>
-		const req = new XMLHttpRequest();
-		req.addEventListener('load', (res) => {
-			res = JSON.parse(res.target.response);
-			if (!res.online) { return; }
-
-			document.getElementById('server-hostname').innerHTML = `Hostname: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
-			document.getElementById('server-type').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
-			document.getElementById('server-players').innerHTML = `${res.players.online} / ${res.players.max} Online`;
-		});
-		req.open('GET', 'https://api.mcsrvstat.us/2/mc.lakuna.pw');
-		req.send();
+		getJson('https://api.mcsrvstat.us/2/mc.lakuna.pw')
+				.then((res) => {
+					// document.getElementById('server-hostname').innerHTML = `Hostname: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
+					document.getElementById('server-type').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
+					document.getElementById('server-players').innerHTML = `${res.players.online} / ${res.players.max} Online`;
+				})
+				.catch((err) => console.error)
 	</script>
 </head>
 <body>
@@ -58,7 +55,7 @@
 		<hr/>
 
 		<h2>IP: mc.lakuna.pw</h2>
-		<p id='server-hostname' style='text-align: center;'></p>
+		<!-- <p id='server-hostname' style='text-align: center;'></p> -->
 		<p id='server-type' style='text-align: center;'></p>
 		<p id='server-players' style='text-align: center;'></p>
 		
