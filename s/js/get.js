@@ -1,0 +1,1 @@
+const get=e=>new Promise((t,n)=>{const r=new XMLHttpRequest;r.addEventListener("load",e=>{try{t(e.target.response)}catch(e){n(e)}}),r.addEventListener("error",e=>n(e)),r.addEventListener("abort",e=>n(e)),r.open("GET",e),r.send()});

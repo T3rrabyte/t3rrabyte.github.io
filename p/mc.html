@@ -30,14 +30,15 @@
 	<link rel='icon' href='/favicon.ico' />
 
 	<script src='https://kit.fontawesome.com/d0b9853910.js'></script>
-	<script src='/s/js/getJson.js'></script>
+	<script src='/s/js/get.js'></script>
 	<script src='/s/js/load.js'></script>
 	<script src='/s/js/tab.js'></script>
 	<script src='/s/js/theme.js'></script>
 	<script src='/s/js/topnav.js'></script>
 	<script>
-		getJson('https://api.mcsrvstat.us/2/mc.lakuna.pw')
+		get('https://api.mcsrvstat.us/2/mc.lakuna.pw')
 				.then((res) => {
+					res = JSON.parse(res);
 					// document.getElementById('server-hostname').innerHTML = `Hostname: ${(res.hostname ? res.hostname : res.ip) + (res.port == 25565 ? '' : `:${res.port}`)}`;
 					document.getElementById('server-type').innerHTML = `Minecraft ${res.version} ${(res.mods && res.mods.names.length ? `(${res.mods.names.length} Mods)` : 'Vanilla')}`;
 					document.getElementById('server-players').innerHTML = `${res.players.online} / ${res.players.max} Online`;

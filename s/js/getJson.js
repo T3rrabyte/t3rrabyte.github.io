@@ -1,1 +1,0 @@
-const getJson=e=>new Promise((t,n)=>{const r=new XMLHttpRequest;r.addEventListener("load",e=>{try{t(JSON.parse(e.target.response))}catch(e){n(e)}}),r.addEventListener("error",e=>n(e)),r.addEventListener("abort",e=>n(e)),r.open("GET",e),r.send()});
