@@ -2,10 +2,8 @@ https://lakuna.pw/404.html
 https://lakuna.pw/index.html
 https://lakuna.pw/p/data.html
 https://lakuna.pw/p/dos.html
-https://lakuna.pw/p/iris.html
 https://lakuna.pw/p/links.html
 https://lakuna.pw/p/massivecraft.html
-https://lakuna.pw/p/minecraft.html
+https://lakuna.pw/p/mc.html
 https://lakuna.pw/p/mtg.html
-https://lakuna.pw/p/software.html
 https://lakuna.pw/p/xanycki.html
