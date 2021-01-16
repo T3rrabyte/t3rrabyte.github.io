@@ -1,1 +1,1 @@
-const get=e=>new Promise((t,n)=>{const r=new XMLHttpRequest;r.addEventListener("load",e=>{try{t(e.target.response)}catch(e){n(e)}}),r.addEventListener("error",e=>n(e)),r.addEventListener("abort",e=>n(e)),r.open("GET",e),r.send()});
+const get=url=>new Promise(((resolve,reject)=>{const req=new XMLHttpRequest;req.addEventListener("load",(res=>{try{resolve(res.target.response)}catch(error){reject(error)}}));req.addEventListener("error",(err=>reject(err)));req.addEventListener("abort",(err=>reject(err)));req.open("GET",url);req.send()}));

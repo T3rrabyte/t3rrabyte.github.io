@@ -1,1 +1,1 @@
-const generateDownload=(e,...t)=>{const n=new Blob(t,{type:"text/plain"}),o=document.createElement("a");o.href=URL.createObjectURL(n),o.download=e,document.documentElement.append(o),o.click(),o.remove(),URL.revokeObjectURL(n)};
+const generateDownload=(filename,...data)=>{const blob=new Blob(data,{type:"text/plain"});const downloadLink=document.createElement("a");downloadLink.href=URL.createObjectURL(blob);downloadLink.download=filename;document.documentElement.append(downloadLink);downloadLink.click();downloadLink.remove();URL.revokeObjectURL(blob)};

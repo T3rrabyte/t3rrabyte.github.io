@@ -1,3 +1,3 @@
-rem Requires uglifyjs-folder.
-cd ..
-uglifyjs-folder js-max -o js -x .js -e
+@echo off
+rem Requires NPM packages: terser.
+for %%f in (../js-max/*.js) do ( start "" /B terser "../js-max/"%%f -o "../js/"%%f )
