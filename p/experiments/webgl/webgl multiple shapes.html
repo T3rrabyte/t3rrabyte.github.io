@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Multiple Shapes</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Multiple Shapes' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<style>
+		html, body, canvas#canvas {
+			margin: 0px;
+			padding: 0px;
+
+			width: 100%;
+			height: 100%;
+
+			touch-action: none;
+		}
+	</style>
+
+	<script>
+		onload = () => {
+			const vertexShaderSource = `#version 300 es
+
+			in vec2 a_position;
+
+			uniform vec2 u_resolution;
+
+			void main() {
+				vec2 percentage = a_position / u_resolution;
+
+				vec2 bicentage = percentage * 2.0;
+
+				vec2 clipSpace = bicentage - 1.0;
+
+				vec2 invertedClipSpace = clipSpace * vec2(1, -1);
+
+				gl_Position = vec4(invertedClipSpace, 0, 1);
+			}
+			`;
+
+			const fragmentShaderSource = `#version 300 es
+
+			precision highp float;
+
+			uniform vec4 u_color;
+
+			out vec4 outColor;
+
+			void main() {
+				outColor = u_color;
+			}
+			`;
+
+			const canvas = document.getElementById('canvas');
+			const gl = canvas.getContext('webgl2');
+			if (!gl) { console.error('Your browser does not support WebGL2.'); }
+
+			const createShader = (gl, type, src) => {
+				const shader = gl.createShader(type);
+				gl.shaderSource(shader, src);
+				gl.compileShader(shader);
+
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					console.error(gl.getShaderInfoLog(shader));
+
+					gl.deleteShader(shader);
+
+					return;
+				}
+
+				return shader;
+			};
+			const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+			const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+			const createProgram = (gl, ...shaders) => {
+				const program = gl.createProgram();
+				shaders.forEach((shader) => gl.attachShader(program, shader));
+				gl.linkProgram(program);
+
+				if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+					console.error(gl.getProgramInfoLog(program));
+
+					gl.deleteProgram(program);
+
+					return;
+				}
+
+				return program;
+			};
+			const program = createProgram(gl, vertexShader, fragmentShader);
+
+			const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+
+			const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+			const colorUniformLocation = gl.getUniformLocation(program, 'u_color');
+
+			const positionBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+			const vao = gl.createVertexArray();
+			gl.bindVertexArray(vao);
+			gl.enableVertexAttribArray(positionAttributeLocation);
+			gl.vertexAttribPointer(
+				positionAttributeLocation,
+				2,
+				gl.FLOAT,
+				false,
+				0,
+				0
+			);
+
+			const resizeCanvas = (gl) => {
+				const displayWidth = gl.canvas.clientWidth;
+				const displayHeight = gl.canvas.clientHeight;
+
+				if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
+					gl.canvas.width = displayWidth;
+					gl.canvas.height = displayHeight;
+
+					gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+				}
+			}
+			resizeCanvas(gl);
+
+			gl.clearColor(0, 0, 0, 0);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			gl.useProgram(program);
+
+			gl.bindVertexArray(vao);
+
+			gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
+			// Fill the buffer with values that define a rectangle.
+			const setRectangle = (gl, x, y, width, height) => {
+				// For MOST applications, updating the data in a buffer like this is not common.
+				// This is done this way in this example in order to simplify the learning steps.
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+					x, y,
+					x + width, y,
+					x, y + height,
+
+					x + width, y,
+					x, y + height,
+					x + width, y + height
+				]), gl.STATIC_DRAW);
+			};
+
+			const randomInt = (max) => Math.floor(Math.random() * (max + 1));
+
+			// Draw randomly-sized and -colored rectangles.
+			for (let i = 0; i < 200; i++) {
+				setRectangle(gl, randomInt(gl.canvas.width), randomInt(gl.canvas.height), randomInt(400), randomInt(400));
+
+				gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
+
+				gl.drawArrays(
+					gl.TRIANGLES,
+					0,
+					6
+				);
+			}
+		};
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>

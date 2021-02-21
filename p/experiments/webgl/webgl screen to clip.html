@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Screen-to-Clip</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Screen-to-Clip' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<style>
+		html, body, canvas#canvas {
+			margin: 0px;
+			padding: 0px;
+
+			width: 100%;
+			height: 100%;
+
+			touch-action: none;
+		}
+	</style>
+
+	<script>
+		onload = () => {
+			const vertexShaderSource = `#version 300 es
+
+			in vec2 a_position;
+
+			uniform vec2 u_resolution;
+
+			void main() {
+				// Convert the position from pixels to percentages (0 - 1).
+				vec2 percentage = a_position / u_resolution;
+
+				// Convert from (0 - 1) to (0 - 2)
+				vec2 bicentage = percentage * 2.0;
+
+				// Convert from (0 - 2) to (-1 - 1)
+				vec2 clipSpace = bicentage - 1.0;
+
+				// Invert Y-axis since screen space typically has the origin in the top-left, while clip space uses the bottom-left.
+				vec2 invertedClipSpace = clipSpace * vec2(1, -1);
+
+				gl_Position = vec4(invertedClipSpace, 0, 1);
+			}
+			`;
+
+			const fragmentShaderSource = `#version 300 es
+
+			precision highp float;
+
+			// Make the fragment shader take a color uniform input.
+			uniform vec4 u_color;
+
+			out vec4 outColor;
+
+			void main() {
+				outColor = u_color;
+			}
+			`;
+
+			const canvas = document.getElementById('canvas');
+			const gl = canvas.getContext('webgl2');
+			if (!gl) { console.error('Your browser does not support WebGL2.'); }
+
+			const createShader = (gl, type, src) => {
+				const shader = gl.createShader(type);
+				gl.shaderSource(shader, src);
+				gl.compileShader(shader);
+
+				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+					console.error(gl.getShaderInfoLog(shader));
+
+					gl.deleteShader(shader);
+
+					return;
+				}
+
+				return shader;
+			};
+			const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+			const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+			const createProgram = (gl, ...shaders) => {
+				const program = gl.createProgram();
+				shaders.forEach((shader) => gl.attachShader(program, shader));
+				gl.linkProgram(program);
+
+				if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+					console.error(gl.getProgramInfoLog(program));
+
+					gl.deleteProgram(program);
+
+					return;
+				}
+
+				return program;
+			};
+			const program = createProgram(gl, vertexShader, fragmentShader);
+
+			const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+
+			// Get uniform locations.
+			const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+			const colorUniformLocation = gl.getUniformLocation(program, 'u_color');
+
+			const positionBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+			// Draw a quadrilateral this time. Requires us to draw two triangles.
+			const corners = [
+				{ x: 200, y: 0 },
+				{ x: 0, y: 200 },
+				{ x: 200, y: 400 },
+				{ x: 400, y: 200 }
+			]
+			const positions = [
+				corners[0].x, corners[0].y,
+				corners[1].x, corners[1].y,
+				corners[2].x, corners[2].y,
+
+				corners[0].x, corners[0].y,
+				corners[3].x, corners[3].y,
+				corners[2].x, corners[2].y
+			];
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+			const vao = gl.createVertexArray();
+			gl.bindVertexArray(vao);
+			gl.enableVertexAttribArray(positionAttributeLocation);
+			gl.vertexAttribPointer(
+				positionAttributeLocation,
+				2,
+				gl.FLOAT,
+				false,
+				0,
+				0
+			);
+
+			const resizeCanvas = (gl) => {
+				const displayWidth = gl.canvas.clientWidth;
+				const displayHeight = gl.canvas.clientHeight;
+
+				if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
+					gl.canvas.width = displayWidth;
+					gl.canvas.height = displayHeight;
+
+					gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+				}
+			}
+			resizeCanvas(gl);
+
+			gl.clearColor(0, 0, 0, 0);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+
+			gl.useProgram(program);
+
+			// After setting which program to use, we can set the values for uniforms.
+			// gl.useProgram is like gl.bindBuffer in that it sets the current program.
+			// Now, all gl.uniformX functions set uniforms on the current program.
+
+			gl.bindVertexArray(vao);
+
+			// Pass in the canvas resolution so we can convert from pixels to clip space in the shader.
+			gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
+			// Pass in a random color.
+			gl.uniform4f(colorUniformLocation, Math.random(), Math.random(), Math.random(), 1);
+
+			gl.drawArrays(
+				gl.TRIANGLES,
+				0,
+				6 // Change count to 6 since we're drawing 2 triangles now.
+			);
+		};
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>
