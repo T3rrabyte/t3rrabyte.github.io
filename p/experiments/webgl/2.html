@@ -27,6 +27,50 @@
 	</style>
 
 	<script>
+		const createShader = (gl, type, src) => {
+			const shader = gl.createShader(type);
+			gl.shaderSource(shader, src);
+			gl.compileShader(shader);
+
+			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+				console.error(gl.getShaderInfoLog(shader));
+
+				gl.deleteShader(shader);
+
+				return;
+			}
+
+			return shader;
+		};
+
+		const createProgram = (gl, ...shaders) => {
+			const program = gl.createProgram();
+			shaders.forEach((shader) => gl.attachShader(program, shader));
+			gl.linkProgram(program);
+
+			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+				console.error(gl.getProgramInfoLog(program));
+
+				gl.deleteProgram(program);
+
+				return;
+			}
+
+			return program;
+		};
+
+		const resizeCanvas = (gl) => {
+			const displayWidth = gl.canvas.clientWidth;
+			const displayHeight = gl.canvas.clientHeight;
+
+			if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
+				gl.canvas.width = displayWidth;
+				gl.canvas.height = displayHeight;
+
+				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+			}
+		}
+
 		onload = () => {
 			const vertexShaderSource = `#version 300 es
 
@@ -69,39 +113,9 @@
 			const gl = canvas.getContext('webgl2');
 			if (!gl) { console.error('Your browser does not support WebGL2.'); }
 
-			const createShader = (gl, type, src) => {
-				const shader = gl.createShader(type);
-				gl.shaderSource(shader, src);
-				gl.compileShader(shader);
-
-				if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-					console.error(gl.getShaderInfoLog(shader));
-
-					gl.deleteShader(shader);
-
-					return;
-				}
-
-				return shader;
-			};
 			const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
 			const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-			const createProgram = (gl, ...shaders) => {
-				const program = gl.createProgram();
-				shaders.forEach((shader) => gl.attachShader(program, shader));
-				gl.linkProgram(program);
-
-				if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-					console.error(gl.getProgramInfoLog(program));
-
-					gl.deleteProgram(program);
-
-					return;
-				}
-
-				return program;
-			};
 			const program = createProgram(gl, vertexShader, fragmentShader);
 
 			const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
@@ -134,26 +148,8 @@
 			const vao = gl.createVertexArray();
 			gl.bindVertexArray(vao);
 			gl.enableVertexAttribArray(positionAttributeLocation);
-			gl.vertexAttribPointer(
-				positionAttributeLocation,
-				2,
-				gl.FLOAT,
-				false,
-				0,
-				0
-			);
+			gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-			const resizeCanvas = (gl) => {
-				const displayWidth = gl.canvas.clientWidth;
-				const displayHeight = gl.canvas.clientHeight;
-
-				if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
-					gl.canvas.width = displayWidth;
-					gl.canvas.height = displayHeight;
-
-					gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-				}
-			}
 			resizeCanvas(gl);
 
 			gl.clearColor(0, 0, 0, 0);
