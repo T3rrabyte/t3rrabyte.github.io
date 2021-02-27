@@ -27,6 +27,43 @@
 	</style>
 
 	<script>
+		const vertexShaderSource = `#version 300 es
+
+		in vec2 a_position;
+
+		uniform vec2 u_resolution;
+
+		void main() {
+			// Convert the position from pixels to percentages (0 - 1).
+			vec2 percentage = a_position / u_resolution;
+
+			// Convert from (0 - 1) to (0 - 2)
+			vec2 bicentage = percentage * 2.0;
+
+			// Convert from (0 - 2) to (-1 - 1)
+			vec2 clipSpace = bicentage - 1.0;
+
+			// Invert Y-axis since screen space typically has the origin in the top-left, while clip space uses the bottom-left.
+			vec2 invertedClipSpace = clipSpace * vec2(1, -1);
+
+			gl_Position = vec4(invertedClipSpace, 0, 1);
+		}
+		`;
+
+		const fragmentShaderSource = `#version 300 es
+
+		precision highp float;
+
+		// Make the fragment shader take a color uniform input.
+		uniform vec4 u_color;
+
+		out vec4 outColor;
+
+		void main() {
+			outColor = u_color;
+		}
+		`;
+			
 		const createShader = (gl, type, src) => {
 			const shader = gl.createShader(type);
 			gl.shaderSource(shader, src);
@@ -72,43 +109,6 @@
 		}
 
 		onload = () => {
-			const vertexShaderSource = `#version 300 es
-
-			in vec2 a_position;
-
-			uniform vec2 u_resolution;
-
-			void main() {
-				// Convert the position from pixels to percentages (0 - 1).
-				vec2 percentage = a_position / u_resolution;
-
-				// Convert from (0 - 1) to (0 - 2)
-				vec2 bicentage = percentage * 2.0;
-
-				// Convert from (0 - 2) to (-1 - 1)
-				vec2 clipSpace = bicentage - 1.0;
-
-				// Invert Y-axis since screen space typically has the origin in the top-left, while clip space uses the bottom-left.
-				vec2 invertedClipSpace = clipSpace * vec2(1, -1);
-
-				gl_Position = vec4(invertedClipSpace, 0, 1);
-			}
-			`;
-
-			const fragmentShaderSource = `#version 300 es
-
-			precision highp float;
-
-			// Make the fragment shader take a color uniform input.
-			uniform vec4 u_color;
-
-			out vec4 outColor;
-
-			void main() {
-				outColor = u_color;
-			}
-			`;
-
 			const canvas = document.getElementById('canvas');
 			const gl = canvas.getContext('webgl2');
 			if (!gl) { console.error('Your browser does not support WebGL2.'); }

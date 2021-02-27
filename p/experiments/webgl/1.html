@@ -27,69 +27,69 @@
 	</style>
 
 	<script>
+		// WebGL is a rasterization engine. It draws points, lines, and triangles based on code you supply.
+
+		// WebGL runs on your GPU. Your code is provided to the GPU in the form of pairs of functions.
+		// These functions are called the vertex shader and the fragment shader, and they are written in a language called GLSL.
+		// Together, they make a "program".
+
+		// A vertex shader computes vertex positions.
+		// Based on the positions it outputs, WebGL can rasterize primitives (points, lines, and triangles).
+		// When rasterizing these primitives, it calls a second user-supplied function called a fragment shader.
+		// The fragment shader's job is to compute a color for each pixel of the primitive being drawn.
+
+		// There are four ways to privide data to a shader.
+
+		// 1 - Attributes, Buffers, and Vertex Array Objects (VAOs)
+		// Buffers are arrays of binary data that you upload to the GPU. They can contain anything.
+		// Attributes specify how to pull data out of the buffers and provide them to the vertex shader.
+		// Details such as the state of attributes, which buffers to use for each attribute, and how to pull data out of those buffers are collected into a VAO.
+
+		// 2 - Uniforms
+		// Uniforms are global variables you set before you execute your shader program.
+
+		// 3 - Textures
+		// Textures are arrays of data you can randomly access in your shader program.
+		// They typically contain image data, but can contain anything else.
+
+		// 4 - Varyings
+		// Varyings are a way for a vertex shader to pass data to a fragment shader.
+		// The values set on a varying by a vertex shader will be interpolated while executing the fragment shader.
+
+		// WebGL only cares about two things - clip space coordinates and colors.
+		// The vertex shader provides clip space coordinates, while the fragment shader provides the color.
+		// Clip space coordinates always go from -1 to +1, regardless of the size of the canvas.
+
+		// The following is a simple vertex shader.
+		const vertexShaderSource = `#version 300 es
+
+		// An attribute is an input (in) to a vertex shader. It recieves data from a buffer.
+		in vec4 a_position;
+
+		// All shaders have a main function.
+		void main() {
+			// gl_Position is a special variable that a vertex shader is responsible for setting.
+			gl_Position = a_position;
+		}
+		`;
+
+		// The following is a simple fragment shader.
+		const fragmentShaderSource = `#version 300 es
+
+		// Fragment shaders don't have a default precision, so one must be assigned.
+		// "highp" means "high precision".
+		precision highp float;
+
+		// Must declare an output for the fragment shader.
+		out vec4 outColor;
+
+		void main() {
+			// Set output manually for simple demonstration.
+			outColor = vec4(0, 1, 0, 1);
+		}
+		`;
+		
 		onload = () => {
-			// WebGL is a rasterization engine. It draws points, lines, and triangles based on code you supply.
-
-			// WebGL runs on your GPU. Your code is provided to the GPU in the form of pairs of functions.
-			// These functions are called the vertex shader and the fragment shader, and they are written in a language called GLSL.
-			// Together, they make a "program".
-
-			// A vertex shader computes vertex positions.
-			// Based on the positions it outputs, WebGL can rasterize primitives (points, lines, and triangles).
-			// When rasterizing these primitives, it calls a second user-supplied function called a fragment shader.
-			// The fragment shader's job is to compute a color for each pixel of the primitive being drawn.
-
-			// There are four ways to privide data to a shader.
-
-			// 1 - Attributes, Buffers, and Vertex Array Objects (VAOs)
-			// Buffers are arrays of binary data that you upload to the GPU. They can contain anything.
-			// Attributes specify how to pull data out of the buffers and provide them to the vertex shader.
-			// Details such as the state of attributes, which buffers to use for each attribute, and how to pull data out of those buffers are collected into a VAO.
-
-			// 2 - Uniforms
-			// Uniforms are global variables you set before you execute your shader program.
-
-			// 3 - Textures
-			// Textures are arrays of data you can randomly access in your shader program.
-			// They typically contain image data, but can contain anything else.
-
-			// 4 - Varyings
-			// Varyings are a way for a vertex shader to pass data to a fragment shader.
-			// The values set on a varying by a vertex shader will be interpolated while executing the fragment shader.
-
-			// WebGL only cares about two things - clip space coordinates and colors.
-			// The vertex shader provides clip space coordinates, while the fragment shader provides the color.
-			// Clip space coordinates always go from -1 to +1, regardless of the size of the canvas.
-
-			// The following is a simple vertex shader.
-			const vertexShaderSource = `#version 300 es
-
-			// An attribute is an input (in) to a vertex shader. It recieves data from a buffer.
-			in vec4 a_position;
-
-			// All shaders have a main function.
-			void main() {
-				// gl_Position is a special variable that a vertex shader is responsible for setting.
-				gl_Position = a_position;
-			}
-			`;
-
-			// The following is a simple fragment shader.
-			const fragmentShaderSource = `#version 300 es
-
-			// Fragment shaders don't have a default precision, so one must be assigned.
-			// "highp" means "high precision".
-			precision highp float;
-
-			// Must declare an output for the fragment shader.
-			out vec4 outColor;
-
-			void main() {
-				// Set output manually for simple demonstration.
-				outColor = vec4(0, 1, 0, 1);
-			}
-			`;
-
 			// Note that both shaders begin with the line "#version 300 es", with NO COMMENTS OR BLANK LINES BEFORE IT.
 			// This tells WebGL2 to use GLSL ES 3.00. Otherwise, it would default to GLSL ES 1.00.
 

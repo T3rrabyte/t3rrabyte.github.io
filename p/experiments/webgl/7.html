@@ -3,13 +3,13 @@
 <html lang='en-US'>
 
 <head>
-	<title>WebGL Translation</title>
+	<title>WebGL Multiple Attributes</title>
 	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
 
-	<meta property='og:title' content='WebGL Translation' />
+	<meta property='og:title' content='WebGL Multiple Attributes' />
 	<meta property='og:type' content='website' />
 	<meta property='og:url' content='#' />
 	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
@@ -30,14 +30,15 @@
 		const vertexShaderSource = `#version 300 es
 
 		in vec2 a_position;
+		in vec4 a_color;
+
+		out vec4 v_color;
 
 		uniform vec2 u_resolution;
 
-		// Translation to add to the position.
 		uniform vec2 u_translation;
 
 		void main() {
-			// Separate shape and translation data so that only the translation has to be passed.
 			vec2 position = a_position + u_translation;
 
 			vec2 percentage = position / u_resolution;
@@ -49,6 +50,9 @@
 			vec2 invertedClipSpace = clipSpace * vec2(1, -1);
 
 			gl_Position = vec4(invertedClipSpace, 0, 1);
+
+			// Use the passed in (attribute) color instead of screen position for the varying.
+			v_color = a_color;
 		}
 		`;
 
@@ -56,15 +60,15 @@
 
 		precision highp float;
 
-		uniform vec4 u_color;
+		in vec4 v_color;
 
 		out vec4 outColor;
 
 		void main() {
-			outColor = u_color;
+			outColor = v_color;
 		}
 		`;
-		
+
 		const createShader = (gl, type, src) => {
 			const shader = gl.createShader(type);
 			gl.shaderSource(shader, src);
@@ -109,19 +113,6 @@
 			}
 		};
 
-		// Remove X and Y since they've been moved into a uniform. Read below.
-		const setRectangle = (gl, width, height) => {
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-				0, 0,
-				width, 0,
-				0, height,
-
-				width, 0,
-				0, height,
-				width, height
-			]), gl.STATIC_DRAW);
-		};
-
 		const randomInt = (min, max) => Math.floor(Math.random() * (Math.abs(max - min) + 1)) + min;
 
 		onload = () => {
@@ -135,44 +126,80 @@
 			const program = createProgram(gl, vertexShader, fragmentShader);
 
 			const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+			const colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
 
 			const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
-			const colorUniformLocation = gl.getUniformLocation(program, 'u_color');
 			const translationUniformLocation = gl.getUniformLocation(program, 'u_translation');
-
-			const positionBuffer = gl.createBuffer();
 
 			const vao = gl.createVertexArray();
 			gl.bindVertexArray(vao);
-			gl.enableVertexAttribArray(positionAttributeLocation);
 
+			// Create buffer for positions.
+			const positionBuffer = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-			gl.vertexAttribPointer( positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-
-			gl.clearColor(0, 0, 0, 0);
-
-			// Create some variables to hold the translation, width, and height information.
+			// Get shape data (only done here because it's necessary for filling position data).
 			resizeCanvas(gl);
-			const width = canvas.width / 5;
-			const height = canvas.height / 5;
-			const color = [Math.random(), Math.random(), Math.random(), 1];
+			let width = canvas.width / 5;
+			let height = canvas.height / 5;
 			let x = canvas.width / 2 - width / 2;
 			let y = canvas.height / 2 - height / 2;
 			let vx = 0;
 			let vy = 0;
 
-			// We only need to set the shape once since we separated geometry from position.
-			setRectangle(gl, width, height);
+			// Fill positions.
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+				0, 0, // Top left
+				width, 0, // Top right
+				0, height, // Bottom left
 
-			// Move render steps into a function.
+				width, 0, // Top right
+				0, height, // Bottom left
+				width, height // Bottom right
+			]), gl.STATIC_DRAW);
+
+			// Tell position attribute how to pull data out of the current ARRAY_BUFFER.
+			gl.enableVertexAttribArray(positionAttributeLocation);
+			gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+			// Create a buffer for the colors.
+			const colorBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
+			// Fill colors.
+			const colors = [
+				[ randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), 255 ],
+				[ randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), 255 ],
+				[ randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), 255 ],
+				[ randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), 255 ]
+			];
+
+			gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([
+				colors[0][0], colors[0][1], colors[0][2], colors[0][3], // Top left
+				colors[1][0], colors[1][1], colors[1][2], colors[1][3], // Top right
+				colors[2][0], colors[2][1], colors[2][2], colors[2][3], // Bottom left
+
+				colors[1][0], colors[1][1], colors[1][2], colors[1][3], // Top right
+				colors[2][0], colors[2][1], colors[2][2], colors[2][3], // Bottom left
+				colors[3][0], colors[3][1], colors[3][2], colors[3][3] // Bottom right
+			]), gl.STATIC_DRAW);
+
+			// Tell color attribute how to pull data out of the current ARRAY_BUFFER.
+			gl.enableVertexAttribArray(colorAttributeLocation);
+			gl.vertexAttribPointer(colorAttributeLocation, 4, gl.UNSIGNED_BYTE, true, 0, 0);
+
+			// Note that the "normalize" flag is set to true.
+			// This makes the range of values that a type can have translate to (-1 - 1).
+			// For example, gl.UNSIGNED_BYTE (which usually goes from (0 - 255)) now goes from (0 - 1) (since it doesn't use negatives).
+			// Above, we use integers from (0 - 255) and a Uint8Array to match this change (as opposed to floats from (0 - 1) and a Float32Array).
+
+			gl.clearColor(0, 0, 0, 0);
+
 			const drawScene = (gl) => {
-				// Loop
 				requestAnimationFrame(() => drawScene(gl));
 
 				resizeCanvas(gl);
 
-				// The "gl.DEPTH_BUFFER_BIT" part here will be important later when using 3D shapes.
 				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 				gl.useProgram(program);
@@ -181,7 +208,6 @@
 
 				gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-				// Slightly move rectangle around to show translation.
 				vx = Math.max(-10, Math.min(vx + randomInt(-1, 1), 10));
 				vy = Math.max(-10, Math.min(vy + randomInt(-1, 1), 10));
 				if (x + vx < 0 || x + vx + width > canvas.width) {
@@ -195,11 +221,9 @@
 
 				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-				gl.uniform4fv(colorUniformLocation, color);
-
-				// Set the translation.
 				gl.uniform2fv(translationUniformLocation, [x, y]);
 
+				// Reduce pulls since there are less vertices.
 				gl.drawArrays(gl.TRIANGLES, 0, 6);
 			};
 			drawScene(gl);

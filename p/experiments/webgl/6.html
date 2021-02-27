@@ -27,6 +27,46 @@
 	</style>
 
 	<script>
+		const vertexShaderSource = `#version 300 es
+
+		in vec2 a_position;
+
+		out vec4 v_color;
+
+		uniform vec2 u_resolution;
+
+		uniform vec2 u_translation;
+
+		void main() {
+			vec2 position = a_position + u_translation;
+
+			vec2 percentage = position / u_resolution;
+
+			vec2 bicentage = percentage * 2.0;
+
+			vec2 clipSpace = bicentage - 1.0;
+
+			vec2 invertedClipSpace = clipSpace * vec2(1, -1);
+
+			gl_Position = vec4(invertedClipSpace, 0, 1);
+
+			v_color = gl_Position * 0.5 + 0.5;
+		}
+		`;
+
+		const fragmentShaderSource = `#version 300 es
+
+		precision highp float;
+
+		in vec4 v_color;
+
+		out vec4 outColor;
+
+		void main() {
+			outColor = v_color;
+		}
+		`;
+			
 		const createShader = (gl, type, src) => {
 			const shader = gl.createShader(type);
 			gl.shaderSource(shader, src);
@@ -74,46 +114,6 @@
 		const randomInt = (min, max) => Math.floor(Math.random() * (Math.abs(max - min) + 1)) + min;
 
 		onload = () => {
-			const vertexShaderSource = `#version 300 es
-
-			in vec2 a_position;
-
-			out vec4 v_color;
-
-			uniform vec2 u_resolution;
-
-			uniform vec2 u_translation;
-
-			void main() {
-				vec2 position = a_position + u_translation;
-
-				vec2 percentage = position / u_resolution;
-
-				vec2 bicentage = percentage * 2.0;
-
-				vec2 clipSpace = bicentage - 1.0;
-
-				vec2 invertedClipSpace = clipSpace * vec2(1, -1);
-
-				gl_Position = vec4(invertedClipSpace, 0, 1);
-
-				v_color = gl_Position * 0.5 + 0.5;
-			}
-			`;
-
-			const fragmentShaderSource = `#version 300 es
-
-			precision highp float;
-
-			in vec4 v_color;
-
-			out vec4 outColor;
-
-			void main() {
-				outColor = v_color;
-			}
-			`;
-
 			const canvas = document.getElementById('canvas');
 			const gl = canvas.getContext('webgl2');
 			if (!gl) { console.error('Your browser does not support WebGL2.'); }
