@@ -159,6 +159,8 @@
 			const color = [Math.random(), Math.random(), Math.random(), 1];
 			let x = canvas.width / 2 - width / 2;
 			let y = canvas.height / 2 - height / 2;
+			let vx = 0;
+			let vy = 0;
 
 			// We only need to set the shape once since we separated geometry from position.
 			setRectangle(gl, width, height);
@@ -180,8 +182,16 @@
 				gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
 				// Slightly move rectangle around to show translation.
-				x += randomInt(-5, 5);
-				y += randomInt(-5, 5);
+				vx = Math.max(-10, Math.min(vx + randomInt(-1, 1), 10));
+				vy = Math.max(-10, Math.min(vy + randomInt(-1, 1), 10));
+				if (x + vx < 0 || x + vx + width > canvas.width) {
+					vx = 0 - vx;
+				}
+				if (y + vy < 0 || y + vy + height > canvas.height) {
+					vy = 0 - vy;
+				}
+				x += vx;
+				y += vy;
 
 				gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
