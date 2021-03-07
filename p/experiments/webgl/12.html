@@ -172,6 +172,16 @@
 			const gl = canvas.getContext('webgl2');
 			if (!gl) { return console.error('WebGL2 is not supported by your browser.'); }
 
+			// Set the viewport.
+			resizeCanvas(gl);
+			gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+			// Create variables to store data about our shape.
+			let size = [Math.min(gl.canvas.width, gl.canvas.height) / 10, Math.min(gl.canvas.width, gl.canvas.height) / 10];
+			let translation = [gl.canvas.width / 4 - size[0] / 2, gl.canvas.height / 4 - size[0] / 2];
+			let rotation = 0;
+			let scale = [0.85, 0.85];
+
 			// Below here is done for each program.
 
 			// Create shaders.
@@ -187,15 +197,6 @@
 			// Look up uniform locations.
 			const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
 			const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
-			// const colorLocation = gl.getUniformLocation(program, 'u_color');
-
-			// Create variables to store data about our shape.
-			let size = [100, 100];
-			let velocity = [0, 0];
-			let translation = [400, 200];
-			let rotation = -50;
-			let scale = [0.85, 0.85];
-			// let color = [Math.random(), Math.random(), Math.random(), 1];
 
 			// Create a vertex array.
 			const vao = gl.createVertexArray();
@@ -238,6 +239,9 @@
 				gl.clearColor(0, 0, 0, 1);
 				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+				// Animation.
+				rotation--;
+
 				// Below here is done for each program.
 
 				// Set the program.
@@ -248,22 +252,6 @@
 
 				// Setup resolution uniform.
 				gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
-
-				// Setup color uniform.
-				// gl.uniform4fv(colorLocation, color);
-
-				// Change transforms.
-				/*
-				velocity = [
-					clamp(-10, velocity[0] + randomInt(-1, 1), 10),
-					clamp(-10, velocity[1] + randomInt(-1, 1), 10)
-				];
-				translation = [
-					translation[0] + velocity[0] < 0 || translation[0] + velocity[0] + size[0] > gl.canvas.width ? translation[0] + (velocity[0] = -velocity[0]) : translation[0] + velocity[0],
-					translation[1] + velocity[1] < 0 || translation[1] + velocity[1] + size[1] > gl.canvas.height ? translation[1] + (velocity[1] = -velocity[1]) : translation[1] + velocity[1]
-				];
-				*/
-				rotation--;
 
 				// Compute matrices.
 				let matrix = identityMatrix;
