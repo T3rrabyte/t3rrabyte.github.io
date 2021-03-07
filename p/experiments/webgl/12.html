@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Rotation From Center</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Rotation From Center' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<style>
+		html, body, canvas#canvas {
+			margin: 0px;
+			padding: 0px;
+
+			width: 100%;
+			height: 100%;
+
+			touch-action: none;
+		}
+	</style>
+
+	<script>
+		const vertexShaderSource = `#version 300 es
+
+		in vec2 a_position; // Vertex data.
+
+		out vec4 v_color; // Color.
+
+		uniform vec2 u_resolution; // Canvas resolution.
+		uniform mat3 u_matrix; // Transforms.
+
+		void main() {
+			// Apply transforms and convert from screen to clip space.
+			gl_Position = vec4(((u_matrix * vec3(a_position, 1)).xy / u_resolution * 2.0 - 1.0) * vec2(1, -1), 0, 1);
+
+			// Output position converted from clip to color space.
+			v_color = gl_Position * 0.5 + 0.5;
+		}
+		`;
+
+		const fragmentShaderSource = `#version 300 es
+
+		precision highp float;
+
+		in vec4 v_color; // Color.
+
+		out vec4 outColor;
+
+		void main() {
+			outColor = v_color;
+		}
+		`;
+
+		// Create a shader from source code.
+		const createShader = (gl, type, src) => {
+			const shader = gl.createShader(type);
+			gl.shaderSource(shader, src);
+			gl.compileShader(shader);
+
+			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+				console.error(gl.getShaderInfoLog(shader));
+
+				gl.deleteShader(shader);
+
+				return;
+			}
+
+			return shader;
+		};
+
+		// Create a shader program from shaders.
+		const createProgram = (gl, ...shaders) => {
+			const program = gl.createProgram();
+			shaders.forEach((shader) => gl.attachShader(program, shader));
+			gl.linkProgram(program);
+
+			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+				console.error(gl.getProgramInfoLog(program));
+
+				gl.deleteProgram(program);
+
+				return;
+			}
+
+			return program;
+		};
+
+		// Resize the drawing buffer to its actual canvas size.
+		const resizeCanvas = (gl) => {
+			const displayWidth = gl.canvas.clientWidth;
+			const displayHeight = gl.canvas.clientHeight;
+
+			if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
+				gl.canvas.width = displayWidth;
+				gl.canvas.height = displayHeight;
+			}
+		};
+
+		// Get a random integer value between the minimum and maximum (inclusive).
+		const randomInt = (min, max) => Math.floor(Math.random() * (Math.abs(max - min) + 1)) + min;
+
+		// Restrict a number between the minimum and maximum values (inclusive).
+		const clamp = (min, number, max) => Math.max(min, Math.min(number, max));
+
+		// Summation notation.
+		const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
+
+		// Multiply matrices.
+		const multiplyMatrices = (a, b, m = 3) => {
+			const n = a.length / m;
+			const p = b.length / m;
+
+			// Recursive function.
+			let r = (ri, rmax, rdo, out = 0) => out += rdo(ri) + (ri < rmax ? r(ri + 1, rmax, rdo, out) : 0);
+
+			let c = [];
+			r(0, n - 1, (i) => r(0, p - 1, (j) => c[j * n + i] = r(0, m - 1, (k) => a[k * n + i] * b[j * m + k])));
+
+			return c;
+		};
+
+		// Identity 3-dimensional matrix.
+		const identityMatrix = [
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1
+		];
+
+		// Create a matrix to translate by (x, y).
+		const translationMatrix = (x = 0, y = 0) => {
+			return [
+				1, 0, 0,
+				0, 1, 0,
+				x, y, 1
+			];
+		}
+
+		// Create a matrix to rotate by degrees.
+		const rotationMatrix = (degrees = 0) => {
+			const radians = degrees * Math.PI / 180;
+			const cosine = Math.cos(radians);
+			const sine = Math.sin(radians);
+			return [
+				cosine, -sine, 0,
+				sine, cosine, 0,
+				0, 0, 1
+			];
+		}
+
+		// Create a matrix to scale by (x, y) times.
+		const scaleMatrix = (x = 1, y = 1) => {
+			return [
+				x, 0, 0,
+				0, y, 0,
+				0, 0, 1
+			];
+		}
+
+		// Start program.
+		onload = () => {
+			// Init time.
+
+			// Get the drawing context.
+			const canvas = document.querySelector('#canvas');
+			const gl = canvas.getContext('webgl2');
+			if (!gl) { return console.error('WebGL2 is not supported by your browser.'); }
+
+			// Below here is done for each program.
+
+			// Create shaders.
+			const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+			const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+			// Create shader program.
+			const program = createProgram(gl, vertexShader, fragmentShader);
+
+			// Look up attribute locations.
+			const positionLocation = gl.getAttribLocation(program, 'a_position');
+
+			// Look up uniform locations.
+			const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+			const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
+			// const colorLocation = gl.getUniformLocation(program, 'u_color');
+
+			// Create variables to store data about our shape.
+			let size = [100, 100];
+			let velocity = [0, 0];
+			let translation = [400, 200];
+			let rotation = -50;
+			let scale = [0.85, 0.85];
+			// let color = [Math.random(), Math.random(), Math.random(), 1];
+
+			// Create a vertex array.
+			const vao = gl.createVertexArray();
+			gl.bindVertexArray(vao);
+
+			// Below here is done for each attribute.
+
+			// Create and fill a buffer for position data.
+			const positionBuffer = gl.createBuffer();
+			gl.enableVertexAttribArray(positionLocation);
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+				size[0] * (0 / 12), size[1] * (3 / 12),
+				size[0] * (5 / 12), size[1] * (0 / 12),
+				size[0] * (10 / 12), size[1] * (3 / 12),
+
+				size[0] * (0 / 12), size[1] * (3 / 12),
+				size[0] * (10 / 12), size[1] * (3 / 12),
+				size[0] * (10 / 12), size[1] * (9 / 12),
+
+				size[0] * (0 / 12), size[1] * (3 / 12),
+				size[0] * (10 / 12), size[1] * (9 / 12),
+				size[0] * (5 / 12), size[1] * (12 / 12),
+
+				size[0] * (0 / 12), size[1] * (3 / 12),
+				size[0] * (5 / 12), size[1] * (12 / 12),
+				size[0] * (0 / 12), size[1] * (9 / 12)
+			]), gl.STATIC_DRAW);
+			gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+			// Render time.
+			const drawScene = () => {
+				requestAnimationFrame(drawScene);
+
+				// Set the viewport.
+				resizeCanvas(gl);
+				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+				// Clear the canvas.
+				gl.clearColor(0, 0, 0, 1);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+				// Below here is done for each program.
+
+				// Set the program.
+				gl.useProgram(program);
+
+				// Bind the vertex array that we want to use.
+				gl.bindVertexArray(vao);
+
+				// Setup resolution uniform.
+				gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+
+				// Setup color uniform.
+				// gl.uniform4fv(colorLocation, color);
+
+				// Change transforms.
+				/*
+				velocity = [
+					clamp(-10, velocity[0] + randomInt(-1, 1), 10),
+					clamp(-10, velocity[1] + randomInt(-1, 1), 10)
+				];
+				translation = [
+					translation[0] + velocity[0] < 0 || translation[0] + velocity[0] + size[0] > gl.canvas.width ? translation[0] + (velocity[0] = -velocity[0]) : translation[0] + velocity[0],
+					translation[1] + velocity[1] < 0 || translation[1] + velocity[1] + size[1] > gl.canvas.height ? translation[1] + (velocity[1] = -velocity[1]) : translation[1] + velocity[1]
+				];
+				*/
+				rotation--;
+
+				// Compute matrices.
+				let matrix = identityMatrix;
+				for (let i = 0; i < 5; i++) {
+					matrix = multiplyMatrices(matrix, translationMatrix(translation[0], translation[1])); // Translation.
+					matrix = multiplyMatrices(matrix, rotationMatrix(rotation)); // Rotation.
+					matrix = multiplyMatrices(matrix, scaleMatrix(scale[0], scale[1])); // Scale.
+					matrix = multiplyMatrices(matrix, translationMatrix(-size[0] / 2, -size[1] / 2)); // Move origin to center.
+
+					// Setup matrix uniform.
+					gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+					// Draw geometry.
+					gl.drawArrays(gl.TRIANGLES, 0, 12);
+				}
+			};
+			drawScene();
+		};
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>
