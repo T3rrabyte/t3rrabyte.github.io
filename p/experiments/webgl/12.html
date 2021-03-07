@@ -177,10 +177,12 @@
 			gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
 			// Create variables to store data about our shape.
-			let size = [Math.min(gl.canvas.width, gl.canvas.height) / 10, Math.min(gl.canvas.width, gl.canvas.height) / 10];
-			let translation = [gl.canvas.width / 4 - size[0] / 2, gl.canvas.height / 4 - size[0] / 2];
-			let rotation = 0;
-			let scale = [0.85, 0.85];
+			const query = new URLSearchParams(window.location.search);
+			let size = [query.get('width') || Math.min(gl.canvas.width, gl.canvas.height) / 10, query.get('height') || Math.min(gl.canvas.width, gl.canvas.height) / 10];
+			let translation = [query.get('x') || gl.canvas.width / 4 - size[0] / 2, query.get('y') || gl.canvas.height / 4 - size[0] / 2];
+			let rotation = query.get('r') || 0;
+			let scale = [query.get('scaleX') || 0.85, query.get('scaleY') || 0.85];
+			let shapes = query.get('shapes') || 5;
 
 			// Below here is done for each program.
 
@@ -255,7 +257,7 @@
 
 				// Compute matrices.
 				let matrix = identityMatrix;
-				for (let i = 0; i < 5; i++) {
+				for (let i = 0; i < shapes; i++) {
 					matrix = multiplyMatrices(matrix, translationMatrix(translation[0], translation[1])); // Translation.
 					matrix = multiplyMatrices(matrix, rotationMatrix(rotation)); // Rotation.
 					matrix = multiplyMatrices(matrix, scaleMatrix(scale[0], scale[1])); // Scale.
