@@ -159,7 +159,7 @@
 		];
 
 		// Create a matrix to convert screen to clip space.
-		// Note: also flips the Y-axis.
+		// Equivalent to scale(1 / resolution) * scale(2) * translate(-1) * scale(0, -1)
 		const projectionMatrix = (resolutionWidth = 1, resolutionHeight = 1) => [
 			2 / resolutionWidth, 0, 0,
 			0, -2 / resolutionHeight, 0,
@@ -173,7 +173,7 @@
 			// Get the drawing context.
 			const canvas = document.querySelector('#canvas');
 			const gl = canvas.getContext('webgl2');
-			if (!gl) { return console.error('WebGL2 is not supported by your browser.'); }
+			if (!gl) { return document.body.innerHTML = 'WebGL2 is not supported by your browser.'; }
 
 			// Set the viewport.
 			resizeCanvas(gl);
