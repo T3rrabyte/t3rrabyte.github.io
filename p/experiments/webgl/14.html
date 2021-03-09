@@ -220,13 +220,18 @@
 				Number(query.get('depth')) || Math.min(gl.canvas.width, gl.canvas.height) / 10
 			];
 			let translation = [
-				Number(query.get('x')) || gl.canvas.width / 4 - size[0] / 2,
-				Number(query.get('y')) || gl.canvas.height / 4 - size[0] / 2,
+				Number(query.get('x')) || Math.min(gl.canvas.width, gl.canvas.height) / 5,
+				Number(query.get('y')) || Math.min(gl.canvas.width, gl.canvas.height) / 10,
 				Number(query.get('z')) || 0
 			];
+			let initialTranslation = [
+				Number(query.get('ix')) || gl.canvas.width / 2 - size[0] / 2,
+				Number(query.get('iy')) || gl.canvas.height / 2 - size[0] / 2,
+				Number(query.get('iz')) || 0
+			];
 			let velocity = [
-				Number(query.get('vx')) || 2,
-				Number(query.get('vy')) || 2,
+				Number(query.get('vx')) || 0,
+				Number(query.get('vy')) || 0,
 				Number(query.get('vz')) || 0
 			];
 			let rotation = [
@@ -244,7 +249,8 @@
 				Number(query.get('scaleY')) || 0.85,
 				Number(query.get('scaleZ')) || 0.85
 			];
-			let shapes = Number(query.get('shapes')) || 1;
+
+			let shapes = Number(query.get('shapes')) || 30;
 
 			// Below here is done for each program.
 
@@ -334,6 +340,10 @@
 				gl.clearColor(0, 0, 0, 1);
 				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+				// Set up global state.
+				// gl.enable(gl.CULL_FACE); // If I was better at making faces I would uncomment this. It doesn't matter for this example due to the way I color the cube.
+				gl.enable(gl.DEPTH_TEST);
+
 				// Animation.
 				translation = [
 					translation[0] + velocity[0],
@@ -361,6 +371,7 @@
 
 				// Compute matrices.
 				let matrix = projectionMatrix(gl.canvas.width, gl.canvas.height, CANVAS_DEPTH);
+				matrix = multiplyMatrices(matrix, translationMatrix(initialTranslation[0], initialTranslation[1], initialTranslation[2])); // Initial translation.
 				for (let i = 0; i < shapes; i++) {
 					matrix = multiplyMatrices(matrix, translationMatrix(translation[0], translation[1], translation[2])); // Translation.
 					matrix = multiplyMatrices(matrix, pitchMatrix(rotation[0])); // X-axis rotation.
