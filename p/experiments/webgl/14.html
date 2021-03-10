@@ -28,31 +28,41 @@
 
 	<script>
 		const vertexShaderSource = `#version 300 es
+		// Version must be declared before anything else; even comments and newlines.
 
+		// Attributes (inputs) are used where data is different for each vertex.
 		in vec4 a_position; // Vertex data.
 
+		// Varyings pass data from the vertex shader to the fragment shader.
 		out vec4 v_color; // Color.
 
+		// Uniforms are used where data is the same for each vertex.
 		uniform mat4 u_matrix; // Transforms.
 
 		void main() {
-			// Apply transforms and convert from screen to clip space.
+			// gl_Position is a special variable that the vertex shader is responsible for setting.
+			// It determines the position of the vertex.
 			gl_Position = u_matrix * a_position;
 
-			// Output position converted from clip to color space.
-			v_color = gl_Position * 0.5 + 0.5;
+			// Output position converted from clip to color space as a varying.
+			v_color = a_position;
 		}
 		`;
 
 		const fragmentShaderSource = `#version 300 es
+		// Version must be declared before anything else; even comments and newlines.
 
+		// Declare precision.
 		precision highp float;
 
+		// Take in varying from vertex shader.
 		in vec4 v_color; // Color.
 
+		// Output color for each pixel.
 		out vec4 outColor;
 
 		void main() {
+			// Set the output color.
 			outColor = v_color;
 		}
 		`;
@@ -125,7 +135,7 @@
 			return c;
 		};
 
-		// Identity 3-dimensional matrix.
+		// Identity 4-dimensional matrix.
 		const identityMatrix = [
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -190,11 +200,11 @@
 
 		// Create a matrix to convert screen to clip space.
 		// Equivalent to scale(1 / resolution) * scale(2) * translate(-1) * scale(0, -1)
-		const projectionMatrix = (w = 1, h = 1, d = 1) => [
-			2 / w, 0, 0, 0,
-			0, -2 / h, 0, 0,
-			0, 0, 2 / d, 0,
-			-1, 1, 0, 1
+		const orthographic = (left, right, bottom, top, near, far) => [
+			2 / (right - left), 0, 0, 0,
+			0, 2 / (top - bottom), 0, 0,
+			0, 0, 2 / (near - far), 0,
+			(left + right) / (left - right), (bottom + top) / (bottom - top), (near + far) / (near - far), 1
 		];
 
 		const CANVAS_DEPTH = 4000;
@@ -249,8 +259,64 @@
 				Number(query.get('scaleY')) || 0.85,
 				Number(query.get('scaleZ')) || 0.85
 			];
-
 			let shapes = Number(query.get('shapes')) || 30;
+
+			// Vertices to form a cube.
+			const cubeVertices = [
+				// Front
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+
+				// Back
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				// Left
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+
+				// Right
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				// Top
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
+				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
+
+				// Bottom
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
+
+				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
+				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1)
+			];
 
 			// Below here is done for each program.
 
@@ -274,59 +340,11 @@
 			// Below here is done for each attribute.
 
 			// Create and fill a buffer for position data.
-			const positionBuffer = gl.createBuffer();
-			gl.enableVertexAttribArray(positionLocation);
-			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-				// Top
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-
-				// Bottom
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-
-				// Left
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-
-				// Right
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-
-				// Front
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (0 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (0 / 1),
-
-				// Back
-				size[0] * (0 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (0 / 1), size[2] * (1 / 1),
-				size[0] * (0 / 1), size[1] * (1 / 1), size[2] * (1 / 1),
-				size[0] * (1 / 1), size[1] * (1 / 1), size[2] * (1 / 1)
-			]), gl.STATIC_DRAW);
-			gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+			const positionBuffer = gl.createBuffer(); // Create buffer.
+			gl.enableVertexAttribArray(positionLocation); // Allow attribute to receive data from a buffer.
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); // Bind the buffer as the array buffer so that we can fill it.
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubeVertices), gl.STATIC_DRAW); // Fill the buffer.
+			gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0); // Tell the attribute how to get data out of the buffer.
 
 			// Render time.
 			const drawScene = () => {
@@ -340,8 +358,10 @@
 				gl.clearColor(0, 0, 0, 1);
 				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-				// Set up global state.
-				// gl.enable(gl.CULL_FACE); // If I was better at making faces I would uncomment this. It doesn't matter for this example due to the way I color the cube.
+				// Render only front-facing triangles (counter-clockwise).
+				gl.enable(gl.CULL_FACE);
+
+				// Draw closer pixels over further ones.
 				gl.enable(gl.DEPTH_TEST);
 
 				// Animation.
@@ -351,9 +371,9 @@
 					translation[2] + velocity[2]
 				];
 				velocity = [
-					translation[0] - size[0] / 2 <= 0 || translation[0] + size[0] / 2 >= gl.canvas.width ? -velocity[0] : velocity[0],
-					translation[1] - size[1] / 2 <= 0 || translation[1] + size[1] / 2 >= gl.canvas.height ? -velocity[1] : velocity[1],
-					translation[2] - size[2] / 2 <= 0 || translation[2] + size[2] / 2 >= CANVAS_DEPTH ? -velocity[2] : velocity[2]
+					translation[0] - size[0] / 2 <= -initialTranslation[0] || translation[0] + size[0] / 2 >= gl.canvas.width - initialTranslation[0] ? -velocity[0] : velocity[0],
+					translation[1] - size[1] / 2 <= -initialTranslation[1] || translation[1] + size[1] / 2 >= gl.canvas.height - initialTranslation[1] ? -velocity[1] : velocity[1],
+					translation[2] - size[2] / 2 <= -initialTranslation[2] || translation[2] + size[2] / 2 >= CANVAS_DEPTH - initialTranslation[2] ? -velocity[2] : velocity[2]
 				];
 				rotation = [
 					rotation[0] + acceleration[0],
@@ -370,7 +390,7 @@
 				gl.bindVertexArray(vao);
 
 				// Compute matrices.
-				let matrix = projectionMatrix(gl.canvas.width, gl.canvas.height, CANVAS_DEPTH);
+				let matrix = orthographic(0, gl.canvas.clientWidth, gl.canvas.clientHeight, 0, CANVAS_DEPTH, -CANVAS_DEPTH)
 				matrix = multiplyMatrices(matrix, translationMatrix(initialTranslation[0], initialTranslation[1], initialTranslation[2])); // Initial translation.
 				for (let i = 0; i < shapes; i++) {
 					matrix = multiplyMatrices(matrix, translationMatrix(translation[0], translation[1], translation[2])); // Translation.
