@@ -122,9 +122,15 @@
 		const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
 
 		// Multiply matrices.
+		// https://wikipedia.org/wiki/Matrix_multiplication_algorithm#Iterative_algorithm
+		// Column-wise traversal.
 		const multiplyMatrices = (a, b, m = 4) => {
 			const n = a.length / m;
 			const p = b.length / m;
+
+			// a[i][k] = a[k * n + i]
+			// b[k][j] = b[j * m + k]
+			// c[i][j] = c[j * n + i]
 
 			let c = [];
 			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[j * n + i] = sigma(0, m - 1, (k) => a[k * n + i] * b[j * m + k])));
@@ -132,13 +138,27 @@
 			return c;
 		};
 
+		// Row-wise traversal.
+		const multiplyMatricesRowWise = (a, b, m = 4) => {
+			const n = a.length / m;
+			const p = b.length / m;
+
+			let c = [];
+			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[i * p + j] = sigma(0, m - 1, (k) => a[i * m + k] * b[k * p + j])));
+
+			return c;
+		};
+
 		// Identity 4-dimensional matrix.
-		const identityMatrix = [
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1
-		];
+		const identityMatrix = (dim = 4) => {
+			let output = [];
+			for (let x = 0; x < dim; x++) {
+				for (let y = 0; y < dim; y++) {
+					output[y * dim + x] = x == y ? 1 : 0;
+				}
+			}
+			return output;
+		};
 
 		// Create a matrix to translate by (x, y).
 		const translationMatrix = (x = 0, y = 0, z = 0) => [
@@ -247,6 +267,56 @@
 			];
 		};
 
+		// Invert a matrix.
+		// https://en.wikipedia.org/wiki/Gaussian_elimination
+		// Based on work by Andrew Ippoliti: http://blog.acipo.com/matrix-inversion-in-javascript/
+		// Only possible for (n * n) matrices.
+		const invertMatrix = (m) => {
+			const dim = Math.sqrt(m.length);
+
+			if (dim % 1 != 0) {
+				return; // Matrix isn't square.
+			}
+
+			const identity = identityMatrix(dim);
+			const copy = [...m];
+
+			for (let y = 0; y < dim; y++) {
+				// Get the element on the diagonal.
+				let d = copy[y * dim + y];
+
+				// If there is a 0 on the diagonal, need to swap with a lower row.
+				if (d == 0) {
+					for (let y2 = y + 1; y2 < dim; y2++) {
+						if (copy[y2 * dim + y] != 0) {
+							for (let x = 0; x < dim; x++) {
+								d = copy[y * dim + x];
+								copy[y * dim + x] = copy[y2 * dim + x];
+								copy[y2 * dim + x] = d;
+
+								d = identity[y * dim + x];
+								identity[y * dim + x] = identity[y2 * dim + x];
+								identity[y2 * dim + x] = d;
+							}
+
+							break;
+						}
+					}
+
+					d = copy[y * dim + y];
+
+					if (d == 0) {
+						return; // Matrix is not invertible.
+					}
+				}
+
+				// Scale the row down so that there is a 1 on the diagonal.
+				for (let x = 0; x < dim; x++) {
+					// TODO
+				}
+			}
+		};
+
 		const CANVAS_DEPTH = 4000;
 
 		// Start program.
@@ -262,7 +332,7 @@
 			resizeCanvas(gl);
 			gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-			// Create variables to store data about our shape.
+			// Create variables to store data about the shape.
 			const query = new URLSearchParams(window.location.search);
 			let size = [
 				Number(query.get('width')) || Math.min(gl.canvas.width, gl.canvas.height) / 10,
@@ -300,6 +370,17 @@
 				Number(query.get('scaleZ')) || 0.85
 			];
 			let shapes = Number(query.get('shapes')) || 30;
+
+			// Create variables to store data about the camera.
+			let fieldOfView = Number(query.get('fov')) || 45;
+			let near = Number(query.get('near')) || 1;
+			let far = Number(query.get('far')) || CANVAS_DEPTH;
+			let cameraYaw = Number(query.get('yawC')) || 45;
+			let cameraTranslation = [
+				Number(query.get('cx')) || 0,
+				Number(query.get('cy')) || 0,
+				Number(query.get('cz')) || 0
+			];
 
 			// Vertices to form a cube.
 			const cubeVertices = [
@@ -428,6 +509,17 @@
 
 				// Bind the vertex array that we want to use.
 				gl.bindVertexArray(vao);
+
+				// Projection matrix. Determines view space.
+				const projectionMatrix = perspectiveMatrix(fieldOfView, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
+
+				// Camera matrix. Contains the camera's position and rotation.
+				const cameraMatrix = multiplyMatrices(yawMatrix(cameraYaw), translationMatrix(cameraTranslation[0], cameraTranslation[1], cameraTranslation[2]));
+
+				// View matrix. Moves everything the opposite of the camera, effectively making everything relative to the camera as if it was at the origin.
+				// TODO
+
+				// View projection matrix.
 
 				// Compute matrices.
 				let matrix = perspectiveMatrix(45, gl.canvas.clientWidth / gl.canvas.clientHeight, 1, CANVAS_DEPTH);
