@@ -3,13 +3,13 @@
 <html lang='en-US'>
 
 <head>
-	<title>WebGL Cameras</title>
+	<title>WebGL Look At</title>
 	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
 
-	<meta property='og:title' content='WebGL Cameras' />
+	<meta property='og:title' content='WebGL Look At' />
 	<meta property='og:type' content='website' />
 	<meta property='og:url' content='#' />
 	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
@@ -306,6 +306,44 @@
 			return identity;
 		};
 
+		// Find the cross product of two vectors. Only possible for three-dimensional vectors.
+		// Technically also possible for seven-dimensional vectors, but this doesn't cover that.
+		const crossVectors = (a, b) => [
+			a[1] * b[2] - a[2] * b[1],
+			a[2] * b[0] - a[0] * b[2],
+			a[0] * b[1] - a[1] * b[0]
+		];
+
+		// Add/subtract/multiply/divide (etc.) vectors. Add by default.
+		const operateVectors = (a, b, operation = (a, b) => a + b) => {
+			let c = [];
+			sigma(0, a.length - 1, (i) => c[i] = operation(a[i], b[i]));
+			return c;
+		};
+
+		// Normalize vector length to point on unit circle/sphere (etc.).
+		// Warning: might cause division by 0 error.
+		const normalizeVector = (v) => {
+			const length = Math.sqrt(sigma(0, v.length - 1, (i) => v[i] * v[i]));
+			let c = [];
+			sigma(0, v.length - 1, (i) => c[i] = v[i] / length);
+			return c;
+		};
+
+		// Camera angle matrix.
+		const lookAtMatrix = (cameraPosition, target, up = [0, 1, 0]) => {
+			const zAxis = normalizeVector(operateVectors(cameraPosition, target, (a, b) => a - b));
+			const xAxis = normalizeVector(crossVectors(up, zAxis));
+			const yAxis = normalizeVector(crossVectors(zAxis, xAxis));
+
+			return [
+				xAxis[0], xAxis[1], xAxis[2], 0,
+				yAxis[0], yAxis[1], yAxis[2], 0,
+				zAxis[0], zAxis[1], zAxis[2], 0,
+				cameraPosition[0], cameraPosition[1], cameraPosition[2], 1
+			];
+		};
+
 		const CANVAS_DEPTH = 4000;
 
 		// Start program.
@@ -324,19 +362,19 @@
 			// Create variables to store data about the shape.
 			const query = new URLSearchParams(window.location.search);
 			let size = [
-				Number(query.get('width')) || Math.min(gl.canvas.width, gl.canvas.height) / 10,
-				Number(query.get('height')) || Math.min(gl.canvas.width, gl.canvas.height) / 10,
-				Number(query.get('depth')) || Math.min(gl.canvas.width, gl.canvas.height) / 10
+				Number(query.get('width')) || 50,
+				Number(query.get('height')) || 50,
+				Number(query.get('depth')) || 50
 			];
 			let translation = [
-				Number(query.get('x')) || Math.min(gl.canvas.width, gl.canvas.height) / 5,
-				Number(query.get('y')) || Math.min(gl.canvas.width, gl.canvas.height) / 10,
+				Number(query.get('x')) || 0,
+				Number(query.get('y')) || 0,
 				Number(query.get('z')) || 0
 			];
 			let initialTranslation = [
 				Number(query.get('ix')) || 0,
 				Number(query.get('iy')) || 0,
-				Number(query.get('iz')) || -CANVAS_DEPTH / 2
+				Number(query.get('iz')) || 0
 			];
 			let velocity = [
 				Number(query.get('vx')) || 0,
@@ -349,16 +387,16 @@
 				Number(query.get('roll')) || 0
 			];
 			let acceleration = [
-				Number(query.get('pitchA')) || 1,
-				Number(query.get('yawA')) || 1,
-				Number(query.get('rollA')) || 1
+				Number(query.get('pitchA')) || 0,
+				Number(query.get('yawA')) || 0,
+				Number(query.get('rollA')) || 0
 			];
 			let scale = [
 				Number(query.get('scaleX')) || 0.85,
 				Number(query.get('scaleY')) || 0.85,
 				Number(query.get('scaleZ')) || 0.85
 			];
-			let shapes = Number(query.get('shapes')) || 30;
+			let shapes = Number(query.get('shapes')) || 5;
 
 			// Create variables to store data about the camera.
 			let fieldOfView = Number(query.get('fov')) || 45;
@@ -368,7 +406,7 @@
 			let cameraTranslation = [
 				Number(query.get('cx')) || 0,
 				Number(query.get('cy')) || 0,
-				Number(query.get('cz')) || 0
+				Number(query.get('cz')) || 500
 			];
 
 			// Vertices to form a cube.
@@ -503,7 +541,8 @@
 				const projectionMatrix = perspectiveMatrix(fieldOfView, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
 
 				// Camera matrix. Contains the camera's position and rotation.
-				const cameraMatrix = multiplyMatrices(yawMatrix(cameraYaw), translationMatrix(cameraTranslation[0], cameraTranslation[1], cameraTranslation[2]));
+				const cameraPositionMatrix = multiplyMatrices(yawMatrix(cameraYaw), translationMatrix(cameraTranslation[0], cameraTranslation[1], cameraTranslation[2]));
+				const cameraMatrix = lookAtMatrix([cameraPositionMatrix[12], cameraPositionMatrix[13], cameraPositionMatrix[14]], [initialTranslation[0] + translation[0], initialTranslation[1] + translation[1], initialTranslation[2] + translation[2]]);
 
 				// View matrix. Moves everything the opposite of the camera, effectively making everything relative to the camera as if it was at the origin.
 				const viewMatrix = invertMatrix(cameraMatrix);
