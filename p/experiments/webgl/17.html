@@ -205,6 +205,9 @@
 			];
 		};
 
+		// Combine the rotation matrix calculations.
+		const rotationMatrix = (pitch = 0, yaw = 0, roll = 0) => multiplyMatrices(multiplyMatrices(pitchMatrix(pitch), yawMatrix(yaw)), rollMatrix(roll));
+
 		// Create a matrix to scale by (x, y) times.
 		const scaleMatrix = (x = 1, y = 1, z = 1) =>  [
 			x, 0, 0, 0,
@@ -401,22 +404,25 @@
 
 		// Create variables to hold shape properties.
 		// Do this in the global scope to allow modification via browser console.
-		let size = [100, 100, 100];
-		let translation = [200, 100, 0];
-		let initialTranslation = [0, 0, -CANVAS_DEPTH / 2];
+		const size = [200, 200, 200];
+		let translation = [400, 200, 0];
+		let initialTranslation = [0, 0, 0];
 		let velocity = [0, 0, 0];
 		let rotation = [0, 0, 0];
-		let rotationalVelocity = [1, 1, 1];
+		let rotationalVelocity = [50, 50, 50];
 		let scale = [0.85, 0.85, 0.85];
 		let shapes = 30;
 
 		// Create variables to hold camera properties.
 		// Do this in the global scope to allow modification via browser console.
-		let fov = 45;
+		let fov = 60;
 		let near = 1;
 		let far = CANVAS_DEPTH;
+		let cameraTranslation = [0, 0, 2000];
+		let cameraVelocity = [0, 0, 0];
 		let cameraRotation = [0, 0, 0];
-		let cameraTranslation = [0, 0, 0];
+		let cameraRotationalVelocity = [0, 0, 0];
+		let cameraLookAt = operateVectors(operateVectors(initialTranslation, translation), size, (a, b) => a - b / 2);
 
 		// Start program.
 		onload = () => {
@@ -455,9 +461,16 @@
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(scaleShape(cubeVertices, size)), gl.STATIC_DRAW); // Fill the buffer.
 			gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0); // Tell the attribute how to get data out of the buffer.
 
+			// Declare variable for delta time calculation.
+			let then = 0;
+
 			// Render time.
-			const drawScene = () => {
+			const drawScene = (now) => {
 				requestAnimationFrame(drawScene);
+
+				// Calculate delta time (time since last frame in seconds).
+				let deltaTime = (now - then) * 0.001 || 0;
+				then = now;
 
 				// Set the viewport.
 				resizeCanvas(gl);
@@ -474,8 +487,11 @@
 				gl.enable(gl.DEPTH_TEST);
 
 				// Animation.
-				translation = operateVectors(translation, velocity);
-				rotation = operateVectors(rotation, rotationalVelocity);
+				translation = operateVectors(translation, velocity, (a, b) => a + b * deltaTime);
+				rotation = operateVectors(rotation, rotationalVelocity, (a, b) => a + b * deltaTime);
+				cameraTranslation = operateVectors(cameraTranslation, cameraVelocity, (a, b) => a + b * deltaTime);
+				cameraRotation = operateVectors(cameraRotation, cameraRotationalVelocity, (a, b) => a + b * deltaTime);
+				cameraLookAt = operateVectors(operateVectors(initialTranslation, translation), size, (a, b) => a - b / 2);
 
 				// Below here is done for each program.
 
@@ -489,23 +505,22 @@
 				const projectionMatrix = perspectiveMatrix(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
 
 				// Camera matrix. Contains the camera's position and rotation.
-				const cameraMatrix = multiplyMatrices(yawMatrix(cameraRotation[0]), translationMatrix(...cameraTranslation));
+				const cameraMatrix = lookAtMatrix(cameraTranslation, cameraLookAt);
 
 				// View matrix. Moves everything the opposite of the camera, effectively making everything relative to the camera as if it was at the origin.
 				const viewMatrix = invertMatrix(cameraMatrix);
 
-				// View projection matrix.
+				// View projection matrix. Both applies perspective and moves the world so that the camera is effectively the origin.
 				const viewProjectionMatrix = multiplyMatrices(projectionMatrix, viewMatrix);
 
 				// Compute matrices.
 				let matrix = multiplyMatrices([...viewProjectionMatrix], translationMatrix(...initialTranslation)); // Initial translation.
+
 				for (let i = 0; i < shapes; i++) {
 					matrix = multiplyMatrices(matrix, translationMatrix(...translation)); // Translation.
-					matrix = multiplyMatrices(matrix, pitchMatrix(rotation[0])); // X-axis rotation.
-					matrix = multiplyMatrices(matrix, yawMatrix(rotation[1])); // Y-axis rotation.
-					matrix = multiplyMatrices(matrix, rollMatrix(rotation[2])); // Z-axis rotation.
+					matrix = multiplyMatrices(matrix, rotationMatrix(...rotation)); // Rotation.
 					matrix = multiplyMatrices(matrix, scaleMatrix(...scale)); // Scale.
-					matrix = multiplyMatrices(matrix, translationMatrix(-size[0] / 2, -size[1] / 2, -size[2] / 2)); // Move origin to center.
+					matrix = multiplyMatrices(matrix, translationMatrix(...operateVectors(size, size, (a, b) => -a / 2))); // Move origin to center.
 
 					// Setup matrix uniform.
 					gl.uniformMatrix4fv(matrixLocation, false, matrix);
