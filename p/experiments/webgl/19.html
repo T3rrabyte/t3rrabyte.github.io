@@ -546,7 +546,7 @@
 			// Asynchronously load an image into the texture.
 			let image = new Image();
 			const imageUrl = 'pastel atlas.png';
-			if ((new URL(imageUrl, location.href)).origin != location.origin) { image.crossOrigin = ''; } // Request permission to use cross-origin images. Wrap in an if statement because it's slow if we have to request CORS.
+			if ((new URL(imageUrl, location.href)).origin != location.origin) { image.crossOrigin = ''; } // Request CORS.
 			image.src = imageUrl;
 			image.addEventListener('load', () => {
 				gl.bindTexture(gl.TEXTURE_2D, texture);
