@@ -139,18 +139,18 @@ const fullCubeTextureCoordinates = [].concat(
 	fullRectangleTextureCoordinates
 );
 
-const CANVAS_DEPTH = 4000;
+const CANVAS_DEPTH = 2000;
 
 // Create variables to hold shape properties.
 // Do this in the global scope to allow modification via browser console.
 const size = [10, 10, 10];
-let translation = [20, 10, 0];
+let translation = [0, 0, 0];
 let initialTranslation = [0, 0, 0];
 let velocity = [0, 0, 0];
 let rotation = [0, 0, 0];
-let rotationalVelocity = [50, 50, 50];
-let scale = [0.85, 0.85, 0.85];
-let shapes = 30;
+let rotationalVelocity = [0, 0, 0];
+let scale = [1, 1, 1];
+let shapes = 1;
 
 // Create variables to hold camera properties.
 // Do this in the global scope to allow modification via browser console.

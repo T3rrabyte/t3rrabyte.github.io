@@ -28,6 +28,7 @@
 
 	<script src='webgl-utils.js'></script>
 	<script src='m4.js'></script>
+	<script src='tutorial.js'></script>
 	<script src='shared.js'></script>
 
 	<script>
@@ -61,16 +62,56 @@
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 
 			const image = new Image();
-			image.src = 'outline texture.png';
 			image.addEventListener('load', () => {
 				gl.bindTexture(gl.TEXTURE_2D, texture);
 				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 				gl.generateMipmap(gl.TEXTURE_2D);
+
+				draw();
 			});
+			image.src = 'outline texture.png';
 
 			// DRAW
 
-			
+			const draw = () => {
+				// DRAW
+
+				webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+				gl.clearColor(0, 0, 0, 1);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+				gl.enable(gl.CULL_FACE);
+				gl.enable(gl.DEPTH_TEST);
+
+				gl.useProgram(program);
+
+				gl.bindVertexArray(vao);
+
+				// DIFFERENCES
+
+				const projectionMatrix = m4.perspective(degToRad(fov), gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
+
+				const up = [0, 1, 0];
+				const cameraMatrix = m4.lookAt(cameraTranslation, cameraLookAt, up);
+
+				const viewMatrix = m4.inverse(cameraMatrix);
+
+				const viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
+
+				let matrix = m4.translate([...viewProjectionMatrix], ...initialTranslation);
+				matrix = m4.translate(matrix, ...translation);
+				matrix = m4.xRotate(matrix, degToRad(rotation[0]));
+				matrix = m4.yRotate(matrix, degToRad(rotation[1]));
+				matrix = m4.zRotate(matrix, degToRad(rotation[2]));
+				matrix = m4.scale(matrix, ...scale);
+				matrix = m4.translate(matrix, ...operateVectors(size, size, (a, b) => -a / 2));
+
+				gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+				gl.drawArrays(gl.TRIANGLES, 0, 36);
+			};
 		};
 	</script>
 </head>

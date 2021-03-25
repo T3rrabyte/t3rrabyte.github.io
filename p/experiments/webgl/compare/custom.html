@@ -62,16 +62,51 @@
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
 
 			const image = new Image();
-			image.src = 'outline texture.png';
 			image.addEventListener('load', () => {
 				gl.bindTexture(gl.TEXTURE_2D, texture);
 				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 				gl.generateMipmap(gl.TEXTURE_2D);
+
+				draw();
 			});
+			image.src = 'outline texture.png';
 
 			// DRAW
 
-			
+			const draw = () => {
+				resizeCanvas(gl);
+				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+				gl.clearColor(0, 0, 0, 1);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+				gl.enable(gl.CULL_FACE);
+				gl.enable(gl.DEPTH_TEST);
+
+				gl.useProgram(program);
+
+				gl.bindVertexArray(vao);
+
+				// DIFFERENCES
+
+				const projectionMatrix = perspectiveMatrix(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
+
+				const cameraMatrix = lookAtMatrix(cameraTranslation, cameraLookAt);
+
+				const viewMatrix = invertMatrix(cameraMatrix);
+
+				const viewProjectionMatrix = multiplyMatrices(projectionMatrix, viewMatrix);
+
+				let matrix = multiplyMatrices([...viewProjectionMatrix], translationMatrix(...initialTranslation));
+				matrix = multiplyMatrices(matrix, translationMatrix(...translation));
+				matrix = multiplyMatrices(matrix, rotationMatrix(...rotation));
+				matrix = multiplyMatrices(matrix, scaleMatrix(...scale));
+				matrix = multiplyMatrices(matrix, translationMatrix(...operateVectors(size, size, (a, b) => -a / 2)));
+
+				gl.uniformMatrix4fv(matrixLocation, false, matrix);
+
+				gl.drawArrays(gl.TRIANGLES, 0, 36);
+			};
 		};
 	</script>
 </head>
