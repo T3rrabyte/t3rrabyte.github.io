@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Algorithm Comparison - Tutorial Side</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Algorithm Comparison - Tutorial Side' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<style>
+		html, body, canvas#canvas {
+			margin: 0px;
+			padding: 0px;
+
+			width: 100%;
+			height: 100%;
+
+			touch-action: none;
+		}
+	</style>
+
+	<script src='webgl-utils.js'></script>
+	<script src='m4.js'></script>
+	<script src='shared.js'></script>
+
+	<script>
+		onload = () => {
+			const canvas = document.querySelector('#canvas');
+			const gl = canvas.getContext('webgl2');
+
+			const program = webglUtils.createProgramFromSources(gl, [vertexShaderSource, fragmentShaderSource]);
+		};
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>

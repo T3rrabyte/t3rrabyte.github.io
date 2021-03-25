@@ -3,13 +3,13 @@
 <html lang='en-US'>
 
 <head>
-	<title>WebGL Textures</title>
+	<title>WebGL Multiple Textures</title>
 	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
 	<meta name='author' content='Travis Martin' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<meta charset='utf-8' />
 
-	<meta property='og:title' content='WebGL Textures' />
+	<meta property='og:title' content='WebGL Multiple Textures' />
 	<meta property='og:type' content='website' />
 	<meta property='og:url' content='#' />
 	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
@@ -60,14 +60,15 @@
 		in vec2 v_texcoord; // Texture coordinates.
 
 		// A sampler2D allows us to reference a texture.
-		uniform sampler2D u_texture;
+		uniform sampler2D u_texture0;
+		uniform sampler2D u_texture1;
 
 		// Output color for each pixel.
 		out vec4 outColor;
 
 		void main() {
 			// Set the output color. texture() looks up a color in a texture.
-			outColor = texture(u_texture, v_texcoord);
+			outColor = texture(u_texture0, v_texcoord) * texture(u_texture1, v_texcoord);
 		}
 		`;
 
@@ -448,8 +449,8 @@
 
 		// Create variables to hold shape properties.
 		// Do this in the global scope to allow modification via browser console.
-		const size = [200, 200, 200];
-		let translation = [400, 200, 0];
+		const size = [10, 10, 10];
+		let translation = [20, 10, 0];
 		let initialTranslation = [0, 0, 0];
 		let velocity = [0, 0, 0];
 		let rotation = [0, 0, 0];
@@ -462,7 +463,7 @@
 		let fov = 60;
 		let near = 1;
 		let far = CANVAS_DEPTH;
-		let cameraTranslation = [0, 0, 2000];
+		let cameraTranslation = [0, 0, 100];
 		let cameraVelocity = [0, 0, 0];
 		let cameraRotation = [0, 0, 0];
 		let cameraRotationalVelocity = [0, 0, 0];
@@ -492,6 +493,8 @@
 
 			// Look up uniform locations.
 			const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
+			const texture0Location = gl.getUniformLocation(program, 'u_texture0');
+			const texture1Location = gl.getUniformLocation(program, 'u_texture1');
 
 			// Create a vertex array.
 			const vao = gl.createVertexArray();
@@ -516,8 +519,8 @@
 			// Below here is done for each texture.
 
 			// Create a texture.
-			const texture = gl.createTexture();
-			gl.bindTexture(gl.TEXTURE_2D, texture);
+			const texture0 = gl.createTexture();
+			gl.bindTexture(gl.TEXTURE_2D, texture0);
 
 			// Fill the texture with a default for before the image loads (1x1 blue pixel, in this case).
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
@@ -531,13 +534,28 @@
 			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // For when size is larger than the largest mip.
 
 			// Asynchronously load an image into the texture.
-			const image = new Image();
-			const imageUrl = 'outline texture.png';
-			if ((new URL(imageUrl, location.href)).origin != location.origin) { image.crossOrigin = ''; } // Request CORS.
-			image.src = imageUrl;
-			image.addEventListener('load', () => {
-				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+			const image0 = new Image();
+			const imageUrl0 = 'outline texture.png';
+			if ((new URL(imageUrl0, location.href)).origin != location.origin) { image0.crossOrigin = ''; } // Request CORS.
+			image0.src = imageUrl0;
+			image0.addEventListener('load', () => {
+				gl.bindTexture(gl.TEXTURE_2D, texture0);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image0);
+				gl.generateMipmap(gl.TEXTURE_2D);
+			});
+
+			// Create another texture.
+			const texture1 = gl.createTexture();
+			gl.bindTexture(gl.TEXTURE_2D, texture1);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+			const image1 = new Image();
+			const imageUrl1 = 'rgb fade.png';
+			if ((new URL(imageUrl1, location.href)).origin != location.origin) { image1.crossOrigin = ''; } // Request CORS.
+			image1.src = imageUrl1;
+			image1.addEventListener('load', () => {
+				gl.bindTexture(gl.TEXTURE_2D, texture1);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image1);
 				gl.generateMipmap(gl.TEXTURE_2D);
 			});
 
@@ -580,6 +598,16 @@
 
 				// Bind the vertex array that we want to use.
 				gl.bindVertexArray(vao);
+
+				// Set which texture units to render with.
+				gl.uniform1i(texture0Location, 0);
+				gl.uniform1i(texture1Location, 1);
+
+				// Bind textures to each texture unit.
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, texture0);
+				gl.activeTexture(gl.TEXTURE1);
+				gl.bindTexture(gl.TEXTURE_2D, texture1);
 
 				// Projection matrix. Determines view space.
 				const projectionMatrix = perspectiveMatrix(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far);
