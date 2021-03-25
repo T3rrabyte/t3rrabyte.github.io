@@ -49,9 +49,6 @@ const randomInt = (min, max) => Math.floor(Math.random() * (Math.abs(max - min) 
 // Restrict a number between the minimum and maximum values (inclusive).
 const clamp = (min, number, max) => Math.max(min, Math.min(number, max));
 
-// Summation notation.
-const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
-
 // Multiply matrices.
 // https://wikipedia.org/wiki/Matrix_multiplication_algorithm#Iterative_algorithm
 // Column-wise traversal.
@@ -240,13 +237,6 @@ const crossVectors = (a, b) => [
 	a[0] * b[1] - a[1] * b[0]
 ];
 
-// Add/subtract/multiply/divide (etc.) vectors. Add by default.
-const operateVectors = (a, b, operation = (a, b) => a + b) => {
-	let c = [];
-	sigma(0, a.length - 1, (i) => c[i] = operation(a[i], b[i]));
-	return c;
-};
-
 // Normalize vector length to point on unit circle/sphere (et cetera).
 // Warning: might cause division by 0 error.
 const normalizeVector = (v) => operateVectors(v, v, (length) => length / Math.sqrt(sigma(0, v.length - 1, (i) => v[i] * v[i])));
@@ -264,72 +254,6 @@ const lookAtMatrix = (cameraPosition, target, up = [0, 1, 0]) => {
 		cameraPosition[0], cameraPosition[1], cameraPosition[2], 1
 	];
 };
-
-// Scale a set of vertices by x dimensions.
-const scaleVertices = (shape, scale) => {
-	shape = [...shape]; // Duplicate to avoid modifying original.
-	for (let i = 0; i < shape.length; i++) {
-		shape[i] *= scale[i % scale.length];
-	}
-	return shape;
-};
-
-// Normalized vertices of a cube.
-const cubeVertices = [
-	// Front
-	0, 0, 1,
-	0, 1, 1,
-	1, 0, 1,
-
-	0, 1, 1,
-	1, 1, 1,
-	1, 0, 1,
-
-	// Back
-	1, 0, 0,
-	1, 1, 0,
-	0, 0, 0,
-
-	1, 1, 0,
-	0, 1, 0,
-	0, 0, 0,
-
-	// Left
-	0, 0, 0,
-	0, 1, 0,
-	0, 0, 1,
-
-	0, 1, 0,
-	0, 1, 1,
-	0, 0, 1,
-
-	// Right
-	1, 0, 1,
-	1, 1, 1,
-	1, 0, 0,
-
-	1, 1, 1,
-	1, 1, 0,
-	1, 0, 0,
-
-	// Top
-	0, 0, 0,
-	0, 0, 1,
-	1, 0, 0,
-
-	0, 0, 1,
-	1, 0, 1,
-	1, 0, 0,
-
-	// Bottom
-	0, 1, 1,
-	0, 1, 0,
-	1, 1, 1,
-
-	0, 1, 0,
-	1, 1, 0,
-	1, 1, 1
-];
 
 // Normalized vertices of a triangular pyramid.
 const pyramidVertices = [
@@ -349,24 +273,3 @@ const pyramidVertices = [
 	1, 0, 1,
 	0, 0, 1
 ];
-
-// Texture coordinates to put one full copy of the texture on one rectangle.
-// Assumes the rectangle's coordinates are top left triangle-first.
-// Assumes that points are declared counter-clockwise, but they should be anyways for CULL_FACE.
-const fullRectangleTextureCoordinates = [
-	0, 0,
-	0, 1,
-	1, 0,
-	0, 1,
-	1, 1,
-	1, 0
-];
-
-const fullCubeTextureCoordinates = [].concat(
-	fullRectangleTextureCoordinates,
-	fullRectangleTextureCoordinates,
-	fullRectangleTextureCoordinates,
-	fullRectangleTextureCoordinates,
-	fullRectangleTextureCoordinates,
-	fullRectangleTextureCoordinates
-);
