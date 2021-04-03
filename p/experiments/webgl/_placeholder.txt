@@ -1,6 +1,1 @@
-Fixing weird perspective bug on: https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
-
-Before moving on to:
 https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
-
-(just finished https://webgl2fundamentals.org/webgl/lessons/webgl-2-textures.html)
