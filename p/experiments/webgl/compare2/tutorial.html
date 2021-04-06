@@ -62,16 +62,12 @@ function main() {
   // normal with a_normal etc..
   twgl.setAttributePrefix("a_");
 
-  var sphereBufferInfo = flattenedPrimitives.createSphereBufferInfo(gl, 10, 12, 6);
-  var cubeBufferInfo   = flattenedPrimitives.createCubeBufferInfo(gl, 20);
-  var coneBufferInfo   = flattenedPrimitives.createTruncatedConeBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
+  var cubeBufferInfo = flattenedPrimitives.createCubeBufferInfo(gl, 20);
 
   // setup GLSL program
   var programInfo = twgl.createProgramInfo(gl, [vs, fs]);
 
-  var sphereVAO = twgl.createVAOFromBufferInfo(gl, programInfo, sphereBufferInfo);
   var cubeVAO   = twgl.createVAOFromBufferInfo(gl, programInfo, cubeBufferInfo);
-  var coneVAO   = twgl.createVAOFromBufferInfo(gl, programInfo, coneBufferInfo);
 
   function degToRad(d) {
     return d * Math.PI / 180;
@@ -80,21 +76,11 @@ function main() {
   var fieldOfViewRadians = degToRad(60);
 
   // Uniforms for each object.
-  var sphereUniforms = {
-    u_colorMult: [0.5, 1, 0.5, 1],
-    u_matrix: m4.identity(),
-  };
   var cubeUniforms = {
     u_colorMult: [1, 0.5, 0.5, 1],
     u_matrix: m4.identity(),
   };
-  var coneUniforms = {
-    u_colorMult: [0.5, 0.5, 1, 1],
-    u_matrix: m4.identity(),
-  };
-  var sphereTranslation = [  0, 0, 0];
-  var cubeTranslation   = [-40, 0, 0];
-  var coneTranslation   = [ 40, 0, 0];
+  var cubeTranslation   = [0, 0, 0];
 
   function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation) {
     var matrix = m4.translate(viewProjectionMatrix,
@@ -135,30 +121,10 @@ function main() {
 
     var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-    var sphereXRotation =  time;
-    var sphereYRotation =  time;
-    var cubeXRotation   = -time;
-    var cubeYRotation   =  time;
-    var coneXRotation   =  time;
-    var coneYRotation   = -time;
+    var cubeXRotation = 0;
+    var cubeYRotation = 0;
 
     gl.useProgram(programInfo.program);
-
-    // ------ Draw the sphere --------
-
-    // Setup all the needed attributes.
-    gl.bindVertexArray(sphereVAO);
-
-    sphereUniforms.u_matrix = computeMatrix(
-        viewProjectionMatrix,
-        sphereTranslation,
-        sphereXRotation,
-        sphereYRotation);
-
-    // Set the uniforms we just computed
-    twgl.setUniforms(programInfo, sphereUniforms);
-
-    twgl.drawBufferInfo(gl, sphereBufferInfo);
 
     // ------ Draw the cube --------
 
@@ -168,29 +134,13 @@ function main() {
     cubeUniforms.u_matrix = computeMatrix(
         viewProjectionMatrix,
         cubeTranslation,
-        cubeXRotation,
+        cubeXRotation,-
         cubeYRotation);
 
     // Set the uniforms we just computed
     twgl.setUniforms(programInfo, cubeUniforms);
 
     twgl.drawBufferInfo(gl, cubeBufferInfo);
-
-    // ------ Draw the cone --------
-
-    // Setup all the needed attributes.
-    gl.bindVertexArray(coneVAO);
-
-    coneUniforms.u_matrix = computeMatrix(
-        viewProjectionMatrix,
-        coneTranslation,
-        coneXRotation,
-        coneYRotation);
-
-    // Set the uniforms we just computed
-    twgl.setUniforms(programInfo, coneUniforms);
-
-    twgl.drawBufferInfo(gl, coneBufferInfo);
 
     requestAnimationFrame(drawScene);
   }

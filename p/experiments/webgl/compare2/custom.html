@@ -26,6 +26,7 @@
 		}
 	</style>
 
+	<script src='custom.js'></script>
 	<script>
 		const vertexShaderSource = `#version 300 es
 		// Version must be declared before anything else; even comments and newlines.
@@ -72,423 +73,18 @@
 		}
 		`;
 
-		// Create a shader from source code.
-		const createShader = (gl, type, src) => {
-			const shader = gl.createShader(type);
-			gl.shaderSource(shader, src);
-			gl.compileShader(shader);
-
-			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-				console.error(gl.getShaderInfoLog(shader));
-
-				gl.deleteShader(shader);
-
-				return;
-			}
-
-			return shader;
-		};
-
-		// Create a shader program from shaders.
-		const createProgram = (gl, ...shaders) => {
-			const program = gl.createProgram();
-			shaders.forEach((shader) => gl.attachShader(program, shader));
-			gl.linkProgram(program);
-
-			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-				console.error(gl.getProgramInfoLog(program));
-
-				gl.deleteProgram(program);
-
-				return;
-			}
-
-			return program;
-		};
-
-		// Resize the drawing buffer to its actual canvas size.
-		const resizeCanvas = (gl) => {
-			const displayWidth = gl.canvas.clientWidth;
-			const displayHeight = gl.canvas.clientHeight;
-
-			if (gl.canvas.width != displayWidth || gl.canvas.height != displayHeight) {
-				gl.canvas.width = displayWidth;
-				gl.canvas.height = displayHeight;
-			}
-		};
-
-		// Get a random integer value between the minimum and maximum (inclusive).
-		const randomInt = (min, max) => Math.floor(Math.random() * (Math.abs(max - min) + 1)) + min;
-
-		// Restrict a number between the minimum and maximum values (inclusive).
-		const clamp = (min, number, max) => Math.max(min, Math.min(number, max));
-
-		// Summation notation.
-		const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
-
-		// Multiply matrices.
-		// https://wikipedia.org/wiki/Matrix_multiplication_algorithm#Iterative_algorithm
-		// Column-wise traversal.
-		const multiplyMatrices = (a, b, m = 4) => {
-			const n = a.length / m;
-			const p = b.length / m;
-
-			// a[i][k] = a[k * n + i]
-			// b[k][j] = b[j * m + k]
-			// c[i][j] = c[j * n + i]
-
-			let c = [];
-			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[j * n + i] = sigma(0, m - 1, (k) => a[k * n + i] * b[j * m + k])));
-
-			return c;
-		};
-
-		// Row-wise traversal.
-		const multiplyMatricesRowWise = (a, b, m = 4) => {
-			const n = a.length / m;
-			const p = b.length / m;
-
-			let c = [];
-			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[i * p + j] = sigma(0, m - 1, (k) => a[i * m + k] * b[k * p + j])));
-
-			return c;
-		};
-
-		// Identity matrix.
-		const identityMatrix = (dim = 4) => {
-			let output = [];
-			sigma(0, dim - 1, (x) => sigma(0, dim - 1, (y) => output[y * dim + x] = x == y ? 1 : 0));
-			return output;
-		};
-
-		// Create a matrix to translate by (x, y).
-		const translationMatrix = (x = 0, y = 0, z = 0) => [
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			x, y, z, 1
-		];
-
-		const degreesToRadians = (d) => d * Math.PI / 180;
-
-		// Create a matrix to rotate by degrees (x axis).
-		const pitchMatrix = (d = 0) => {
-			const r = degreesToRadians(d);
-			const c = Math.cos(r);
-			const s = Math.sin(r);
-			return [
-				1, 0, 0, 0,
-				0, c, s, 0,
-				0, -s, c, 0,
-				0, 0, 0, 1
-			];
-		};
-
-		// Create a matrix to rotate by degrees (y axis).
-		const yawMatrix = (d = 0) => {
-			const r = degreesToRadians(d);
-			const c = Math.cos(r);
-			const s = Math.sin(r);
-			return [
-				c, 0, -s, 0,
-				0, 1, 0, 0,
-				s, 0, c, 0,
-				0, 0, 0, 1
-			];
-		};
-
-		// Create a matrix to rotate by degrees (z axis).
-		const rollMatrix = (d = 0) => {
-			const r = degreesToRadians(d);
-			const c = Math.cos(r);
-			const s = Math.sin(r);
-			return [
-				c, s, 0, 0,
-				-s, c, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-			];
-		};
-
-		// Combine the rotation matrix calculations.
-		const rotationMatrix = (pitch = 0, yaw = 0, roll = 0) => multiplyMatrices(multiplyMatrices(pitchMatrix(pitch), yawMatrix(yaw)), rollMatrix(roll));
-
-		// Create a matrix to scale by (x, y) times.
-		const scaleMatrix = (x = 1, y = 1, z = 1) =>  [
-			x, 0, 0, 0,
-			0, y, 0, 0,
-			0, 0, z, 0,
-			0, 0, 0, 1
-		];
-
-		// Create a matrix to convert screen to clip space.
-		// Equivalent to scale(1 / resolution) * scale(2) * translate(-1) * scale(0, -1)
-		const orthographicMatrix = (left, right, bottom, top, near, far) => [
-			2 / (right - left), 0, 0, 0,
-			0, 2 / (top - bottom), 0, 0,
-			0, 0, 2 / (near - far), 0,
-			(left + right) / (left - right), (bottom + top) / (bottom - top), (near + far) / (near - far), 1
-		];
-
-		// Apply perspective to the camera.
-		const perspectiveMatrix = (fieldOfView = 45, aspectRatio, near, far) => {
-			const f = Math.tan(Math.PI * 0.5 - 0.5 * degreesToRadians(fieldOfView));
-			const range = 1.0 / (near - far);
-
-			return [
-				f / aspectRatio, 0, 0, 0,
-				0, f, 0, 0,
-				0, 0, (near + far) * range, -1,
-				0, 0, near * far * range * 2, 0
-			];
-		};
-
-		// Invert a matrix.
-		// Based on Gaussian elimination: https://en.wikipedia.org/wiki/Gaussian_elimination
-		// Based on work by Andrew Ippoliti: http://blog.acipo.com/matrix-inversion-in-javascript/
-		// Only possible for (n * n) (square) matrices.
-		const invertMatrix = (m) => {
-			const dim = Math.sqrt(m.length);
-
-			const identity = identityMatrix(dim);
-			m = [...m]; // Duplicate to avoid modifying original.
-
-			for (let y = 0; y < dim; y++) {
-				// Get the element on the diagonal.
-				let d = m[y * dim + y];
-
-				// If there is a 0 on the diagonal, need to swap with a lower row.
-				if (d == 0) {
-					for (let y2 = y + 1; y2 < dim; y2++) {
-						if (m[y2 * dim + y] != 0) {
-							for (let x = 0; x < dim; x++) {
-								d = m[y * dim + x];
-								m[y * dim + x] = m[y2 * dim + x];
-								m[y2 * dim + x] = d;
-
-								d = identity[y * dim + x];
-								identity[y * dim + x] = identity[y2 * dim + x];
-								identity[y2 * dim + x] = d;
-							}
-
-							break;
-						}
-					}
-
-					d = m[y * dim + y];
-
-					if (d == 0) {
-						return; // Matrix is not invertible.
-					}
-				}
-
-				// Scale the row down so that there is a 1 on the diagonal.
-				for (let x = 0; x < dim; x++) {
-					m[y * dim + x] /= d;
-					identity[y * dim + x] /= d;
-				}
-
-				// Subtract this row from all of the others.
-				for (let y2 = 0; y2 < dim; y2++) {
-					if (y2 == y) {
-						continue; // Skip current row.
-					}
-
-					d = m[y2 * dim + y];
-
-					for (let x = 0; x < dim; x++) {
-						m[y2 * dim + x] -= d * m[y * dim + x];
-						identity[y2 * dim + x] -= d * identity[y * dim + x];
-					}
-				}
-			}
-
-			return identity;
-		};
-
-		// Find the cross product of two vectors. Only possible for three-dimensional vectors.
-		// Technically also possible for seven-dimensional vectors, but this doesn't cover that.
-		const crossVectors = (a, b) => [
-			a[1] * b[2] - a[2] * b[1],
-			a[2] * b[0] - a[0] * b[2],
-			a[0] * b[1] - a[1] * b[0]
-		];
-
-		// Add/subtract/multiply/divide (etc.) vectors. Add by default.
-		const operateVectors = (a, b, operation = (a, b) => a + b) => {
-			let c = [];
-			sigma(0, a.length - 1, (i) => c[i] = operation(a[i], b[i]));
-			return c;
-		};
-
-		// Normalize vector length to point on unit circle/sphere (et cetera).
-		// Warning: might cause division by 0 error.
-		const normalizeVector = (v) => operateVectors(v, v, (length) => length / Math.sqrt(sigma(0, v.length - 1, (i) => v[i] * v[i])));
-
-		// Camera angle matrix.
-		const lookAtMatrix = (cameraPosition, target, up = [0, 1, 0]) => {
-			const zAxis = normalizeVector(operateVectors(cameraPosition, target, (a, b) => a - b));
-			const xAxis = normalizeVector(crossVectors(up, zAxis));
-			const yAxis = normalizeVector(crossVectors(zAxis, xAxis));
-
-			return [
-				xAxis[0], xAxis[1], xAxis[2], 0,
-				yAxis[0], yAxis[1], yAxis[2], 0,
-				zAxis[0], zAxis[1], zAxis[2], 0,
-				cameraPosition[0], cameraPosition[1], cameraPosition[2], 1
-			];
-		};
-
-		// Scale a set of vertices by x dimensions.
-		const scaleVertices = (shape, scale) => {
-			shape = [...shape]; // Duplicate to avoid modifying original.
-			for (let i = 0; i < shape.length; i++) {
-				shape[i] *= scale[i % scale.length];
-			}
-			return shape;
-		};
-
-		const loadTexture = (gl, texture, url) => new Promise((resolve, reject) => {
-			const image = new Image();
-			if ((new URL(url, location.href)).origin != location.origin) { image.crossOrigin = ''; } // Request CORS.
-			image.addEventListener('load', () => {
-				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-				gl.generateMipmap(gl.TEXTURE_2D);
-				resolve();
-			});
-			image.src = url;
-		});
-
-		// Normalized vertices of a cube.
-		const cubeVertices = [
-			// Front
-			0, 0, 1,
-			0, 1, 1,
-			1, 0, 1,
-
-			0, 1, 1,
-			1, 1, 1,
-			1, 0, 1,
-
-			// Back
-			1, 0, 0,
-			1, 1, 0,
-			0, 0, 0,
-
-			1, 1, 0,
-			0, 1, 0,
-			0, 0, 0,
-
-			// Left
-			0, 0, 0,
-			0, 1, 0,
-			0, 0, 1,
-
-			0, 1, 0,
-			0, 1, 1,
-			0, 0, 1,
-
-			// Right
-			1, 0, 1,
-			1, 1, 1,
-			1, 0, 0,
-
-			1, 1, 1,
-			1, 1, 0,
-			1, 0, 0,
-
-			// Top
-			0, 0, 0,
-			0, 0, 1,
-			1, 0, 0,
-
-			0, 0, 1,
-			1, 0, 1,
-			1, 0, 0,
-
-			// Bottom
-			0, 1, 1,
-			0, 1, 0,
-			1, 1, 1,
-
-			0, 1, 0,
-			1, 1, 0,
-			1, 1, 1
-		];
-
-		// Normalized vertices of a triangular pyramid.
-		const pyramidVertices = [
-			0.5, 0, 0,
-			0, 0, 1,
-			1, 0, 1,
-
-			0.5, 1, 0.5,
-			0, 0, 1,
-			0.5, 0, 0,
-
-			0.5, 1, 0.5,
-			0.5, 0, 0,
-			1, 0, 1,
-
-			0.5, 1, 0.5,
-			1, 0, 1,
-			0, 0, 1
-		];
-
-		// Texture coordinates to put one full copy of the texture on one rectangle.
-		// Assumes the rectangle's coordinates are top left triangle-first.
-		// Assumes that points are declared counter-clockwise, but they should be anyways for CULL_FACE.
-		const fullRectangleTextureCoordinates = [
-			0, 0,
-			0, 1,
-			1, 0,
-			0, 1,
-			1, 1,
-			1, 0
-		];
-
-		const fullCubeTextureCoordinates = [].concat(
-			fullRectangleTextureCoordinates,
-			fullRectangleTextureCoordinates,
-			fullRectangleTextureCoordinates,
-			fullRectangleTextureCoordinates,
-			fullRectangleTextureCoordinates,
-			fullRectangleTextureCoordinates
-		);
-
-		// Texture coordinates to put the upper-left half of the texture on one triangle.
-		const fullTriangleTextureCoordinates = [
-			0, 0,
-			0, 1,
-			1, 0
-		];
-
-		const fullPyramidTextureCoordinates = [].concat(
-			fullTriangleTextureCoordinates,
-			fullTriangleTextureCoordinates,
-			fullTriangleTextureCoordinates,
-			fullTriangleTextureCoordinates
-		);
-
 		// Cube properties.
 		const cubeSize = [20, 20, 20];
-		let cubeTranslation = [-30, 0, 0];
+		let cubeTranslation = [0, 0, 0];
 		let cubeRotation = [0, 0, 0];
 		let cubeRotationalVelocity = [20, 10, 0];
-
-		// Pyramid properties.
-		const pyramidSize = [20, 20, 20];
-		let pyramidTranslation = [30, 0, 0];
-		let pyramidRotation = [0, 0, 0];
-		let pyramidRotationalVelocity = [20, 10, 0];
 
 		// Camera properties.
 		let fov = 60;
 		let near = 1;
 		let far = 200;
 		let lookAt = [0, 0, 0];
-		let cameraTranslation = [0, 10, 100];
+		let cameraTranslation = [0, 0, 100];
 
 		// Start program.
 		onload = () => {
@@ -536,18 +132,6 @@
 			gl.bindBuffer(gl.ARRAY_BUFFER, cubeTexcoordBuffer);
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(fullCubeTextureCoordinates), gl.STATIC_DRAW);
 
-			// Buffer 3: Pyramid vertex data.
-
-			const pyramidPositionBuffer = gl.createBuffer();
-			gl.bindBuffer(gl.ARRAY_BUFFER, pyramidPositionBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(scaleVertices(pyramidVertices, pyramidSize)), gl.STATIC_DRAW);
-
-			// Buffer 4: Pyramid texcoord data.
-
-			const pyramidTexcoordBuffer = gl.createBuffer();
-			gl.bindBuffer(gl.ARRAY_BUFFER, pyramidTexcoordBuffer);
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(fullPyramidTextureCoordinates), gl.STATIC_DRAW);
-
 			// Below here is done for each shape.
 
 			// Shape 1: Cube.
@@ -576,23 +160,6 @@
 			gl.bindBuffer(gl.ARRAY_BUFFER, cubeTexcoordBuffer);
 			gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-			// Shape 2: Pyramid.
-
-			const pyramidVao = gl.createVertexArray();
-			gl.bindVertexArray(pyramidVao);
-
-			// Attribute 1: Vertices.
-
-			gl.enableVertexAttribArray(positionLocation);
-			gl.bindBuffer(gl.ARRAY_BUFFER, pyramidPositionBuffer);
-			gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
-			// Attribute 2: Texture coordinates.
-
-			gl.enableVertexAttribArray(texcoordLocation);
-			gl.bindBuffer(gl.ARRAY_BUFFER, pyramidTexcoordBuffer);
-			gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
-
 			// Below here is done for each texture.
 
 			// Texture 1: Square outline.
@@ -612,34 +179,12 @@
 			);
 			loadTexture(gl, squareOutlineTexture, 'outline texture.png');
 
-			// Set behavior when using values outside of the (0 - 1) range. Not necessary since we're using a mipmap.
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-			// Set scaling options. Not necessary since we're using a mipmap.
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); // For when size is smaller than the largest mip.
-			// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // For when size is larger than the largest mip.
-
 			// Texture 2: Cube rainbow.
 
 			const squareRainbowTexture = gl.createTexture();
 			gl.bindTexture(gl.TEXTURE_2D, squareRainbowTexture);
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([ 255, 0, 255, 255 ]));
 			loadTexture(gl, squareRainbowTexture, 'rgb fade.png');
-
-			// Texture 3: Triangle outline.
-
-			const triangleOutlineTexture = gl.createTexture();
-			gl.bindTexture(gl.TEXTURE_2D, triangleOutlineTexture);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([ 255, 0, 255, 255 ]));
-			loadTexture(gl, triangleOutlineTexture, 'tri outline texture.png');
-
-			// Texture 4: Triangle rainbow.
-
-			const triangleRainbowTexture = gl.createTexture();
-			gl.bindTexture(gl.TEXTURE_2D, triangleRainbowTexture);
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([ 255, 0, 255, 255 ]));
-			loadTexture(gl, triangleRainbowTexture, 'tri rgb fade.png');
 
 			// Render time.
 			const drawScene = (now) => {
@@ -648,10 +193,6 @@
 				// Calculate delta time (time since last frame in seconds).
 				let deltaTime = (now - then) * 0.001 || 0;
 				then = now;
-
-				// Animation.
-				cubeRotation = operateVectors(cubeRotation, cubeRotationalVelocity, (a, b) => a + b * deltaTime);
-				pyramidRotation = operateVectors(pyramidRotation, pyramidRotationalVelocity, (a, b) => a + b * deltaTime);
 
 				// Build camera matrix.
 				const projectionMatrix = perspectiveMatrix(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far); // Determines view space.
@@ -662,7 +203,7 @@
 				// Global state.
 				resizeCanvas(gl); // Resize canvas drawing buffer to match physical size.
 				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height); // Set WebGL viewport.
-				gl.clearColor(0, 0, 0, 1); // Set clear color.
+				gl.clearColor(0, 0, 0, 0); // Set clear color.
 				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // Clear the canvas.
 				gl.enable(gl.CULL_FACE); // Render only front-facing (counter-clockwise) triangles.
 				gl.enable(gl.DEPTH_TEST); // Draw closer pixels over further ones.
@@ -676,12 +217,29 @@
 
 				// Setup uniforms.
 
-				gl.uniformMatrix4fv(matrixLocation, false, multiplyMatrices(multiplyMatrices(multiplyMatrices(
+				/*
+				const matrix = multiplyMatrices(multiplyMatrices(multiplyMatrices(
 					viewProjectionMatrix,
 					translationMatrix(...cubeTranslation)),
 					rotationMatrix(...cubeRotation)),
 					translationMatrix(...operateVectors(cubeSize, cubeSize, (a, b) => -a / 2)) // Move origin to center.
-				));
+				);
+				*/
+
+				let matrix = multiplyMatrices(viewProjectionMatrix, translationMatrix(...cubeTranslation));
+
+				matrix = multiplyMatrices(matrix, rotationMatrix(...cubeRotation));
+
+				if (new URLSearchParams(window.location.search).get('center')) {
+					// This is where the matrices diverge.
+					// Enabling this causes the cubes to take up the same screen space, albeit with warped dimensions in this example.
+					// Disabling this returns very different results, but with identical matrices.
+					// Therefore, the issue cannot be within the matrices or any of the methods used to create them.
+
+					matrix = multiplyMatrices(matrix, translationMatrix(...operateVectors(cubeSize, cubeSize, (a, b) => -a / 2)));
+				}
+
+				gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
 				// Below is done for each texture (for each shape).
 
@@ -700,28 +258,6 @@
 				// Below is done for each shape (not each texture).
 
 				gl.drawArrays(gl.TRIANGLES, 0, 36); // Draw geometry.
-
-				// Shape 2: Pyramid.
-
-				gl.useProgram(program);
-				gl.bindVertexArray(pyramidVao);
-
-				gl.uniformMatrix4fv(matrixLocation, false, multiplyMatrices(multiplyMatrices(multiplyMatrices(
-					viewProjectionMatrix,
-					translationMatrix(...pyramidTranslation)),
-					rotationMatrix(...pyramidRotation)),
-					translationMatrix(...operateVectors(pyramidSize, pyramidSize, (a, b) => -a / 2))
-				));
-
-				gl.uniform1i(textureLocation, 0);
-				gl.activeTexture(gl.TEXTURE0 + 0);
-				gl.bindTexture(gl.TEXTURE_2D, triangleRainbowTexture);
-
-				gl.uniform1i(textureMaskLocation, 1);
-				gl.activeTexture(gl.TEXTURE0 + 1);
-				gl.bindTexture(gl.TEXTURE_2D, triangleOutlineTexture);
-
-				gl.drawArrays(gl.TRIANGLES, 0, 12);
 			};
 			drawScene();
 		};
