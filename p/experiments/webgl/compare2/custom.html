@@ -120,13 +120,13 @@
 
 			// Below here is done for each buffer.
 
-			// Buffer 1: Cube vertex data.
+			// Buffer 1: Cube position data.
 
 			const cubePositionBuffer = gl.createBuffer(); // Create the buffer.
 			gl.bindBuffer(gl.ARRAY_BUFFER, cubePositionBuffer); // Set the ARRAY_BUFFER to the new buffer.
-			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(scaleVertices(cubeVertices, cubeSize)), gl.STATIC_DRAW); // Fill the ARRAY_BUFFER.
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cubePositions), gl.STATIC_DRAW); // Fill the ARRAY_BUFFER.
 
-			// Buffer 2: Cube texcoord data.
+			// Buffer 3: Cube texcoord data.
 
 			const cubeTexcoordBuffer = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, cubeTexcoordBuffer);
@@ -138,6 +138,12 @@
 
 			const cubeVao = gl.createVertexArray(); // Create a Vertex Array Object (VAO).
 			gl.bindVertexArray(cubeVao); // Set it as the current active VAO.
+
+			// Buffer 2: Cube index data.
+
+			const cubeIndexBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeIndexBuffer);
+			gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(cubeIndices), gl.STATIC_DRAW);
 
 			// Below here is done for each attribute (for each shape).
 
@@ -257,7 +263,7 @@
 
 				// Below is done for each shape (not each texture).
 
-				gl.drawArrays(gl.TRIANGLES, 0, 36); // Draw geometry.
+				gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0); // Draw geometry.
 			};
 			drawScene();
 		};

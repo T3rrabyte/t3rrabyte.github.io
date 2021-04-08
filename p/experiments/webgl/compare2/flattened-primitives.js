@@ -27,6 +27,9 @@
   function createFlattenedFunc(createVerticesFunc, vertsPerColor) {
     return function(gl) {
       const arrays = createVerticesFunc.apply(null,  Array.prototype.slice.call(arguments, 1));
+
+      console.log(arrays); // TODO: Delete.
+      
       return createFlattenedVertices(gl, arrays, vertsPerColor);
     };
   }
