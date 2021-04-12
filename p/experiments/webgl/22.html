@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Cleanup</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Cleanup' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<link rel='stylesheet' href='webgl.css' />
+
+	<script src='webgl.js'></script>
+
+	<script>
+		/*
+		Standard WebGL program layout:
+
+		Init time:
+		- Create all shaders and programs and look up locations.
+		- Create buffers and upload vertex data.
+		- Create a vertex array for each thing you want to draw.
+			- For each attribute call gl.bindBuffer, gl.vertexAttribPointer, and gl.enableVertexAttribArray.
+			- Bind any indices to gl.ELEMENT_ARRAY_BUFFER.
+		- Create textures and upload texture data.
+
+		Render time:
+		- Clear and set the viewport and other global state.
+		- For each thing you want to draw:
+			- Call gl.useProgram for the program needed to draw.
+			- Bind the vertex array for that thing (gl.bindVertexArray).
+			- Setup uniforms for the thing you want to draw.
+				- Call gl.uniformXXX for each uniform.
+				- Call gl.activeTexture and gl.bindTexture to assign textures to texture units.
+			- Call gl.drawArrays or gl.drawElements.
+		*/
+
+		// Start program.
+		onload = () => { }
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>
