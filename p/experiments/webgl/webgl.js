@@ -45,36 +45,6 @@ void main() {
 	outColor = texture(u_texture, v_texcoord) * texture(u_textureMask, v_texcoord) * v_hue;
 }`;
 
-// Create a shader from source code.
-const createShader = (gl, type, src) => {
-	const shader = gl.createShader(type);
-	gl.shaderSource(shader, src);
-	gl.compileShader(shader);
-
-	if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		console.error(gl.getShaderInfoLog(shader));
-		gl.deleteShader(shader);
-		return;
-	}
-
-	return shader;
-};
-
-// Create a shader program from shaders.
-const createProgram = (gl, ...shaders) => {
-	const program = gl.createProgram();
-	shaders.forEach((shader) => gl.attachShader(program, shader));
-	gl.linkProgram(program);
-
-	if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-		console.error(gl.getProgramInfoLog(program));
-		gl.deleteProgram(program);
-		return;
-	}
-
-	return program;
-};
-
 // Resize the drawing buffer to match the physical canvas size.
 const resizeCanvas = (gl) => {
 	const displayWidth = gl.canvas.clientWidth;
@@ -86,96 +56,147 @@ const resizeCanvas = (gl) => {
 	}
 };
 
-// Summation notation.
-const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
+class Shader {
+	constructor(gl, src, type) {
+		this.gl = gl;
 
-// Create a new array with values based on a rule.
-const arrayFromRule = (length = 1, rule = (i) => i) => {
-	let output = [];
-	for (let i = 0; i < length; i++) {
-		output[i] = rule(i);
+		this.shader = this.gl.createShader(type);
+		this.gl.shaderSource(this.shader, src);
+		this.gl.compileShader(this.shader);
+
+		/*
+		if (this.gl.getShaderParameter(this.shader, this.gl.COMPILE_STATUS)) {
+			console.error(this.gl.getShaderInfoLog(this.shader));
+			this.gl.deleteShader(shader);
+		}
+		*/
 	}
-	return output;
-};
-// TODO: Rewrite some methods to use arrayFromRule instead of sigma.
+}
 
-// Convert degrees to radians.
-const degreesToRadians = (d = 0) => d * Math.PI / 180;
+class ShaderProgram {
+	constructor(gl, vertexSrc, fragmentSrc) {
+		this.gl = gl;
+		this.program = this.gl.createProgram();
+		[
+			{ src: vertexSrc, type: this.gl.VERTEX_SHADER },
+			{ src: fragmentSrc, type: this.gl.FRAGMENT_SHADER }
+		].forEach((info) => this.gl.attachShader(this.program, new Shader(this.gl, info.src, info.type).shader));
+		this.gl.linkProgram(this.program);
 
-// Multiply matrices via iterative algorithm. Column-wise traversal.
-const multiplyMatrices = (a, b, m = 4) => {
-	const n = a.length / m;
-	const p = b.length / m;
+		/*
+		if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+			console.error(this.gl.getProgramInfoLog(this.program));
+			this.gl.deleteProgram(this.program);
+		}
+		*/
+	}
+}
 
-	let c = [];
-	sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[j * n + i] = sigma(0, m - 1, (k) => a[k * n + i] * b[j * m + k])));
-	return c;
-};
+class UMath {
+	// Summation notation.
+	static sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? UMath.sigma(min + 1, max, equation, output) : 0);
 
-// Make an identity matrix for a given dimension.
-const identityMatrix = (dim = 4) => {
-	let output = [];
-	sigma(0, dim - 1, (x) => sigma(0, dim - 1, (y) => output[y * dim + x] = x == y ? 1 : 0));
-	return output;
-};
+	// Convert value in degrees to equivalent value in radians.
+	static degreesToRadians = (d) => d * Math.PI / 180;
 
-// Make a matrix which translates by (x, y, z).
-const translationMatrix = (x = 0, y = 0, z = 0) => [
-	1, 0, 0, 0,
-	0, 1, 0, 0,
-	0, 0, 1, 0,
-	x, y, z, 1
-];
+	// Create a new array with values based on a rule.
+	static arrayFromRule = (length, rule = (i) => i) => {
+		let output = [];
+		for (let i = 0; i < length; i++) {
+			output[i] = rule(i);
+		}
+		return output;
+	};
+}
 
-// Create a matrix which rotates by d degrees about the x axis.
-const pitchMatrix = (d = 0) => {
-	const r = degreesToRadians(d);
-	const c = Math.cos(r);
-	const s = Math.sin(r);
-	return [
-		1, 0, 0, 0,
-		0, c, s, 0,
-		0, -s, c, 0,
-		0, 0, 0, 1
-	];
-};
+class Matrix {
+	// Create an identity matrix for the given dimensions.
+	static identity = (dim = 4) => UMath.arrayFromRule(dim, (x) => UMath.arrayFromRule(dim, (y) => x == y ? 1 : 0));
 
-// Create a matrix which rotates by d degrees about the y axis.
-const yawMatrix = (d = 0) => {
-	const r = degreesToRadians(d);
-	const c = Math.cos(r);
-	const s = Math.sin(r);
-	return [
-		c, 0, -s, 0,
-		0, 1, 0, 0,
-		s, 0, c, 0,
-		0, 0, 0, 1
-	];
-};
+	// Defaults to a four-dimensional identity matrix.
+	constructor(data = Matrix.identity()) {
+		this.data = data;
+	}
 
-// Create a matrix which rotates by d degrees about the z axis.
-const rollMatrix = (d = 0) => {
-	const r = degreesToRadians(d);
-	const c = Math.cos(r);
-	const s = Math.sin(r);
-	return [
-		c, s, 0, 0,
-		-s, c, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	];
-};
+	// Flatten to a one-dimensional array.
+	flatten = () => [].concat(...this.data);
 
-// Create a matrix which rotates by x degrees about the x axis, y degrees about the y axis, and z degrees about the z axis.
-const rotationMatrix = (x = 0, y = 0, z = 0) => multiplyMatrices(multiplyMatrices(pitchMatrix(x), yawMatrix(y)), rollMatrix(z));
+	// Multiply by another matrix via iterative algorithm.
+	// If C = AB for an (n * m) matrix A and an (m * p) matrix B, then C is an (n * p) matrix with entries.
+	multiply = (b) => {
+		// A is this
+		// B is b
+		// C is the return value.
 
-// Create a matrix which scales by (x, y, z) times.
-const scaleMatrix = (x = 1, y = 1, z = 1) => [
-	x, 0, 0, 0,
-	0, y, 0, 0,
-	0, 0, z, 0,
-	0, 0, 0, 1
-];
+		const n = this.data.length;
+		const m = b.data.length;
+		const p = b.data[0].length;
+
+		this.data = UMath.arrayFromRule(n, (i) => UMath.arrayFromRule(p, (j) => UMath.sigma(0, m - 1, (k) => this.data[i][k] * b.data[k][j])));
+		return this;
+	}
+
+	// Translate by (x, y, z).
+	translate = (x, y, z) => this.multiply(new Matrix([
+		[1, 0, 0, 0],
+		[0, 1, 0, 0],
+		[0, 0, 1, 0],
+		[x, y, z, 1]
+	]));
+
+	// Rotate d degrees about the x axis.
+	pitch = (d) => {
+		const r = UMath.degreesToRadians(d);
+		const c = Math.cos(r);
+		const s = Math.sin(r);
+
+		return this.multiply(new Matrix([
+			[1, 0, 0, 0],
+			[0, c, s, 0],
+			[0, -s, c, 0],
+			[0, 0, 0, 1]
+		]));
+	}
+
+	// Rotate d degrees about the y axis.
+	yaw = (d) => {
+		const r = UMath.degreesToRadians(d);
+		const c = Math.cos(r);
+		const s = Math.sin(r);
+
+		return this.multiply(new Matrix([
+			[c, 0, -s, 0],
+			[0, 1, 0, 0],
+			[s, 0, c, 0],
+			[0, 0, 0, 1]
+		]));
+	}
+
+	// Rotate d degrees about the z axis.
+	roll = (d) => {
+		const r = UMath.degreesToRadians(d);
+		const c = Math.cos(r);
+		const s = Math.sin(r);
+
+		return this.multiply(new Matrix([
+			[c, s, 0, 0],
+			[-s, c, 0, 0],
+			[0, 0, 1, 0],
+			[0, 0, 0, 1]
+		]));
+	}
+
+	// Rotate (x, y, z) degrees.
+	rotate = (x, y, z) => this.pitch(x).yaw(y).roll(z);
+
+	// Scale by (x, y, z) times.
+	scale = (x, y, z) => this.multiply(new Matrix([
+		[x, 0, 0, 0],
+		[0, y, 0, 0],
+		[0, 0, z, 0],
+		[0, 0, 0, 1]
+	]));
+}
 
 // Create a matrix which converts screen space to clip space.
 const orthographicMatrix = (left, right, bottom, top, near, far) => [
@@ -200,16 +221,59 @@ const perspectiveMatrix = (fov = 60, aspectRatio, near = 1, far = 2000) => {
 // Invert a matrix via Gaussian elimination. Based on work by Andrew Ippoliti. Only possible for square matrices.
 const invertMatrix = (m) => {
 	const dim = Math.sqrt(m.length);
+
 	const identity = identityMatrix(dim);
-	m = [...m];
+	m = [...m]; // Duplicate to avoid modifying original.
 
-	sigma(0, dim - 1, (y) => {
-		let d = m[y * dim + y];
+	for (let y = 0; y < dim; y++) {
+		let d = m[y * dim + y]; // Get the element on the diagonal.
 
+		// If there is a 0 on the diagonal, need to swap with a lower row.
 		if (d == 0) {
-			sigma(y + 1, dim - 1, (y2) => {
-				if ()
-			})
+			for (let y2 = y + 1; y2 < dim; y2++) {
+				if (m[y2 * dim + y] != 0) {
+					for (let x = 0; x < dim; x++) {
+						d = m[y * dim + x];
+						m[y * dim + x] = m[y2 * dim + x];
+						m[y2 * dim + x] = d;
+
+						d = identity[y * dim + x];
+						identity[y * dim + x] = identity[y2 * dim + x];
+						identity[y2 * dim + x] = d;
+					}
+
+					break;
+				}
+			}
+
+			d = m[y * dim + y];
+
+			if (d == 0) {
+				return; // Matrix is not invertible.
+			}
 		}
-	})
+
+		// Scale the row down so that there is a 1 on the diagonal.
+		for (let x = 0; x < dim; x++) {
+			m[y * dim + x] /= d;
+			identity[y * dim + x] /= d;
+		}
+
+		// Subtract this row from all of the others.
+		for (let y2 = 0; y2 < dim; y2++) {
+			if (y2 == y) {
+				continue; // Skip current row.
+			}
+
+			d = m[y2 * dim + y];
+
+			for (let x = 0; x < dim; x++) {
+				m[y2 * dim + x] -= d * m[y * dim + x];
+				identity[y2 * dim + x] -= d * identity[y * dim + x];
+			}
+		}
+	}
+
+	return identity;
 };
+
