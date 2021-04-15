@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>WebGL Cleanup</title>
+	<meta name='description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+	<meta name='author' content='Travis Martin' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta charset='utf-8' />
+
+	<meta property='og:title' content='WebGL Cleanup' />
+	<meta property='og:type' content='website' />
+	<meta property='og:url' content='#' />
+	<meta property='og:description' content='Example and walkthrough of WebGL fundamentals, based on webgl2fundamentals.org.' />
+
+	<link rel='stylesheet' href='webgl.css' />
+
+	<script src='custom.js'></script>
+
+	<script>
+		onload = () => {
+			let matrix = translationMatrix(100, 100, 100);
+			console.log(matrix);
+		}
+	</script>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+</body>
+
+</html>
