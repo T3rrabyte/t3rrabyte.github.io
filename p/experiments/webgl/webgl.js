@@ -1,50 +1,3 @@
-// Vertex shader source code written in GLSL ES 3.00.
-const vertexShaderSource = `#version 300 es
-// Version must be declared before anything else - including comments and newlines.
-
-// Attributes (inputs) are used where data is different for each vertex.
-in vec4 a_position; // Vertex positions.
-in vec2 a_texcoord; // Texture coordinates.
-in vec4 a_hue; // Color.
-
-// Varyings (outputs) pass data from the vertex shader to the fragment shader.
-out vec2 v_texcoord; // Texture coordinates.
-out vec4 v_hue; // Color.
-
-// Uniforms are used where data is the same for each vertex.
-uniform mat4 u_matrix; // Transforms.
-
-void main() {
-	// gl_Position is a special variable that the vertex shader is responsible for setting. It determines the position of the vertex.
-	gl_Position = u_matrix * a_position;
-
-	v_texcoord = a_texcoord;
-	v_hue = a_hue;
-}`;
-
-// Fragment shader source code written in GLSL ES 3.00.
-const fragmentShaderSource = `#version 300 es
-// Version must be declared before anything else - including comments and newlines.
-
-// Declare default precision.
-precision highp float;
-
-// Accept varyings (inputs) from the vertex shader.
-in vec2 v_texcoord;
-in vec4 v_hue;
-
-// A sampler2D allows us to reference a texture.
-uniform sampler2D u_texture;
-uniform sampler2D u_textureMask;
-
-// Output the color of each pixel.
-out vec4 outColor;
-
-void main() {
-	// Set the output color. texture() looks up a color in a texture.
-	outColor = texture(u_texture, v_texcoord) * texture(u_textureMask, v_texcoord) * v_hue;
-}`;
-
 // Resize the drawing buffer to match the physical canvas size.
 const resizeCanvas = (gl) => {
 	const displayWidth = gl.canvas.clientWidth;
@@ -69,40 +22,105 @@ const loadTexture = (gl, texture, url) => new Promise((resolve, reject) => {
 });
 
 const cubePositions = [
-	1, 1, 1, // 0
-	1, 1, -1, // 1
-	1, -1, 1, // 2
-	1, -1, -1, // 3
-	-1, 1, 1, // 4
-	-1, 1, -1, // 5
-	-1, -1, 1, // 6
-	-1, -1, -1 // 7
+	// Front
+	-1, -1, 1,
+	-1, 1, 1,
+	1, -1, 1,
+	1, 1, 1,
+
+	// Back
+	1, -1, -1,
+	1, 1, -1,
+	-1, -1, -1,
+	-1, 1, -1,
+
+	// Left
+	-1, -1, -1,
+	-1, 1, -1,
+	-1, -1, 1,
+	-1, 1, 1,
+
+	// Right
+	1, -1, 1,
+	1, 1, 1,
+	1, -1, -1,
+	1, 1, -1,
+
+	// Top
+	-1, -1, -1,
+	-1, -1, 1,
+	1, -1, -1,
+	1, -1, 1,
+
+	// Bottom
+	-1, 1, 1,
+	-1, 1, -1,
+	1, 1, 1,
+	1, 1, -1
+];
+
+const cubeTexcoords = [
+	// Front
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1,
+
+	// Back
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1,
+	
+	// Left
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1,
+	
+	// Right
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1,
+	
+	// Top
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1,
+	
+	// Bottom
+	0, 0,
+	0, 1,
+	1, 0,
+	1, 1
 ];
 
 const cubeIndices = [
 	// Front
-	6, 4, 2,
-	4, 0, 2,
+	0, 1, 2,
+	1, 3, 2,
 
 	// Back
-	3, 1, 7,
-	1, 5, 7,
+	4, 5, 6,
+	5, 7, 6,
 
 	// Left
-	7, 5, 6,
-	5, 4, 6,
+	8, 9, 10,
+	9, 11, 10,
 
 	// Right
-	2, 0, 3,
-	0, 1, 3,
+	12, 13, 14,
+	13, 15, 14,
 
 	// Top
-	7, 6, 3,
-	6, 2, 3,
+	16, 17, 18,
+	17, 19, 18,
 
 	// Bottom
-	4, 5, 0,
-	5, 1, 0
+	20, 21, 22,
+	21, 23, 22
 ];
 
 class Shader {
@@ -113,12 +131,10 @@ class Shader {
 		this.gl.shaderSource(this.shader, src);
 		this.gl.compileShader(this.shader);
 
-		/*
-		if (this.gl.getShaderParameter(this.shader, this.gl.COMPILE_STATUS)) {
+		if (!this.gl.getShaderParameter(this.shader, this.gl.COMPILE_STATUS)) {
 			console.error(this.gl.getShaderInfoLog(this.shader));
-			this.gl.deleteShader(shader);
+			this.gl.deleteShader(this.shader);
 		}
-		*/
 	}
 }
 
@@ -132,12 +148,71 @@ class ShaderProgram {
 		].forEach((info) => this.gl.attachShader(this.program, new Shader(this.gl, info.src, info.type).shader));
 		this.gl.linkProgram(this.program);
 
-		/*
 		if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
 			console.error(this.gl.getProgramInfoLog(this.program));
 			this.gl.deleteProgram(this.program);
 		}
-		*/
+	}
+}
+
+class DefaultShaderProgram extends ShaderProgram {
+	// Vertex shader source code written in GLSL ES 3.00.
+	static vertexShaderSource = `#version 300 es
+	// Version must be declared before anything else - including comments and newlines.
+
+	// Attributes (inputs) are used where data is different for each vertex.
+	in vec4 a_position; // Vertex positions.
+	in vec2 a_texcoord; // Texture coordinates.
+
+	// Varyings (outputs) pass data from the vertex shader to the fragment shader.
+	out vec2 v_texcoord; // Texture coordinates.
+
+	// Uniforms are used where data is the same for each vertex.
+	uniform mat4 u_matrix; // Transforms.
+
+	void main() {
+		// gl_Position is a special variable that the vertex shader is responsible for setting. It determines the position of the vertex.
+		gl_Position = u_matrix * a_position;
+
+		v_texcoord = a_texcoord;
+	}`;
+
+	// Fragment shader source code written in GLSL ES 3.00.
+	static fragmentShaderSource = `#version 300 es
+	// Version must be declared before anything else - including comments and newlines.
+
+	// Declare default precision.
+	precision highp float;
+
+	// Accept varyings (inputs) from the vertex shader.
+	in vec2 v_texcoord;
+
+	// A sampler2D allows us to reference a texture.
+	uniform sampler2D u_texture;
+	uniform sampler2D u_textureMask;
+
+	// Output the color of each pixel.
+	out vec4 outColor;
+
+	void main() {
+		// Set the output color. texture() looks up a color in a texture.
+		outColor = texture(u_texture, v_texcoord) * texture(u_textureMask, v_texcoord);
+	}`;
+
+	constructor(gl) {
+		super(gl, DefaultShaderProgram.vertexShaderSource, DefaultShaderProgram.fragmentShaderSource);
+
+		this.locations = {
+			attributes: {
+				position: gl.getAttribLocation(this.program, 'a_position'),
+				texcoord: gl.getAttribLocation(this.program, 'a_texcoord')
+			},
+			uniforms: {
+				matrix: gl.getUniformLocation(this.program, 'u_matrix'),
+				texture: gl.getUniformLocation(this.program, 'u_texture'),
+				textureMask: gl.getUniformLocation(this.program, 'u_textureMask')
+			}
+		};
 	}
 }
 
@@ -178,7 +253,7 @@ class UArray extends Array {
 
 class Vector extends UArray {
 	// Find the cross product of this and another vector.
-	cross = (vector) => UArray.fromRule(this.data.length, (i) => {
+	cross = (vector) => UArray.fromRule(this.length, (i) => {
 		const increment = (num) => num + 1 >= this.length ? 0 : num + 1;
 		i = increment(i);
 		let j = increment(i);
@@ -391,8 +466,8 @@ class Camera extends Matrix {
 
 	// Position camera and face towards a position.
 	lookAt = (position, targetPosition, up = new Vector(0, 1, 0)) => {
-		const zAxis = new Vector(...position).operate(targetPosition, (a, b) => a - b).normalize();
-		const xAxis = up.cross(zAxis).normalize();
+		const zAxis = new Vector(...position).operate(new Vector(...targetPosition), (a, b) => a - b).normalize();
+		const xAxis = new Vector(...up).cross(zAxis).normalize();
 		const yAxis = new Vector(...zAxis).cross(xAxis).normalize();
 
 		return this.multiply(new Matrix(
