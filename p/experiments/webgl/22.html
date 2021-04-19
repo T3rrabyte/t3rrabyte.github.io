@@ -50,6 +50,9 @@
 		let cubeRotation = new Vector(0, 0, 0);
 		let cubeScale = new Vector(1, 1, 1);
 
+		onload = () => console.log(new Matrix().rotate(100, 100, 100).flatten());
+
+		/*
 		onload = () => {
 			const canvas = document.querySelector('#canvas');
 			const gl = canvas.getContext('webgl2');
@@ -85,7 +88,7 @@
 			const squareTexture = gl.createTexture();
 			gl.bindTexture(gl.TEXTURE_2D, squareTexture);
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 255, 255]));
-			loadTexture(gl, squareTexture, 'empty.png');
+			loadTexture(gl, squareTexture, 'null.png');
 
 			const squareTextureMask = gl.createTexture();
 			gl.bindTexture(gl.TEXTURE_2D, squareTextureMask);
@@ -97,8 +100,6 @@
 
 				let deltaTime = (now - then) * 0.001 || 0;
 				then = now;
-
-				cubeRotation.operate(new Vector(0.7, 0.4, 0));
 
 				const viewProjectionMatrix = new Camera()
 					.perspective(fov, gl.canvas.clientWidth / gl.canvas.clientHeight, near, far)
@@ -132,6 +133,7 @@
 			}
 			drawScene();
 		};
+		*/
 	</script>
 </head>
 <body>

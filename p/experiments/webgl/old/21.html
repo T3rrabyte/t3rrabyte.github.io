@@ -126,10 +126,14 @@
 		// Summation notation.
 		const sigma = (min, max, equation, output = 0) => output += equation(min) + (min < max ? sigma(min + 1, max, equation, output) : 0);
 
+		let testi = 0;
+
 		// Multiply matrices.
 		// https://wikipedia.org/wiki/Matrix_multiplication_algorithm#Iterative_algorithm
 		// Column-wise traversal.
 		const multiplyMatrices = (a, b, m = 4) => {
+			console.log(`multiply:\n${a}\n${b}`);
+
 			const n = a.length / m;
 			const p = b.length / m;
 
@@ -138,7 +142,10 @@
 			// c[i][j] = c[j * n + i]
 
 			let c = [];
-			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[j * n + i] = sigma(0, m - 1, (k) => a[k * n + i] * b[j * m + k])));
+			sigma(0, n - 1, (i) => sigma(0, p - 1, (j) => c[j * n + i] = sigma(0, m - 1, (k) => {
+				console.log(`${++testi} - (${i}, ${j}, ${k}): ${a[k * n + i]} * ${b[j * m + k]} = ${a[k * n + i] * b[j * m + k]}`)
+				return a[k * n + i] * b[j * m + k];
+			})));
 
 			return c;
 		};
@@ -173,6 +180,7 @@
 
 		// Create a matrix to rotate by degrees (x axis).
 		const pitchMatrix = (d = 0) => {
+			console.log('pitch');
 			const r = degreesToRadians(d);
 			const c = Math.cos(r);
 			const s = Math.sin(r);
@@ -186,6 +194,7 @@
 
 		// Create a matrix to rotate by degrees (y axis).
 		const yawMatrix = (d = 0) => {
+			console.log('yaw');
 			const r = degreesToRadians(d);
 			const c = Math.cos(r);
 			const s = Math.sin(r);
@@ -199,6 +208,7 @@
 
 		// Create a matrix to rotate by degrees (z axis).
 		const rollMatrix = (d = 0) => {
+			console.log('roll');
 			const r = degreesToRadians(d);
 			const c = Math.cos(r);
 			const s = Math.sin(r);
@@ -211,7 +221,19 @@
 		};
 
 		// Combine the rotation matrix calculations.
-		const rotationMatrix = (pitch = 0, yaw = 0, roll = 0) => multiplyMatrices(multiplyMatrices(pitchMatrix(pitch), yawMatrix(yaw)), rollMatrix(roll));
+		const rotationMatrix = (pitch = 0, yaw = 0, roll = 0) => {
+			console.log('rotate');
+			let matrix = identityMatrix();
+			console.log(matrix);
+			matrix = multiplyMatrices(matrix, pitchMatrix(pitch));
+			console.log(matrix);
+			matrix = multiplyMatrices(matrix, yawMatrix(yaw));
+			console.log(matrix);
+			matrix = multiplyMatrices(matrix, rollMatrix(roll));
+			console.log(matrix);
+			console.log('done rotate');
+			return matrix;
+		};
 
 		// Create a matrix to scale by (x, y) times.
 		const scaleMatrix = (x = 1, y = 1, z = 1) =>  [
@@ -490,6 +512,9 @@
 		let lookAt = [0, 0, 0];
 		let cameraTranslation = [0, 10, 100];
 
+		onload = () => console.log(rotationMatrix(100, 100, 100));
+
+		/*
 		// Start program.
 		onload = () => {
 			// Init time.
@@ -725,6 +750,7 @@
 			};
 			drawScene();
 		};
+		*/
 	</script>
 </head>
 <body>

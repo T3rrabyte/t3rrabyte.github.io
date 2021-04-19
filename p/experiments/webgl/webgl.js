@@ -23,78 +23,78 @@ const loadTexture = (gl, texture, url) => new Promise((resolve, reject) => {
 
 const cubePositions = [
 	// Front
-	-1, -1, 1,
-	-1, 1, 1,
-	1, -1, 1,
-	1, 1, 1,
+	-1, -1, 1, // 0
+	-1, 1, 1, // 1
+	1, -1, 1, // 2
+	1, 1, 1, // 3
 
 	// Back
-	1, -1, -1,
-	1, 1, -1,
-	-1, -1, -1,
-	-1, 1, -1,
+	1, -1, -1, // 4
+	1, 1, -1, // 5
+	-1, -1, -1, // 6
+	-1, 1, -1, // 7
 
 	// Left
-	-1, -1, -1,
-	-1, 1, -1,
-	-1, -1, 1,
-	-1, 1, 1,
+	-1, -1, -1, // 8
+	-1, 1, -1, // 9
+	-1, -1, 1, // 10
+	-1, 1, 1, // 11
 
 	// Right
-	1, -1, 1,
-	1, 1, 1,
-	1, -1, -1,
-	1, 1, -1,
+	1, -1, 1, // 12
+	1, 1, 1, // 13
+	1, -1, -1, // 14
+	1, 1, -1, // 15
 
 	// Top
-	-1, -1, -1,
-	-1, -1, 1,
-	1, -1, -1,
-	1, -1, 1,
+	-1, -1, -1, // 16
+	-1, -1, 1, // 17
+	1, -1, -1, // 18
+	1, -1, 1, // 19
 
 	// Bottom
-	-1, 1, 1,
-	-1, 1, -1,
-	1, 1, 1,
-	1, 1, -1
+	-1, 1, 1, // 20
+	-1, 1, -1, // 21
+	1, 1, 1, // 22
+	1, 1, -1 // 23
 ];
 
 const cubeTexcoords = [
 	// Front
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1,
+	0, 0, // 0
+	0, 1, // 1
+	1, 0, // 2
+	1, 1, // 3
 
 	// Back
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1,
-	
+	0, 0, // 4
+	0, 1, // 5
+	1, 0, // 6
+	1, 1, // 7
+
 	// Left
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1,
-	
+	0, 0, // 8
+	0, 1, // 9
+	1, 0, // 10
+	1, 1, // 11
+
 	// Right
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1,
-	
+	0, 0, // 12
+	0, 1, // 13
+	1, 0, // 14
+	1, 1, // 15
+
 	// Top
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1,
-	
+	0, 0, // 16
+	0, 1, // 17
+	1, 0, // 18
+	1, 1, // 19
+
 	// Bottom
-	0, 0,
-	0, 1,
-	1, 0,
-	1, 1
+	0, 0, // 20
+	0, 1, // 21
+	1, 0, // 22
+	1, 1 // 23
 ];
 
 const cubeIndices = [
@@ -196,7 +196,8 @@ class DefaultShaderProgram extends ShaderProgram {
 
 	void main() {
 		// Set the output color. texture() looks up a color in a texture.
-		outColor = texture(u_texture, v_texcoord) * texture(u_textureMask, v_texcoord);
+		// outColor = texture(u_texture, v_texcoord) * texture(u_textureMask, v_texcoord);
+		outColor = vec4(255, 0, 255, 255);
 	}`;
 
 	constructor(gl) {
@@ -272,6 +273,8 @@ class Vector extends UArray {
 	normalize = () => this.operate(this, (length) => length / Math.sqrt(UMath.sigma(0, this.length - 1, (i) => this[i] * this[i])));
 }
 
+let testi = 0;
+
 class Matrix extends UArray {
 	// Create an identity matrix for the given dimensions.
 	static identity = (dim = 4) => UArray.fromRule(dim, (x) => UArray.fromRule(dim, (y) => x == y ? 1 : 0));
@@ -283,7 +286,7 @@ class Matrix extends UArray {
 
 	// Flatten to a one-dimensional array.
 	// WebGL uses column-wise matrices, so columnWise should be set to true for use with WebGL.
-	flatten = (columnWise) => {
+	flatten = (columnWise = true) => {
 		const output = [];
 		for (let x = 0; x < this.length; x++) {
 			for (let y = 0; y < this[x].length; y++) {
@@ -296,17 +299,21 @@ class Matrix extends UArray {
 	// Multiply by another matrix via iterative algorithm.
 	// If C = AB for an (n * m) matrix A and an (m * p) matrix B, then C is an (n * p) matrix with entries.
 	// WebGL uses column-wise matrices, so columnWise should be set to true for use with WebGL.
-	multiply = (matrix, columnWise) => {
+	multiply = (matrix, columnWise = true) => {
 		// A is this
 		// B is matrix
 		// C is the return value.
+
+		console.log(`multiply:\n${this.flatten(columnWise)}\n${matrix.flatten(columnWise)}`);
 
 		const n = this.length;
 		const m = matrix.length;
 		const p = matrix[0].length;
 
-		this.setValues(...UArray.fromRule(n, (i) => UArray.fromRule(p, (j) => UMath.sigma(0, m - 1, (k) =>
-			this[columnWise ? k : i][columnWise ? i : k] * matrix[columnWise ? j : k][columnWise ? k : j]))));
+		this.setValues(...UArray.fromRule(n, (i) => UArray.fromRule(p, (j) => UMath.sigma(0, m - 1, (k) => {
+			console.log(`${++testi} - (${i}, ${j}, ${k}): ${this[columnWise ? k : i][columnWise ? i : k]} * ${matrix[columnWise ? j : k][columnWise ? k : j]} = ${this[columnWise ? k : i][columnWise ? i : k] * matrix[columnWise ? j : k][columnWise ? k : j]}`)
+			return this[columnWise ? k : i][columnWise ? i : k] * matrix[columnWise ? j : k][columnWise ? k : j];
+		}))));
 		return this;
 	}
 
@@ -316,10 +323,11 @@ class Matrix extends UArray {
 		[0, 1, 0, 0],
 		[0, 0, 1, 0],
 		[x, y, z, 1]
-	), true);
+	));
 
 	// Rotate d degrees about the x axis.
 	pitch = (d) => {
+		console.log('pitch');
 		const r = UMath.degreesToRadians(d);
 		const c = Math.cos(r);
 		const s = Math.sin(r);
@@ -329,11 +337,24 @@ class Matrix extends UArray {
 			[0, c, s, 0],
 			[0, -s, c, 0],
 			[0, 0, 0, 1]
-		), true);
+		), false);
 	}
+
+	/*
+	1 0 0 0
+	0 c s 0
+	0 -s c 0
+	0 0 0 1
+
+	1 0 0 0
+	0 c -s 0
+	0 s c 0
+	0 0 0 1
+	*/
 
 	// Rotate d degrees about the y axis.
 	yaw = (d) => {
+		console.log('yaw');
 		const r = UMath.degreesToRadians(d);
 		const c = Math.cos(r);
 		const s = Math.sin(r);
@@ -343,11 +364,12 @@ class Matrix extends UArray {
 			[0, 1, 0, 0],
 			[s, 0, c, 0],
 			[0, 0, 0, 1]
-		), true);
+		));
 	}
 
 	// Rotate d degrees about the z axis.
 	roll = (d) => {
+		console.log('roll');
 		const r = UMath.degreesToRadians(d);
 		const c = Math.cos(r);
 		const s = Math.sin(r);
@@ -357,11 +379,22 @@ class Matrix extends UArray {
 			[-s, c, 0, 0],
 			[0, 0, 1, 0],
 			[0, 0, 0, 1]
-		), true);
+		));
 	}
 
 	// Rotate (x, y, z) degrees.
-	rotate = (x, y, z) => this.pitch(x).yaw(y).roll(z);
+	rotate = (x, y, z) => {
+		console.log('rotate');
+		console.log(this.flatten());
+		this.pitch(x);
+		console.log(this.flatten());
+		this.yaw(y);
+		console.log(this.flatten());
+		this.roll(z);
+		console.log(this.flatten());
+		console.log('done rotate');
+		return this;
+	};
 
 	// Scale by (x, y, z) times.
 	scale = (x, y, z) => this.multiply(new Matrix(
@@ -369,7 +402,7 @@ class Matrix extends UArray {
 		[0, y, 0, 0],
 		[0, 0, z, 0],
 		[0, 0, 0, 1]
-	), true);
+	));
 
 	// Invert a matrix via Gaussian elimination. Based on work by Andrew Ippoliti. Only possible for square matrices.
 	invert = () => {
@@ -435,7 +468,7 @@ class Matrix extends UArray {
 		}
 
 		// After all operations, copy will be the identity and identity will be the inverse.
-		return this.multiply(new Matrix(...identity), true);
+		return this.multiply(new Matrix(...identity));
 	};
 }
 
