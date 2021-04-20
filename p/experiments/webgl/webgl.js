@@ -287,6 +287,8 @@ class Matrix extends UArray {
 	// Flatten to a one-dimensional array.
 	// WebGL uses column-wise matrices, so columnWise should be set to true for use with WebGL.
 	flatten = (columnWise = true) => {
+		console.log(`flatten (${(columnWise ? 'column' : 'row') + '-wise'})`);
+		
 		const output = [];
 		for (let x = 0; x < this.length; x++) {
 			for (let y = 0; y < this[x].length; y++) {
@@ -304,7 +306,7 @@ class Matrix extends UArray {
 		// B is matrix
 		// C is the return value.
 
-		console.log(`multiply:\n${this.flatten(columnWise)}\n${matrix.flatten(columnWise)}`);
+		console.log(`multiply (${(columnWise ? 'column' : 'row') + '-wise'}):\n${this.flatten(columnWise)}\n${matrix.flatten(columnWise)}`);
 
 		const n = this.length;
 		const m = matrix.length;
