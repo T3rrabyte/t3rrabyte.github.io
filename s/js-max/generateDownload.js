@@ -8,3 +8,12 @@ const generateDownload = (filename, ...data) => {
 	downloadLink.remove();
 	URL.revokeObjectURL(blob);
 };
+
+const generateUriDownload = (filename, uri) => {
+	const downloadLink = document.createElement('a');
+	downloadLink.href = uri;
+	downloadLink.download = filename;
+	document.documentElement.append(downloadLink);
+	downloadLink.click();
+	downloadLink.remove();
+};
