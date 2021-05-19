@@ -44,15 +44,12 @@
 		let fov = 60;
 		let near = 1;
 		let far = 2000;
-		let cameraPosition = new Vector(0, 0, 2);
+		let cameraPosition = new Vector(2, 2, 2);
 		let lookAt = new Vector(0, 0, 0);
 		let cubeTranslation = new Vector(0, 0, 0);
 		let cubeRotation = new Vector(0, 0, 0);
 		let cubeScale = new Vector(1, 1, 1);
 
-		onload = () => console.log(new Matrix().rotate(100, 100, 100).flatten());
-
-		/*
 		onload = () => {
 			const canvas = document.querySelector('#canvas');
 			const gl = canvas.getContext('webgl2');
@@ -133,7 +130,6 @@
 			}
 			drawScene();
 		};
-		*/
 	</script>
 </head>
 <body>
