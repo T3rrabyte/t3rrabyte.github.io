@@ -1,1 +1,0 @@
-https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html

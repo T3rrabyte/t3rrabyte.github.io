@@ -1,4 +1,0 @@
-Get a non-minified version of TWGL.
-- Cull out the unused parts.
-
-Check TWGL documentation for used methods.
