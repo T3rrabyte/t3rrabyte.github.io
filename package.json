@@ -1,0 +1,48 @@
+{
+	"name": "lakuna.github.io",
+	"version": "1.0.0",
+	"description": "Travis Martin's website",
+	"homepage": "https://lakuna.pw",
+	"bugs": {
+		"url": "https://github.com/Lakuna/website/issues",
+		"email": "tjmartin2003@gmail.com"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Travis Martin",
+		"email": "tjmartin2003@gmail.com",
+		"url": "https://lakuna.pw"
+	},
+	"funding": "https://github.com/sponsors/Lakuna",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Lakuna/website.git"
+	},
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build && next export",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"@mdx-js/loader": "^2.0.0",
+		"@next/mdx": "^12.1.0",
+		"@typescript-eslint/eslint-plugin": "^5.13.0",
+		"@typescript-eslint/parser": "^5.13.0",
+		"gray-matter": "^4.0.3",
+		"next": "^12.1.0",
+		"prism-themes": "^1.9.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"remark-prism": "^1.3.6",
+		"sass": "^1.49.9"
+	},
+	"devDependencies": {
+		"@types/node": "^17.0.21",
+		"@types/react": "^17.0.39",
+		"eslint": "8.10.0",
+		"eslint-config-next": "12.1.0"
+	}
+}
