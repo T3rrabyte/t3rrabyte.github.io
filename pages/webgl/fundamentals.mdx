@@ -1,0 +1,362 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# WebGL Fundamentals
+WebGL is a *rasterization engine*.
+It draws *points, lines, and triangles* based on code that you supply.
+That code is provided in the form of pairs of functions called **shaders** which run on the GPU.
+Each pair of shaders contains one vertex shader and one fragment shader.
+Shaders are written in a language called **GLSL**.
+For WebGL2 (the version of WebGL covered in this tutorial), we must use **GLSL ES 3.00**.
+When paired together, these shaders make a **program**.
+
+The *vertex shader* computes vertex positions.
+Based on the positions that the function outputs, WebGL can rasterize primitives (points, lines, or triangles).
+When rasterizing these primitives, it calls the *fragment shader*, which computes a color for each pixel of the primitive being drawn.
+
+Most of the WebGL API is dedicated to setting up state for the program to run.
+After all of the state is set, the program is executed using one method call.
+
+Any data that you want the shaders to have access to must be provided to the GPU in one of four ways.
+1. **Attributes**: data can be put into an array of binary data called a **buffer** which is then uploaded to the GPU.
+Attributes specify how to pull data out of the buffers and provide them to the vertex shader.
+Each time the vertex shader is executed, the next value from the specified buffer is used.
+The state of attributes is collected into a **vertex array object (VAO)**.
+2. **Uniforms**: uniforms are effectively global variables.
+3. **Textures**: textures are arrays of data that can be randomly accessed in a shader program.
+They usually store image data, but they can be used to store anything.
+4. **Varyings**: varyings are a way for a vertex shader to pass data to a fragment shader.
+They are called "varyings" because the value set on a varying by a vertex shader will be interpolated while executing the fragment shader.
+
+## Hello, world!
+WebGL only cares about two things: **clip space coordinates** and colors.
+The former is supplied by the vertex shader and the latter is supplied by the fragment shader.
+
+Clip space coordinates always go from `-1` to `+1` regardless of canvas size.
+
+Here is an example vertex shader:
+```glsl
+#version 300 es
+// The first line of a shader for WebGL2 must be exactly what's written above. There can't even be comments or whitespace before it.
+// This line specifies that the language we're using is GLSL ES 3.00
+
+// An attribute is an input to a vertex shader. It will receive data from a buffer.
+in vec4 a_position;
+
+// All shaders have a main function.
+void main() {
+  // gl_Position is a special variable that the vertex shader is responsible for setting.
+  gl_Position = a_position;
+}
+```
+
+And here is an example fragment shader:
+```glsl
+#version 300 es
+
+// Fragment shaders don't have a default precision so we need to specify one.
+precision highp float;
+
+// We need to declare an output for the fragment shader.
+out vec4 outColor;
+
+void main() {
+  // This sets the output color to green. Choose whatever color you'd like to.
+  // Note that colors in WebGL go from 0 to 1.
+  outColor = vec4(0, 1, 0, 1);
+}
+```
+
+Now we need to create a canvas in HTML to draw on.
+```html
+<canvas></canvas>
+```
+
+Then we need to find the canvas using JavaScript.
+```js
+const canvas = document.querySelector("canvas");
+```
+
+Now we can access WebGL2 on the canvas.
+```js
+const gl = canvas.getContext("webgl2");
+if (!gl) { throw new Error("WebGL2 is not supported by your browser."); }
+```
+
+In order to compile our shaders to put them on the GPU, we first need to put their source code into strings.
+```js
+const vertexShaderSource = `#version 300 es
+
+in vec4 a_position;
+
+void main() {
+  gl_Position = a_position;
+}`;
+
+const fragmentShaderSource = `#version 300 es
+
+precision highp float;
+
+out vec4 outColor;
+
+void main() {
+  outColor = vec4(0, 1, 0, 1);
+}`;
+```
+
+Now that we have the shader source code, we need to write a function that can compile the shaders.
+```js
+// Creates and compiles a shader from source code.
+function createShader(gl, type, source) {
+  // Create a shader.
+  const shader = gl.createShader(type);
+
+  // Set the source code of the shader.
+  gl.shaderSource(shader, source);
+
+  // Compile the shader.
+  gl.compileShader(shader);
+
+  // Check if the compilation worked.
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    throw new Error("Shader failed to compile.");
+  }
+
+  return shader;
+}
+
+// Call the function once for each shader.
+const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+```
+
+After we have both shaders, we can finally link them into a program.
+```js
+// Creates and links a program from a pair of shaders.
+function createProgram(gl, vertexShader, fragmentShader) {
+  // Create a program.
+  const program = gl.createProgram();
+
+  // Attach the shaders.
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+
+  // Link the program.
+  gl.linkProgram(program);
+
+  // Check if the linking worked.
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+    throw new Error("Program failed to link.");
+  }
+
+  return program;
+}
+
+// Call the function.
+const program = createProgram(gl, vertexShader, fragmentShader);
+```
+
+For the program we've written, we only have one input in the form of an attribute called `a_position`.
+The first step in supplying data to the program is to look up the location of the attribute for the program.
+```js
+const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+```
+
+Since attributes get their data from buffers, we need to create a buffer.
+```js
+const positionBuffer = gl.createBuffer();
+```
+
+In order to manipulate some types of WebGL resources (including buffers), we first need to bind that resource to a global bind point.
+Since we're trying to set up an array buffer, we'll bind this buffer to `ARRAY_BUFFER`.
+```js
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+```
+
+Now we are able to put data in the buffer by referencing it through it's binding point.
+```js
+gl.bufferData(
+  // The target buffer. This is equivalent to positionBuffer because we just set it to be.
+  gl.ARRAY_BUFFER,
+
+  // The data we're putting into the buffer must be a TypedArray because GLSL is a strictly-typed language.
+  // We're supplying six numbers because the program we're working in is two-dimensional, and we're drawing one triangle.
+  // Three two-dimensional positions (vertices) makes a triangle.
+  new Float32Array([
+    0, 0, // The first position is at the center of the screen.
+    0, 0.5, // The second position is halfway up the screen from the center.
+    0.7, 0 // The third position is 7/10ths of the way to the right of the screen from the center.
+  ]),
+
+  // Don't worry about this part too much; it's a hint to WebGL about how to optimize the data.
+  // We're setting it to STATIC_DRAW because we won't be changing the data in this buffer.
+  gl.STATIC_DRAW
+);
+```
+
+Now that we've created a buffer, we need to tell WebGL how to get data out of it.
+To do this, we create a collection of attribute state called a **vertex array object (VAO)**.
+```js
+// Create a VAO.
+const vao = gl.createVertexArray();
+
+// Bind the VAO so that it is the "current" VAO that all of our settings will apply to.
+gl.bindVertexArray(vao);
+```
+
+Then, we can set up each attribute.
+```js
+// Turn the attribute on. This tells WebGL that we want to get data out of a buffer.
+gl.enableVertexAttribArray(positionAttributeLocation);
+
+// Specify how to pull the data out.
+// This binds the current ARRAY_BUFFER to the attribute.
+gl.vertexAttribPointer(
+  positionAttributeLocation, // The attribute to modify.
+  2, // The number of components to pull per iteration; 2 in this case because our triangle is two-dimensional.
+  gl.FLOAT, // The type of data in the buffer. This is FLOAT because we used a Float32Array above.
+  false, // Whether to normalize the data in the buffer.
+  0, // The amount to move forward per iteration. Since we use 0, this is set automatically.
+  0 // The offset from the beginning of the buffer to start at.
+);
+```
+
+`a_position` is a `vec4` (four-dimensional vector) but we're only supplying two dimensions of data to it.
+Because of this, the third and fourth dimensions will use their default values (`0` and `1`, respectively).
+
+Canvases have two sizes: the physical display size (set by CSS) and the number of pixels in them.
+Before we draw our data, we should resize the canvas to match its display size.
+```js
+// Resizes the canvas to match its display size. Returns whether a resize was necessary.
+function resizeCanvasToDisplaySize(canvas) {
+  const displayWidth = canvas.clientWidth; // The physical display width of the canvas.
+  const displayHeight = canvas.clientHeight; // The physical display height of the canvas.
+
+  if (canvas.width != displayWidth || canvas.height != displayHeight) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+
+    return true;
+  }
+
+  return false;
+}
+
+// Call the function.
+resizeCanvasToDisplaySize(canvas);
+
+// Tell WebGL how to convert from the clip space values we give it back into screen space values (pixels).
+gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+```
+
+Before we draw, we should always clear the canvas.
+```js
+// Tell WebGL which color to clear to.
+gl.clearColor(0, 0, 0, 1); // Fully opaque black.
+
+// Tell WebGL which buffers to clear. We're only worried about color for now.
+gl.clear(gl.COLOR_BUFFER_BIT);
+```
+
+Finally, we can draw our data.
+```js
+// Tell WebGL which program to use.
+gl.useProgram(program);
+
+// Bind the VAO we want to draw.
+gl.bindVertexArray(vao);
+
+// Execute the program.
+gl.drawArrays(
+  gl.TRIANGLES, // The type of primitive we want to draw is triangles.
+  0, // The offset from the beginning of the buffer to start drawing.
+
+  // The number of times to execute the vertex shader; once for each vertex.
+  // Since we're drawing triangles, executing the vertex shader 3 times will draw one triangle.
+  3
+);
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="oNoVNPK" />
+
+Let's modify the shader a little bit so that we can work with screen space coordinates (pixels) rather than clip space coordinates.
+```glsl
+#version 300 es
+
+in vec2 a_position;
+
+uniform vec2 u_resolution;
+
+void main() {
+  // Convert the position from pixels to (0 to 1).
+  vec2 zeroToOne = a_position / u_resolution;
+
+  // Convert from (0 to 1) to (0 to 2).
+  vec2 zeroToTwo = zeroToOne * 2.0;
+
+  // Convert from (0 to 2) to (-1 to 1; clip space coordinates).
+  vec2 clipSpace = zeroToTwo - 1.0;
+
+  // Flip Y axis so that the origin is in the top left corner.
+  vec2 clipSpaceFlippedY = clipSpace * vec2(1, -1);
+
+  gl_Position = vec4(clipSpaceFlippedY, 0, 1);
+}
+```
+
+Notice that we added a uniform.
+Just like with attributes, we need to look up the location of a uniform before we can change its value.
+```js
+const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+```
+
+To match the change in our vertex shader, let's change our position buffer data to contain pixels.
+We'll also add another triangle to demonstrate what that looks like.
+```js
+gl.bufferData(
+  gl.ARRAY_BUFFER,
+  new Float32Array([
+    // Triangle one.
+    10, 20,
+    80, 20,
+    10, 30,
+
+    // Triangle two.
+    10, 30,
+    80, 20,
+    80, 30
+  ]),
+  gl.STATIC_DRAW
+);
+```
+
+Now we need to give a value to the uniform we created.
+After we set which program we're using, we can set uniform values on that program.
+```js
+gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height); // The method to set uniforms depends on the type of the uniform.
+```
+
+Don't forget to increase the draw count to account for the new triangle.
+```js
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="xxPBbJZ" />
+
+[Next: Structure](/webgl/structure).
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "WebGL Fundamentals",
+      description: "An introduction to the fundamental concepts of WebGL."
+    }
+  };
+}
