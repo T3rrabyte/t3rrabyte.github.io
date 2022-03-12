@@ -4,7 +4,7 @@
 	"description": "Travis Martin's website",
 	"homepage": "https://lakuna.pw",
 	"bugs": {
-		"url": "https://github.com/Lakuna/website/issues",
+		"url": "https://github.com/Lakuna/Lakuna.github.io/issues",
 		"email": "tjmartin2003@gmail.com"
 	},
 	"license": "MIT",
@@ -16,7 +16,7 @@
 	"funding": "https://github.com/sponsors/Lakuna",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Lakuna/website.git"
+		"url": "git+https://github.com/Lakuna/Lakuna.github.io.git"
 	},
 	"scripts": {
 		"dev": "next dev",
