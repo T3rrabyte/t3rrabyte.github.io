@@ -1,0 +1,83 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+
+# What is WebGL?
+
+**WebGL** is a *rasterization engine*. That means that it draws **primitives** (points, lines, and triangles) using pixels.
+
+WebGL runs on the GPU, so you (as the developer) need to provide it code that can run on the GPU.
+That code is supplied to the GPU in the form of pairs of functions called "**shaders**."
+Each pair of shaders contains one *vertex shader* and one *fragment shader*.
+Collectively, the pair of shaders is called a **shader program**.
+Shaders are written in a *strictly-typed* language called **GLSL**.
+
+Each shader fulfills a different function.
+The vertex shader computes vertex positions, and outputs them as **clip-space coordinates**.
+Clip-space coordinates are coordinates that go from `-1` to `+1` in each direction, regardless of the size of the viewport.
+Once enough vertex positions have been calculated for the type of primitive being drawn, WebGL rasterizes that primitive by calling the fragment shader for each pixel.
+The fragment shader computes a color for each pixel.
+
+# Program Structure
+
+Most of the WebGL API is dedicated to setting up state for the shader program.
+A typical program using the WebGL API follows this structure:
+
+- **Initialization step** (run once at the beginning of the program):
+  - Create the **rendering context**.
+  - Create all of the shaders and link them into shader programs.
+  - Look up the **locations** of every variable in every shader program.
+  - Create **buffers** and upload vertex data to them.
+  - Create a *vertex array object* (**VAO**) for each thing that you want to draw.
+    - Assign each **attribute** a buffer, and tell WebGL how to get data out of that buffer.
+  - Create **textures** and upload texture data to them.
+- **Render step** (run once every frame):
+  - Clear the viewport.
+  - Resize the viewport.
+  - Set global state.
+  - For each thing that you want to draw:
+    - Set the active shader program to the correct shader program for that thing.
+    - Bind the VAO for that thing.
+    - Set **uniforms** for that thing.
+      - Assign textures to **texture units**.
+    - Execute the shader program.
+
+There are a lot of new terms in that list that you don't need to know yet.
+They will all be covered in this tutorial.
+
+# Getting Started
+
+In order to work with WebGL, we use the [WebGL API](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+The goal of [Umbra](https://umbra.lakuna.pw/) is to provide full access to the functionality of the WebGL API while making it much easier to work with.
+Using HTML we can create a **canvas**, and using the WebGL API we can use the **rendering context** of that canvas to access WebGL's functionality.
+
+As mentioned above, only one step of the normal program structure actually draws anything.
+Before that, we need to supply all of the data WebGL needs to the GPU using one of four methods:
+
+1. **Attributes**:
+Attributes are inputs to the vertex shader.
+They pull data from arrays of binary data called "**buffers**."
+Each vertex pulls a specified amount of data from a specified buffer.
+Information about how WebGL should get data out of buffers is collected into a *vertex array object* (**VAO**).
+2. **Uniforms**:
+Uniforms are variables that are "uniform" for each vertex.
+They can be present in either the vertex shader or the fragment shader.
+3. **Textures**:
+Textures are arrays of data that can be randomly accessed in a shader program.
+They are accessed through uniforms, so they can be present in either the vertex shader or the fragment shader.
+4. **Varyings**:
+Varyings are variables that "vary" between vertices.
+They are outputs from the vertex shader and inputs to the fragment shader.
+For each vertex, the vertex shader outputs a value.
+The fragment shader then interpolates that value based on the pixel's distance from that vertex.
+
+Next: ["Hello, world!"](/webgl/hello-world)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "What is WebGL?",
+      description: "An introduction to the fundamental concepts of WebGL."
+    }
+  };
+}

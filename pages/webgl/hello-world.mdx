@@ -1,0 +1,493 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# "Hello, world!"
+
+This page walks you through writing a very basic WebGL program.
+
+## Initialization Step
+
+The initialization step is run once at the beginning of the program.
+
+### Rendering Context
+
+The very first thing we need to do is to create the WebGL *rendering context*.
+This will allow us to access WebGL functionality through the WebGL API.
+
+First, we need to create a canvas using HTML.
+
+```html
+<canvas></canvas>
+```
+
+Optionally, we can style that canvas using CSS to make it fullscreen.
+
+```css
+canvas {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+```
+
+Finally, we need to access that canvas within JavaScript so that we can get the rendering context.
+
+```js
+// Get the first canvas on the page.
+const canvas = document.querySelector("canvas");
+
+// Get the WebGL rendering context.
+const gl = canvas.getContext("webgl2");
+```
+
+If we're using Umbra, all of the above can be condensed by using the `Umbra` class.
+The Umbra constructor takes two optional arguments.
+The first of these arguments is the canvas we want Umbra to use.
+If this argument is not supplied, Umbra automatically creates a fullscreen canvas for us.
+
+```js
+// Import Umbra from a CDN. If you don't understand this line, consider reading about "ES6 modules."
+import { Umbra } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+// Create an instance of Umbra.
+const u = new Umbra();
+
+const canvas = u.canvas;
+const gl = u.gl;
+```
+
+### Shader Program
+
+Shaders are written in **GLSL**. We access GLSL code in JavaScript by putting it into a string.
+
+Minimal vertex shader:
+
+```glsl
+#version 300 es
+// The line above this tells WebGL to use the programming language called "GLSL ES 3.00" so that we can work with WebGL2.
+// It is necessary that this line comes first, before even comments or empty lines.
+
+// An attribute is an input to a vertex shader, so it uses the "in" keyword.
+// This attribute contains four-dimensional vectors, so we use the "vec4" keyword.
+// The naming convention for attributes is camelCase with "a_" at the beginning.
+in vec4 a_position;
+
+// All shaders have a main function.
+void main() {
+  // gl_Position is a special variable that the vertex shader is responsible for setting.
+  gl_Position = a_position;
+}
+```
+
+Minimal fragment shader:
+
+```glsl
+#version 300 es
+
+// Fragment shaders don't have a default precision, so we have to set one.
+// "highp" means "high precision."
+precision highp float;
+
+// We need to declare an output variable for the fragment shader.
+out vec4 outColor;
+
+void main() {
+  // Set the pixel color to a constant color.
+  outColor = vec4(0, 1, 1, 1);
+}
+```
+
+Without Umbra, creating a shader from source code takes multiple steps:
+
+```js
+// Put the shader source code into a string.
+const vertexShaderSource = `#version 300 es
+in vec4 a_position;
+void main() {
+  gl_Position = a_position;
+}`;
+
+// Create the shader.
+const shader = gl.createShader(gl.VERTEX_SHADER);
+
+// Put the source code into the shader.
+gl.shaderSource(shader, vertexShaderSource);
+
+// Compile the shader.
+gl.compileShader(shader);
+
+// Check for compilation errors.
+if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+  // If there's an error, log it to the console.
+  console.error(gl.getShaderInfoLog(shader));
+  throw new Error("Failed to compile the vertex shader.");
+}
+```
+
+With Umbra, the above functionality is bundled into the `Shader` class:
+
+```js
+import { Shader, ShaderType } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+const vertexShader = new Shader(gl, ShaderType.VERTEX_SHADER, `#version 300 es
+in vec4 a_position;
+void main() {
+  gl_Position = a_position;
+}`);
+```
+
+Repeat the same process for the fragment shader.
+
+Once we have both shaders, we can link the shaders into a shader program.
+Without Umbra, that would look something like this:
+
+```js
+// Create the shader program.
+const program = gl.createProgram();
+
+// Attach the shaders to the shader program.
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+
+// Link the shaders to finish creating the shader program.
+gl.linkProgram(program);
+
+// Check for linking errors.
+if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+  console.error(gl.getProgramInfoLog(program));
+  throw new Error("Failed to link the shader program.");
+}
+```
+
+With Umbra, the above functionality is bundled into the `Program` class:
+
+```js
+import { Program } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+const program = new Program(gl, vertexShader, fragmentShader);
+```
+
+We can even cut out the `Shader` class entirely and create the shader program directly from source code:
+
+```js
+const program = Program.fromSource(gl,
+`#version 300 es
+in vec4 a_position;
+void main() {
+  gl_Position = a_position;
+}`,
+`#version 300 es
+precision highp float;
+out vec4 outColor;
+void main() {
+  outColor = vec4(0, 1, 1, 1);
+}`);
+```
+
+### Variable Locations
+
+In order to supply data to the variables in a shader program, we need to look up the locations (pointers) of each of them.
+Since our basic program only has one input variable (an attribute), this is very easy:
+
+```js
+const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+```
+
+However, in more complex programs with many variables, this can get tedious.
+With Umbra, the `Program` constructor automatically looks up all of our variables for us and stores them in a map:
+
+```js
+const positionAttributeLocation = program.attributes.get("a_position");
+```
+
+### Buffers
+
+In order to supply vertex-specific data (such as locations, colors, *texture coordinates*, *normals*, et cetera) to an attribute, we need to put that data into buffers.
+First, we need to create the buffer:
+
+```js
+const positionBuffer = gl.createBuffer();
+```
+
+In order to access a buffer to set up its state, WebGL requires us to bind that buffer to a *binding point*:
+
+```js
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+```
+
+This can be thought of as setting a variable within WebGL called `ARRAY_BUFFER` to the buffer we just created.
+Now, whenever we want to access that buffer, we use `ARRAY_BUFFER` instead.
+The `ARRAY_BUFFER` binding point is used to store buffers that hold vertex data.
+
+Now that the buffer is bound to a binding point, we can supply data to it.
+Since GLSL is a *strongly-typed* language, we must supply that data in the form of a `TypedArray`.
+
+```js
+gl.bufferData(
+  // Tell WebGL which buffer we want to supply data to.
+  gl.ARRAY_BUFFER,
+
+  // Supply the data.
+  // We will be drawing one two-dimensional triangle.
+  // Two dimensions per point times three points to draw one triangle makes six numbers.
+  new Float32Array([
+    0, 0,
+    0, 0.5,
+    0.7, 0
+  ]),
+
+  // Hint to WebGL about how we plan on using the data.
+  // This is used for optimization purposes internally.
+  // Since we don't plan on changing this data, we use STATIC_DRAW.
+  gl.STATIC_DRAW
+);
+```
+
+Umbra takes a more object-oriented approach to buffers.
+Rather than worrying about binding points, you can just set the data directly on the buffer:
+
+```js
+import { Buffer } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+const positionBuffer = new Buffer(gl, new Float32Array([
+  0, 0,
+  0, 0.5,
+  0.7, 0
+]));
+
+// If we wanted to change the data in the buffer, we can set it directly.
+// Umbra takes care of binding points for us.
+positionBuffer.data = new Float32Array([
+  0.5, 0.6,
+  0.4, 0.7,
+  0.3, 0.8
+]);
+```
+
+### Vertex Array Objects
+
+Now that we've created our buffer and put data into it, we have to tell WebGL how to take data out of it.
+All of this data will be collected into a *vertex array object* (**VAO**).
+First, we must create our VAO:
+
+```js
+const vao = gl.createVertexArray();
+```
+
+Or, with Umbra:
+
+```js
+import { VAO } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+const vao = new VAO(program);
+```
+
+For each attribute, we must set up attribute state.
+The first step is to turn the attribute on so that it can accept data from a buffer.
+
+```js
+// We always refer to the variable we want to access through its location that we looked up earlier.
+gl.enableVertexAttribArray(positionAttributeLocation);
+```
+
+Then we can specify how to take data out of the buffer:
+
+```js
+gl.vertexAttribPointer(
+  // Tell WebGL which attribute we're modifying.
+  positionAttributeLocation,
+
+  // The number of components to get per iteration.
+  // Since we're drawing a two-dimensional triangle, we're supplying two numbers per vertex.
+  2,
+
+  // The type of data in the buffer.
+  // Since we used a Float32Array above, we use FLOAT here.
+  gl.FLOAT,
+
+  // Whether to normalize the data after pulling it out of the buffer.
+  false,
+
+  // The number of bytes to move forward after each iteration.
+  // By setting this to zero, we tell WebGL to calculate the value automatically.
+  0,
+
+  // The offset in bytes of the first element in the buffer.
+  0
+);
+```
+
+Notice that we never specified which buffer to pull data out of.
+This is because WebGL requires us to use the buffer that's currently bound to `ARRAY_BUFFER`.
+For us, that's `positionBuffer` right now.
+By calling `vertexAttribPointer`, we bind the `ARRAY_BUFFER` to the specified attribute.
+Now, whenever we use the VAO that's currently bound, these settings will apply to this attribute.
+
+With Umbra, we don't have to pay attention to binding points.
+Attribute state is set up in the `AttributeState` class.
+
+```js
+import { AttributeState } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+const positionAttributeState = new AttributeState("a_position", positionBuffer, 2);
+```
+
+Then, we can add the attribute state to the VAO:
+
+```js
+vao.addAttribute(positionAttributeState);
+```
+
+If we wanted to, we could even create the VAO, the attribute state, and the buffer all in one line:
+
+```js
+const vao = new VAO(program, [new AttributeState("a_position", new Buffer(gl, new Float32Array([0, 0, 0, 0.5, 0.7, 0])), 2)]);
+```
+
+This object-oriented design means that we don't have to worry about which VAO is bound when we set up attribute state, and it allows us to easily reuse common attribute state.
+
+An important thing to notice is that the `a_position` attribute that we're supplying data to is a `vec4`, but we're only supplying two numbers to it for each vertex.
+`vec4`s default to `(0, 0, 0, 1)` for the `(x, y, z, w)` coordinates.
+We supply the `x` and `y` coordinates, and the `z` and `w` coordinates use their default values.
+
+## Render Step
+
+The render step runs once each frame.
+This means that we have to set up a loop to contain it.
+JavaScript provides an easy method for this.
+
+```js
+function renderStep() {
+  requestAnimationFrame(renderStep);
+
+  // Do render step here.
+}
+requestAnimationFrame(renderStep);
+```
+
+The `requestAnimationFrame` function will make the `renderStep` function run after the canvas is finished drawing its last frame.
+
+The `Umbra` instance we created earlier comes with a built-in render loop.
+It's more complicated to set up, so I won't explain it until a later tutorial.
+However, it becomes very important once we start using the **scene graph**.
+For now, we should stop the build-in render loop so that it doesn't use up our resources.
+
+```js
+u.destroy();
+```
+
+### Clearing the Canvas
+
+Before we draw on the canvas, we first want to clear the last frame's content.
+There are multiple buffers that we'll have to clear later, but for now the only one we're using is the *color buffer*.
+First, we tell WebGL the default value for each buffer:
+
+```js
+// Set the color buffer default to black.
+gl.clearColor(0, 0, 0, 1);
+```
+
+Then we tell WebGL to clear all of the buffers:
+
+```js
+gl.clear(gl.COLOR_BUFFER_BIT);
+```
+
+With Umbra, this is combined into one function:
+
+```js
+import { clearContext, Color } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+clearContext(gl, new Color(0x000000));
+```
+
+### Resizing the Canvas
+
+Similarly to images, canvases have two sizes: the physical display size and the number of pixels in them.
+The display size is typically set with CSS, while the actual size can be set with JavaScript:
+
+```js
+const displayWidth = canvas.clientWidth;
+const displayHeight = canvas.clientHeight;
+
+if (canvas.width != displayWidth || canvas.height != displayHeight) {
+  canvas.width = displayWidth;
+  canvas.height = displayHeight;
+}
+```
+
+After resizing the canvas, we need to tell WebGL how to translate from clip-space coordinates to *screen-space coordinates* (pixels):
+
+```js
+gl.viewport(0, 0, canvas.width, canvas.height);
+```
+
+The above functionality is bundled into an Umbra function:
+
+```js
+import { resizeContext } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+resizeContext(gl);
+```
+
+### Global State
+
+Global state refers to settings ("state") that apply to all shader programs.
+For example, the screen's clear color and the viewport size (both of which are set above) are global state.
+Since this example is so simple, we don't have any other global state to set.
+Later on, however, certain things like enabling depth for 3D drawing will be done here.
+
+### Drawing
+
+Finally, we can draw our shapes (VAOs).
+For each VAO, we first need to enable its shader program:
+
+```js
+gl.useProgram(use);
+```
+
+Then we need to enable the VAO itself:
+
+```js
+gl.bindVertexArray(vao);
+```
+
+Finally, we call the function that actually draws the contents of the VAO to the screen:
+
+```js
+gl.drawArrays(
+  // We're drawing triangles.
+  gl.TRIANGLES,
+
+  // We don't want to skip any vertices.
+  0,
+
+  // We're only drawing one triangle.
+  // This totals to three vertices.
+  3
+);
+```
+
+With Umbra, a lot of this data is set for you.
+Instead of all of the above, you can simply call one method on the VAO:
+
+```js
+vao.draw();
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="rNpVEWd" />
+
+Next: [Transformation](/webgl/transformation)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "\"Hello, world!\"",
+      description: "Walkthrough of writing a basic WebGL program using Umbra."
+    }
+  };
+}
