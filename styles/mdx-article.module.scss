@@ -40,4 +40,23 @@ article.mdx-article {
     border-collapse: collapse;
     padding: 5px;
   }
+
+  // Switch some colors for light theme.
+  @media (prefers-color-scheme: light) {
+    h1, h2, h3, h4, h5, h6 {
+      color: $dark-emerald;
+    }
+
+    em {
+      color: $pink;
+    }
+
+    strong {
+      color: $yellow;
+    }
+
+    table, th, td {
+      border: 1px solid $dark-emerald;
+    }
+  }
 }
