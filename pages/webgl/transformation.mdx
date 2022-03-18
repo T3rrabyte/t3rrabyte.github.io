@@ -1,0 +1,176 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# Transformation
+
+This article will introduce you to translation, rotation, and scaling using uniforms.
+Towards the end, you will learn how to combine transformations using matrices.
+
+## Translation
+
+While attributes supply unique data to each vertex, **uniforms** supply "global" data that is the same for every vertex in a shape.
+Uniforms can be declared in either the vertex shader or the fragment shader.
+As an example, let's declare a translation uniform that will move our shape by a given value:
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+// Uniforms are declared using the "uniform" keyword.
+// This uniform contains a two-dimensional vector, so we use the "vec2" keyword.
+// The naming convention for uniforms is camelCase with "u_" at the beginning.
+uniform vec2 u_translation;
+
+void main() {
+  // Set default z and w values for the translation.
+  vec4 translation = vec4(u_translation, 0, 0);
+
+  // Add the translation to the vector position.
+  gl_Position = a_position + translation;
+}
+```
+
+For this example, we don't need to update our fragment shader.
+However, if we want to declare a uniform within our fragment shader, it uses the exact same syntax.
+
+If you aren't using Umbra, you'll need to get the location of each uniform just like you did with attributes:
+
+```js
+const translationLocation = gl.getUniformLocation(program, "u_translation");
+```
+
+Setting uniforms is a much less involved process, though.
+We can simply pass in a value using a method depending on the type of our uniform:
+
+```js
+// Create a variable to hold the translation.
+const translation = [0, 0];
+
+// For two-dimensional vectors, we use the uniform2fv method.
+gl.uniform2fv(translationLocation, translation);
+```
+
+Umbra will detect the type of the uniform and automatically set the uniform using the proper method:
+
+```js
+// Create a variable to hold the translation.
+const translation = [0, 0];
+
+program.uniforms.get("u_translation").value = translation;
+```
+
+Updating the uniform should be done between binding the VAO and drawing it.
+With Umbra, that means we'll need to split up our draw call slightly:
+
+```js
+program.use();
+vao.bind();
+
+// Set uniforms.
+
+vao.draw();
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="xxpZWXj" />
+
+## Animation
+
+You shouldn't see a difference between the example above and the "Hello, world!" program we wrote before.
+That's because we're currently translating by zero in both directions.
+
+Let's add some code to animate this translation.
+The following example uses Umbra's `Vector` class for convenience, but it's possible to do the same thing with regular numbers.
+
+```js
+import { Vector } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+// Initialization step.
+let translation = new Vector(0, 0);
+let velocity = new Vector(0.0005, 0.001);
+
+// Render step.
+if (translation[0] > 1 || translation[0] < -1) { velocity[0] = -velocity[0]; }
+if (translation[1] > 1 || translation[1] < -1) { velocity[1] = -velocity[1]; }
+translation = translation.add(velocity);
+program.uniforms.get("u_translation").value = [...translation];
+```
+
+The code above would work fine, but the speed of the triangle bouncing around the screen is tied to framerate.
+In order to fix that, we need to modify our render loop a little bit.
+
+```js
+let then = 0;
+
+function renderStep(now) {
+  requestAnimationFrame(renderStep);
+
+  const deltaTime = now - then;
+  then = now;
+
+  // Do render step here.
+}
+requestAnimationFrame(renderStep);
+```
+
+Then we can multiply the velocity by the time between frames, called `deltaTime` here, to make the animation smoother:
+
+```js
+translation = translation.add(velocity.scale(deltaTime));
+```
+
+Once we begin using the built-in Umbra render loop, we can use the `deltaTime` property on our Umbra object instead of calculating it ourselves.
+
+<CodePen className={styles["full-bleed"]} slugHash="wvpMXWx" />
+
+## Rotation
+
+Rotation works the same as translation, except we multiply the vertex coordinates by positions on the *unit circle*.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec2 u_translation;
+uniform vec2 u_rotation;
+
+void main() {
+  vec4 rotatedPosition = vec4(
+    a_position.x * u_rotation.y + a_position.y * u_rotation.x,
+    a_position.y * u_rotation.y - a_position.x * u_rotation.x,
+    a_position.zw);
+
+  vec4 translation = vec4(u_translation, 0, 0);
+
+  gl_Position = rotatedPosition + translation;
+}
+```
+
+We can get a point on the unit circle using the *sine* and *cosine* of a number in *radians*.
+
+```js
+// Initialization step.
+let rotation = 0;
+
+// Render step.
+rotation += deltaTime * 0.001;
+program.uniforms.get("u_rotation").value = [Math.sin(rotation), Math.cos(rotation)];
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="vYpLrvj" />
+
+The reason the triangle appears to be warping in the example above is because we're still passing in *clip-space coordinates*, and your viewport (probably) isn't a perfect square.
+Information about how to pass *screen-space coordinates* (pixels) into buffers is farther down on this page.
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Transformation",
+      description: "An introduction to transformation in WebGL."
+    }
+  };
+}
