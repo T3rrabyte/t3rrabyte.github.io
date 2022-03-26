@@ -308,8 +308,13 @@ program.uniforms.get("u_matrix").value = [...matrix];
 The above matrix can also be computed on one line:
 
 ```js
-matrix = Matrix.fromTranslation(translation[0], translation[1], 0).rotateZ(rotation).scale(scale, scale, 1);
+matrix = new Matrix()
+  .rotateZ(rotation)
+  .scale(scale, scale, 1)
+  .translate(translation[0], translation[1], 0);
 ```
+
+<CodePen className={styles["full-bleed"]} slugHash="GRyWvZQ" />
 
 // TODO: Matrices CodePen.
 // TODO: Column-major note.
