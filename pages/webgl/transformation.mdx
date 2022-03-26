@@ -164,6 +164,158 @@ program.uniforms.get("u_rotation").value = [Math.sin(rotation), Math.cos(rotatio
 The reason the triangle appears to be warping in the example above is because we're still passing in *clip-space coordinates*, and your viewport (probably) isn't a perfect square.
 Information about how to pass *screen-space coordinates* (pixels) into buffers is farther down on this page.
 
+## Scale
+
+Scale is done in the same way as rotation, except we don't need to worry about the values we pass in being on the unit circle.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec2 u_translation;
+uniform vec2 u_rotation;
+uniform vec2 u_scale;
+
+void main() {
+  vec4 scaledPosition = a_position * vec4(u_scale, 1, 1);
+
+  vec4 rotatedPosition = vec4(
+    scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
+    scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x,
+    scaledPosition.zw);
+
+  vec4 translation = vec4(u_translation, 0, 0);
+
+  gl_Position = rotatedPosition + translation;
+}
+```
+
+We'll add a minimal animation to show the effect:
+
+```js
+// Initialization step.
+let scale = 0;
+let scaleDirection = -1;
+
+// Render step.
+if (scale < 0 || scale > 1) { scaleDirection *= -1; }
+scale += deltaTime * 0.001 * scaleDirection;
+program.uniforms.get("u_scale").value = [scale, scale];
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="MWrJZbY" />
+
+## Matrices
+
+There are a few issues with using transformations as they are explained above.
+Although they work perfectly fine, it can be tedious to work with three different uniforms.
+Additionally, if we want to apply the transformations in a different order, we would have to write a whole new vertex shader.
+
+The more common way to transform vertices is using **matrices**, which are rectangular arrays of numbers.
+Matrices can be multiplied together as if they were one number to produce some interesting effects.
+
+In order to transform points in two-dimensional space, we require a three-by-three matrix:
+
+```
+1 2 3
+4 5 6
+7 8 9
+```
+
+Whenever we multiply a **vector** (point) by a matrix, the following calculation is performed:
+
+```
+newX = x * 1 +    newY = x * 2 +    extra = x * 3 +
+       y * 4 +           y * 5 +            y * 6 +
+       1 * 7             1 * 8              1 * 9
+```
+
+In order to transform a point using a matrix, we would construct a matrix like this (where `tx` and `ty` are the amounts to transform by on the horizontal and vertical axes, respectively):
+
+```
+ 1  0 0
+ 0  1 0
+tx ty 1
+```
+
+Plugging that into the equation above would look like this:
+
+```
+newX = x * 1 +    newY = x * 0 +    extra = x * 0 +
+       y * 0 +           y * 1 +            y * 0 +
+       1 * tx            1 * ty             1 * 1
+```
+
+Simplified, that looks like this:
+
+```
+newX = x + tx
+newY = y + ty
+```
+
+Which is exactly the same as the translation algorithm above.
+
+Rotation looks like this (where `c` and `s` are the cosine and sine of the rotation in radians, respectively):
+
+```
+c -s 0
+s  c 0
+0  0 1
+```
+
+And scale looks like this (where `sx` and `sy` are the scaling factors on the horizontal and vertical axes, respectively):
+
+```
+sx  0 0
+ 0 sy 0
+ 0  0 1
+```
+
+In our vertex shader, we can replace all of our transformation uniforms with one matrix uniform.
+One thing to note here is that we're using a four-dimensional matrix.
+This is because Umbra's built-in math uses four-dimensional matrices to make working with three-dimensional points easier.
+We can simply ignore the third dimension for now.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_matrix;
+
+void main() {
+  gl_Position = u_matrix * a_position;
+}
+```
+
+Now in code, we can use Umbra's `Matrix` class to perform matrix operations:
+
+```js
+import { Matrix } from "https://cdn.skypack.dev/@lakuna/umbra.js";
+
+// Initialization step.
+let matrix = new Matrix();
+
+// Render step.
+const translationMatrix = Matrix.fromTranslation(translation[0], translation[1], 0);
+const rotationMatrix = Matrix.fromRotationZ(rotation);
+const scaleMatrix = Matrix.fromScale(scale, scale, 1);
+matrix = translationMatrix.multiply(rotationMatrix).multiply(scaleMatrix);
+program.uniforms.get("u_matrix").value = [...matrix];
+```
+
+The above matrix can also be computed on one line:
+
+```js
+matrix = Matrix.fromTranslation(translation[0], translation[1], 0).rotateZ(rotation).scale(scale, scale, 1);
+```
+
+// TODO: Matrices CodePen.
+// TODO: Column-major note.
+// TODO: glMatrix performance note.
+// TODO: Orthographic projection example.
+
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
