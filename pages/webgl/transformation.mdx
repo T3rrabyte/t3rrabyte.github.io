@@ -94,7 +94,7 @@ let velocity = new Vector(0.0005, 0.001);
 if (translation[0] > 1 || translation[0] < -1) { velocity[0] = -velocity[0]; }
 if (translation[1] > 1 || translation[1] < -1) { velocity[1] = -velocity[1]; }
 translation = translation.add(velocity);
-program.uniforms.get("u_translation").value = [...translation];
+program.uniforms.get("u_translation").value = translation;
 ```
 
 The code above would work fine, but the speed of the triangle bouncing around the screen is tied to framerate.
@@ -302,7 +302,7 @@ const translationMatrix = Matrix.fromTranslation(translation[0], translation[1],
 const rotationMatrix = Matrix.fromRotationZ(rotation);
 const scaleMatrix = Matrix.fromScale(scale, scale, 1);
 matrix = translationMatrix.multiply(rotationMatrix).multiply(scaleMatrix);
-program.uniforms.get("u_matrix").value = [...matrix];
+program.uniforms.get("u_matrix").value = matrix;
 ```
 
 The above matrix can also be computed on one line:
@@ -316,10 +316,77 @@ matrix = new Matrix()
 
 <CodePen className={styles["full-bleed"]} slugHash="GRyWvZQ" />
 
-// TODO: Matrices CodePen.
-// TODO: Column-major note.
-// TODO: glMatrix performance note.
-// TODO: Orthographic projection example.
+## Orthographic projection
+
+If we want to provide *screen-space coordinates* (pixels) to our buffers rather than clip-space coordinates, we can also do that using matrices.
+Typically, transforming screen-space coordinates to clip-space coordinates inside of a shader would look something like this:
+
+```glsl
+#version 300 es
+
+in vec2 a_position;
+
+// The dimensions of the canvas.
+uniform vec2 u_resolution;
+
+void main() {
+  // Convert from pixels to 0->1.
+  vec2 zeroToOne = a_position / u_resolution;
+
+  // Convert from 0->1 to 0->2.
+  vec2 zeroToTwo = zeroToOne * 2.0;
+
+  // Convert from 0->2 to -1->1 (clip space).
+  vec2 clipSpace = zeroToTwo - 1.0;
+
+  // Invert the vertical axis.
+  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+}
+```
+
+Which is basically equivalent to three scale operations and one translation operation.
+The matrix required for this transformation looks like this (where `w` and `h` are the width and the height of the canvas, respectively):
+
+```
+2 / w,      0, 0,
+    0, -2 / h, 0
+   -1,      1, 1
+```
+
+Now we can pass pixel values into our buffer instead of clip-space coordinates:
+
+```js
+const positionBuffer = new Buffer(gl, new Float32Array([
+  100, 100,
+  300, 500,
+  500, 100
+]));
+```
+
+<CodePen className={styles["full-bleed"]} slugHash="KKZWELG" />
+
+---
+
+**IMPORTANT**: Note that matrices shown in this tutorial are in *column-major* order:
+
+```js
+new Matrix(
+  1, 0, 0, 0, // Column 0
+  0, 1, 0, 0, // Column 1
+  0, 0, 1, 0, // Column 2
+  0, 0, 0, 1 // Column 3
+);
+```
+
+Because programming works in rows rather than columns, this appears backwards from what you're probably used to.
+The math convention for matrices is to work in columns, so any matrices you find online will need to be *transposed* (flipped diagonally) in order to be used in your code.
+
+---
+
+**IMPORTANT**: The matrix class in Umbra is optimized for ease of use, not for performance.
+If high performance is very important in your application, I highly recommend using a dedicated matrix math library such as [glMatrix](https://glmatrix.net/).
+
+Next: [Scene graph](/webgl/scene-graph)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
