@@ -2,21 +2,19 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Transparency
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://xem.github.io/articles/webgl-guide-part-2.html#1a
 */}
-
-Next: [Varyings](/webgl/varyings)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Transparency",
+      description: "An introduction to transparency in WebGL."
     }
   };
 }

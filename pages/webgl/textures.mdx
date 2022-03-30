@@ -1,0 +1,48 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# Textures
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2-textures.html
+  https://xem.github.io/articles/webgl-guide.html#2g
+  https://xem.github.io/articles/webgl-guide-part-2.html#2a
+  https://xem.github.io/articles/webgl-guide-part-2.html#2b
+*/}
+
+## Data textures
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
+*/}
+
+## Images
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-cors-permission.html
+*/}
+
+## Texture mapping
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective-correct-texturemapping.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
+*/}
+
+Next: [Framebuffers](/webgl/framebuffers)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Textures",
+      description: "An introduction to using textures in WebGL."
+    }
+  };
+}

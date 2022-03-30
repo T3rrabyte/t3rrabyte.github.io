@@ -1,0 +1,41 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# Attributes
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-indexed-vertices.html
+  https://xem.github.io/articles/webgl-guide.html#2b
+  https://xem.github.io/articles/webgl-guide.html#3b
+*/}
+
+## Buffers
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
+*/}
+
+## Vertex array objects
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-indexed-vertices.html
+*/}
+
+Next: [Uniforms](/webgl/uniforms)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Attributes",
+      description: "An introduction to buffers and WebGL attributes."
+    }
+  };
+}

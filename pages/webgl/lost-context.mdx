@@ -2,21 +2,22 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Lost context
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-anti-patterns.html
+  https://www.khronos.org/webgl/wiki/HandlingContextLost
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Transparency](/webgl/transparency)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Lost context",
+      description: "A guide on handling lost context in programs that use the WebGL API."
     }
   };
 }

@@ -1,0 +1,41 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# Skyboxes
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-skybox.html
+*/}
+
+## Cubemaps
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-cube-maps.html
+*/}
+
+## Environment maps
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-environment-maps.html
+  https://xem.github.io/articles/webgl-guide-part-2.html#2c
+*/}
+
+## Skyboxes
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-skybox.html
+*/}
+
+Next: [Text](/webgl/text)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "Skyboxes",
+      description: "An introduction to skyboxes in WebGL."
+    }
+  };
+}

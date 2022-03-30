@@ -2,21 +2,23 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# The scene graph
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-scene-graph.html
+  https://xem.github.io/articles/webgl-guide.html#3g
+  https://xem.github.io/articles/webgl-guide.html#3h
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Animation](/webgl/animation)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "The scene graph",
+      description: "An introduction to the scene graph structure."
     }
   };
 }

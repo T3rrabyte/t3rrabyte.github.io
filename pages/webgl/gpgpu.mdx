@@ -2,21 +2,21 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# GPGPU
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-gpgpu.html
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Picking](/webgl/picking)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "GPGPU",
+      description: "An introduction to using the GPU to perform calculations using WebGL."
     }
   };
 }

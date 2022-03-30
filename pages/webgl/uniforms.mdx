@@ -2,21 +2,22 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Uniforms
 
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://xem.github.io/articles/webgl-guide.html#2b
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Program structure](/webgl/program-structure)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Attributes",
+      description: "An introduction to WebGL uniforms."
     }
   };
 }

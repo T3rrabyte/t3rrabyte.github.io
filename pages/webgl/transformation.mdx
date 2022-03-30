@@ -4,387 +4,40 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # Transformation
 
-This article will introduce you to translation, rotation, and scaling using uniforms.
-Towards the end, you will learn how to combine transformations using matrices.
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-translation.html
+  https://xem.github.io/articles/webgl-guide.html#2f
+*/}
 
 ## Translation
 
-While attributes supply unique data to each vertex, **uniforms** supply "global" data that is the same for every vertex in a shape.
-Uniforms can be declared in either the vertex shader or the fragment shader.
-As an example, let's declare a translation uniform that will move our shape by a given value:
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-
-// Uniforms are declared using the "uniform" keyword.
-// This uniform contains a two-dimensional vector, so we use the "vec2" keyword.
-// The naming convention for uniforms is camelCase with "u_" at the beginning.
-uniform vec2 u_translation;
-
-void main() {
-  // Set default z and w values for the translation.
-  vec4 translation = vec4(u_translation, 0, 0);
-
-  // Add the translation to the vector position.
-  gl_Position = a_position + translation;
-}
-```
-
-For this example, we don't need to update our fragment shader.
-However, if we want to declare a uniform within our fragment shader, it uses the exact same syntax.
-
-If you aren't using Umbra, you'll need to get the location of each uniform just like you did with attributes:
-
-```js
-const translationLocation = gl.getUniformLocation(program, "u_translation");
-```
-
-Setting uniforms is a much less involved process, though.
-We can simply pass in a value using a method depending on the type of our uniform:
-
-```js
-// Create a variable to hold the translation.
-const translation = [0, 0];
-
-// For two-dimensional vectors, we use the uniform2fv method.
-gl.uniform2fv(translationLocation, translation);
-```
-
-Umbra will detect the type of the uniform and automatically set the uniform using the proper method:
-
-```js
-// Create a variable to hold the translation.
-const translation = [0, 0];
-
-program.uniforms.get("u_translation").value = translation;
-```
-
-Updating the uniform should be done between binding the VAO and drawing it.
-With Umbra, that means we'll need to split up our draw call slightly:
-
-```js
-program.use();
-vao.bind();
-
-// Set uniforms.
-
-vao.draw();
-```
-
-<CodePen className={styles["full-bleed"]} slugHash="xxpZWXj" />
-
-## Animation
-
-You shouldn't see a difference between the example above and the "Hello, world!" program we wrote before.
-That's because we're currently translating by zero in both directions.
-
-Let's add some code to animate this translation.
-The following example uses Umbra's `Vector` class for convenience, but it's possible to do the same thing with regular numbers.
-
-```js
-import { Vector } from "https://cdn.skypack.dev/@lakuna/umbra.js";
-
-// Initialization step.
-let translation = new Vector(0, 0);
-let velocity = new Vector(0.0005, 0.001);
-
-// Render step.
-if (translation[0] > 1 || translation[0] < -1) { velocity[0] = -velocity[0]; }
-if (translation[1] > 1 || translation[1] < -1) { velocity[1] = -velocity[1]; }
-translation = translation.add(velocity);
-program.uniforms.get("u_translation").value = translation;
-```
-
-The code above would work fine, but the speed of the triangle bouncing around the screen is tied to framerate.
-In order to fix that, we need to modify our render loop a little bit.
-
-```js
-let then = 0;
-
-function renderStep(now) {
-  requestAnimationFrame(renderStep);
-
-  const deltaTime = now - then;
-  then = now;
-
-  // Do render step here.
-}
-requestAnimationFrame(renderStep);
-```
-
-Then we can multiply the velocity by the time between frames, called `deltaTime` here, to make the animation smoother:
-
-```js
-translation = translation.add(velocity.scale(deltaTime));
-```
-
-Once we begin using the built-in Umbra render loop, we can use the `deltaTime` property on our Umbra object instead of calculating it ourselves.
-
-<CodePen className={styles["full-bleed"]} slugHash="wvpMXWx" />
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-translation.html
+  https://xem.github.io/articles/webgl-guide.html#2f
+*/}
 
 ## Rotation
 
-Rotation works the same as translation, except we multiply the vertex coordinates by positions on the *unit circle*.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-
-uniform vec2 u_translation;
-uniform vec2 u_rotation;
-
-void main() {
-  vec4 rotatedPosition = vec4(
-    a_position.x * u_rotation.y + a_position.y * u_rotation.x,
-    a_position.y * u_rotation.y - a_position.x * u_rotation.x,
-    a_position.zw);
-
-  vec4 translation = vec4(u_translation, 0, 0);
-
-  gl_Position = rotatedPosition + translation;
-}
-```
-
-We can get a point on the unit circle using the *sine* and *cosine* of a number in *radians*.
-
-```js
-// Initialization step.
-let rotation = 0;
-
-// Render step.
-rotation += deltaTime * 0.001;
-program.uniforms.get("u_rotation").value = [Math.sin(rotation), Math.cos(rotation)];
-```
-
-<CodePen className={styles["full-bleed"]} slugHash="vYpLrvj" />
-
-The reason the triangle appears to be warping in the example above is because we're still passing in *clip-space coordinates*, and your viewport (probably) isn't a perfect square.
-Information about how to pass *screen-space coordinates* (pixels) into buffers is farther down on this page.
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-rotation.html
+  https://xem.github.io/articles/webgl-guide.html#2f
+*/}
 
 ## Scale
 
-Scale is done in the same way as rotation, except we don't need to worry about the values we pass in being on the unit circle.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-
-uniform vec2 u_translation;
-uniform vec2 u_rotation;
-uniform vec2 u_scale;
-
-void main() {
-  vec4 scaledPosition = a_position * vec4(u_scale, 1, 1);
-
-  vec4 rotatedPosition = vec4(
-    scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x,
-    scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x,
-    scaledPosition.zw);
-
-  vec4 translation = vec4(u_translation, 0, 0);
-
-  gl_Position = rotatedPosition + translation;
-}
-```
-
-We'll add a minimal animation to show the effect:
-
-```js
-// Initialization step.
-let scale = 0;
-let scaleDirection = -1;
-
-// Render step.
-if (scale < 0 || scale > 1) { scaleDirection *= -1; }
-scale += deltaTime * 0.001 * scaleDirection;
-program.uniforms.get("u_scale").value = [scale, scale];
-```
-
-<CodePen className={styles["full-bleed"]} slugHash="MWrJZbY" />
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-scale.html
+  https://xem.github.io/articles/webgl-guide.html#2f
+*/}
 
 ## Matrices
 
-There are a few issues with using transformations as they are explained above.
-Although they work perfectly fine, it can be tedious to work with three different uniforms.
-Additionally, if we want to apply the transformations in a different order, we would have to write a whole new vertex shader.
-
-The more common way to transform vertices is using **matrices**, which are rectangular arrays of numbers.
-Matrices can be multiplied together as if they were one number to produce some interesting effects.
-
-In order to transform points in two-dimensional space, we require a three-by-three matrix:
-
-```
-1 2 3
-4 5 6
-7 8 9
-```
-
-Whenever we multiply a **vector** (point) by a matrix, the following calculation is performed:
-
-```
-newX = x * 1 +    newY = x * 2 +    extra = x * 3 +
-       y * 4 +           y * 5 +            y * 6 +
-       1 * 7             1 * 8              1 * 9
-```
-
-In order to transform a point using a matrix, we would construct a matrix like this (where `tx` and `ty` are the amounts to transform by on the horizontal and vertical axes, respectively):
-
-```
- 1  0 0
- 0  1 0
-tx ty 1
-```
-
-Plugging that into the equation above would look like this:
-
-```
-newX = x * 1 +    newY = x * 0 +    extra = x * 0 +
-       y * 0 +           y * 1 +            y * 0 +
-       1 * tx            1 * ty             1 * 1
-```
-
-Simplified, that looks like this:
-
-```
-newX = x + tx
-newY = y + ty
-```
-
-Which is exactly the same as the translation algorithm above.
-
-Rotation looks like this (where `c` and `s` are the cosine and sine of the rotation in radians, respectively):
-
-```
-c -s 0
-s  c 0
-0  0 1
-```
-
-And scale looks like this (where `sx` and `sy` are the scaling factors on the horizontal and vertical axes, respectively):
-
-```
-sx  0 0
- 0 sy 0
- 0  0 1
-```
-
-In our vertex shader, we can replace all of our transformation uniforms with one matrix uniform.
-One thing to note here is that we're using a four-dimensional matrix.
-This is because Umbra's built-in math uses four-dimensional matrices to make working with three-dimensional points easier.
-We can simply ignore the third dimension for now.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-
-uniform mat4 u_matrix;
-
-void main() {
-  gl_Position = u_matrix * a_position;
-}
-```
-
-Now in code, we can use Umbra's `Matrix` class to perform matrix operations:
-
-```js
-import { Matrix } from "https://cdn.skypack.dev/@lakuna/umbra.js";
-
-// Initialization step.
-let matrix = new Matrix();
-
-// Render step.
-const translationMatrix = Matrix.fromTranslation(translation[0], translation[1], 0);
-const rotationMatrix = Matrix.fromRotationZ(rotation);
-const scaleMatrix = Matrix.fromScale(scale, scale, 1);
-matrix = translationMatrix.multiply(rotationMatrix).multiply(scaleMatrix);
-program.uniforms.get("u_matrix").value = matrix;
-```
-
-The above matrix can also be computed on one line:
-
-```js
-matrix = new Matrix()
-  .rotateZ(rotation)
-  .scale(scale, scale, 1)
-  .translate(translation[0], translation[1], 0);
-```
-
-<CodePen className={styles["full-bleed"]} slugHash="GRyWvZQ" />
-
-## Orthographic projection
-
-If we want to provide *screen-space coordinates* (pixels) to our buffers rather than clip-space coordinates, we can also do that using matrices.
-Typically, transforming screen-space coordinates to clip-space coordinates inside of a shader would look something like this:
-
-```glsl
-#version 300 es
-
-in vec2 a_position;
-
-// The dimensions of the canvas.
-uniform vec2 u_resolution;
-
-void main() {
-  // Convert from pixels to 0->1.
-  vec2 zeroToOne = a_position / u_resolution;
-
-  // Convert from 0->1 to 0->2.
-  vec2 zeroToTwo = zeroToOne * 2.0;
-
-  // Convert from 0->2 to -1->1 (clip space).
-  vec2 clipSpace = zeroToTwo - 1.0;
-
-  // Invert the vertical axis.
-  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
-}
-```
-
-Which is basically equivalent to three scale operations and one translation operation.
-The matrix required for this transformation looks like this (where `w` and `h` are the width and the height of the canvas, respectively):
-
-```
-2 / w,      0, 0,
-    0, -2 / h, 0
-   -1,      1, 1
-```
-
-Now we can pass pixel values into our buffer instead of clip-space coordinates:
-
-```js
-const positionBuffer = new Buffer(gl, new Float32Array([
-  100, 100,
-  300, 500,
-  500, 100
-]));
-```
-
-<CodePen className={styles["full-bleed"]} slugHash="KKZWELG" />
-
----
-
-**IMPORTANT**: Note that matrices shown in this tutorial are in *column-major* order:
-
-```js
-new Matrix(
-  1, 0, 0, 0, // Column 0
-  0, 1, 0, 0, // Column 1
-  0, 0, 1, 0, // Column 2
-  0, 0, 0, 1 // Column 3
-);
-```
-
-Because programming works in rows rather than columns, this appears backwards from what you're probably used to.
-The math convention for matrices is to work in columns, so any matrices you find online will need to be *transposed* (flipped diagonally) in order to be used in your code.
-
----
-
-**IMPORTANT**: The matrix class in Umbra is optimized for ease of use, not for performance.
-If high performance is very important in your application, I highly recommend using a dedicated matrix math library such as [glMatrix](https://glmatrix.net/).
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-matrices.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-matrix-naming.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-matrix-vs-math.html
+  https://xem.github.io/articles/webgl-guide.html#3f
+*/}
 
 Next: [Scene graph](/webgl/scene-graph)
 
@@ -394,7 +47,7 @@ export async function getStaticProps() {
   return {
     props: {
       title: "Transformation",
-      description: "An introduction to transformation in WebGL."
+      description: "An introduction to transformations in WebGL shader programs."
     }
   };
 }

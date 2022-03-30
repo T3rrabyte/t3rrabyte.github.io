@@ -2,21 +2,22 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Picking
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-picking.html
+  https://xem.github.io/articles/webgl-guide-part-2.html#1b
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Image processing](/webgl/image-processing)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Picking",
+      description: "An introduction to selecting things in WebGL."
     }
   };
 }

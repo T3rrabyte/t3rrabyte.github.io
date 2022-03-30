@@ -2,21 +2,22 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Program structure
 
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Initialization](/webgl/initialization)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Program structure",
+      description: "An overview of the standard structure of a program that uses the WebGL API."
     }
   };
 }

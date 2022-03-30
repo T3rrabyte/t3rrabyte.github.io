@@ -2,14 +2,62 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 
 # Introduction to WebGL
 This is an introduction to WebGL2 using [Umbra](https://umbra.lakuna.pw).
-The contents of this series of tutorials is mostly reorganized from the excellent content at [WebGL2Fundamentals](https://webgl2fundamentals.org).
+I learned much of the content of this tutorial from the excellent tutorial by [Gregg Tavares](https://webgl2fundamentals.org).
 
 ## Table of Contents
-1. [Intro](/webgl)
+1. [Index](/webgl)
 2. [What is WebGL?](/webgl/what-is)
-3. ["Hello, world!"](/webgl/hello-world)
-4. [Transformation](/webgl/transformation)
-5. [Scene graph](/webgl/scene-graph)
+    * WebGL
+    * Shaders
+    * The WebGL API
+3. [Attributes](/webgl/attributes)
+    * Buffers
+    * Vertex array objects
+4. [Uniforms](/webgl/uniforms)
+5. [Program structure](/webgl/structure)
+6. [Initialization](/webgl/initialization)
+    * The rendering context
+    * Shader programs
+    * Variable locations
+7. [Rendering](/webgl/rendering)
+    * Global state
+    * Drawing
+8. ["Hello, world!"](/webgl/hello-world)
+9. [Varyings](/webgl/varyings)
+10. [Transformation](/webgl/transformation)
+    * Translation
+    * Rotation
+    * Scale
+    * Matrices
+11. [The scene graph](/webgl/scene-graph)
+12. [Animation](/webgl/animation)
+13. [3D](/webgl/3d)
+    * Orthographic 3D
+    * Perspective
+    * Cameras
+14. [Textures](/webgl/textures)
+    * Data textures
+    * Images
+    * Texture mapping
+15. [Framebuffers](/webgl/framebuffers)
+    * Rendering to a texture
+16. [Lighting](/webgl/lighting)
+    * Directional lighting
+    * Point lighting
+    * Spot lighting
+17. [Shadows](/webgl/shadows)
+18. [Fog](/webgl/fog)
+19. [Skyboxes](/webgl/skyboxes)
+    * Cubemaps
+    * Environment maps
+29. [Text](/webgl/text)
+    * Glyph textures
+21. [GPGPU](/webgl/gpgpu)
+22. [Picking](/webgl/picking)
+23. [Image processing](/webgl/image-processing)
+24. [Skinning](/webgl/skinning)
+25. [Lost context](/webgl/lost-context)
+26. [Transparency](/webgl/transparency)
 
 Next: [What is WebGL?](/webgl/what-is)
 
@@ -19,7 +67,7 @@ export async function getStaticProps() {
   return {
     props: {
       title: "Introduction to WebGL",
-      description: "An introduction to WebGL2 with Umbra."
+      description: "An introduction to WebGL with Umbra."
     }
   };
 }

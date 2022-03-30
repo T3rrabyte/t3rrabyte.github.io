@@ -2,39 +2,35 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# What is WebGL?
+# Rendering
 
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://xem.github.io/articles/webgl-guide.html#0
-  https://xem.github.io/articles/webgl-guide.html#1
-  https://xem.github.io/articles/webgl-guide.html#1a
+  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
 */}
 
-## Shaders
+## Global state
 
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html
-  https://xem.github.io/articles/webgl-guide.html#1b
+  https://webgl2fundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
 */}
 
-## The WebGL API
+## Drawing
 
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://xem.github.io/articles/webgl-guide.html#1c
 */}
 
-Next: [Attributes](/webgl/attributes)
+Next: ["Hello, world!"](/webgl/hello-world)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "What is WebGL?",
-      description: "An introduction to the fundamental concepts of WebGL."
+      title: "Rendering",
+      description: "An overview of the rendering step of a program that uses the WebGL API."
     }
   };
 }

@@ -2,21 +2,24 @@ import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 
-# "Hello, world!"
+# Shadows
 
 {/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-shadows.html
+  https://xem.github.io/articles/webgl-guide-part-2.html#3b
+  https://xem.github.io/articles/webgl-guide-part-2.html#3c
+  https://xem.github.io/articles/webgl-guide-part-2.html#3d
 */}
 
-Next: [Varyings](/webgl/varyings)
+Next: [Fog](/webgl/fog)
 
 export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
 
 export async function getStaticProps() {
   return {
     props: {
-      title: "\"Hello, world!\"",
-      description: "A walkthrough for writing a minimal program that uses the WebGL API."
+      title: "Shadows",
+      description: "An introduction to shadows in WebGL."
     }
   };
 }

@@ -1,0 +1,43 @@
+import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
+import CodePen from "../../components/CodePen.tsx";
+import styles from "../../styles/mdx-article.module.scss";
+
+# 3D
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-orthographic.html
+  https://xem.github.io/articles/webgl-guide.html#3
+*/}
+
+## Orthographic 3D
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-orthographic.html
+*/}
+
+## Perspective
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective.html
+*/}
+
+## Cameras
+
+{/*
+  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-camera.html
+  https://webgl2fundamentals.org/webgl/lessons/webgl-visualizing-the-camera.html
+  https://xem.github.io/articles/webgl-guide.html#3a
+*/}
+
+Next: [Textures](/webgl/textures)
+
+export default function applyLayout({ children }) { return (<MdxArticleLayout>{children}</MdxArticleLayout>); }
+
+export async function getStaticProps() {
+  return {
+    props: {
+      title: "3D",
+      description: "An introduction to depth and the techniques used to draw three-dimensional objects in WebGL."
+    }
+  };
+}
