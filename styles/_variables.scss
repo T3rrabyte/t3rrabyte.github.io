@@ -8,14 +8,14 @@ $mobile-breakpoint: 800px;
 $white: #ffffff;
 $black: #000000;
 
-// "Caterpillar" color scheme by Xanycki
+// "Caterpillar" dark theme color scheme by Xanycki
 $light-emerald: #9ceea6;
 $emerald: #50c878;
 $dark-emerald: #437f66;
 $very-dark-emerald: #344a47;
 $black-emerald: #121411;
 $light-yellow: #eada9c;
-$yellow: #d0af6c;
+$pastel-yellow: #d0af6c;
 $light-teal: #9deece;
 $teal: #6ccaa6;
 $light-gray: #292f2f;
@@ -27,3 +27,23 @@ $light-magenta: #f2e0fa;
 $magenta: #d7b5e7;
 $light-pink: #f5dbdc;
 $pink: #dfabaf;
+
+// Unnamed dark theme color scheme.
+$charcoal: #272727;
+$gray: #747474;
+$orange: #ff652f;
+$yellow: #ffe400;
+$jade: #14a76c;
+
+// Unnamed light theme color scheme.
+$electric-blue: #4cdef5;
+$pea-green: #a4d555;
+$blush-pink: #ff5992;
+$orchid-purple: #841983;
+
+// Themed variables. Light and dark themes are set up in the global stylesheet.
+$background-color: var(--background-color);
+$text-color: var(--text-color);
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$tertiary-color: var(--tertiary-color);

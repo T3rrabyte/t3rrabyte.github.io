@@ -2,24 +2,14 @@
 
 :root {
   font-family: $font-sans-serif;
-  color: $white;
-  background-color: $dark-gray;
+  color: $text-color;
+  background-color: $background-color;
 
   code {
     font-family: $font-monospace;
   }
 
   a {
-    color: $emerald;
-  }
-
-  // Switch some colors for light theme.
-  @media (prefers-color-scheme: light) {
-    color: $dark-gray;
-    background-color: $white;
-
-    a {
-      color: $dark-emerald;
-    }
+    color: $primary-color;
   }
 }

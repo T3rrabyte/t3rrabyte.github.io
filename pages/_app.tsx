@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { AppProps } from "next/app";
 import "../styles/global.scss";
+import "../styles/css-variables.scss";
 
 export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 	const title: string = pageProps.title ?? "Missing page title.";

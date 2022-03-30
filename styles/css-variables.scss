@@ -1,0 +1,19 @@
+@use "variables" as *;
+
+:root {
+  // Dark theme.
+  --background-color: #{$charcoal};
+  --text-color: #{$gray};
+  --primary-color: #{$jade};
+  --secondary-color: #{$orange};
+  --tertiary-color: #{$yellow};
+
+  // Light theme.
+  @media (prefers-color-scheme: light) {
+    --background-color: #{$white};
+    --text-color: #{$black};
+    --primary-color: #{$electric-blue};
+    --secondary-color: #{$pea-green};
+    --tertiary-color: #{$blush-pink};
+  }
+}

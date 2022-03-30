@@ -4,13 +4,17 @@ type Properties = {
   className: string,
   height: string,
   slugHash: string,
+  defaultTab: string,
   props: string[]
 };
 
-export default function CodePen({ className, height, slugHash, ...props }: Properties): JSX.Element {
+export default function CodePen({ className, height, slugHash, defaultTab, ...props }: Properties): JSX.Element {
+  const dataHeight: number = height ? parseInt(height) : 600;
+  const dataDefaultTab: string = defaultTab ?? "js,result";
+
   return (
     <div className={className} {...props}>
-      <p className="codepen" data-height={height ? parseInt(height) : 600} data-default-tab="js,result" data-slug-hash={slugHash} />
+      <p className="codepen" data-height={dataHeight} data-default-tab={dataDefaultTab} data-slug-hash={slugHash} />
       <Script async src="https://cpwebassets.codepen.io/assets/embed/ei.js" />
     </div>
   );
