@@ -4,27 +4,35 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # What is WebGL?
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://xem.github.io/articles/webgl-guide.html#0
-  https://xem.github.io/articles/webgl-guide.html#1
-  https://xem.github.io/articles/webgl-guide.html#1a
-*/}
+*WebGL* is a *rasterization engine*.
+That means that it draws *primitives* (points, lines, and triangles) using pixels.
+That is all that it can do.
+Using WebGL to draw complex scenes is up to the developer.
+
+WebGL is based on *OpenGL ES*.
 
 ## Shaders
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html
-  https://xem.github.io/articles/webgl-guide.html#1b
-*/}
+WebGL runs on the GPU, so developers need to provide it code that can run on the GPU.
+That code is supplied in the form of pairs of functions called *shaders*.
+Each pair of shaders contains one *vertex shader* and one *fragment shader*.
+Collectively, the pair of shaders is called a *shader program*.
+
+Shaders are written in a strictly-typed C-like language called *GLSL*.
+
+Each shader fulfills a different function:
+
+- The vertex shader is run once for each vertex in the shape you're drawing; it computes the position of that vertex and outputs it as a *clip-space coordinate*.
+Clip-space coordinates are a coordinate system that goes from `-1` to `+1` in every direction, regardless of the size of the viewport.
+- Once the vertex shader has been run the proper number of times for the type of primitive being drawn (such as 3 for triangles), WebGL *rasterizes* (draws with pixels) that primitive.
+The fragment shader is run once for each *fragment* (pixel) in the primitive being rasterized; it computes the color of that fragment.
+
+The fragments from the fragment shader constitute a bitmap image stored in a *color buffer*, which is then displayed on a canvas.
 
 ## The WebGL API
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://xem.github.io/articles/webgl-guide.html#1c
-*/}
+The [WebGL API](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API) is how developers interact with WebGL through JavaScript.
+It can be accessed through the rendering context on an HTML canvas element.
 
 Next: [Attributes](/webgl/attributes)
 

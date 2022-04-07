@@ -4,28 +4,30 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # Attributes
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-indexed-vertices.html
-  https://xem.github.io/articles/webgl-guide.html#2b
-  https://xem.github.io/articles/webgl-guide.html#3b
-*/}
+Since WebGL runs on the GPU, we need a way to pass data to the GPU so that we can draw with it.
+One of those ways is through *attributes*.
+
+Attributes are a type of variable in a WebGL program which are used as inputs to the vertex shader.
+Based on rules specified by the developer, each time the vertex shader is run, each attribute will read a certain amount of data from the buffer assigned to it.
+As such, attributes are used to supply vertex-specific data to the shader program.
 
 ## Buffers
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
-*/}
+Attributes can only read data from arrays of binary data called *buffers*.
+They differ from regular arrays only in that they store binary data.
 
 ## Vertex array objects
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-indexed-vertices.html
-*/}
+Since buffers contain binary data, WebGL needs some context in order to read data out of them.
+After all of the necessary data has been put into buffers, a WebGL program can be told how to use those buffers through a *vertex array object* (*VAO*).
+VAOs contain information like which buffer is supposed to be used for each attribute, and what type of data is stored in that buffer.
+
+Each VAO represents one "thing" to be drawn by a shader program.
+For example, imagine that you want to draw two shapes: one cube and one sphere.
+A cube and a sphere are different shapes, so each one is made up of a different set of vertices.
+In order to avoid writing multiple separate shader programs just to draw different shapes, we can instead make one VAO which uses a buffer containing the positions to make a cube, and another VAO which uses a buffer containing the positions to make a sphere.
+
+{/* TODO: Indices */}
 
 Next: [Uniforms](/webgl/uniforms)
 
