@@ -4,10 +4,56 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # Uniforms
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://xem.github.io/articles/webgl-guide.html#2b
-*/}
+Another way to pass data to the GPU is through *uniforms*.
+
+Uniforms are variables that are uniform for each vertex.
+They can be defined in either the vertex shader or the fragment shader.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+// The naming convention for uniforms is camelCase prefixed by "u_".
+uniform vec4 u_color;
+
+out vec4 outColor;
+
+void main() {
+  outColor = u_color;
+}
+```
+
+Once a uniform has been declared in a shader program, it can be accessed through the WebGL API by getting its *location*.
+Umbra does this step automatically.
+
+```js
+const colorUniformLocation = gl.getUniformLocation(program, "u_color");
+```
+
+In order to set a uniform, the correct method must be called for the type of that uniform.
+
+```js
+// uniform4fv is proper because u_color is defined as a vec4.
+gl.uniform4fv(colorUniformLocation, [0, 0, 0, 1]);
+```
+
+Umbra automatically determines the correct method to use.
+
+```js
+program.uniforms.get("u_color").value = [0, 0, 0, 1];
+```
+
+Setting uniforms should be done between binding a VAO and drawing it.
+
+```js
+program.use();
+vao.bind();
+
+// Set uniforms.
+
+vao.draw();
+```
 
 Next: [Program structure](/webgl/program-structure)
 
@@ -16,7 +62,7 @@ export default function applyLayout({ children }) { return (<MdxArticleLayout>{c
 export async function getStaticProps() {
   return {
     props: {
-      title: "Attributes",
+      title: "Uniforms",
       description: "An introduction to WebGL uniforms."
     }
   };

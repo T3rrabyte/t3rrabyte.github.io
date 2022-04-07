@@ -4,10 +4,30 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # Program structure
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html
-*/}
+Most of the WebGL API is dedicated to setting up state for the shader program.
+A typical program using the WebGL API follows this structure:
+
+- *Initialization step* (run once at the beginning of the program).
+  - Get the rendering context.
+  - Create all of the shaders and link them into shader programs.
+  - Look up the locations of every variable in every shader program.
+  - Create buffers and upload vertex data to them.
+  - Create a vertex array object (VAO) for each thing that needs to be rasterized.
+    - For each attribute that will accept data from a buffer:
+      - Turn on the attribute.
+      - Assign the attribute a buffer.
+      - Tell WebGL how to get data out of that buffer.
+  - Create textures and upload data to them.
+- *Render step* (run once each frame).
+  - Clear the viewport.
+  - Resize the viewport.
+  - Set global state.
+  - For each thing that needs to be rasterized:
+    - Activate the shader program that is used to draw that thing.
+    - Bind the VAO that represents that thing.
+    - Set uniforms to the correct values for that thing.
+      - Assign textures to texture units.
+    - Execute the shader program.
 
 Next: [Initialization](/webgl/initialization)
 
