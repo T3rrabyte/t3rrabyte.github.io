@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import HTMLParser from "node-html-parser";
+import { parse, HTMLElement as ParsedHTMLElement } from "node-html-parser";
 
 let currentScore: number;
 let currentPage: string;
@@ -50,26 +50,35 @@ function takeTurn(clickedTitle: string): void {
 
 // Displays the Wikipedia page with the given title in the given play area.
 async function displayWikipediaPage(title: string): Promise<void> {
-  window.document.querySelector("div#play-area")!.innerHTML = cleanParsedHtml((HTMLParser as any).parse(await wikipediaPageContentHtml(title))).toString();
+  const playArea: Element | null = window.document.querySelector("div#play-area");
+  if (playArea) { playArea.innerHTML = cleanParsedHtml(parse(await wikipediaPageContentHtml(title))).toString(); }
 }
 
-const nonAlphaNumeric: RegExp = /[^a-z0-9]/gi;
+const nonAlphaNumeric = /[^a-z0-9]/gi;
 
 // Updates the score display.
 function updateScoreDisplay(): void {
-  window.document.querySelector("p#score-display")!.innerHTML =
-    currentPage.replace(nonAlphaNumeric, "") == endingPoint.replace(nonAlphaNumeric, "")
-    ? `Achieved victory in ${currentScore} turns.`
-    : `Turns taken: ${currentScore}`;
+  const scoreDisplay: Element | null = window.document.querySelector("p#score-display");
+
+  if (scoreDisplay) {
+    scoreDisplay.innerHTML =
+      currentPage.replace(nonAlphaNumeric, "") == endingPoint.replace(nonAlphaNumeric, "")
+      ? `Achieved victory in ${currentScore} turns.`
+      : `Turns taken: ${currentScore}`;
+  }
 }
 
 // Updates the endpoint display.
 function updateEndpointDisplay(): void {
-  window.document.querySelector("p#endpoint-display")!.innerHTML = `Current goal: "${startingPoint}" to "${endingPoint}"`;
+  const endpointDisplay: Element | null = window.document.querySelector("p#endpoint-display");
+  if (endpointDisplay) { endpointDisplay.innerHTML = `Current goal: "${startingPoint}" to "${endingPoint}"`; }
 
   // Update the challenge link display.
-  const challengeLink: string = `https://lakuna.pw/wiki-game?s=${startingPoint.replace(/ /g, "+")}&e=${endingPoint.replace(/ /g, "+")}`;
-  window.document.querySelector("p#challenge-link-display")!.innerHTML = `Use this link to challenge your friends: <a href=${challengeLink}>${challengeLink}</a>`;
+  const challengeLinkDisplay: Element | null = window.document.querySelector("p#challenge-link-display");
+  if (challengeLinkDisplay) {
+    const challengeLink = `https://lakuna.pw/wiki-game?s=${startingPoint.replace(/ /g, "+")}&e=${endingPoint.replace(/ /g, "+")}`;
+    challengeLinkDisplay.innerHTML = `Use this link to challenge your friends: <a href=${challengeLink}>${challengeLink}</a>`;
+  }
 }
 
 async function randomWikipediaPageTitle(): Promise<string> {
@@ -83,7 +92,7 @@ async function randomWikipediaPageTitle(): Promise<string> {
     }
   })
     .then((response: AxiosResponse): string => response.data.query.random[0].title)
-    .catch((error: any): void => { throw new Error(error); }) as string;
+    .catch((error: Error): void => { throw error; }) as string;
 }
 
 // Get the HTML of the content of the Wikipedia page with the given title.
@@ -98,11 +107,11 @@ async function wikipediaPageContentHtml(title: string): Promise<string> {
     }
   })
     .then((response: AxiosResponse): string => response.data.parse.text["*"])
-    .catch((error: any): void => { throw new Error(error); }) as string;
+    .catch((error: Error): void => { throw error; }) as string;
 }
 
 // Recursively replace links in the given parsed HTML with function calls, and delete added styles.
-function cleanParsedHtml(parsedHtml: HTMLElement): HTMLElement {
+function cleanParsedHtml(parsedHtml: ParsedHTMLElement): ParsedHTMLElement {
   // Remove all children of style tags.
   if (parsedHtml.tagName?.toLowerCase() == "style") {
     parsedHtml.remove();
@@ -114,14 +123,14 @@ function cleanParsedHtml(parsedHtml: HTMLElement): HTMLElement {
   // Modify href attributes.
   if (parsedHtml.hasAttribute?.("href")) {
     if (parsedHtml.getAttribute?.("href")?.startsWith("/wiki/")) {
-      parsedHtml.setAttribute?.("href", `#${parsedHtml.getAttribute?.("href")?.substr("/wiki/".length)}`);
+      parsedHtml.setAttribute?.("href", `#${parsedHtml.getAttribute?.("href")?.substring("/wiki/".length)}`);
     } else {
       parsedHtml.removeAttribute?.("href");
     }
   }
 
-  for (const child of parsedHtml?.childNodes) {
-    (parsedHtml as any).exchangeChild?.(child, cleanParsedHtml(child as HTMLElement));
+  for (const child of parsedHtml.childNodes) {
+    parsedHtml.exchangeChild?.(child, cleanParsedHtml(child as ParsedHTMLElement));
   }
 
   return parsedHtml;
