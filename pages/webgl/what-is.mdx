@@ -22,8 +22,8 @@ Shaders are written in a strictly-typed C-like language called *GLSL*.
 
 Each shader fulfills a different purpose:
 
-- The vertex shader is run once for each vertex in the shape being drawn; it computes the position of that vertex and outputs it as a *clip-space coordinate*.
-Clip-space coordinates are a coordinate system that goes from `-1` to `+1` in every direction, regardless of the size of the viewport.
+- The vertex shader is run once for each vertex in the shape being drawn; it computes the position of that vertex and outputs it as a *clip space coordinate*.
+Clip space coordinates are a coordinate system that goes from `-1` to `+1` in every direction, regardless of the size of the viewport.
 - Once the vertex shader has been run the proper number of times for the type of primitive being drawn (such as 3 for triangles), WebGL *rasterizes* (draws with pixels) that primitive.
 The fragment shader is run once for each *fragment* (pixel) in the primitive being rasterized; it computes the color of that fragment.
 
@@ -36,7 +36,7 @@ A minimal vertex shader looks like this:
 
 // Every shader has a main function to be executed.
 void main() {
-  // Setting the special "gl_Position" variable is how the vertex shader outputs clip-space coordinates.
+  // Setting the special "gl_Position" variable is how the vertex shader outputs clip space coordinates.
   gl_Position = vec4(0, 0, 0, 1);
 }
 ```

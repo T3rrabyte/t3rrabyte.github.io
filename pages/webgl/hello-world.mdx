@@ -4,9 +4,149 @@ import styles from "../../styles/mdx-article.module.scss";
 
 # "Hello, world!"
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
-*/}
+The program described below draws one monocolored triangle using a minimal WebGL shader program.
+
+## Initialization step
+
+The initialization step contains all of the steps that only need to be done once.
+
+### Rendering context
+
+Umbra provides a function called `makeFullscreenCanvas` which can be used to create a fullscreen canvas without HTML or CSS.
+The `Umbra` constructor takes an `HTMLCanvasElement` as its first parameter and defaults to `makeFullscreenCanvas()`.
+
+```js
+const umbra = new Umbra();
+const canvas = umbra.canvas;
+const gl = umbra.gl;
+```
+
+### Shader program
+
+The vertex shader for this shader program will have only one attribute which stores position data.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+void main() {
+  gl_Position = a_position;
+}
+```
+
+The fragment shader for this shader program will set all fragments to a static color.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+out vec4 outColor;
+
+void main() {
+  outColor = vec4(1, 0, 0, 1);
+}
+```
+
+```js
+const program = Program.fromSource(gl,
+`#version 300 es
+in vec4 a_position;
+void main() {
+  gl_Position = a_position;
+}`,
+`#version 300 es
+precision highp float;
+out vec4 outColor;
+void main() {
+  outColor = vec4(1, 0, 0, 1);
+}`);
+```
+
+### Buffers
+
+This program will draw only one triangle, so only one buffer is needed.
+
+```js
+const buffer = new Buffer(gl, new Float32Array([0, 0, 0, 0.5, 0.7, 0]));
+```
+
+### Vertex array objects
+
+This program will draw only one triangle, so only one vertex array object is needed.
+
+```js
+const vao = new VAO(program, [new AttributeState("a_position", buffer, 2)]);
+```
+
+## Render step
+
+The render step contains all of the steps that need to be done for every frame.
+The `requestAnimationFrame` function provided by JavaScript can be used to loop through the render step as fast as the browser is able to process it.
+
+```js
+function renderStep() {
+  requestAnimationFrame(renderStep);
+
+  // Render step goes here.
+}
+requestAnimationFrame(renderStep);
+```
+
+This program will not use Umbra's built-in update loop, so it is best to stop it.
+
+```js
+umbra.destroy();
+```
+
+### Clearing the viewport
+
+With the WebGL API, the various buffers of the viewport are each cleared with a different function.
+In this program, the only buffer that is being used is the *color buffer*, so the viewport can be cleared with one function.
+
+```js
+gl.clearColor(0, 0, 0, 1);
+```
+
+Umbra provides a function called `clearContext` which clears all of the buffers of the viewport to the provided values.
+Although it isn't as important when only the color buffer is involved, it is a good idea to get used to using `clearContext` since it scales better to more complicated programs (like those that use the *depth buffer*).
+
+```js
+clearContext(gl, new Color(0x000000));
+```
+
+### Resizing the viewport
+
+Like images, canvases have two sizes.
+One is the physical (display) size, which is set by CSS and represents the actual size of the canvas on the document.
+The other size is the number of pixels in the canvas (the resolution of the canvas).
+In order to prevent the canvas from appearing blurry, its resolution must be resized to match its display size.
+
+```js
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+```
+
+Once the canvas has been resized, the WebGL API must be used to pass the resolution of the canvas to WebGL so that WebGL can properly convert from clip space coordinates to screen space coordinates.
+
+```js
+gl.viewport(0, 0, canvas.width, canvas.height);
+```
+
+With Umbra, all of the above can be condensed into one line.
+
+```js
+resizeContext(gl);
+```
+
+### Rasterizing
+
+```js
+vao.draw();
+```
+
+<CodePen slugHash="rNpRYZB" class={styles["full-bleed"]} />
 
 Next: [Varyings](/webgl/varyings)
 
