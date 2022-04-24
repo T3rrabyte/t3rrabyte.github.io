@@ -1,43 +1,221 @@
 import MdxArticleLayout from "../../components/MdxArticleLayout.tsx";
 import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
+import "katex/dist/katex.min.css";
 
 # Transformation
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-translation.html
-  https://xem.github.io/articles/webgl-guide.html#2f
-*/}
+A *transformation* is a way to change something.
+There are three basic transformations: *translation*, *rotation*, and *scale*.
 
 ## Translation
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-translation.html
-  https://xem.github.io/articles/webgl-guide.html#2f
-*/}
+A translation is performed by adding a value to each vertex.
+
+$$
+newX=oldX+translationX
+$$
+
+$$
+newY=oldY+translationY
+$$
+
+In a vertex shader, a translation could be implemented with a vector uniform.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec4 u_translation;
+
+void main() {
+  gl_Position = a_position + u_translation;
+}
+```
 
 ## Rotation
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-rotation.html
-  https://xem.github.io/articles/webgl-guide.html#2f
-*/}
+A rotation is performed by multiplying each vertex by a point on the *unit circle*.
 
-## Scale
+The unit circle is the circle with a radius of one.
+As such, it can be thought of as a rotating one.
+Therefore, multiplying a vertex by a point on the unit circle will not change its value (shape) except to rotate it.
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-scale.html
-  https://xem.github.io/articles/webgl-guide.html#2f
-*/}
+A point on the unit circle can be calculated with the *sine* (horizontal) and *cosine* (vertical) functions.
+
+$$
+newX=oldX*\sin{rotation}+oldY*\cos{rotation}
+$$
+
+$$
+newY=oldY*\sin{rotation}-oldX*\cos{rotation}
+$$
+
+In a vertex shader, a translation could be implemented with a vector uniform calculated from a rotation in JavaScript.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec2 a_rotation;
+
+void main() {
+  gl_Position = vec4(
+    a_position.x * u_rotation.y + a_position.y * u_rotation.x,
+    a_position.y * u_rotation.y - a_position.x * u_rotation.x,
+    a_position.zw);
+}
+```
+
+## Scaling
+
+A scaling is performed by multiplying each vertex by a value.
+
+$$
+newX=oldX*scalingX
+$$
+
+$$
+newY=oldY*scalingY
+$$
+
+In a vertex shader, a scaling could be implemented with a vector uniform.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec4 u_scaling;
+
+void main() {
+  gl_Position = a_position * u_scaling;
+}
+```
 
 ## Matrices
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2d-matrices.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-matrix-naming.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-matrix-vs-math.html
-  https://xem.github.io/articles/webgl-guide.html#3f
-*/}
+There are various problems with using individual uniforms for translation, rotation, and scaling as described above.
+It can be tedious to use three different uniforms to describe the transformation of a vertex.
+Additionally, since the transformation logic is written into the vertex shader, a completely different shader program is required in order to apply transformations in a different order.
+
+A better way to pass transformations to the vertex shader is with *matrices*.
+Matrices are rectangular arrays of numbers.
+
+**Matrices are column-major**, so a matrix defined in JavaScript like this:
+
+```js
+const matrix = [
+  1, 2, 3,
+  4, 5, 6,
+  7, 8, 9
+];
+```
+
+Would make a matrix like this:
+
+$$
+\begin{bmatrix}
+1&4&7\\
+2&5&8\\
+3&6&9
+\end{bmatrix}
+$$
+
+A transformation matrix is a matrix with $n$ rows and $n$ columns, where $n-1$ is the number of dimensions being transformed through.
+The transformed position of a vertex in any given dimension is calculated by multiplying the position across the rows of the matrix and adding up the results.
+For example:
+
+$$
+\begin{bmatrix}
+1&5&9&13\\
+2&6&10&14\\
+3&7&11&15\\
+4&8&12&16
+\end{bmatrix}
+$$
+
+$$
+newX=oldX*1+oldY*5+oldZ*9+1*13
+$$
+
+$$
+newY=oldX*2+oldY*6+oldZ*10+1*14
+$$
+
+$$
+newZ=oldX*3+oldY*7+oldZ*11+1*15
+$$
+
+In this way, matrices can be used to describe transformations.
+For example, take a transformation matrix that translates a vertex by $(x,y,z)$:
+
+$$
+\begin{bmatrix}
+1&0&0&x\\
+0&1&0&y\\
+0&0&1&z\\
+0&0&0&1
+\end{bmatrix}
+$$
+
+$$
+newX=oldX*1+oldY*0+oldZ*0+1*x=oldX+x
+$$
+
+$$
+newY=oldX*0+oldY*1+oldZ*0+1*y=oldY+y
+$$
+
+$$
+newZ=oldX*0+oldY*0+oldZ*1+1*z=oldZ+z
+$$
+
+The values calculated in this way match the algorithm used for translation above.
+A similar array exists for rotation by $r$ radians (where $c=\cos{r}$ and $s=\sin{r}$) about the z axis (for two-dimensional rotation):
+
+$$
+\begin{bmatrix}
+c&-s&0&0\\
+s&c&0&0\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}
+$$
+
+And for scaling by $(x,y,z)$:
+
+$$
+\begin{bmatrix}
+x&0&0&0\\
+0&y&0&0\\
+0&0&z&0\\
+0&0&0&1
+\end{bmatrix}
+$$
+
+Like numbers, matrices can be multiplied together.
+Unlike numbers, however, matrices are not commutative; changing the order of transformation matrices being multiplied together also changes the order that the transformations are applied in.
+
+Matrices can be passed into vertex shaders as uniforms.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_matrix;
+
+void main() {
+  gl_Position = u_matrix * a_position;
+}
+```
+
+The animation techniques used in the example below are explained in a later tutorial.
+
+<CodePen slugHash="LYeoxaV" className={styles["full-bleed"]} />
 
 Next: [Scene graph](/webgl/scene-graph)
 
