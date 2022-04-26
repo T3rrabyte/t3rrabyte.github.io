@@ -3,13 +3,24 @@ import CodePen from "../../components/CodePen.tsx";
 import styles from "../../styles/mdx-article.module.scss";
 import "katex/dist/katex.min.css";
 
-# The scene graph
+# Scene graph
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-scene-graph.html
-  https://xem.github.io/articles/webgl-guide.html#3g
-  https://xem.github.io/articles/webgl-guide.html#3h
-*/}
+A *scene graph* is a general data structure which arranges the logical representation of a graphical scene.
+It is a collection of nodes in a tree structure, with each node having a parent and a non-negative number of children.
+
+In Umbra, nodes in a scene graph are represented by the `GameObject` class.
+The top node of the scene graph is called the *scene*.
+Umbra triggers certain custom events which can execute special functions attached to nodes called `Components`.
+
+Many nodes will have a `Transform` component, which generates a matrix to describe the transformation of that node.
+Nodes that are intended to be drawn will have a `Mesh` component which also generates additional matrices that will be explained in a later tutorial.
+Each node's transformation matrix is multiplied by its parent's to generate its *world matrix*, which represents its actual position in the scene (from the origin).
+
+<CodePen slugHash="wvpLGWO" className={styles["full-bleed"]} />
+
+## Cameras
+
+{/* TODO */}
 
 Next: [Animation](/webgl/animation)
 
@@ -18,7 +29,7 @@ export default function applyLayout({ children }) { return (<MdxArticleLayout>{c
 export async function getStaticProps() {
   return {
     props: {
-      title: "The scene graph",
+      title: "Scene graph",
       description: "An introduction to the scene graph structure."
     }
   };
