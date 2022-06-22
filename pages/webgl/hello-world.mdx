@@ -17,9 +17,8 @@ Umbra provides a function called `makeFullscreenCanvas` which can be used to cre
 The `Umbra` constructor takes an `HTMLCanvasElement` as its first parameter and defaults to `makeFullscreenCanvas()`.
 
 ```js
-const umbra = new Umbra();
-const canvas = umbra.canvas;
-const gl = umbra.gl;
+const canvas = makeFullscreenCanvas();
+const gl = canvas.getContext("webgl2");
 ```
 
 ### Shader program
@@ -93,12 +92,6 @@ function renderStep() {
   // Render step goes here.
 }
 requestAnimationFrame(renderStep);
-```
-
-This program will not use Umbra's built-in update loop, so it is best to stop it.
-
-```js
-umbra.destroy();
 ```
 
 ### Clearing the viewport

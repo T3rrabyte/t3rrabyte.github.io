@@ -8,13 +8,7 @@ import "katex/dist/katex.min.css";
 A *scene graph* is a general data structure which arranges the logical representation of a graphical scene.
 It is a collection of nodes in a tree structure, with each node having a parent and a non-negative number of children.
 
-In Umbra, nodes in a scene graph are represented by the `GameObject` class.
-The top node of the scene graph is called the *scene*.
-Umbra triggers certain custom events which can execute special functions attached to nodes called `Components`.
-
-Many nodes will have a `Transform` component, which generates a matrix to describe the transformation of that node.
-Nodes that are intended to be drawn will have a `Mesh` component which also generates additional matrices that will be explained in a later tutorial.
-Each node's transformation matrix is multiplied by its parent's to generate its *world matrix*, which represents its actual position in the scene (from the origin).
+Each node's transformation matrix is multiplied by all of its ancestors' to generate its *world matrix*, which represents its actual position in the scene (relative to the origin).
 
 <CodePen slugHash="wvpLGWO" className={styles["full-bleed"]} />
 
