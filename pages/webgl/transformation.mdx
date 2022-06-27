@@ -213,7 +213,47 @@ void main() {
 }
 ```
 
-The animation techniques used in the example below are explained in a later tutorial.
+## Animation
+
+Animation is usually accomplished by changing the uniform (or sometimes attribute) values passed to WebGL by JavaScript.
+
+```js
+// Create a matrix to describe the transformation of an object.
+const transMat = mat4.create();
+
+function renderStep() {
+  requestAnimationFrame(renderStep);
+
+  // Modify the transformation matrix.
+  mat4.rotateZ(transMat, transMat, 0.01);
+
+  // Update the value of the transformation matrix uniform.
+  program.uniforms.get("u_matrix").value = [...transMat];
+}
+requestAnimationFrame(renderStep);
+```
+
+One important thing to note about `requestAnimationFrame` is that, since it executes a function once each frame, the amount of time between executions can vary.
+In other words, animations being done in a function called by `requestAnimationFrame` can vary in speed based on the framerate of the user.
+In order to counteract this, the amount of transformation done on any given frame should be scaled by the time between frames.
+
+```js
+// Stores the time of the last frame.
+let then = 0;
+
+// The first parameter passed to any function executed by `requestAnimationFrame` is the amount of time that the function has been executing each frame.
+function renderStep(now) {
+  requestAnimationFrame(renderStep);
+
+  // Calculate the amount of time between frames.
+  const deltaTime = now - then;
+  then = now;
+
+  // Modify the transformation matrix.
+  mat4.rotateZ(transMat, transMat, 0.001 * deltaTime);
+}
+requestAnimationFrame(renderStep);
+```
 
 <CodePen slugHash="LYeoxaV" className={styles["full-bleed"]} />
 
