@@ -59,9 +59,14 @@ clearContext(gl, new Color(0x000000), 1);
 
 ## Perspective
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective.html
-*/}
+*Perspective* is the idea that things that are farther away from the camera appear smaller.
+WebGL automatically divides the value assigned to `gl_Position` by its fourth ($w$) component.
+This is useful for applying perspective because dividing (or multiplying) a vector by a scalar is equivalent to a scale operation.
+In other words, the fourth component of `gl_Position` can be used to apply perspective to a shape.
+
+In the example below, the cube on the left uses an orthographic projection, and the cube on the right uses perspective.
+
+<CodePen slugHash="XWEWVar" className={styles["full-bleed"]} />
 
 ## Cameras
 
