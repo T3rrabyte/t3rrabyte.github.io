@@ -5,16 +5,41 @@ import "katex/dist/katex.min.css";
 
 # 3D
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-orthographic.html
-  https://xem.github.io/articles/webgl-guide.html#3
-*/}
+Working with three dimensions in WebGL is almost the same as working with two dimensions.
+The main differences are that 3D uses 4x4 matrices (as opposed to 3x3 matrices) and the *depth buffer*.
+
+The third ($z$) part of `gl_Position` is put into the depth buffer.
+The depth buffer is used to remember the depth of a given pixel, so that WebGL can draw behind or in front of other pixels based on their depth.
+The depth buffer needs to be enabled before it can be modified:
+
+```js
+gl.enable(gl.DEPTH_TEST);
+```
+
+Just like the color buffer, the depth buffer needs to be cleared before drawing every frame.
+With the WebGL API, this can be accomplished like this:
+
+```js
+gl.clearColor(0, 0, 0, 0);
+gl.clearDepth(1);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+```
+
+With Umbra, the third parameter of `clearContext` can be used to clear the depth buffer:
+
+```js
+clearContext(gl, new Color(0x000000), 1);
+```
 
 ## Orthographic 3D
 
+An *orthographic* projection is way to draw 3D without regard to perspective.
+
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-3d-orthographic.html
 */}
+
+<CodePen slugHash="oNqvKRG" className={styles["full-bleed"]} />
 
 ## Perspective
 

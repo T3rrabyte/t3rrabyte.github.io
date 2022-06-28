@@ -196,6 +196,17 @@ x&0&0&0\\
 \end{bmatrix}
 $$
 
+You can even make a matrix that converts from screen space to clip space, since that operation is essentially just a scale and rotate operation:
+
+$$
+\begin{bmatrix}
+2/width&0&0&0\\
+0&-2/height&0&0\\
+0&0&2/depth&0\\
+-1&1&0&1
+\end{bmatrix}
+$$
+
 Like numbers, matrices can be multiplied together, which has the effect of combining their transformations.
 Unlike numbers, however, matrices are not commutative; changing the order of the factors also changes the order that the transformations are applied in.
 
@@ -213,6 +224,8 @@ void main() {
 }
 ```
 
+Many examples that include matrices will use the [glMatrix](https://glmatrix.net/) library to perform matrix math.
+
 ## Animation
 
 Animation is usually accomplished by changing the uniform (or sometimes attribute) values passed to WebGL by JavaScript.
@@ -225,7 +238,7 @@ function renderStep() {
   requestAnimationFrame(renderStep);
 
   // Modify the transformation matrix.
-  mat4.rotateZ(transMat, transMat, 0.01);
+  mat4.rotateZ(transMat, transMat, 0.01); // glMatrix
 
   // Update the value of the transformation matrix uniform.
   program.uniforms.get("u_matrix").value = [...transMat];
@@ -250,7 +263,7 @@ function renderStep(now) {
   then = now;
 
   // Modify the transformation matrix.
-  mat4.rotateZ(transMat, transMat, 0.001 * deltaTime);
+  mat4.rotateZ(transMat, transMat, 0.001 * deltaTime); // glMatrix
 }
 requestAnimationFrame(renderStep);
 ```
