@@ -178,8 +178,8 @@ A similar array exists for rotation by $r$ radians (where $c=\cos{r}$ and $s=\si
 
 $$
 \begin{bmatrix}
-c&-s&0&0\\
-s&c&0&0\\
+c&s&0&0\\
+-s&c&0&0\\
 0&0&1&0\\
 0&0&0&1
 \end{bmatrix}
@@ -196,14 +196,14 @@ x&0&0&0\\
 \end{bmatrix}
 $$
 
-You can even make a matrix that converts from screen space to clip space, since that operation is essentially just a scale and rotate operation:
+You can even make a matrix that converts from screen space to clip space (known as an *orthographic projection*), since that operation is essentially just a scale and rotate operation:
 
 $$
 \begin{bmatrix}
-2/width&0&0&0\\
-0&-2/height&0&0\\
-0&0&2/depth&0\\
--1&1&0&1
+-2/(l-r)&0&0&(l+r)/(l-r)\\
+0&-2/(b-t)&0&(t+b)/(b-t)\\
+0&0&2/(n-f)&(f+n)/(n-f)\\
+0&0&0&1
 \end{bmatrix}
 $$
 

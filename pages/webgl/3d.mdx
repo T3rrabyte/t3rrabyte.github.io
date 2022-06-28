@@ -6,10 +6,34 @@ import "katex/dist/katex.min.css";
 # 3D
 
 Working with three dimensions in WebGL is almost the same as working with two dimensions.
-The main differences are that 3D uses 4x4 matrices (as opposed to 3x3 matrices) and the *depth buffer*.
 
-The third ($z$) part of `gl_Position` is put into the depth buffer.
-The depth buffer is used to remember the depth of a given pixel, so that WebGL can draw behind or in front of other pixels based on their depth.
+## Orthographic 3D
+
+An *orthographic* projection is way to draw 3D without regard to perspective.
+The example below uses only topics that have been covered before, but with 3D position inputs instead of 2D.
+
+<CodePen slugHash="oNqvKRG" className={styles["full-bleed"]} />
+
+Notice that the back of the rotating shape shows through to the front.
+One way to address this issue is to draw only front-facing triangles.
+By default, a triangle is front-facing if its vertices go in a counter-clockwise direction (relative to the camera).
+
+```js
+gl.enable(gl.CULL_FACE);
+```
+
+<CodePen slugHash="zYWYryq" className={styles["full-bleed"]} />
+
+Now that clockwise triangles are being culled, many of the triangles aren't displaying.
+This is because they're passed to the buffer in the wrong order.
+By fixing the data in the position buffer, all of the triangles can be made to display.
+
+<CodePen slugHash="PoRoZvd" className={styles["full-bleed"]} />
+
+Even with only front-facing triangles rendering, some triangles show up when they're behind others.
+The solution to this issue is the *depth buffer*.
+The depth buffer is used to remember the depth of a given pixel, so that WebGL can draw behind or in front of other pixels based on their distance from the camera.
+The third ($z$) component of `gl_Position` is put into the depth buffer.
 The depth buffer needs to be enabled before it can be modified:
 
 ```js
@@ -31,15 +55,7 @@ With Umbra, the third parameter of `clearContext` can be used to clear the depth
 clearContext(gl, new Color(0x000000), 1);
 ```
 
-## Orthographic 3D
-
-An *orthographic* projection is way to draw 3D without regard to perspective.
-
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-orthographic.html
-*/}
-
-<CodePen slugHash="oNqvKRG" className={styles["full-bleed"]} />
+<CodePen slugHash="yLKLOBy" className={styles["full-bleed"]} />
 
 ## Perspective
 
