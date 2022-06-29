@@ -70,11 +70,13 @@ In the example below, the cube on the left uses an orthographic projection, and 
 
 ## Cameras
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-camera.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-visualizing-the-camera.html
-  https://xem.github.io/articles/webgl-guide.html#3a
-*/}
+Rather than move the cube to fit in the frustum of the camera (as demonstrated in the example above), it is more common to move the camera to view the cube.
+To do this, we can make a camera matrix that can be transformed just like any other matrix.
+Once the camera is in the desired state, a *view matrix* can be calculated by inverting the camera matrix.
+The *projection matrix* (calculated using either the orthographic or perspective function described above) can then be multiplied by the view matrix to make a *view projection matrix*.
+Finally, objects in the scene can be viewed using the camera by multiplying their transformation matrices by the view projection matrix.
+
+<CodePen slugHash="ZExERyO" className={styles["full-bleed"]} />
 
 Next: [Textures](/webgl/textures)
 
