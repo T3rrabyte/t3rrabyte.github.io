@@ -5,6 +5,85 @@ import "katex/dist/katex.min.css";
 
 # Textures
 
+A *texture* is an array of data that can be randomly accessed in a shader program.
+Most commonly, textures are used to store image data.
+
+In a shader, a *sampler* uniform is used to reference a texture.
+The `texture` function is used to get data out of the texture at the given *texture coordinate*.
+Texture coordinates are coordinates which range from `0` (top/left) to `1` (bottom/right) in both directions.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+// Get texture coordinates from the fragment shader.
+in vec2 v_texcoord;
+
+// A sampler2D is used to reference normal 2D textures.
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+  // Return the value of the texture at the given position.
+  outColor = texture(u_texture, v_texcoord);
+}
+```
+
+In order to access a texture in WebGL, a texture object must be created with the WebGL API.
+
+```js
+const texture = gl.createTexture();
+```
+
+The texture must be supplied data.
+This data can take many forms, such as HTML images or color data.
+
+```js
+// Bind the texture to modify it.
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// 1x1 blue pixel.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+// Image from URL.
+const image = new Image();
+image.addEventListener("load", () => {
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.generateMipmap(gl.TEXTURE_2D);
+});
+image.crossOrigin = "";
+image.src = "https://www.xanycki.art/images/slideshow/1.png";
+```
+
+Instead of passing a texture to the sampler uniform directly, we assign it a *texture unit* to be passed in its place.
+With just the WebGL API, that looks like this:
+
+```js
+// Select a texture unit.
+gl.activeTexture(gl.TEXTURE0);
+
+// Assign a texture to the texture unit.
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Set the uniform to the texture unit.
+gl.uniform1i(imageUniformLocation, 0);
+```
+
+Umbra handles texture units automatically.
+
+```js
+const texture = new Texture2D(gl, new Uint8Array([0, 0, 255, 255]));
+texture.width = 1;
+texture.height = 1;
+
+program.uniforms.get("u_texture").value = texture;
+```
+
+<CodePen slugHash="MWVYpJz" className={styles["full-bleed"]} />
+
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
   https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
