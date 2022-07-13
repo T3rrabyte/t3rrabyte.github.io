@@ -87,13 +87,49 @@ program.uniforms.get("u_texture").value = texture;
 
 ## Texture parameters
 
+Certain parameters of a texture can be modified using `gl.texParameteri`.
+
+```js
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+```
+
+As with other situations where bind points are necessary, Umbra takes a more object-oriented approach.
+
+```js
+texture.wrapSFunction = TextureWrapFunction.CLAMP_TO_EDGE;
+```
+
+WebGL can be told what to do when supplied texture coordinates outside of the normal range with the `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` parameters (which define functionality in the S and T directions, respectively).
+
+- `REPEAT` is the default functionality. It makes the texture repeat in the given direction.
+- `CLAMP_TO_EDGE` makes the texture not repeat at all (the last pixel is used forever).
+- `MIRRORED_REPEAT` makes the texture repeat, but mirrors each repetition.
+
+<CodePen slugHash="abYBbvX" className={styles["full-bleed"]} />
+
+A mipmap is a collection of smaller versions of a texture that is used to render a texture at different sizes.
+Without a mipmap, textures can only be drawn at the exact size of the source texture.
+A *mip* is one level of a mipmap.
+The way that the *mipmap* is generated can be specified through the `TEXTURE_MIN_FILTER` and `TEXTURE_MAG_FILTER` parameters.
+The former is the setting used when drawing anything smaller than the largest mip, and the latter is used when drawing anything larger than the largest mip.
+
+- `NEAREST` chooses one pixel from the biggest mip.
+- `LINEAR` chooses four pixels from the biggest mip and blends them.
+- `NEAREST_MIPMAP_NEAREST` chooses the best mip, then picks one pixel from that mip.
+- `LINEAR_MIPMAP_NEAREST` chooses the best mip, then blends four pixels from that mip.
+- `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
+- `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
+
+Note that, since `NEAREST` and `LINEAR` only ever use the largest mip, it is not necessary to generate a mipmap for textures that use those functions.
+Additionally, only `NEAREST` and `LINEAR` may be used for `TEXTURE_MAG_FILTER`.
+
+<CodePen slugHash="PoRboJm" className={styles["full-bleed"]} />
+
+## Texture atlases
+
 {/*
   https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-2-textures.html
-  https://xem.github.io/articles/webgl-guide.html#2g
-  https://xem.github.io/articles/webgl-guide-part-2.html#2a
-  https://xem.github.io/articles/webgl-guide-part-2.html#2b
 */}
 
 ## Data textures
