@@ -121,16 +121,18 @@ The former is the setting used when drawing anything smaller than the largest mi
 - `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
 - `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
 
-Note that, since `NEAREST` and `LINEAR` only ever use the largest mip, it is not necessary to generate a mipmap for textures that use those functions.
-Additionally, only `NEAREST` and `LINEAR` may be used for `TEXTURE_MAG_FILTER`.
+Since the magnification filter is used when drawing larger than the largest mip, only `NEAREST` and `LINEAR` can be used.
+Since `NEAREST` and `LINEAR` only ever use the largest mip, it is not necessary to generate a mipmap to use them.
+
+In order for a texture to render, it must be *texture complete*.
+In order for a texture to be texture complete, it must either only access the first mip (use the `NEAREST` or `LINEAR` minification filter) or have a complete mipmap.
 
 <CodePen slugHash="PoRboJm" className={styles["full-bleed"]} />
 
 ## Texture atlases
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
-*/}
+A *texture atlas* is when multiple images are put into one texture.
+This approach has a few advantages, such as keeping the shader simple and reducing the number of draw calls required to draw multiple images.
 
 ## Data textures
 
