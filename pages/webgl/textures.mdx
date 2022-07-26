@@ -55,7 +55,7 @@ image.addEventListener("load", () => {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   gl.generateMipmap(gl.TEXTURE_2D);
 });
-image.crossOrigin = "";
+image.crossOrigin = ""; // CORS
 image.src = "https://www.xanycki.art/images/slideshow/1.png";
 ```
 
@@ -138,24 +138,49 @@ This approach has a few advantages, such as keeping the shader simple and reduci
 
 ## Data textures
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-data-textures.html
-*/}
+Instead of loading a texture from an image, texture data can also be supplied directly from the code.
+The way the data is interpreted depends on the *internal format* that is chosen.
+For example, `R8` takes one eight-bit number per *texel* (short for "texture element") and normalizes it to a fraction.
+Depending on which internal format is chosen, the corresponding external format (just "format") and data type must also be chosen.
 
-## Images
+```js
+const level = 0;
+const internalFormat = gl.R8; // Internal format
+const width = 3;
+const height = 2;
+const border = 0;
+const format = gl.RED; // External format for R8
+const type = gl.UNSIGNED_BYTE; // Data type for R8
+const data = new Uint8Array([
+	0x80, 0x40, 0x80,
+	0x00, 0xC0, 0x00
+]);
+gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, format, type, data);
+```
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-textures.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-cors-permission.html
-*/}
+In Umbra, the format and data type are decided automatically based on the internal format.
 
-## Texture mapping
+```js
+texture.internalFormat = TextureFormat.R8;
+```
 
-{/*
-  https://webgl2fundamentals.org/webgl/lessons/webgl-3d-perspective-correct-texturemapping.html
-  https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
-*/}
+**Textures will not draw if their width is not a multiple of the unpack alignment.**
+The unpack alignment defaults to four in order to remain backwards compatibility with WebGL 1.0, but it can be set to one, two, four, or eight.
+The example above uses a width of three, so the unpack alignment must be one in order for the texture to render.
+
+```js
+gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+```
+
+Umbra sets the unpack alignment automatically as necessary.
+
+<CodePen slugHash="gOeRyjr" className={styles["full-bleed"]} />
+
+## Projection mapping
+
+{/* https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html */}
+
+<CodePen slugHash="rNdwgjg" className={styles["full-bleed"]} />
 
 Next: [Framebuffers](/webgl/framebuffers)
 
