@@ -121,11 +121,12 @@ The former is the setting used when drawing anything smaller than the largest mi
 - `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
 - `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
 
-Since the magnification filter is used when drawing larger than the largest mip, only `NEAREST` and `LINEAR` can be used.
-Since `NEAREST` and `LINEAR` only ever use the largest mip, it is not necessary to generate a mipmap to use them.
+Since the magnification filter is used when drawing larger than the largest mip, it can only be `NEAREST` or `LINEAR`.
+Since `NEAREST` and `LINEAR` only ever read the largest mip, it is not necessary to generate a mipmap when using them for the minification filter.
 
 In order for a texture to render, it must be *texture complete*.
 In order for a texture to be texture complete, it must either only access the first mip (use the `NEAREST` or `LINEAR` minification filter) or have a complete mipmap.
+Umbra will automatically generate a mipmap when necessary.
 
 <CodePen slugHash="PoRboJm" className={styles["full-bleed"]} />
 
@@ -164,21 +165,27 @@ In Umbra, the format and data type are decided automatically based on the intern
 texture.internalFormat = TextureFormat.R8;
 ```
 
-**Textures will not draw if their width is not a multiple of the unpack alignment.**
+**Textures will not update if their width is not a multiple of the unpack alignment.**
 The unpack alignment defaults to four in order to remain backwards compatibility with WebGL 1.0, but it can be set to one, two, four, or eight.
 The example above uses a width of three, so the unpack alignment must be one in order for the texture to render.
+This must be done before the call to `texImage2D` (or whatever other method you're using to update the texture).
 
 ```js
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 ```
 
-Umbra sets the unpack alignment automatically as necessary.
+Umbra sets the unpack alignment automatically as necessary when updating textures.
 
 <CodePen slugHash="gOeRyjr" className={styles["full-bleed"]} />
 
 ## Projection mapping
 
-{/* https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html */}
+*Projection mapping* is the process of projecting an image.
+
+{/*
+	https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html
+	https://webgl2fundamentals.org/webgl/lessons/webgl-visualizing-the-camera.html
+*/}
 
 <CodePen slugHash="rNdwgjg" className={styles["full-bleed"]} />
 
