@@ -2,13 +2,15 @@ export default function Index(): JSX.Element {
   return (
     <>
       <h1>Travis Martin</h1>
-      <p>This page is currently a placeholder while I work on making it pretty.</p>
-      <p>In the meantime, consider checking out these other cool websites:</p>
+      <p>I'm Travis Martin, a junior at the University of Illinois at Chicago, currently pursuing a bachelor's degree in computer science.</p>
+      <p>I have over a decade of programming experience in almost a dozen languages, and I spend much of my free time programming.</p>
+      <p>This website is currently undergoing an overhaul to a new framework. In the meantime, please check out my other links:</p>
       <ul>
-        <li><a href="https://ty.business">Ty Morrow</a></li>
-        <li><a href="https://griff.pw">Griffon Hansen</a></li>
-        <li><a href="https://xanycki.art">Xanycki</a></li>
+        <li><p><a href="https://github.com/Lakuna">GitHub</a></p></li>
+        <li><p><a href="https://www.linkedin.com/in/t-j-m/">LinkedIn</a></p></li>
+        <li><p><a href="mailto:tjmartin2003@gmail.com">tjmartin2003@gmail.com</a></p></li>
       </ul>
+      <p>If you're looking for my WebGL tutorial series, go <a href="/webgl">here</a>.</p>
     </>
   );
 }
