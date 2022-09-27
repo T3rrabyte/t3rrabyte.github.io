@@ -10,6 +10,10 @@
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
-    "next/core-web-vitals"
-	]
+		"next/core-web-vitals",
+		"plugin:mdx/recommended"
+	],
+	"settings": {
+		"mdx/code-blocks": true
+	}
 }

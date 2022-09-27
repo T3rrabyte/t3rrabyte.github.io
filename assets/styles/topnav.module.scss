@@ -1,0 +1,60 @@
+@use "variables" as *;
+
+nav.topnav {
+	ul {
+		background-color: $fg-color;
+		color: $fg-text-color;
+		list-style-type: none;
+		margin: 0px;
+		padding: 0px;
+		overflow: hidden;
+
+		li a {
+			background-color: $fg-color;
+			color: $fg-text-color;
+			text-decoration: none;
+			display: inline-block;
+			padding: 8px 16px;
+			font-size: 1.5em;
+
+			&:hover {
+				background-color: $bg-color;
+				color: $text-color;
+			}
+
+			&.dropdown-button {
+				display: none;
+				cursor: pointer;
+			}
+		}
+	}
+
+	@media screen and (max-width: $mobile-breakpoint) {
+		ul li a {
+			&:not(:first-child) {
+				display: none;
+			}
+
+			&.dropdown-button {
+				float: right;
+				display: block;
+			}
+		}
+
+		&.expanded {
+			position: relative;
+
+			ul li a {
+				float: none;
+				display: block;
+				text-align: left;
+
+				&.dropdown-button {
+					position: absolute;
+					right: 0px;
+					top: 0px;
+				}
+			}
+		}
+	}
+}

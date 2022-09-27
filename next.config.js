@@ -1,16 +1,19 @@
-import mdx from "@next/mdx";
-import prism from "remark-prism";
-import math from "remark-math";
-import katex from "rehype-katex";
+import nextMdx from "@next/mdx";
+import remarkPrism from "remark-prism";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeImgSize from "rehype-img-size";
+import { join } from "path";
 
-const withMdx = mdx({
-  extension: /\.mdx?$/,
-  options: {
-    remarkPlugins: [prism, math],
-    rehypePlugins: [katex]
-  }
+const withMdx = nextMdx({
+	extension: /\.mdx?$/,
+	options: {
+		remarkPlugins: [remarkPrism, remarkMath],
+		rehypePlugins: [rehypeKatex, [rehypeImgSize, { dir: join(process.cwd(), "public") }]],
+		providerImportSource: "@mdx-js/react"
+	}
 });
 
 export default withMdx({
-  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"]
+	pageExtensions: ["tsx", "mdx"]
 });

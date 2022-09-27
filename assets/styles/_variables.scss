@@ -1,0 +1,30 @@
+@import url(https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu%20Mono);
+
+$font-serif: "Times New Roman", serif;
+$font-sans-serif: "Ubuntu", "Arial", sans-serif;
+$font-monospace: "Ubuntu Mono", "Courier New", monospace;
+
+$mobile-breakpoint: 800px;
+
+$white: #FFFFFF;
+$black: #000000;
+$dark-gray: #272727;
+$gray: #373737;
+$light-gray: #B3B3B3;
+$light-orange: #FF9670;
+$yellow: #C7B300;
+$blue-green: #18CD85;
+$dark-blue: #065D6B;
+$dark-green: #4D724D;
+$dark-pink: #B3003E;
+$purple: #961D94;
+$off-white: #F5F5F5;
+
+$bg-color: var(--bg-color);
+$fg-color: var(--fg-color);
+$text-color: var(--text-color);
+$fg-text-color: var(--fg-text-color);
+$highlight-color: var(--highlight-color);
+$fg-highlight-color: var(--fg-highlight-color);
+$italic-color: var(--italic-color);
+$bold-color: var(--bold-color);

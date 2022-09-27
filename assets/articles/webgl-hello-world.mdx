@@ -1,0 +1,282 @@
+---
+title: WebGL "Hello, world!"
+summary: "A walkthrough for writing a minimal WebGL API
+program."
+---
+# "Hello, world!"
+
+You may need to read the 
+[introductory article](/articles/webgl-what-is), the
+article about [attributes](/articles/webgl-attributes), and
+the article about
+[program structure](/articles/webgl-program-structure) in
+order to understand this one.
+
+The program described below draws one monocolored triangle
+using a minimal WebGL shader program.
+
+## Initialization step
+
+The initialization step is run once at the beginning of the
+program.
+
+### Rendering context
+
+To draw on a canvas that already exists in the DOM, first
+get that canvas in JavaScript:
+
+```js
+const canvas = document.querySelector("canvas");
+```
+
+Umbra provides a function called `makeFullscreenCanvas`
+that **replaces all content in the DOM** with a fullscreen
+canvas.
+
+```js
+const canvas = makeFullscreenCanvas();
+```
+
+The rendering context can be obtained via a method on the
+canvas:
+
+```js
+const gl = canvas.getContext("webgl2");
+```
+
+### Shader program
+
+The vertex shader for this shader program will have only
+one attribute that stores vertex position data.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+void main() {
+	gl_Position = a_position;
+}
+```
+
+The fragment shader for this shader program will set all
+fragments to a static color.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+out vec4 outColor;
+
+void main() {
+	outColor = vec4(1, 0, 0, 1);
+}
+```
+
+Assuming that the vertex shader's source code and the
+fragment shader's source code have been put into string
+variables called `vss` and `fss`, respectively, the shader
+program can be linked like this:
+
+```js
+const program = Program.fromSource(gl, vss, fss);
+```
+
+If you aren't using Umbra, see the
+[introductory article](/articles/webgl-what-is) for the
+"vanilla" way to do this.
+
+**If your shader program is not linking or compiling
+correctly, make sure that there is no white space or any
+comments before the `#version 300 es` line in the shader
+strings.** For example, the following shader string will
+not work because it starts with a new line:
+
+```js
+const vss = `
+#version 300 es
+in vec4 a_position;
+void main() {
+	gl_Position = a_position;
+}`;
+```
+
+### Variable locations
+
+Umbra automatically creates a map of variable names to
+their locations when it links a shader program, so no
+additional code is required to get variable locations.
+These maps are called `program.uniforms` for uniforms and
+`program.attributes` for attributes.
+
+If you aren't using Umbra, see the
+[attributes](/articles/webgl-attributes) and
+[uniforms](/articles/webgl-uniforms) articles for the
+"vanilla" ways to do this.
+
+### Buffers
+
+This program will draw only one shape (a triangle) with one
+attribute (`a_position`) per shape, so only one buffer is
+needed. In Umbra, a buffer can be created like this:
+
+```js
+const trianglePositionBuffer = new Buffer(gl,
+	new Float32Array([0, 0, 0, 0.5, 0.7, 0]));
+```
+
+If you aren't using Umbra, see the
+[attributes](/articles/webgl-attributes) article for the
+"vanilla" way to do this.
+
+### Vertex array objects
+
+This program will only draw one shape (a triangle), so only
+one vertex array object (VAO) is needed. In Umbra, a VAO
+can be created like this:
+
+```js
+const triangleVao = new VAO(program, [
+	new AttributeState("a_position",
+		trianglePositionBuffer, 2)
+]);
+```
+
+## Render step
+
+The render step is run once each frame. The
+`requestAnimationFrame` function (vanilla JavaScript) can
+be used to loop through the render step as fast as the
+browser is able to render it:
+
+```js
+function renderStep() {
+	requestAnimationFrame(renderStep);
+
+	// Render step code goes here.
+}
+requestAnimationFrame(renderStep);
+```
+
+### Clearing the viewport
+
+The WebGL API provides a different function to clear each
+buffer of the viewport. The only viewport buffer that is
+being used by this program is the *color buffer*, which
+stores the color of each pixel.
+
+```js
+gl.clearColor(0, 0, 0, 0);
+```
+
+Umbra provides a function called `clearContext` that clears
+all of the viewport's buffers to the provided values. It
+becomes more useful in later programs, when multiple
+viewport buffers are used.
+
+```js
+clearContext(gl, new Color(0, 0, 0, 0));
+```
+
+### Resizing the viewport
+
+Like images, canvases have two sizes. One is the physical
+(display) size, which is set by CSS and represents the
+actual size of the canvas on the document. The other is the
+number of pixels in the canvas (the resolution of the
+canvas). In order to prevent the canvas from appearing
+blurry, its resolution must be resized to match its display
+size.
+
+```js
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+```
+
+Umbra provides a function called `resizeContext` that has
+similar functionality to the code above but is more
+performant.
+
+```js
+resizeContext(gl);
+```
+
+### Global state
+
+Once the canvas has been resized, the WebGL API must be
+used to pass the new resolution of the canvas to WebGL so
+that WebGL can properly convert from clip space coordinates
+to *screen space coordinates* (pixels).
+
+```js
+gl.viewport(0, 0, canvas.width, canvas.height);
+```
+
+Umbra's `resizeContext` automatically handles this.
+
+### Rasterizing
+
+Since this program doesn't use any uniforms, all of the
+rasterization work can be done with one method call:
+
+```js
+vao.draw();
+```
+
+If you aren't using Umbra, see the
+[attributes](/articles/webgl-attributes) article for the
+"vanilla" way to do this.
+
+## Final code
+
+Combining all of the above, the final code looks like this:
+
+```js
+/*
+Import Umbra. In the browser, this will be imported from a
+CDN link such as:
+- Skypack: "https://cdn.skypack.dev/@lakuna/umbra.js"
+- jsDelivr: "https://cdn.jsdelivr.net/npm/@lakuna/umbra.js"
+- unpkg: "https://unpkg.com/@lakuna/umbra.js"
+*/
+import {
+	Program,
+	Buffer,
+	VAO,
+	AttributeState,
+	clearContext,
+	Color,
+	resizeContext
+} from "@lakuna/umbra.js";
+
+const gl = document
+	.querySelector("canvas")
+	.getContext("webgl2");
+
+const program = Program.fromSource(gl,
+`#version 300 es
+in vec4 a_position;
+void main() { gl_Position = a_position; }`,
+`#version 300 es
+precision highp float;
+out vec4 outColor;
+void main() { outColor = vec4(1, 0, 0, 1); }`);
+
+const buffer = new Buffer(gl,
+	new Float32Array([0, 0, 0, 0.5, 0.7, 0]));
+
+const vao = new VAO(program,
+	[new AttributeState("a_position", buffer, 2)]);
+
+function renderStep() {
+	requestAnimationFrame(renderStep);
+
+	clearContext(gl, new Color(0, 0, 0, 0));
+
+	resizeContext(gl);
+
+	vao.draw();
+}
+requestAnimationFrame(renderStep);
+```
