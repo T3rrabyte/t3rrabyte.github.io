@@ -2,7 +2,7 @@ import Head from "next/head";
 import TopNav from "../assets/components/TopNav";
 import "../assets/styles/global.scss";
 
-export default function MyApp({ Component, pageProps, router }: any) {
+export default function MyApp({ Component, pageProps, router }) {
 	const title = pageProps.title ?? "Untitled Page";
 	const description = pageProps.description ?? "No page description provided.";
 	const imageUrl = pageProps.imageUrl ?? "/images/favicon.png";

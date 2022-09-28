@@ -1,7 +1,7 @@
 import Card from "../../assets/components/Card";
 import CardList from "../../assets/components/CardList";
 
-export default function Articles({ pageDatas }: any) {
+export default function Articles() {
 	return (
 		<>
 			<h1>Articles</h1>

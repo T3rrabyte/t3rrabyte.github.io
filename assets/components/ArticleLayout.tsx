@@ -8,7 +8,7 @@ const components = {
 	img: ({ ...props }: any) => <span style={{ display: "block", textAlign: "center" }}><Image {...props} /></span>
 };
 
-export default function ArticleLayout({ children }: any) {
+export default function ArticleLayout({ children }) {
 	return (
 		<article className={styles["article"]}>
 			<MDXProvider components={components}>

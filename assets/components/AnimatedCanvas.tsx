@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function AnimatedCanvas({ init, ...props }: any) {
+export default function AnimatedCanvas({ init, ...props }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	let forceStopLoop = false;
 	let render: () => void;
