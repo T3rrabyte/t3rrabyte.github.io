@@ -1,6 +1,5 @@
 import Head from "next/head";
 import TopNav from "../assets/components/TopNav";
-import Gtag from "../assets/components/Gtag";
 import "../assets/styles/global.scss";
 
 export default function MyApp({ Component, pageProps, router }: any) {
@@ -30,7 +29,6 @@ export default function MyApp({ Component, pageProps, router }: any) {
 				<meta name="twitter:description" content={description} />
 				<meta name="twitter:title" content={title} />
 				<meta name="twitter:image" content={imageUrl} />
-				<Gtag />
 			</Head>
 			<div id="page-flow">
 				<header>
