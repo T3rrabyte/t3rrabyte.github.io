@@ -20,9 +20,9 @@ export default function TopNav() {
 					<Link href="/portfolio">
 						<a>Portfolio</a>
 					</Link>
-					<a className={styles["dropdown-button"]} onClick={() => toggleExpandTopnav(navRef.current as unknown as Element)}>
+					<button className={styles["dropdown-button"]} onClick={() => toggleExpandTopnav(navRef.current as unknown as Element)}>
 						<FontAwesomeIcon icon={faBars} />
-					</a>
+					</button>
 				</li>
 			</ul>
 		</nav>

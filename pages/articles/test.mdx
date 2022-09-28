@@ -1,0 +1,19 @@
+# Test
+
+Test
+
+---
+
+import ArticleLayout from "../../assets/components/ArticleLayout";
+export default function Article({ children }) {
+	return <ArticleLayout>{children}</ArticleLayout>;
+}
+
+export async function getStaticProps() {
+	return {
+		props: {
+			title: "Test",
+			description: "Test article."
+		}
+	};
+}

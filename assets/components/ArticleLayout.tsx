@@ -5,9 +5,7 @@ import "prism-themes/themes/prism-atom-dark.min.css";
 import styles from "../styles/article.module.scss";
 
 const components = {
-	li: ({ ...props }: any) => <li><p {...props} /></li>,
-	img: ({ ...props }: any) => <span style={{ display: "block", textAlign: "center" }}><Image {...props} /></span>,
-	hr: ({ ...props }: any) => <hr style={{ width: "100%" }} {...props} />
+	img: ({ ...props }: any) => <span style={{ display: "block", textAlign: "center" }}><Image {...props} /></span>
 };
 
 export default function ArticleLayout({ children }: any) {

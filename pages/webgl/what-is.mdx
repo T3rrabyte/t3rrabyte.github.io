@@ -1,7 +1,3 @@
----
-title: What is WebGL?
-summary: An introduction to WebGL.
----
 # What is WebGL?
 
 *WebGL* is a *rasterization engine*. That means that it
@@ -181,4 +177,18 @@ entire block above:
 const program = Program.fromSource(gl, vss, fss);
 ```
 
-The next article is about [attributes](/articles/webgl-attributes).
+The next article is about [attributes](/webgl/attributes).
+
+import ArticleLayout from "../../assets/components/ArticleLayout";
+export default function Article({ children }) {
+	return <ArticleLayout>{children}</ArticleLayout>;
+}
+
+export async function getStaticProps() {
+	return {
+		props: {
+			title: "What is WebGL?",
+			description: "An introduction to the fundamental concepts of WebGL."
+		}
+	};
+}

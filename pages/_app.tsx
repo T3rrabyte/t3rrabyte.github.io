@@ -1,13 +1,12 @@
 import Head from "next/head";
 import TopNav from "../assets/components/TopNav";
 import "../assets/styles/global.scss";
-import ArticleLayout from "../assets/components/ArticleLayout";
 
 export default function MyApp({ Component, pageProps, router }: any) {
 	const title = pageProps.title ?? "Untitled Page";
 	const description = pageProps.description ?? "No page description provided.";
 	const imageUrl = pageProps.imageUrl ?? "/images/favicon.png";
-	const url = pageProps.url ?? (typeof window == "undefined" ? "" : window?.location?.href);
+	const url = pageProps.url ?? `https://www.lakuna.pw/${router.pathname}`;
 
 	return (
 		<>
@@ -36,18 +35,7 @@ export default function MyApp({ Component, pageProps, router }: any) {
 					<TopNav />
 				</header>
 				<main>
-					{(() => {
-						if (router.pathname.startsWith("/webgl")
-							|| router.pathname.startsWith("/articles")) {
-							return (
-								<ArticleLayout>
-									<Component {...pageProps} />
-								</ArticleLayout>
-							);
-						}
-
-						return <Component {...pageProps} />
-					})()}
+					<Component {...pageProps} />
 				</main>
 				<footer></footer>
 			</div>

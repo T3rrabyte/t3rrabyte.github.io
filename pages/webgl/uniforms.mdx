@@ -1,13 +1,9 @@
----
-title: WebGL Uniforms
-summary: An introduction to uniforms in WebGL.
----
 # Uniforms
 
 You may need to read the 
-[introductory article](/articles/webgl-what-is) in order to
+[introductory article](/webgl/what-is) in order to
 understand this one. The previous article is about
-[attributes](/articles/webgl-attributes).
+[attributes](/webgl/attributes).
 
 Another way to pass data to the GPU is with *uniforms*.
 
@@ -72,5 +68,19 @@ vao.draw();
 ```
 
 The next article covers the typical
-[program structure](/articles/webgl-program-structure) when
+[program structure](/webgl/program-structure) when
 using the WebGL API.
+
+import ArticleLayout from "../../assets/components/ArticleLayout";
+export default function Article({ children }) {
+	return <ArticleLayout>{children}</ArticleLayout>;
+}
+
+export async function getStaticProps() {
+	return {
+		props: {
+			title: "WebGL Uniforms",
+			description: "An introduction to WebGL uniforms."
+		}
+	};
+}

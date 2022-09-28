@@ -2,13 +2,13 @@
 
 div.outer {
 	background-color: $fg-color;
-	color: $fg-text-color;
+	color: $text-color;
 	border-radius: 10px;
 	width: 300px;
 
 	a.outerlink {
 		text-decoration: none;
-		color: $fg-text-color;
+		color: $text-color;
 	}
 
 	div.inner {
@@ -21,7 +21,7 @@ div.outer {
 		h5,
 		h6 {
 			text-align: center;
-			color: $fg-text-color;
+			color: $text-color;
 		}
 	}
 }

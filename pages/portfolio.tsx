@@ -8,6 +8,7 @@ export default function Portfolio() {
 			<h1>Software Development Portfolio</h1>
 			<p>Below is an incomplete collection of software that I've worked on, both professionally and as a hobby.</p>
 			<p>You can find more of my code, including smaller projects, on my <Link href={"https://github.com/Lakuna"}><a>GitHub</a></Link> profile. Please keep in mind that the majority of my code is private.</p>
+			<h2>Projects</h2>
 			<CardList>
 				<Card>
 					<h3>Umbra</h3>

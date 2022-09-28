@@ -6,4 +6,8 @@ article.article {
 	&>* {
 		grid-column: 2;
 	}
+
+	hr {
+		width: 100%;
+	}
 }

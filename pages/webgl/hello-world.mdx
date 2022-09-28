@@ -1,15 +1,10 @@
----
-title: WebGL "Hello, world!"
-summary: "A walkthrough for writing a minimal WebGL API
-program."
----
 # "Hello, world!"
 
 You may need to read the 
-[introductory article](/articles/webgl-what-is), the
-article about [attributes](/articles/webgl-attributes), and
+[introductory article](/webgl/what-is), the
+article about [attributes](/webgl/attributes), and
 the article about
-[program structure](/articles/webgl-program-structure) in
+[program structure](/webgl/program-structure) in
 order to understand this one.
 
 The program described below draws one monocolored triangle
@@ -84,7 +79,7 @@ const program = Program.fromSource(gl, vss, fss);
 ```
 
 If you aren't using Umbra, see the
-[introductory article](/articles/webgl-what-is) for the
+[introductory article](/webgl/what-is) for the
 "vanilla" way to do this.
 
 **If your shader program is not linking or compiling
@@ -111,9 +106,9 @@ These maps are called `program.uniforms` for uniforms and
 `program.attributes` for attributes.
 
 If you aren't using Umbra, see the
-[attributes](/articles/webgl-attributes) and
-[uniforms](/articles/webgl-uniforms) articles for the
-"vanilla" ways to do this.
+[attributes](/webgl/attributes) and
+[uniforms](/webgl/uniforms) articles for the "vanilla" ways
+to do this.
 
 ### Buffers
 
@@ -127,8 +122,8 @@ const trianglePositionBuffer = new Buffer(gl,
 ```
 
 If you aren't using Umbra, see the
-[attributes](/articles/webgl-attributes) article for the
-"vanilla" way to do this.
+[attributes](/webgl/attributes) article for the "vanilla"
+way to do this.
 
 ### Vertex array objects
 
@@ -225,7 +220,7 @@ vao.draw();
 ```
 
 If you aren't using Umbra, see the
-[attributes](/articles/webgl-attributes) article for the
+[attributes](/webgl/attributes) article for the
 "vanilla" way to do this.
 
 ## Final code
@@ -280,3 +275,23 @@ function renderStep() {
 }
 requestAnimationFrame(renderStep);
 ```
+
+import HelloWorld from "../../assets/components/umbra/HelloWorld";
+
+<HelloWorld style={{ width: "100%", border: "1px solid black" }} />
+
+The next article is about [varyings](/webgl/varyings).
+
+import ArticleLayout from "../../assets/components/ArticleLayout";
+export default function Article({ children }) {
+	return <ArticleLayout>{children}</ArticleLayout>;
+}
+
+export async function getStaticProps() {
+	return {
+		props: {
+			title: "WebGL \"Hello, world!\"",
+			description: "A minimal WebGL program."
+		}
+	};
+}
