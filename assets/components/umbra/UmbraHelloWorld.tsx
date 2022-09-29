@@ -19,27 +19,29 @@ void main() {
 	outColor = vec4(1, 0, 0, 1);
 }`;
 
-export default function HelloWorld({ ...props }) {
+const bufferData = new Float32Array([
+	0, 0,
+	0, 0.5,
+	0.7, 0
+]);
+
+const transparent = new Color(0, 0, 0, 0);
+
+export default function UmbraHelloWorld({ ...props }) {
 	return <AnimatedCanvas {...props} init={(canvas: HTMLCanvasElement) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
 
 		const program = Program.fromSource(gl, vss, fss);
 
-		const buffer = new Buffer(gl, new Float32Array([
-			0, 0,
-			0, 0.5,
-			0.7, 0
-		]));
+		const buffer = new Buffer(gl, bufferData);
 
 		const vao = new VAO(program, [
 			new AttributeState("a_position", buffer, 2)
 		]);
 
-		console.log(new Color(0, 0, 0, 0));
-
 		return function render() {
-			clearContext(gl, new Color(0, 0, 0, 0));
+			clearContext(gl, transparent);
 
 			resizeContext(gl);
 
