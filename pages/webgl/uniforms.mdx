@@ -1,3 +1,7 @@
+---
+title: WebGL Uniforms
+description: An introduction to WebGL uniforms.
+---
 # Uniforms
 
 You may need to read the 
@@ -70,17 +74,3 @@ vao.draw();
 The next article covers the typical
 [program structure](/webgl/program-structure) when
 using the WebGL API.
-
-import ArticleLayout from "../../assets/components/ArticleLayout";
-export default function Article({ children }) {
-	return <ArticleLayout>{children}</ArticleLayout>;
-}
-
-export async function getStaticProps() {
-	return {
-		props: {
-			title: "WebGL Uniforms",
-			description: "An introduction to WebGL uniforms."
-		}
-	};
-}

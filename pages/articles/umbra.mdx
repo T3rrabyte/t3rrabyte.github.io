@@ -1,3 +1,7 @@
+---
+title: WebGL Tutorial
+description: An entrypoint to my WebGL tutorial.
+---
 # WebGL Tutorial
 
 I have written a full tutorial that teaches WebGL2, along
@@ -7,17 +11,3 @@ by Gregg Tavares, which can be found
 [here](https://webgl2fundamentals.org/).
 
 The tutorial series is available [here](/webgl).
-
-import ArticleLayout from "../../assets/components/ArticleLayout";
-export default function Article({ children }) {
-	return <ArticleLayout>{children}</ArticleLayout>;
-}
-
-export async function getStaticProps() {
-	return {
-		props: {
-			title: "WebGL Tutorial",
-			description: "An entrypoint to my WebGL tutorial."
-		}
-	};
-}

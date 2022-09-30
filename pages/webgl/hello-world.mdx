@@ -1,3 +1,7 @@
+---
+title: WebGL "Hello, world!"
+description: A minimal WebGL program.
+---
 # "Hello, world!"
 
 You may need to read the 
@@ -281,17 +285,3 @@ import UmbraHelloWorld from "../../assets/components/umbra/UmbraHelloWorld";
 <UmbraHelloWorld style={{ width: "100%", border: "1px solid black" }} />
 
 The next article is about [varyings](/webgl/varyings).
-
-import ArticleLayout from "../../assets/components/ArticleLayout";
-export default function Article({ children }) {
-	return <ArticleLayout>{children}</ArticleLayout>;
-}
-
-export async function getStaticProps() {
-	return {
-		props: {
-			title: "WebGL \"Hello, world!\"",
-			description: "A minimal WebGL program."
-		}
-	};
-}

@@ -1,3 +1,7 @@
+---
+title: Introduction to WebGL
+description: The table of contents for my WebGL tutorial series.
+---
 # Introduction to WebGL
 
 This is an introduction to WebGL using
@@ -53,17 +57,3 @@ This is an introduction to WebGL using
 21. [Skinning](/webgl/skinning)
 22. [Lost context](/webgl/lost-context)
 23. [Transparency](/webgl/transparency)
-
-import ArticleLayout from "../../assets/components/ArticleLayout";
-export default function Article({ children }) {
-	return <ArticleLayout>{children}</ArticleLayout>;
-}
-
-export async function getStaticProps() {
-	return {
-		props: {
-			title: "Introduction to WebGL",
-			description: "An introduction to WebGL with Umbra."
-		}
-	};
-}

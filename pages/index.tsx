@@ -22,7 +22,7 @@ export default function Index() {
 	);
 }
 
-export async function getStaticProps() {
+export function getStaticProps() {
 	return {
 		props: {
 			title: "Travis Martin",

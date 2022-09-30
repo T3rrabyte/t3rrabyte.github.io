@@ -1,3 +1,7 @@
+---
+title: WebGL Program Structure
+description: A reference page for the typical structure of a WebGL API program.
+---
 # Program Structure
 
 You may need to read the 
@@ -41,17 +45,3 @@ program).
 The next article walks through a minimal
 ["Hello, world!"](/webgl/hello-world) WebGL API
 program.
-
-import ArticleLayout from "../../assets/components/ArticleLayout";
-export default function Article({ children }) {
-	return <ArticleLayout>{children}</ArticleLayout>;
-}
-
-export async function getStaticProps() {
-	return {
-		props: {
-			title: "WebGL Program Structure",
-			description: "The structure of a typical WebGL API program."
-		}
-	};
-}

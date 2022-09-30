@@ -79,7 +79,7 @@ export default function Portfolio() {
 	);
 }
 
-export async function getStaticProps() {
+export function getStaticProps() {
 	return {
 		props: {
 			title: "Portfolio",
