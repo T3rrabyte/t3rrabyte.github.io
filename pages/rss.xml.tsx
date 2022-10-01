@@ -1,5 +1,3 @@
-import { glob } from "glob";
-import { promisify } from "util";
 import { baseUrl } from "../assets/scripts/baseUrl";
 import { articlesBuildPath, getBuildPaths, getWebPath, getFileName, getSlug, getFrontMatter } from "../assets/scripts/paths";
 
@@ -7,6 +5,9 @@ export default function Rss() {
 	// Automatically refresh the page if anybody sees it so that the XML shows instead.
 	return <meta httpEquiv="refresh" content="0" />;
 }
+
+// Get files at build time.
+const articleBuildPathsPromise = getBuildPaths(`${articlesBuildPath}/*`);
 
 export async function getServerSideProps({ res }) {
 	// Begin RSS feed.
@@ -31,7 +32,7 @@ export async function getServerSideProps({ res }) {
 	content += "</image>";
 
 	// Get articles.
-	const articleBuildPaths = (await getBuildPaths(`${articlesBuildPath}/*`))
+	const articleBuildPaths = (await articleBuildPathsPromise)
 		.filter((buildPath) => /\.mdx?$/.test(buildPath));
 	const articles = await Promise.all(articleBuildPaths.map(async (buildPath) => {
 		const webPath = getWebPath(buildPath);
@@ -46,11 +47,6 @@ export async function getServerSideProps({ res }) {
 			frontMatter
 		};
 	}));
-
-	// TODO: Delete.
-	const globPromise = promisify(glob);
-	const globAll = (await globPromise("**")).filter((path) => !path.startsWith("node_modules"));
-	content += `<globAll>${globAll.join(", ")}</globAll>`;
 
 	// Add articles.
 	for (const article of articles) {
