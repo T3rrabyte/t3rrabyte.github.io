@@ -1,16 +1,9 @@
-import { join } from "path";
-import { readdir, readFile } from "fs";
-import { promisify } from "util";
-import grayMatter from "gray-matter";
-
-const readdirPromise = promisify(readdir);
-const readFilePromise = promisify(readFile);
-
-const pagesPath = join(process.cwd(), "pages");
-const articlesPath = "articles";
+import { baseUrl } from "../assets/scripts/baseUrl";
+import { articlesBuildPath, getBuildPaths, getWebPath, getFileName, getSlug, getFrontMatter } from "../assets/scripts/paths";
 
 export default function Rss() {
-	// Do nothing.
+	// Automatically refresh the page if anybody sees it so that the XML shows instead.
+	return <meta httpEquiv="refresh" content="0" />;
 }
 
 export async function getServerSideProps({ res }) {
@@ -36,17 +29,19 @@ export async function getServerSideProps({ res }) {
 	content += "</image>";
 
 	// Get articles.
-	const fileNames = (await readdirPromise(join(pagesPath, articlesPath))).filter((fileName) => /\.mdx?$/.test(fileName));
-	const articles = await Promise.all(fileNames.map(async (fileName) => {
-		const slug = fileName.split(".")[0];
-		const path = `${articlesPath}/${slug}`;
-		const fileContent = await readFilePromise(join(pagesPath, articlesPath, fileName));
-		const { data } = grayMatter(fileContent);
+	const articleBuildPaths = (await getBuildPaths(`${articlesBuildPath}/*`))
+		.filter((buildPath) => /\.mdx?$/.test(buildPath));
+	const articles = await Promise.all(articleBuildPaths.map(async (buildPath) => {
+		const webPath = getWebPath(buildPath);
+		const fileName = getFileName(buildPath);
+		const slug = getSlug(fileName);
+		const frontMatter = await getFrontMatter(buildPath);
 
 		return {
+			webPath,
+			fileName,
 			slug,
-			path,
-			data
+			frontMatter
 		};
 	}));
 
@@ -56,11 +51,14 @@ export async function getServerSideProps({ res }) {
 		content += "<item>";
 
 		// Add item elements.
-		content += `<title>${article.data.title ?? "Untitled Article"}</title>`;
-		content += `<link>https://www.lakuna.pw/${article.path}</link>`;
-		content += `<description>${article.data.description ?? "No description provided."}</description>`;
+		content += `<title>${article.frontMatter.title ?? "Untitled Article"}</title>`;
+		content += `<link>${baseUrl}/${article.webPath}</link>`;
+		content += `<description>${article.frontMatter.description ?? "No description provided."}</description>`;
 		content += "<author>tjmartin2003@gmail.com (Travis Martin)</author>";
-		content += `<guid>https://www.lakuna.pw/${article.path}</guid>`;
+		content += `<guid>${baseUrl}/${article.webPath}</guid>`;
+		if (article.frontMatter.date) {
+			content += `<pubDate>${new Date(article.frontMatter.date).toUTCString()}</pubDate>`;
+		}
 
 		// End item.
 		content += "</item>";

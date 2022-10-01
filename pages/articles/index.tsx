@@ -1,28 +1,19 @@
-import { join } from "path";
-import { readdir, readFile } from "fs";
-import { promisify } from "util";
-import grayMatter from "gray-matter";
 import Card from "../../assets/components/Card";
 import CardList from "../../assets/components/CardList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRss } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
-const readdirPromise = promisify(readdir);
-const readFilePromise = promisify(readFile);
-
-const pagesPath = join(process.cwd(), "pages");
-const articlesPath = "articles";
+import { articlesBuildPath, getBuildPaths, getFileName, getFrontMatter, getSlug, getWebPath } from "../../assets/scripts/paths";
 
 export default function Articles({ articles }) {
 	return (
 		<>
 			<h1>Articles <Link href="/rss.xml"><a><FontAwesomeIcon icon={faRss} /></a></Link></h1>
 			<CardList>
-				{articles.map((article) =>
-					<Card href={article.path} key={article.slug}>
-						<h2>{article.data.title ?? "Untitled Article"}</h2>
-						<p>{article.data.description ?? "No description."}</p>
+				{articles.sort((a, b) => new Date(a.frontMatter.date ?? 0) > new Date(b.frontMatter.date ?? 0) ? -1 : 1).map((article) =>
+					<Card href={article.webPath} key={article.slug}>
+						<h2>{article.frontMatter.title ?? "Untitled Article"}</h2>
+						<p>{article.frontMatter.description ?? "No description."}</p>
 					</Card>
 				)}
 			</CardList>
@@ -31,17 +22,20 @@ export default function Articles({ articles }) {
 }
 
 export async function getStaticProps() {
-	const fileNames = (await readdirPromise(join(pagesPath, articlesPath))).filter((fileName) => /\.mdx?$/.test(fileName));
-	const articles = await Promise.all(fileNames.map(async (fileName) => {
-		const slug = fileName.split(".")[0];
-		const path = `${articlesPath}/${slug}`;
-		const fileContent = await readFilePromise(join(pagesPath, articlesPath, fileName));
-		const { data } = grayMatter(fileContent);
+	const articleBuildPaths = (await getBuildPaths(`${articlesBuildPath}/*`))
+		.filter((buildPath) => /\.mdx?$/.test(buildPath));
+
+	const articles = await Promise.all(articleBuildPaths.map(async (buildPath) => {
+		const webPath = getWebPath(buildPath);
+		const fileName = getFileName(buildPath);
+		const slug = getSlug(fileName);
+		const frontMatter = await getFrontMatter(buildPath);
 
 		return {
+			webPath,
+			fileName,
 			slug,
-			path,
-			data
+			frontMatter
 		};
 	}));
 

@@ -1,13 +1,13 @@
 import styles from "../styles/card.module.scss";
 import Link from "next/link";
 
-export default function Card({ children, href, ...props }: any) {
-	return href ? (
+export default function Card(props) {
+	return props.href ? (
 		<div className={styles["outer"]} {...props}>
-			<Link href={href}>
+			<Link href={props.href}>
 				<a className={styles["outerlink"]}>
 					<div className={styles["inner"]}>
-						{children}
+						{props.children}
 					</div>
 				</a>
 			</Link>
@@ -15,7 +15,7 @@ export default function Card({ children, href, ...props }: any) {
 	) : (
 		<div className={styles["outer"]} {...props}>
 			<div className={styles["inner"]}>
-				{children}
+				{props.children}
 			</div>
 		</div>
 	);
