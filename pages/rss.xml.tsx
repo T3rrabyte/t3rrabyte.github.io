@@ -16,7 +16,8 @@ export default function Rss() {
 export async function getServerSideProps({ res }) {
 	// Begin RSS feed.
 	let content = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-	content += "<rss>";
+	content += "<rss version=\"2.0\">";
+	content += "<channel>";
 
 	// Add channel elements.
 	content += "<title>Travis Martin's Blog</title>";
@@ -59,6 +60,7 @@ export async function getServerSideProps({ res }) {
 	}
 
 	// End RSS feed.
+	content += "</channel>";
 	content += "</rss>";
 
 	res.setHeader("Content-Type", "text/xml");
