@@ -16,7 +16,7 @@ export default function Rss() {
 export async function getServerSideProps({ res }) {
 	// Begin RSS feed.
 	let content = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-	content += "<rss version=\"2.0\">";
+	content += "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">";
 	content += "<channel>";
 
 	// Add channel elements.
@@ -26,7 +26,14 @@ export async function getServerSideProps({ res }) {
 	content += "<language>en-us</language>";
 	content += "<copyright>Copyright 2022, Travis Martin</copyright>";
 	content += "<docs>https://validator.w3.org/feed/docs/rss2.html</docs>";
-	content += "<image>https://www.lakuna.pw/images/favicon.png</image>";
+	content += "<atom:link href=\"https://www.lakuna.pw/rss.xml\" rel=\"self\" type=\"application/rss+xml\" />";
+
+	// Add channel image.
+	content += "<image>";
+	content += "<url>https://www.lakuna.pw/images/favicon.png</url>";
+	content += "<title>Travis Martin's Blog</title>";
+	content += "<link>https://www.lakuna.pw/</link>";
+	content += "</image>";
 
 	// Get articles.
 	const fileNames = (await readdirPromise(join(pagesPath, articlesPath))).filter((fileName) => /\.mdx?$/.test(fileName));
@@ -52,8 +59,8 @@ export async function getServerSideProps({ res }) {
 		content += `<title>${article.data.title ?? "Untitled Article"}</title>`;
 		content += `<link>https://www.lakuna.pw/${article.path}</link>`;
 		content += `<description>${article.data.description ?? "No description provided."}</description>`;
-		content += "<author>Travis Martin</author>";
-		content += `<guid>${article.slug}</guid>`;
+		content += "<author>tjmartin2003@gmail.com</author>";
+		content += `<guid>https://www.lakuna.pw/${article.path}</guid>`;
 
 		// End item.
 		content += "</item>";
