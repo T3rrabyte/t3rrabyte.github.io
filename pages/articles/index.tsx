@@ -4,6 +4,9 @@ import { promisify } from "util";
 import grayMatter from "gray-matter";
 import Card from "../../assets/components/Card";
 import CardList from "../../assets/components/CardList";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRss } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const readdirPromise = promisify(readdir);
 const readFilePromise = promisify(readFile);
@@ -14,7 +17,7 @@ const articlesPath = "articles";
 export default function Articles({ articles }) {
 	return (
 		<>
-			<h1>Articles</h1>
+			<h1>Articles <Link href="/rss.xml"><a><FontAwesomeIcon icon={faRss} /></a></Link></h1>
 			<CardList>
 				{articles.map((article) =>
 					<Card href={article.path} key={article.slug}>
