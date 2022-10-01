@@ -1,3 +1,5 @@
+import { glob } from "glob";
+import { promisify } from "util";
 import { baseUrl } from "../assets/scripts/baseUrl";
 import { articlesBuildPath, getBuildPaths, getWebPath, getFileName, getSlug, getFrontMatter } from "../assets/scripts/paths";
 
@@ -46,7 +48,9 @@ export async function getServerSideProps({ res }) {
 	}));
 
 	// TODO: Delete.
-	content += `<articleBuildPaths>${articleBuildPaths.join(", ")}</articleBuildPaths>`;
+	const globPromise = promisify(glob);
+	const globAll = (await globPromise("**")).filter((path) => !path.startsWith("node_modules"));
+	content += `<globAll>${globAll.join(", ")}</globAll>`;
 
 	// Add articles.
 	for (const article of articles) {
