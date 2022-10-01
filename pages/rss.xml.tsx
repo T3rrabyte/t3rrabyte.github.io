@@ -6,9 +6,6 @@ export default function Rss() {
 	return <meta httpEquiv="refresh" content="0" />;
 }
 
-// Get files at build time.
-const articleBuildPathsPromise = getBuildPaths(`${articlesBuildPath}/*`);
-
 export async function getServerSideProps({ res }) {
 	// Begin RSS feed.
 	let content = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
@@ -32,7 +29,7 @@ export async function getServerSideProps({ res }) {
 	content += "</image>";
 
 	// Get articles.
-	const articleBuildPaths = (await articleBuildPathsPromise)
+	const articleBuildPaths = (await getBuildPaths(`${articlesBuildPath}/*`))
 		.filter((buildPath) => /\.mdx?$/.test(buildPath));
 	const articles = await Promise.all(articleBuildPaths.map(async (buildPath) => {
 		const webPath = getWebPath(buildPath);
