@@ -59,7 +59,7 @@ export async function getServerSideProps({ res }) {
 		content += `<title>${article.data.title ?? "Untitled Article"}</title>`;
 		content += `<link>https://www.lakuna.pw/${article.path}</link>`;
 		content += `<description>${article.data.description ?? "No description provided."}</description>`;
-		content += "<author>tjmartin2003@gmail.com</author>";
+		content += "<author>tjmartin2003@gmail.com (Travis Martin)</author>";
 		content += `<guid>https://www.lakuna.pw/${article.path}</guid>`;
 
 		// End item.
