@@ -45,6 +45,9 @@ export async function getServerSideProps({ res }) {
 		};
 	}));
 
+	// TODO: Delete.
+	content += `<articleBuildPaths>${articleBuildPaths.join(", ")}</articleBuildPaths>`;
+
 	// Add articles.
 	for (const article of articles) {
 		// Begin item.
