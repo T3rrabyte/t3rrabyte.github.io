@@ -1,4 +1,4 @@
-export const baseUrl = process.env.SITE_URL ?? "https://www.lakuna.pw";
+export const baseUrl = "https://www.lakuna.pw";
 export const siteName = "lakuna.pw";
 
 // Web paths are relative to the website's index.
