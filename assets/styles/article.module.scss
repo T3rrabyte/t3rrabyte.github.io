@@ -5,6 +5,7 @@ article.article {
 
 	&>* {
 		grid-column: 2;
+		overflow: auto;
 	}
 
 	hr {
