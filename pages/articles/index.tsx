@@ -3,12 +3,13 @@ import CardList from "../../assets/components/CardList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRss } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { articlesBuildPath, getBuildPaths, getFileName, getFrontMatter, getSlug, getWebPath } from "../../assets/scripts/paths";
+import { getBuildPaths, getFileName, getFrontMatter, getSlug, getWebPath } from "../../assets/scripts/files";
+import { articlesBuildPath, rssWebPath } from "../../assets/scripts/constants";
 
 export default function Articles({ articles }) {
 	return (
 		<>
-			<h1>Articles <Link href="/rss.xml"><a><FontAwesomeIcon icon={faRss} /></a></Link></h1>
+			<h1>Articles <Link href={`/${rssWebPath}`}><a><FontAwesomeIcon icon={faRss} /></a></Link></h1>
 			<CardList>
 				{articles.sort((a, b) => new Date(a.frontMatter.date ?? 0) > new Date(b.frontMatter.date ?? 0) ? -1 : 1).map((article) =>
 					<Card href={article.webPath} key={article.slug}>

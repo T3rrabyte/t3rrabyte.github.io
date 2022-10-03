@@ -42,6 +42,7 @@
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
+		"postbuild": "node ./assets/scripts/postbuild.js",
 		"start": "next start",
 		"lint": "next lint"
 	}

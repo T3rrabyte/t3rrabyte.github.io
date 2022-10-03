@@ -1,12 +1,12 @@
+import { baseUrl, faviconImageWebPath, siteName, twitterUsername } from "../assets/scripts/constants";
 import Head from "next/head";
 import TopNav from "../assets/components/TopNav";
-import { baseUrl } from "../assets/scripts/baseUrl";
 import "../assets/styles/global.scss";
 
 export default function MyApp({ Component, pageProps, router }) {
 	const title = pageProps.title ?? "Untitled Page";
 	const description = pageProps.description ?? "No page description provided.";
-	const imageUrl = pageProps.imageUrl ?? "/images/favicon.png";
+	const imageUrl = pageProps.imageUrl ?? `/${faviconImageWebPath}`;
 	const url = pageProps.url ?? `${baseUrl}${router.pathname}`;
 
 	return (
@@ -23,10 +23,10 @@ export default function MyApp({ Component, pageProps, router }) {
 				<meta name="og:url" content={url} />
 				<meta name="og:description" content={description} />
 				<meta name="og:locale" content="en_US" />
-				<meta name="og:site_name" content="lakuna.pw" />
+				<meta name="og:site_name" content={siteName} />
 				<meta name="twitter:card" content="summary" />
-				<meta name="twitter:site" content="@T3Lakuna" />
-				<meta name="twitter:creator" content="@T3Lakuna" />
+				<meta name="twitter:site" content={`@${twitterUsername}`} />
+				<meta name="twitter:creator" content={`@${twitterUsername}`} />
 				<meta name="twitter:description" content={description} />
 				<meta name="twitter:title" content={title} />
 				<meta name="twitter:image" content={imageUrl} />

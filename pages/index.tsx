@@ -2,6 +2,7 @@ import ButtonLink from "../assets/components/ButtonLink";
 import OneLiner from "../assets/components/OneLiner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faReddit, faFacebook, faYoutube, faLinkedin, faTwitch, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { facebookUrl, githubUrl, linkedinUrl, redditUrl, twitchUrl, twitterUrl, youtubeUrl } from "../assets/scripts/constants";
 
 export default function Index() {
 	return (
@@ -10,13 +11,13 @@ export default function Index() {
 			<p><OneLiner /></p>
 			<hr />
 			<div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-				<ButtonLink href="https://github.com/Lakuna"><FontAwesomeIcon icon={faGithub} /></ButtonLink>
-				<ButtonLink href="https://www.reddit.com/user/T3Lacuna"><FontAwesomeIcon icon={faReddit} /></ButtonLink>
-				<ButtonLink href="https://www.linkedin.com/in/t-j-m/"><FontAwesomeIcon icon={faLinkedin} /></ButtonLink>
-				<ButtonLink href="https://www.twitch.tv/lakuna0"><FontAwesomeIcon icon={faTwitch} /></ButtonLink>
-				<ButtonLink href="https://twitter.com/T3Lakuna"><FontAwesomeIcon icon={faTwitter} /></ButtonLink>
-				<ButtonLink href="https://www.facebook.com/profile.php?id=100027929321707"><FontAwesomeIcon icon={faFacebook} /></ButtonLink>
-				<ButtonLink href="https://www.youtube.com/channel/UC0AjiYU8DPKcBKUfIQoUGNg"><FontAwesomeIcon icon={faYoutube} /></ButtonLink>
+				<ButtonLink href={githubUrl}><FontAwesomeIcon icon={faGithub} /></ButtonLink>
+				<ButtonLink href={redditUrl}><FontAwesomeIcon icon={faReddit} /></ButtonLink>
+				<ButtonLink href={linkedinUrl}><FontAwesomeIcon icon={faLinkedin} /></ButtonLink>
+				<ButtonLink href={twitchUrl}><FontAwesomeIcon icon={faTwitch} /></ButtonLink>
+				<ButtonLink href={twitterUrl}><FontAwesomeIcon icon={faTwitter} /></ButtonLink>
+				<ButtonLink href={facebookUrl}><FontAwesomeIcon icon={faFacebook} /></ButtonLink>
+				<ButtonLink href={youtubeUrl}><FontAwesomeIcon icon={faYoutube} /></ButtonLink>
 			</div>
 		</div>
 	);

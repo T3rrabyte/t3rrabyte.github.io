@@ -26,19 +26,18 @@ function remarkCustom() {
 		}
 
 		// The string to be added to the end of the MDX.
-		const suffix = `
-		import Layout from "/assets/components/ArticleLayout";
+		const suffix = `import Layout from "/assets/components/ArticleLayout";
 		
-		export default function({ children }) {
-			return <Layout>{children}</Layout>;
-		}
+export default function({ children }) {
+	return <Layout>{children}</Layout>;
+}
 
-		export function getStaticProps() {
-			return {
-				props: ${JSON.stringify(data)}
-			};
-		}
-		`.replace(/(\t|\n)/g, "");
+export function getStaticProps() {
+	return {
+		props: ${JSON.stringify(data)}
+	};
+}
+`.replace(/(\t|\n)/g, "");
 
 		// Turn the suffix into an AST.
 		const suffixTree = suffixProcessor.parse(suffix);

@@ -8,13 +8,14 @@ import statecraftPreview from "../public/images/statecraft-preview.png";
 import prepareModeratelyPreview from "../public/images/prepare-moderately-preview.png";
 import mobaPreview from "../public/images/moba-preview.png";
 import outpostPreview from "../public/images/outpost-preview.png";
+import { githubUrl } from "../assets/scripts/constants";
 
 export default function Portfolio() {
 	return (
 		<>
 			<h1>Software Development Portfolio</h1>
 			<p>Below is an incomplete collection of software that I{"'"}ve worked on, both professionally and as a hobby.</p>
-			<p>You can find more of my code, including smaller projects, on my <Link href={"https://github.com/Lakuna"}><a>GitHub</a></Link> profile. Please keep in mind that the majority of my code is private.</p>
+			<p>You can find more of my code, including smaller projects, on my <Link href={githubUrl}><a>GitHub</a></Link> profile. Please keep in mind that the majority of my code is private.</p>
 			<h2>Projects</h2>
 			<CardList>
 				<Card>
@@ -22,13 +23,13 @@ export default function Portfolio() {
 					<UmbraCameras style={{ width: "100%" }} />
 					<p>A lightweight visual application framework for WebGL2.</p>
 					<p>Written in <strong>TypeScript</strong>.</p>
-					<p>The source code is available on <Link href={"https://github.com/Lakuna/Umbra"}><a>its GitHub repository</a></Link>, and the documentation is on <Link href={"https://umbra.lakuna.pw/"}><a>its website</a></Link>.</p>
+					<p>The source code is available on <Link href={`${githubUrl}/Umbra`}><a>its GitHub repository</a></Link>, and the documentation is on <Link href={"https://umbra.lakuna.pw/"}><a>its website</a></Link>.</p>
 				</Card>
 				<Card>
 					<h3>My website</h3>
 					<p>This website, which has gone through several iterations since it was first put online on <time>November 13, 2017</time>.</p>
 					<p>Written in <strong>TypeScript</strong>, <strong>JSX</strong>, and <strong>Sass</strong> with <Link href={"https://nextjs.org/"}><a>Next.js</a></Link> and <Link href={"https://reactjs.org/"}><a>React</a></Link>.</p>
-					<p>The source code is available on <Link href={"https://github.com/Lakuna/Lakuna.github.io"}><a>its GitHub repository</a></Link>.</p>
+					<p>The source code is available on <Link href={`${githubUrl}/Lakuna.github.io`}><a>its GitHub repository</a></Link>.</p>
 				</Card>
 				<Card>
 					<h3>EPS</h3>
@@ -47,7 +48,7 @@ export default function Portfolio() {
 					<Image src={prepareModeratelyPreview} alt="Prepare Moderately preview." />
 					<p>A mod for the real-time strategy game <Link href="https://rimworldgame.com/"><a>RimWorld</a></Link>.</p>
 					<p>Written in <strong>C#</strong> with <Link href="https://github.com/pardeike/Harmony"><a>Harmony</a></Link>.</p>
-					<p>The source code is available on <Link href={"https://github.com/Lakuna/RimWorld-Prepare-Moderately"}><a>its GitHub repository</a></Link>, and it can be downloaded from <Link href={"https://steamcommunity.com/sharedfiles/filedetails/?id=2057362949"}><a>its Steam Workshop page</a></Link>.</p>
+					<p>The source code is available on <Link href={`${githubUrl}/RimWorld-Prepare-Moderately`}><a>its GitHub repository</a></Link>, and it can be downloaded from <Link href={"https://steamcommunity.com/sharedfiles/filedetails/?id=2057362949"}><a>its Steam Workshop page</a></Link>.</p>
 				</Card>
 				<Card>
 					<h3>Statecraft</h3>
@@ -72,7 +73,7 @@ export default function Portfolio() {
 				<Card>
 					<h3>Diplomat</h3>
 					<p>A console program that uses brute force to determine the best move in a game of <Link href="https://en.wikipedia.org/wiki/Diplomacy_(game)"><a>Diplomacy</a></Link>.</p>
-					<p>The source code is available on <Link href={"https://github.com/Lakuna/Diplomat"}><a>its GitHub repository</a></Link>.</p>
+					<p>The source code is available on <Link href={`${githubUrl}/Diplomat`}><a>its GitHub repository</a></Link>.</p>
 				</Card>
 			</CardList>
 		</>
