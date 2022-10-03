@@ -1,6 +1,8 @@
 export const baseUrl = "https://www.lakuna.pw";
 export const siteName = "lakuna.pw";
 
+export const googleAnalyticsMeasurementId = "G-HHPHD31E3M";
+
 // Web paths are relative to the website's index.
 export const articlesWebPath = "articles";
 export const rssWebPath = "rss.xml";

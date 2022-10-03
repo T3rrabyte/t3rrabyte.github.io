@@ -2,6 +2,7 @@ import { baseUrl, faviconImageWebPath, siteName, twitterUsername } from "../asse
 import Head from "next/head";
 import TopNav from "../assets/components/TopNav";
 import "../assets/styles/global.scss";
+import Gtag from "../assets/components/Gtag";
 
 export default function MyApp({ Component, pageProps, router }) {
 	const title = pageProps.title ?? "Untitled Page";
@@ -40,6 +41,7 @@ export default function MyApp({ Component, pageProps, router }) {
 				</main>
 				<footer></footer>
 			</div>
+			<Gtag />
 		</>
 	);
 }
