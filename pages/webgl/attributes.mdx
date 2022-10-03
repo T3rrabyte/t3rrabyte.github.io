@@ -13,7 +13,7 @@ in order to be used for rendering. One way to pass data to
 the GPU is with *attributes*.
 
 Attributes are a type of variable in a WebGL program that
-are used as inputs to the vertex shader. Based on rules
+are used as inputs to vertex shaders. Based on rules
 specified by the developer, each time the vertex shader is
 executed, each attribute will read a certain amount of data
 from the buffer assigned to it. As such, attributes are
@@ -23,7 +23,7 @@ used to supply vertex-specific data to the shader program.
 #version 300 es
 
 /*
-Attributes are inputs to the vertex shader. The naming
+Attributes are inputs to vertex shaders. The naming
 convention for attributes is camelCase prefixed by "a_".
 */
 in vec4 a_position;

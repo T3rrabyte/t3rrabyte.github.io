@@ -71,6 +71,13 @@ program.uniforms.get("u_color").value = [0, 0, 0, 1];
 vao.draw();
 ```
 
+There is also a shorthand equivalent to the block of code
+above:
+
+```js
+vao.draw({ "u_color": [0, 0, 0, 1] });
+```
+
 The next article covers the typical
 [program structure](/webgl/program-structure) when
 using the WebGL API.
