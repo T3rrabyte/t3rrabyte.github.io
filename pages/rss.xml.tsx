@@ -1,12 +1,11 @@
 import { baseUrl } from "../assets/scripts/baseUrl";
 import { articlesBuildPath, getBuildPaths, getWebPath, getFileName, getSlug, getFrontMatter } from "../assets/scripts/paths";
 
-export default function Rss() {
-	// Automatically refresh the page if anybody sees it so that the XML shows instead.
-	return <meta httpEquiv="refresh" content="0" />;
+export default function Rss({ content }) {
+	return <code>{content}</code>;
 }
 
-export async function getServerSideProps({ res }) {
+export async function getStaticProps() {
 	// Begin RSS feed.
 	let content = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
 	content += "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">";
@@ -68,11 +67,9 @@ export async function getServerSideProps({ res }) {
 	content += "</channel>";
 	content += "</rss>";
 
-	res.setHeader("Content-Type", "text/xml");
-	res.write(content);
-	res.end();
-
 	return {
-		props: {}
+		props: {
+			content
+		}
 	};
 }
