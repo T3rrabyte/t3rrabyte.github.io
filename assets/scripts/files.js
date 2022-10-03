@@ -1,7 +1,6 @@
 import { readFile } from "fs";
 import { promisify } from "util";
 import glob from "glob";
-import { pagesBuildPath } from "./constants.js";
 import grayMatter from "gray-matter";
 
 const readFilePromise = promisify(readFile);
@@ -18,7 +17,15 @@ export async function getBuildPaths(pattern) {
 }
 
 export function getWebPath(buildPath) {
-	return buildPath.slice(`${pagesBuildPath}/`.length, buildPath.lastIndexOf("."));
+	let start = 0;
+	for (const root of ["pages/", "public/"]) {
+		if (buildPath.indexOf(root) >= 0) {
+			start = buildPath.indexOf(root) + root.length;
+			break;
+		}
+	}
+
+	return buildPath.slice(start, buildPath.lastIndexOf("."));
 }
 
 export function getFileName(path) {

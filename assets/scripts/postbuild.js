@@ -59,7 +59,8 @@ const rssContent = `<?xml version="1.0" encoding="UTF-8" ?>
 await writeFilePromise(`./${rssBuildPath}`, rssContent);
 
 // Get list of files.
-const fileWebPaths = await getWebPaths(`./${pagesBuildPath}/**`);
+const fileWebPaths = (await getWebPaths(`./${pagesBuildPath}/**`))
+	.filter((webPath) => webPath != "_app" && webPath != "_document" && webPath != "404" && webPath != "500");
 
 // Create XML string to describe the list of files.
 let pagesText = "";
