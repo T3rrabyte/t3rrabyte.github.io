@@ -96,21 +96,6 @@ const cubeSideLen = 50;
 const cubeCount = 5;
 const cameraCircleRad = 400;
 
-const cubeMats = [];
-for (let i = 0; i < cubeCount; i++) {
-	const r = i * Math.PI * 2 / cubeCount;
-	const mat = mat4.create();
-	mat4.translate(mat, mat, [Math.cos(r) * cubeCircleRad, 0, Math.sin(r) * cubeCircleRad]);
-	mat4.scale(mat, mat, [cubeSideLen, cubeSideLen, cubeSideLen]);
-	cubeMats[i] = mat;
-}
-
-const camMat = mat4.create();
-const viewMat = mat4.create();
-const projMat = mat4.create();
-const viewProjMat = mat4.create();
-const tempMat = mat4.create();
-
 const transparent = new Color(0, 0, 0, 0);
 
 export default function UmbraCameras({ ...props }) {
@@ -126,19 +111,34 @@ export default function UmbraCameras({ ...props }) {
 			new AttributeState("a_position", buffer)
 		], indexData);
 
+		const cubeMats = [];
+		for (let i = 0; i < cubeCount; i++) {
+			const r = i * Math.PI * 2 / cubeCount;
+			const mat = mat4.create();
+			mat4.translate(mat, mat, [Math.cos(r) * cubeCircleRad, 0, Math.sin(r) * cubeCircleRad]);
+			mat4.scale(mat, mat, [cubeSideLen, cubeSideLen, cubeSideLen]);
+			cubeMats[i] = mat;
+		}
+
+		const camMat = mat4.create();
+		const viewMat = mat4.create();
+		const projMat = mat4.create();
+		const viewProjMat = mat4.create();
+		const tempMat = mat4.create();
+
 		return function render(now: number) {
+			clearContext(gl, transparent, 1);
+
+			resizeContext(gl);
+
+			gl.enable(gl.CULL_FACE);
+
 			mat4.perspective(projMat, 45, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 			mat4.identity(camMat);
 			mat4.rotateY(camMat, camMat, 0.001 * now);
 			mat4.translate(camMat, camMat, [0, 0, cameraCircleRad]);
 			mat4.invert(viewMat, camMat);
 			mat4.multiply(viewProjMat, projMat, viewMat);
-
-			clearContext(gl, transparent, 1);
-
-			resizeContext(gl);
-
-			gl.enable(gl.CULL_FACE);
 
 			for (let i = 0; i < cubeMats.length; i++) {
 				mat4.multiply(tempMat, viewProjMat, cubeMats[i]);
