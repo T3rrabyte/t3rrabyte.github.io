@@ -1,5 +1,5 @@
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "@lakuna/umbra.js";
+import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext, UniformValue } from "@lakuna/umbra.js";
 import { mat4 } from "gl-matrix";
 
 const vss = `#version 300 es
@@ -142,7 +142,7 @@ export default function UmbraCameras({ ...props }) {
 
 			for (let i = 0; i < cubeMats.length; i++) {
 				mat4.multiply(tempMat, viewProjMat, cubeMats[i]);
-				vao.draw({ "u_matrix": tempMat as number[] });
+				vao.draw({ "u_matrix": tempMat as UniformValue });
 			}
 		}
 	}} />;

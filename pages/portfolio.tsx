@@ -2,7 +2,7 @@ import Link from "next/link";
 import Card from "../assets/components/Card";
 import CardList from "../assets/components/CardList";
 import Image from "next/image";
-import UmbraCameras from "../assets/components/umbra/UmbraCameras";
+import Umbra3dCameras from "../assets/components/umbra/Umbra3dCameras";
 import residuumPreview from "../public/images/residuum-preview.png";
 import statecraftPreview from "../public/images/statecraft-preview.png";
 import prepareModeratelyPreview from "../public/images/prepare-moderately-preview.png";
@@ -20,7 +20,7 @@ export default function Portfolio() {
 			<CardList>
 				<Card>
 					<h3>Umbra</h3>
-					<UmbraCameras style={{ width: "100%" }} />
+					<Umbra3dCameras style={{ width: "100%" }} />
 					<p>A lightweight visual application framework for WebGL2.</p>
 					<p>Written in <strong>TypeScript</strong>.</p>
 					<p>The source code is available on <Link href={`${githubUrl}/Umbra`}><a>its GitHub repository</a></Link>, and the documentation is on <Link href={"https://umbra.lakuna.pw/"}><a>its website</a></Link>.</p>

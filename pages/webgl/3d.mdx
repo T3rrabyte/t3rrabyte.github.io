@@ -1,0 +1,119 @@
+---
+title: WebGL 3D
+description: An introduction to depth and the techniques used to render three-dimensional scenes in WebGL.
+---
+# 3D
+
+You may need to read the previous article about the
+[scene graph](/webgl/scene-graph) in order to
+understand this one.
+
+## Orthographic
+
+An *orthographic* projection is a way to draw 3D without
+regard to perspective.
+
+import Umbra3dOrthoNoCull from "../../assets/components/umbra/Umbra3dOrthoNoCull";
+
+<Umbra3dOrthoNoCull style={{ width: "100%", border: "1px solid black" }} />
+
+### Cull face
+
+Notice that the back of the rotating shape in the example
+above shows through to the front in some places. One way to
+fix this is to draw only front-facing triangles. By
+default, a triangle is considered front-facing if its
+vertices are being rasterized in a counter-clockwise
+orientation relative to the camera. To do so, enable the
+`CULL_FACE` feature.
+
+```js
+gl.enable(gl.CULL_FACE);
+```
+
+Enabling `CULL_FACE` will make any triangles that are
+defined in the wrong orientation invisible:
+
+import Umbra3dOrthoBadVertices from "../../assets/components/umbra/Umbra3dOrthoBadVertices";
+
+<Umbra3dOrthoBadVertices style={{ width: "100%", border: "1px solid black" }} />
+
+The orientation of a triangle can be reversed by swapping
+the last two vertices.
+
+import Umbra3dOrthoNoDepth from "../../assets/components/umbra/Umbra3dOrthoNoDepth";
+
+<Umbra3dOrthoNoDepth style={{ width: "100%", border: "1px solid black" }} />
+
+### Depth test
+
+Even when culling backwards-facing triangles, some
+triangles still show through others. This is because WebGL
+doesn't remember the depth of a triangle unless the *depth
+buffer* is enabled.
+
+```js
+gl.enable(gl.DEPTH_TEST);
+```
+
+While the color buffer stores the RGBA values of each
+pixel, the depth buffer stores the depth of each pixel. The
+third ("$z$") value of `gl_Position` is stored in the depth
+buffer. The depth buffer should be cleared before every
+frame just like the color buffer.
+
+```js
+gl.clearColor(0, 0, 0, 0);
+gl.clearDepth(1);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+```
+
+Umbra's `clearContext` function can be used to clear both
+the color and depth buffers in one line, and also enables
+the depth buffer if necessary.
+
+```js
+clearContext(gl, new Color(0, 0, 0, 0), 1);
+```
+
+import Umbra3dOrtho from "../../assets/components/umbra/Umbra3dOrtho";
+
+<Umbra3dOrtho style={{ width: "100%", border: "1px solid black" }} />
+
+## Perspective
+
+*Perspective* is when things that are further away from
+the camera appear smaller. WebGL automatically divides the
+value assigned to `gl_Position` by its fourth ("$w$")
+value. This is usefule for applying perspective because it
+is equivalent to a scaling operation.
+
+The example below shows two cubes (one on each side of the
+canvas). The cube on the left uses an orthographic
+projection, and the cube on the right uses a perspective
+projection. Notice that the sides of the orthographic cube
+are not visible despite being to the left of the camera.
+
+import Umbra3dPerspective from "../../assets/components/umbra/Umbra3dPerspective";
+
+<Umbra3dPerspective style={{ width: "100%", border: "1px solid black" }} />
+
+## Cameras
+
+Rather than move a scene to fit in the frustum of a camera
+(as is the case in all of the examples above), it is more
+common to move the camera to view the scene. To do so, a
+transformation matrix can be made to represent the camera,
+called the *camera matrix*. The camera matrix can be
+inverted to make a *view matrix*. The *projection matrix*
+(which is calculated according to different algorithms
+depending on the type of projection) can be multiplied by
+the view matrix to make a *view projection matrix*. Objects
+in a scene can be "viewed" by a camera by multiplying their
+transformation matrices by the view projection matrix.
+
+import Umbra3dCameras from "../../assets/components/umbra/Umbra3dCameras";
+
+<Umbra3dCameras style={{ width: "100%", border: "1px solid black" }} />
+
+The next article is about [textures](/webgl/textures).
