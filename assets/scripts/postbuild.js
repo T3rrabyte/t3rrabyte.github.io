@@ -62,9 +62,23 @@ await writeFilePromise(`./${rssBuildPath}`, rssContent);
 const fileWebPaths = (await getWebPaths(`./${pagesBuildPath}/**`))
 	.filter((webPath) => webPath != "_app" && webPath != "_document" && webPath != "404" && webPath != "500");
 
+// Remove duplicate files.
+const uniqueFileWebPaths = [];
+for (let fileWebPath of fileWebPaths) {
+	for (const suffix of ["/", "index", "/"]) {
+		if (fileWebPath.endsWith(suffix)) {
+			fileWebPath = fileWebPath.slice(0, fileWebPath.length - suffix.length);
+		}
+	}
+
+	if (uniqueFileWebPaths.indexOf(fileWebPath) < 0) {
+		uniqueFileWebPaths.push(fileWebPath);
+	}
+}
+
 // Create XML string to describe the list of files.
 let pagesText = "";
-for (const fileWebPath of fileWebPaths) {
+for (const fileWebPath of uniqueFileWebPaths) {
 	pagesText += `
 	<url>
 		<loc>${baseUrl}/${fileWebPath}</loc>
