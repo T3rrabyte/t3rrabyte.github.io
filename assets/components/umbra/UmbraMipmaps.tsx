@@ -1,4 +1,4 @@
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, UniformValue, VAO } from "@lakuna/umbra.js";
+import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureFilter, UniformValue, VAO } from "@lakuna/umbra.js";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -51,7 +51,7 @@ const indexData = new Uint8Array([
 
 const transparent = new Color(0, 0, 0, 0);
 
-export default function UmbraTextures({ ...props }) {
+export default function UmbraMipmaps({ ...props }) {
 	return AnimatedCanvas((canvas: HTMLCanvasElement) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -70,7 +70,9 @@ export default function UmbraTextures({ ...props }) {
 			gl,
 			pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
 			width: 1,
-			height: 1
+			height: 1,
+			minFilter: TextureFilter.LINEAR_MIPMAP_LINEAR,
+			magFilter: TextureFilter.LINEAR_MIPMAP_LINEAR
 		});
 
 		const image = new Image();
@@ -85,16 +87,17 @@ export default function UmbraTextures({ ...props }) {
 
 		const mat = mat4.create();
 
-		return function render() {
+		return function render(now: number) {
 			clearContext(gl, transparent);
 
 			resizeContext(gl);
 
+			const scale = Math.cos(now * 0.001) * 2 + 2.5;
 			mat4.identity(mat);
 			if (canvas.clientWidth > canvas.clientHeight) {
-				mat4.scale(mat, mat, [canvas.clientHeight / canvas.clientWidth, 1, 1]);
+				mat4.scale(mat, mat, [(canvas.clientHeight / canvas.clientWidth) * scale, scale, scale]);
 			} else {
-				mat4.scale(mat, mat, [1, canvas.clientWidth / canvas.clientHeight, 1]);
+				mat4.scale(mat, mat, [scale, (canvas.clientWidth / canvas.clientHeight) * scale, scale]);
 			}
 
 			vao.draw({ "u_matrix": mat as UniformValue, "u_texture": texture });

@@ -1,4 +1,4 @@
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, UniformValue, VAO } from "@lakuna/umbra.js";
+import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureWrapFunction, UniformValue, VAO } from "@lakuna/umbra.js";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -38,10 +38,10 @@ const positionBufferData = new Float32Array([
 ]);
 
 const texcoordBufferData = new Float32Array([
-	0, 0,
-	0, 1,
-	1, 1,
-	1, 0
+	-1, -1,
+	-1, 2,
+	2, 2,
+	2, -1
 ]);
 
 const indexData = new Uint8Array([
@@ -70,7 +70,9 @@ export default function UmbraTextures({ ...props }) {
 			gl,
 			pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
 			width: 1,
-			height: 1
+			height: 1,
+			wrapSFunction: TextureWrapFunction.CLAMP_TO_EDGE,
+			wrapTFunction: TextureWrapFunction.CLAMP_TO_EDGE
 		});
 
 		const image = new Image();

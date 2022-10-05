@@ -107,3 +107,94 @@ program.uniforms.get("u_texture").value = texture;
 import UmbraTextures from "../../assets/components/umbra/UmbraTextures";
 
 <UmbraTextures style={{ width: "100%", border: "1px solid black" }} />
+
+Check out the artist of the example textures on
+[her website](https://www.xanycki.art/).
+
+## Texture parameters
+
+Certain parameters of a texture can be modified with the
+WebGL API via the `texParameteri` function.
+
+```js
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
+	gl.CLAMP_TO_EDGE);
+```
+
+As with other situations where binding points are
+necessary, Umbra uses an object-oriented approach to
+texture parameters.
+
+```js
+texture.wrapSFunction = TextureWrapFunction.CLAMP_TO_EDGE;
+```
+
+WebGL can be told what to do when supplied texture
+coordinates outside of the interval $[0,1]$ in the $s$ and
+$t$ directions with the `TEXTURE_WRAP_S` and
+`TEXTURE_WRAP_T` texture parameters, respectively.
+
+- `REPEAT` is the default functionality. It makes the
+texture repeat in the given direction.
+- `CLAMP_TO_EDGE` makes the texture not repeat at all.
+- `MIRRORED_REPEAT` makes the texture repeat, but flips
+the texture across the corresponding axis for each
+repetition.
+
+import UmbraTextureParameters from "../../assets/components/umbra/UmbraTextureParameters";
+
+<UmbraTextureParameters style={{ width: "100%", border: "1px solid black" }} />
+
+A *mipmap* is a collection of smaller versions of a texture
+that is used to render a texture at different sizes. A
+*mip* is one level of a mipmap. The way that the mipmap is
+generated can be specified with the `TEXTURE_MIN_FILTER`
+and `TEXTURE_MAG_FILTER` parameters. The minification
+filter (which corresponds to the former) is used when
+drawing anything smaller than the largest mip, and the
+magnification filter (which corresponds to the latter) is
+used when drawing anything larger than the largest mip.
+
+- `NEAREST` chooses one pixel from the largest mip.
+- `LINEAR` chooses four pixels from the largest mip and
+blends them.
+- `NEAREST_MIPMAP_NEAREST` chooses the best mip, then picks
+one pixel from that mip.
+- `LINEAR_MIPMAP_NEAREST` chooses the best mip, then blends
+four pixels from that mip.
+- `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then
+chooses one pixel from each and blends them.
+- `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then
+chooses four pixels from each and blends them.
+
+Since the magnification filter is used when drawing larger
+than the largest mip, it can only be `NEAREST` or `LINEAR`.
+
+**In order for a texture to render, it must be *texture
+complete***. A texture is texture complete if it either
+only reads the first mip (i.e. uses `NEAREST` or `LINEAR`
+as its minification filter) or has a complete mipmap. The
+easiest way to generate a complete mipmap is with the WebGL
+API's `generateMipmap` function.
+
+```js
+gl.generateMipmap(gl.TEXTURE_2D);
+```
+
+Umbra textures have an equivalent method, but it is
+automatically executed when necessary.
+
+import UmbraMipmaps from "../../assets/components/umbra/UmbraMipmaps";
+
+<UmbraMipmaps style={{ width: "100%", border: "1px solid black" }} />
+
+## Texture atlases
+
+A *texture atlas* is a texture that contains multiple
+images. This method has a few advantages, such as keeping
+the shader that uses it simple and reducing the number of
+draw calls required to draw multiple images.
+
+import UmbraTextureAtlases from "../../assets/components/umbra/UmbraTextureAtlases";
+
+<UmbraTextureAtlases style={{ width: "100%", border: "1px solid black" }} />
