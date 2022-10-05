@@ -31,7 +31,7 @@ const bufferData = new Float32Array([
 const transparent = new Color(0, 0, 0, 0);
 
 export default function UmbraVaryings({ ...props }) {
-	return <AnimatedCanvas {...props} init={(canvas: HTMLCanvasElement) => {
+	return AnimatedCanvas((canvas: HTMLCanvasElement) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
 
@@ -56,5 +56,5 @@ export default function UmbraVaryings({ ...props }) {
 
 			vao.draw({ "u_matrix": mat as UniformValue });
 		}
-	}} />;
+	}, props);
 }

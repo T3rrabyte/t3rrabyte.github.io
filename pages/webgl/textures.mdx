@@ -1,0 +1,109 @@
+---
+title: WebGL Textures
+description: An introduction to using textures in WebGL.
+---
+# Textures
+
+You may need to read the previous articles about
+[attributes](/webgl/attributes),
+[uniforms](/webgl/uniforms), and
+[varyings](/webgl/varyings) in order to understand this
+one.
+
+A *texture* is an array of data that can be randomly
+accessed in a shader program. Textures are mostly used to
+store image data.
+
+In a shader, a *sampler* uniform is used to reference a
+texture. The `texture` function is used to get data out of
+a texture at the given *texture coordinates*. Texture
+space is a coordinate system in the interval $[0,1]$ from
+left to right and from the first pixel on the first line
+to the last pixel on the last line.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec2 v_texcoord;
+
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+	outColor = texture(u_texture, v_texcoord);
+}
+```
+
+In order to access a texture in WebGL, a texture object
+must be created and bound to an appropriate binding point
+with the WebGL API (much like a buffer).
+
+```js
+const texture = gl.createTexture();
+
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Fill the texture with one blue pixel as a placeholder.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
+	gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+/*
+Create an image, make it load data, and put it into the
+texture once it's ready.
+*/
+const image = new Image();
+image.addEventListener("load", () => {
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+		gl.UNSIGNED_BYTE, image);
+});
+image.crossOrigin = ""; // CORS
+image.src = "https://www.lakuna.pw/images/" +
+	"webgl-example-texture.png";
+```
+
+Instead of taking a texture as the value of a sampler
+uniform directly, WebGL expects a *texture unit*
+representing the texture.
+
+```js
+// Select a texture unit.
+gl.activeTexture(gl.TEXTURE0);
+
+// Assign a texture to the texture unit.
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Pass the texture unit to the sampler uniform.
+gl.uniform1i(imageUniformLocation, 0);
+```
+
+Umbra handles texture units automatically.
+
+```js
+const texture = new Texture2D({
+	gl,
+	pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+	width: 1,
+	height: 1
+});
+
+const image = new Image();
+image.addEventListener("load", () => {
+	texture.pixels = image;
+	texture.width = undefined;
+	texture.height = undefined;
+	texture.update();
+});
+image.crossOrigin = "";
+image.src = "https://www.lakuna.pw/images/" +
+	"webgl-example-texture.png";
+
+program.uniforms.get("u_texture").value = texture;
+```
+
+import UmbraTextures from "../../assets/components/umbra/UmbraTextures";
+
+<UmbraTextures style={{ width: "100%", border: "1px solid black" }} />
