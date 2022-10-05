@@ -193,8 +193,83 @@ import UmbraMipmaps from "../../assets/components/umbra/UmbraMipmaps";
 A *texture atlas* is a texture that contains multiple
 images. This method has a few advantages, such as keeping
 the shader that uses it simple and reducing the number of
-draw calls required to draw multiple images.
+draw calls required to draw multiple images. A texture
+atlas is used the same way as any other texture, but the
+texture coordinates of each vertex should be modified so
+that its primitive only displays the relevant part of the
+texture.
 
 import UmbraTextureAtlases from "../../assets/components/umbra/UmbraTextureAtlases";
 
 <UmbraTextureAtlases style={{ width: "100%", border: "1px solid black" }} />
+
+## Data textures
+
+Instead of loading texture data from an image, texture data
+can also be supplied directly from JavaScript. The way that
+the data is interpreted depends on the *internal format* of
+the texture. For example, setting the internal format to
+`R8` causes the texture to expect one eight-bit number per
+*texel* (short for *texture element*; roughly equivalent to
+a pixel), which it normalizes to a fraction. Each internal
+format has a corresponding format and data type that must
+also be specified. For example, with an internal format of
+`R8`, the format must be set to `RED` and the data type
+must be set to `UNSIGNED_BYTE`.
+
+```js
+const level = 0;
+const internalFormat = gl.R8;
+const width = 3;
+const height = 2;
+const border = 0;
+const format = gl.RED;
+const type = gl.UNSIGNED_BYTE;
+const data = new Uint8Array([
+	0x80, 0x40, 0x80,
+	0x00, 0xC0, 0x00
+]);
+gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
+	height, border, format, type, data);
+```
+
+Umbra automatically determines the correct format and data
+type based on the specified internal format.
+
+```js
+texture.internalFormat = TextureFormat.R8;
+```
+
+**Textures will not update if their width is not a
+multiple of their *unpack alignment***. The unpack
+alignment defaults to four in order to maintain
+backwards compatibility with WebGL 1.0, but it can be set
+to one, two, four, or eight. The texture in the example
+above has a width of three, so the unpack alignment must be
+set to one in order for the texture to render. This must be
+done before executing the function that is being used to
+update the texture (i.e. `texImage2D`).
+
+```js
+gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+```
+
+Umbra updates the unpack alignment as necessary.
+
+import UmbraDataTextures from "../../assets/components/umbra/UmbraDataTextures";
+
+<UmbraDataTextures style={{ width: "100%", border: "1px solid black" }} />
+
+## Projection mapping
+
+*Projection mapping* is the process of projecting an image.
+
+import UmbraProjectionMapping from "../../assets/components/umbra/UmbraProjectionMapping";
+
+<UmbraProjectionMapping style={{ width: "100%", border: "1px solid black" }} />
+
+This article is a work-in-progress. In the meantime,
+consider reading these other articles about the same topic:
+
+- [Planar projection mapping](https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html).
+- [Visualizing the camera](https://webgl2fundamentals.org/webgl/lessons/webgl-visualizing-the-camera.html).
