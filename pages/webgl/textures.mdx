@@ -263,13 +263,86 @@ import UmbraDataTextures from "../../assets/components/umbra/UmbraDataTextures";
 ## Projection mapping
 
 *Projection mapping* is the process of projecting an image.
+In the following animation, the left and right halves of
+the canvas are drawn separately by making use of
+`resizeCanvas`. The left half shows the view of a camera
+that is spinning around a letter F, and the right side
+shows the view of a camera that is floating above the
+scene. The frustum of the left camera is displayed by the
+right camera by multiplying a wireframe cube by the left
+camera's projection matrix.
+
+import UmbraMultipleViews from "../../assets/components/umbra/UmbraMultipleViews";
+
+<UmbraMultipleViews style={{ width: "100%", border: "1px solid black" }} />
+
+In order to perform projection mapping, some changes need
+to be made to the shader program. The vertex shader needs
+to pass the view projection matrix of the projecting camera
+to the fragment shader.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec2 a_texcoord;
+
+// Split up u_matrix into two parts.
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+
+// Also take the view projection matrix of the projector.
+uniform mat4 u_texMat;
+
+out vec2 v_texcoord;
+out vec4 v_projTexcoord;
+
+void main() {
+	gl_Position = u_viewProjMat * u_worldMat * a_position;
+	v_texcoord = a_texcoord;
+	v_projTexcoord = u_texMat * u_worldMat * a_position;
+}
+```
+
+The fragment shader needs to determine which texture to use
+at each position based on whether the position falls within
+the frustum of the projector.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec2 v_texcoord;
+in vec4 v_projTexcoord;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_projTexture;
+
+out vec4 outColor;
+
+void main() {
+	vec3 projTexcoord =
+		v_projTexcoord.xyz / v_projTexcoord.w;
+	
+	bool inRange =
+		projTexcoord.x >= 0.0
+		&& projTexcoord.x <= 1.0
+		&& projTexcoord.y >= 0.0
+		&& projTexcoord.y <= 1.0;
+	
+	vec4 projTexColor =
+		texture(u_projTexture, projTexcoord.xy);
+	vec4 texColor = texture(u_texture, v_texcoord);
+
+	float projAmount = inRange ? 1.0 : 0.0;
+
+	outColor = mix(texColor, projTexColor, projAmount);
+}
+```
 
 import UmbraProjectionMapping from "../../assets/components/umbra/UmbraProjectionMapping";
 
 <UmbraProjectionMapping style={{ width: "100%", border: "1px solid black" }} />
 
-This article is a work-in-progress. In the meantime,
-consider reading these other articles about the same topic:
-
-- [Planar projection mapping](https://webgl2fundamentals.org/webgl/lessons/webgl-planar-projection-mapping.html).
-- [Visualizing the camera](https://webgl2fundamentals.org/webgl/lessons/webgl-visualizing-the-camera.html).
+The next article is about [framebuffers](/webgl/framebuffers).

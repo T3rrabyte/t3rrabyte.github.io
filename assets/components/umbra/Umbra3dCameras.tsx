@@ -133,7 +133,7 @@ export default function UmbraCameras({ ...props }) {
 
 			gl.enable(gl.CULL_FACE);
 
-			mat4.perspective(projMat, 45, canvas.clientWidth / canvas.clientHeight, 1, 1000);
+			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 			mat4.identity(camMat);
 			mat4.rotateY(camMat, camMat, 0.001 * now);
 			mat4.translate(camMat, camMat, [0, 0, cameraCircleRad]);

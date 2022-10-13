@@ -7,13 +7,21 @@ const vss = `#version 300 es
 in vec4 a_position;
 in vec2 a_texcoord;
 
+uniform mat4 u_projMat;
+uniform mat4 u_viewMat;
 uniform mat4 u_matrix;
+uniform mat4 u_texMat;
 
 out vec2 v_texcoord;
+out vec4 v_projectedTexcoord;
 
 void main() {
-	gl_Position = u_matrix * a_position;
+	vec4 pos = u_matrix * a_position;
+	mat4 viewProjMat = u_projMat * u_viewMat;
+
+	gl_Position = viewProjMat * pos;
 	v_texcoord = a_texcoord;
+	v_projectedTexcoord = u_texMat * pos;
 }`;
 
 const fss = `#version 300 es
@@ -21,24 +29,44 @@ const fss = `#version 300 es
 precision highp float;
 
 in vec2 v_texcoord;
+in vec4 v_projectedTexcoord;
 
-uniform sampler2D u_texture;
 uniform vec4 u_color;
+uniform sampler2D u_texture;
+uniform sampler2D u_projectedTexture;
 
 out vec4 outColor;
 
 void main() {
-	outColor = texture(u_texture, v_texcoord) * u_color;
+	vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
+
+	bool inRange =
+		projectedTexcoord.x >= 0.0
+		&& projectedTexcoord.x <= 1.0
+		&& projectedTexcoord.y >= 0.0
+		&& projectedTexcoord.y <= 1.0;
+	
+	vec4 projectedTexColor = texture(u_projectedTexture, projectedTexcoord.xy);
+	vec4 texColor = texture(u_texture, v_texcoord) * u_color;
+
+	float projectedAmount = inRange ? 1.0 : 0.0;
+
+	outColor = mix(texColor, projectedTexColor, projectedAmount);
 }`;
 
 const wireframeVss = `#version 300 es
 
 in vec4 a_position;
 
+uniform mat4 u_projMat;
+uniform mat4 u_viewMat;
 uniform mat4 u_matrix;
 
 void main() {
-	gl_Position = u_matrix * a_position;
+	vec4 pos = u_matrix * a_position;
+	mat4 viewProjMat = u_projMat * u_viewMat;
+
+	gl_Position = viewProjMat * pos;
 }`;
 
 const wireframeFss = `#version 300 es
@@ -210,9 +238,9 @@ const icoIndexData = new Uint8Array([
 	36, 38, 39
 ]);
 
-const wireframeCamConeRes = 6;
+const projectorConeRes = 6;
 
-const wireframeCamPositionBufferData = (() => {
+const projectorPositionBufferData = (() => {
 	const out = [
 		-1, -1, 1,
 		1, -1, 1,
@@ -225,15 +253,15 @@ const wireframeCamPositionBufferData = (() => {
 		0, 0, 1
 	];
 
-	for (let i = 0; i < wireframeCamConeRes; i++) {
-		const angle = i / wireframeCamConeRes * Math.PI * 2;
+	for (let i = 0; i < projectorConeRes; i++) {
+		const angle = i / projectorConeRes * Math.PI * 2;
 		out.push(Math.cos(angle), Math.sin(angle), 0);
 	}
 
 	return new Float32Array(out);
 })();
 
-const wireframeCamIndexData = (() => {
+const projectorIndexData = (() => {
 	const out = [
 		0, 1,
 		1, 3,
@@ -252,34 +280,63 @@ const wireframeCamIndexData = (() => {
 	];
 
 	const coneBaseIndex = 9;
-	for (let i = 0; i < wireframeCamConeRes; i++) {
+	for (let i = 0; i < projectorConeRes; i++) {
 		out.push(
 			coneBaseIndex - 1, // Cone tip
 			coneBaseIndex + i,
 
 			coneBaseIndex + i,
-			coneBaseIndex + (i + 1) % wireframeCamConeRes
+			coneBaseIndex + (i + 1) % projectorConeRes
 		);
 	}
 
 	return new Uint8Array(out);
 })();
 
+const frustumPositionBufferData = new Float32Array([
+	0, 0, 0,
+	1, 0, 0,
+	0, 1, 0,
+	1, 1, 0,
+	0, 0, 1,
+	1, 0, 1,
+	0, 1, 1,
+	1, 1, 1
+]);
+
+const frustumIndexData = new Uint8Array([
+	0, 1,
+	1, 3,
+	3, 2,
+	2, 0,
+
+	4, 5,
+	5, 7,
+	7, 6,
+	6, 4,
+
+	0, 4,
+	1, 5,
+	3, 7,
+	2, 6
+]);
+
 const transparent = new Color(0, 0, 0, 0);
 const red = new Color(0xFF0000);
 const green = new Color(0x00FF00);
 
-const fov = 45;
-const camNear = 1;
-const camFar = 1000;
-const camTheta = Math.PI / 4;
-const camVz = 0.001;
-const camDist = 500;
-const planeScale = 500;
-const icoScale = 50;
-const icoPos = new Float32Array([100, 100, 200]);
-const wireframeCamScale = 25;
-const wireframeCamPos = new Float32Array([50, 50, 100]);
+const projectorFov = Math.PI / 12;
+const projectorNear = 1;
+const projectorFar = 25;
+const projectorScale = new Float32Array([25, 25, 25]);
+const up = new Float32Array([0, 1, 0]);
+const fov = Math.PI / 4;
+const near = 1;
+const far = 1500;
+const planeScale = new Float32Array([500, 500, 1]);
+const planePos = new Float32Array([0, 0, 0]);
+const icoScale = new Float32Array([50, 50, 50]);
+const icoPos = new Float32Array([50, 50, 100]);
 
 export default function UmbraProjectionMapping({ ...props }) {
 	return AnimatedCanvas((canvas: HTMLCanvasElement) => {
@@ -293,7 +350,8 @@ export default function UmbraProjectionMapping({ ...props }) {
 		const planeTexcoordBuffer = new Buffer(gl, planeTexcoordBufferData);
 		const icoPositionBuffer = new Buffer(gl, icoPositionBufferData);
 		const icoTexcoordBuffer = new Buffer(gl, icoTexcoordBufferData);
-		const wireframeCamPositionBuffer = new Buffer(gl, wireframeCamPositionBufferData);
+		const projectorPositionBuffer = new Buffer(gl, projectorPositionBufferData);
+		const frustumPositionBuffer = new Buffer(gl, frustumPositionBufferData);
 
 		const planeVao = new VAO(program, [
 			new AttributeState("a_position", planePositionBuffer, 2),
@@ -305,9 +363,13 @@ export default function UmbraProjectionMapping({ ...props }) {
 			new AttributeState("a_texcoord", icoTexcoordBuffer, 2)
 		], icoIndexData);
 
-		const wireframeCamVao = new VAO(wireframeProgram, [
-			new AttributeState("a_position", wireframeCamPositionBuffer)
-		], wireframeCamIndexData);
+		const projectorVao = new VAO(wireframeProgram, [
+			new AttributeState("a_position", projectorPositionBuffer)
+		], projectorIndexData);
+
+		const frustumVao = new VAO(wireframeProgram, [
+			new AttributeState("a_position", frustumPositionBuffer)
+		], frustumIndexData);
 
 		const tileTexture = new Texture2D({
 			gl,
@@ -341,44 +403,71 @@ export default function UmbraProjectionMapping({ ...props }) {
 
 		const planeMat = mat4.create();
 		const icoMat = mat4.create();
-		const wireframeCamMat = mat4.create();
-		const projMat = mat4.create();
+		const projectorMat = mat4.create();
+		const frustumMat = mat4.create();
 		const camMat = mat4.create();
+		const projMat = mat4.create();
 		const viewMat = mat4.create();
-		const viewProjMat = mat4.create();
+		const texMat = mat4.create();
 
 		return function render(now: number) {
 			clearContext(gl, transparent, 1);
-
 			resizeContext(gl);
-
 			gl.enable(gl.CULL_FACE);
 
-			mat4.perspective(projMat, fov, canvas.clientWidth / canvas.clientHeight, camNear, camFar);
-			mat4.identity(camMat);
-			mat4.rotateZ(camMat, camMat, camVz * now);
-			mat4.rotateX(camMat, camMat, camTheta);
-			mat4.translate(camMat, camMat, [0, 0, camDist]);
-			mat4.invert(viewMat, camMat);
-			mat4.multiply(viewProjMat, projMat, viewMat);
-
 			mat4.identity(planeMat);
-			mat4.scale(planeMat, planeMat, [planeScale, planeScale, 1]);
-			mat4.multiply(planeMat, viewProjMat, planeMat);
+			mat4.rotateX(planeMat, planeMat, Math.PI * 3 / 2);
+			mat4.translate(planeMat, planeMat, planePos);
+			mat4.scale(planeMat, planeMat, planeScale);
 
 			mat4.identity(icoMat);
 			mat4.translate(icoMat, icoMat, icoPos);
-			mat4.scale(icoMat, icoMat, [icoScale, icoScale, icoScale]);
-			mat4.multiply(icoMat, viewProjMat, icoMat);
+			mat4.scale(icoMat, icoMat, icoScale);
 
-			mat4.identity(wireframeCamMat);
-			mat4.translate(wireframeCamMat, wireframeCamMat, wireframeCamPos);
-			mat4.scale(wireframeCamMat, wireframeCamMat, [wireframeCamScale, wireframeCamScale, wireframeCamScale]);
-			mat4.multiply(wireframeCamMat, viewProjMat, wireframeCamMat);
+			mat4.perspective(projMat, projectorFov, canvas.clientWidth / canvas.clientHeight, projectorNear, projectorFar);
+			mat4.targetTo(projectorMat, [Math.cos(now * 0.0008) * 400, 200, Math.sin(now * 0.0008) * 400], planePos, up);
+			mat4.scale(projectorMat, projectorMat, projectorScale);
+			mat4.invert(viewMat, projectorMat);
+			mat4.multiply(texMat, projMat, viewMat);
 
-			planeVao.draw({ "u_color": red, "u_matrix": planeMat as UniformValue, "u_texture": tileTexture });
-			icoVao.draw({ "u_color": green, "u_matrix": icoMat as UniformValue, "u_texture": tileTexture });
-			wireframeCamVao.draw({ "u_matrix": wireframeCamMat as UniformValue }, Primitive.LINES);
+			mat4.invert(frustumMat, projMat);
+			mat4.multiply(frustumMat, projectorMat, frustumMat);
+
+			mat4.perspective(projMat, fov, canvas.clientWidth / canvas.clientHeight, near, far);
+			mat4.targetTo(camMat, [Math.sin(now * 0.0002) * 500, 300, Math.cos(now * 0.0002) * 500], planePos, up);
+			mat4.invert(viewMat, camMat);
+
+			planeVao.draw({
+				"u_color": red,
+				"u_projMat": projMat as UniformValue,
+				"u_viewMat": viewMat as UniformValue,
+				"u_matrix": planeMat as UniformValue,
+				"u_texture": projectedTexture,
+				"u_projectedTexture": tileTexture,
+				"u_texMat": texMat as UniformValue
+			});
+
+			icoVao.draw({
+				"u_color": green,
+				"u_projMat": projMat as UniformValue,
+				"u_viewMat": viewMat as UniformValue,
+				"u_matrix": icoMat as UniformValue,
+				"u_texture": projectedTexture,
+				"u_projectedTexture": tileTexture,
+				"u_texMat": texMat as UniformValue
+			});
+
+			projectorVao.draw({
+				"u_projMat": projMat as UniformValue,
+				"u_viewMat": viewMat as UniformValue,
+				"u_matrix": projectorMat as UniformValue
+			}, Primitive.LINES);
+
+			frustumVao.draw({
+				"u_projMat": projMat as UniformValue,
+				"u_viewMat": viewMat as UniformValue,
+				"u_matrix": frustumMat as UniformValue
+			}, Primitive.LINES);
 		}
 	}, props);
 }
