@@ -8,6 +8,7 @@
 	--highlight-color: #{$emerald};
 	--italic-color: #{$light-salmon};
 	--bold-color: #{$old-gold};
+	color-scheme: dark;
 
 	// Light theme.
 	@media (prefers-color-scheme: light) {
@@ -17,6 +18,7 @@
 		--highlight-color: #{$may-green};
 		--italic-color: #{$dark-magenta};
 		--bold-color: #{$sweet-brown};
+		color-scheme: light;
 	}
 
 	font-family: $font-sans-serif;
