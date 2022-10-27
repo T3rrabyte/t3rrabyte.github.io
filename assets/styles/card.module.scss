@@ -23,5 +23,10 @@ div.outer {
 			text-align: center;
 			color: $text-color;
 		}
+
+		div.img-container {
+			position: relative;
+			aspect-ratio: 16 / 9;
+		}
 	}
 }
