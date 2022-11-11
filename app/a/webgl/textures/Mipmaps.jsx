@@ -68,7 +68,7 @@ export default function Mipmaps(props) {
 			width: 1,
 			height: 1,
 			minFilter: TextureFilter.LINEAR_MIPMAP_LINEAR,
-			magFilter: TextureFilter.LINEAR_MIPMAP_LINEAR
+			magFilter: TextureFilter.LINEAR
 		});
 
 		const image = new Image();
