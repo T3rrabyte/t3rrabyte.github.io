@@ -1,0 +1,15 @@
+# Scene graph
+
+You may need to read the previous article about [transformation](/a/webgl/transformation) in order to understand this one.
+
+A *scene graph* is a general data structure that arranges the logical representation of a graphical scene. It is a collection
+of nodes in a tree structure, with each node having one parent and a non-negative number of children. Only the top node has no parent.
+
+Each node's transformation matrix is multiplied by all of its ancestors' to generate its *world matrix*. A world matrix represents an
+actual position in a scene relative to the origin, whereas a transformation matrix represents a position relative to a parent.
+
+import SceneGraph from "./SceneGraph";
+
+<SceneGraph style={{ width: "100%" }} />
+
+The next article is about [3D](/a/webgl/3d).

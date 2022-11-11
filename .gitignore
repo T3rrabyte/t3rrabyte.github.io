@@ -1,5 +1,2 @@
 .next
 node_modules
-out
-public/rss.xml
-public/sitemap.xml

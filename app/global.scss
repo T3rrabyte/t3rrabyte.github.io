@@ -1,0 +1,104 @@
+@use "variables" as *;
+
+:root {
+	// Dark theme.
+	--bg-color: #{$raisin-black};
+	--fg-color: #{$jet};
+	--text-color: #{$silver-chalice};
+	--highlight-color: #{$emerald};
+	--italic-color: #{$light-salmon};
+	--bold-color: #{$old-gold};
+	color-scheme: dark;
+
+	// Light theme.
+	@media (prefers-color-scheme: light) {
+		--bg-color: #{$cultured};
+		--fg-color: #{$gainsboro};
+		--text-color: #{$raisin-black};
+		--highlight-color: #{$may-green};
+		--italic-color: #{$dark-magenta};
+		--bold-color: #{$sweet-brown};
+		color-scheme: light;
+	}
+
+	font-family: $font-sans-serif;
+	color: $text-color;
+	background-color: $bg-color;
+}
+
+a {
+	color: $highlight-color;
+}
+
+b,
+strong {
+	color: $bold-color;
+}
+
+blockquote {
+	font-family: $font-serif;
+}
+
+body {
+	margin: 0px;
+}
+
+button {
+	color: $text-color;
+	background-color: $fg-color;
+	border: 1px solid $text-color;
+	border-radius: 10px;
+	padding: 6px 8px;
+
+	&:hover {
+		color: $fg-color;
+		background-color: $text-color;
+		border: 1px solid $fg-color;
+	}
+}
+
+caption {
+	color: $highlight-color;
+}
+
+code {
+	font-family: $font-monospace;
+}
+
+em,
+i {
+	color: $italic-color;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: $highlight-color;
+}
+
+hr {
+	border-color: $highlight-color;
+}
+
+main {
+	margin: 8px;
+}
+
+pre {
+	font-family: $font-monospace;
+}
+
+samp {
+	font-family: $font-monospace;
+}
+
+table,
+th,
+td {
+	border: 1px solid $highlight-color;
+	border-collapse: collapse;
+	padding: 5px;
+}

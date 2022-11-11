@@ -1,0 +1,27 @@
+@use "variables" as *;
+
+div.base {
+	background-color: $fg-color;
+	color: $text-color;
+	border-radius: 10px;
+	width: 300px;
+
+	a.outer-link {
+		text-decoration: none;
+		color: $text-color;
+	}
+
+	div.content-wrapper {
+		padding: 10px;
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			text-align: center;
+			color: $text-color;
+		}
+	}
+}

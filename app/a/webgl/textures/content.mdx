@@ -1,0 +1,285 @@
+# Textures
+
+You may need to read the previous articles about [attributes](/a/webgl/attributes), [uniforms](/a/webgl/uniforms), and
+[varyings](/a/webgl/varyings) in order to understand this one.
+
+A *texture* is an array of data that can be randomly accessed in a shader program. Textures are mostly used to store image data.
+
+In a shader, a *sampler* uniform is used to reference a texture. The `texture` function is used to get data out of
+a texture at the given *texture coordinates*. Texture space is a coordinate system in the interval $[0,1]$ from
+left to right and from the first pixel on the first line to the last pixel on the last line.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec2 v_texcoord;
+
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+	outColor = texture(u_texture, v_texcoord);
+}
+```
+
+In order to access a texture in WebGL, a texture object must be created and bound to an appropriate binding point with the
+WebGL API (much like a buffer).
+
+```js
+const texture = gl.createTexture();
+
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Fill the texture with one blue pixel as a placeholder.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
+	gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+
+/*
+Create an image, make it load data, and put it into the
+texture once it's ready.
+*/
+const image = new Image();
+image.addEventListener("load", () => {
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
+		gl.UNSIGNED_BYTE, image);
+});
+image.crossOrigin = ""; // CORS
+image.src = "https://www.lakuna.pw/images/" +
+	"webgl-example-texture.png";
+```
+
+Instead of taking a texture as the value of a sampler uniform directly, WebGL expects a *texture unit* representing the texture.
+
+```js
+// Select a texture unit.
+gl.activeTexture(gl.TEXTURE0);
+
+// Assign a texture to the texture unit.
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Pass the texture unit to the sampler uniform.
+gl.uniform1i(imageUniformLocation, 0);
+```
+
+Umbra handles texture units automatically.
+
+```js
+const texture = new Texture2D({
+	gl,
+	pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+	width: 1,
+	height: 1
+});
+
+const image = new Image();
+image.addEventListener("load", () => {
+	texture.pixels = image;
+	texture.width = undefined;
+	texture.height = undefined;
+	texture.update();
+});
+image.crossOrigin = "";
+image.src = "https://www.lakuna.pw/images/" +
+	"webgl-example-texture.png";
+
+program.uniforms.get("u_texture").value = texture;
+```
+
+import Textures from "./Textures";
+
+<Textures style={{ width: "100%" }} />
+
+Check out the artist of the example textures on [her website](https://www.xanycki.art/).
+
+## Texture parameters
+
+Certain parameters of a texture can be modified with the WebGL API via the `texParameteri` function.
+
+```js
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
+	gl.CLAMP_TO_EDGE);
+```
+
+As with other situations where binding points are necessary, Umbra uses an object-oriented approach to texture parameters.
+
+```js
+texture.wrapSFunction = TextureWrapFunction.CLAMP_TO_EDGE;
+```
+
+WebGL can be told what to do when supplied texture coordinates outside of the interval $[0,1]$ in the $s$ and
+$t$ directions with the `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` texture parameters, respectively.
+
+- `REPEAT` is the default functionality. It makes the texture repeat in the given direction.
+- `CLAMP_TO_EDGE` makes the texture not repeat at all.
+- `MIRRORED_REPEAT` makes the texture repeat, but flips the texture across the corresponding axis for each repetition.
+
+import TextureParameters from "./TextureParameters";
+
+<TextureParameters style={{ width: "100%" }} />
+
+A *mipmap* is a collection of smaller versions of a texture that is used to render a texture at different sizes. A
+*mip* is one level of a mipmap. The way that the mipmap is generated can be specified with the `TEXTURE_MIN_FILTER`
+and `TEXTURE_MAG_FILTER` parameters. The minification filter (which corresponds to the former) is used when
+drawing anything smaller than the largest mip, and the magnification filter (which corresponds to the latter) is
+used when drawing anything larger than the largest mip.
+
+- `NEAREST` chooses one pixel from the largest mip.
+- `LINEAR` chooses four pixels from the largest mip and blends them.
+- `NEAREST_MIPMAP_NEAREST` chooses the best mip, then picks one pixel from that mip.
+- `LINEAR_MIPMAP_NEAREST` chooses the best mip, then blends four pixels from that mip.
+- `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
+- `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
+
+Since the magnification filter is used when drawing larger than the largest mip, it can only be `NEAREST` or `LINEAR`.
+
+**In order for a texture to render, it must be *texture complete***. A texture is texture complete if it either
+only reads the first mip (i.e. uses `NEAREST` or `LINEAR` as its minification filter) or has a complete mipmap. The
+easiest way to generate a complete mipmap is with the WebGL API's `generateMipmap` function.
+
+```js
+gl.generateMipmap(gl.TEXTURE_2D);
+```
+
+Umbra textures have an equivalent method, but it is automatically executed when necessary.
+
+import Mipmaps from "./Mipmaps";
+
+<Mipmaps style={{ width: "100%" }} />
+
+## Texture atlases
+
+A *texture atlas* is a texture that contains multiple images. This method has a few advantages, such as keeping
+the shader that uses it simple and reducing the number of draw calls required to draw multiple images. A texture
+atlas is used the same way as any other texture, but the texture coordinates of each vertex should be modified so
+that its primitive only displays the relevant part of the texture.
+
+import TextureAtlases from "./TextureAtlases";
+
+<TextureAtlases style={{ width: "100%" }} />
+
+## Data textures
+
+Instead of loading texture data from an image, texture data can also be supplied directly from JavaScript. The way that
+the data is interpreted depends on the *internal format* of the texture. For example, setting the internal format to
+`R8` causes the texture to expect one eight-bit number per *texel* (short for *texture element*; roughly equivalent to a pixel),
+which it normalizes to a fraction. Each internal format has a corresponding format and data type that must also be specified.
+For example, with an internal format of `R8`, the format must be set to `RED` and the data type must be set to `UNSIGNED_BYTE`.
+
+```js
+const level = 0;
+const internalFormat = gl.R8;
+const width = 3;
+const height = 2;
+const border = 0;
+const format = gl.RED;
+const type = gl.UNSIGNED_BYTE;
+const data = new Uint8Array([
+	0x80, 0x40, 0x80,
+	0x00, 0xC0, 0x00
+]);
+gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
+	height, border, format, type, data);
+```
+
+Umbra automatically determines the correct format and data type based on the specified internal format.
+
+```js
+texture.internalFormat = TextureFormat.R8;
+```
+
+**Textures will not update if their width is not a multiple of their *unpack alignment***. The unpack alignment defaults to
+four in order to maintain backwards compatibility with WebGL 1.0, but it can be set to one, two, four, or eight. The texture in the
+example above has a width of three, so the unpack alignment must be set to one in order for the texture to render. This must be
+done before executing the function that is being used to update the texture (i.e. `texImage2D`).
+
+```js
+gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+```
+
+Umbra updates the unpack alignment as necessary.
+
+import DataTextures from "./DataTextures";
+
+<DataTextures style={{ width: "100%" }} />
+
+## Projection mapping
+
+*Projection mapping* is the process of projecting an image. In the following animation, the left and right halves of the canvas are
+drawn separately by making use of `resizeCanvas`. The left half shows the view of a camera that is spinning around a letter F, and the
+right side shows the view of a camera that is floating above the scene. The frustum of the left camera is displayed by the right camera
+by multiplying a wireframe cube by the left camera's projection matrix.
+
+import MultipleViews from "./MultipleViews";
+
+<MultipleViews style={{ width: "100%" }} />
+
+In order to perform projection mapping, some changes need to be made to the shader program. The vertex shader needs to pass the view projection
+matrix of the projecting camera to the fragment shader.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec2 a_texcoord;
+
+// Split up u_matrix into two parts.
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+
+// Also take the view projection matrix of the projector.
+uniform mat4 u_texMat;
+
+out vec2 v_texcoord;
+out vec4 v_projTexcoord;
+
+void main() {
+	gl_Position = u_viewProjMat * u_worldMat * a_position;
+	v_texcoord = a_texcoord;
+	v_projTexcoord = u_texMat * u_worldMat * a_position;
+}
+```
+
+The fragment shader needs to determine which texture to use at each position based on whether the position falls within the frustum of the projector.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec2 v_texcoord;
+in vec4 v_projTexcoord;
+
+uniform sampler2D u_texture;
+uniform sampler2D u_projTexture;
+
+out vec4 outColor;
+
+void main() {
+	vec3 projTexcoord =
+		v_projTexcoord.xyz / v_projTexcoord.w;
+	
+	bool inRange =
+		projTexcoord.x >= 0.0
+		&& projTexcoord.x <= 1.0
+		&& projTexcoord.y >= 0.0
+		&& projTexcoord.y <= 1.0;
+	
+	vec4 projTexColor =
+		texture(u_projTexture, projTexcoord.xy);
+	vec4 texColor = texture(u_texture, v_texcoord);
+
+	float projAmount = inRange ? 1.0 : 0.0;
+
+	outColor = mix(texColor, projTexColor, projAmount);
+}
+```
+
+import ProjectionMapping from "./ProjectionMapping";
+
+<ProjectionMapping style={{ width: "100%" }} />
+
+The next article is about [framebuffers](/a/webgl/framebuffers).

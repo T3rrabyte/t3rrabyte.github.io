@@ -1,0 +1,292 @@
+# Attributes
+
+You may need to read the previous article about [WebGL](/a/webgl/what-is) in order to understand this one.
+
+Since WebGL runs on the GPU, data must be passed to the GPU in order to be used for rendering. One way to pass data to
+the GPU is with *attributes*.
+
+Attributes are a type of variable in a WebGL program that are used as inputs to vertex shaders. Based on rules
+specified by the developer, each time the vertex shader is executed, each attribute will read a certain amount of data
+from the buffer assigned to it. As such, attributes are used to supply vertex-specific data to the shader program.
+
+```glsl
+#version 300 es
+
+/*
+Attributes are inputs to vertex shaders. The naming
+convention for attributes is camelCase prefixed by "a_".
+*/
+in vec4 a_position;
+
+void main() {
+	gl_Position = a_position;
+}
+```
+
+Once an attribute has been declared in a shader program, it can be accessed with the WebGL API by getting its
+*location*. Umbra does this step automatically when linking shader programs.
+
+```js
+const positionAttributeLocation = gl.getAttribLocation(
+	program, "a_position");
+```
+
+## Buffers
+
+Attributes can only read data from arrays of binary data called *buffers*.
+
+A buffer can be created like this:
+
+```js
+const positionBuffer = gl.createBuffer();
+```
+
+In order to access a buffer with the WebGL API, that buffer must be bound to a *binding point*. Different binding
+points are used for different things.
+
+```js
+// The ARRAY_BUFFER binding point is used for most buffers.
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+/*
+Now, data can be put into the buffer by using ARRAY_BUFFER
+instead of positionBuffer. The bufferData function puts
+data into a buffer.
+*/
+gl.bufferData(
+	// The buffer to put data into.
+	gl.ARRAY_BUFFER,
+
+	/*
+	The data to put into the buffer. Since WebGL is
+	strongly-typed, data must be supplied in the form of a
+	TypedArray. This example will draw one two-dimensional
+	triangle (2 dimensions per point times 3 points to draw
+	1 triangle equals 6 values).
+	*/
+	new Float32Array([
+		0, 0, // First point at (0, 0).
+		0, 0.5, // Second point at (0, 0.5).
+		0.7, 0 // Third point at (0.7, 0).
+	]),
+
+	/*
+	The last argument is a hint to WebGL about how the data
+	will be used. This is for optimization purposes
+	internally. In this example, the data will never be
+	changed, so STATIC_DRAW is the proper value.
+	*/
+	gl.STATIC_DRAW
+);
+```
+
+Umbra has a function that is equivalent to the block of code above:
+
+```js
+const positionBuffer = new Buffer(gl,
+	new Float32Array([0, 0, 0, 0.5, 0.7]));
+```
+
+## Vertex Array Objects
+
+Since buffers contain binary data, WebGL needs some context in order to read data out of them. After all of the
+necessary data has been put into buffers, a shader program can be told how to use those buffers through a
+*vertex array object* (VAO). VAOs contain information like which buffer is supposed to be used for each attribute,
+and what type of data is stored in each buffer.
+
+Each VAO represents one "thing" that will be rasterized by a shader program. For example, imagine that you want to
+draw two shapes: a cube and a sphere. A cube and a sphere are different shapes, so each one is made up of a different
+set of vertices. Instead of writing two shader programs (one for each shape), you can instead make a VAO that uses
+a buffer containing the positions to make a cube, and another VAO that uses a buffer containing the positions to
+make a sphere.
+
+```js
+// Create a VAO.
+const vao = gl.createVertexArray();
+
+/*
+Attributes must be enabled before they can accept data from
+buffers.
+*/
+gl.enableVertexAttribArray(positionAttributeLocation);
+
+/*
+For each attribute, specify which buffer to use and how.
+The buffer is automatically determined to be whichever
+buffer is currently bound to ARRAY_BUFFER.
+*/
+gl.vertexAttribPointer(
+	// The attribute to assign the buffer to.
+	positionAttributeLocation,
+
+	/*
+	The number of components to pull from the buffer per
+	iteration. Since this example put 2D data into the
+	buffer, it pulls 2D data out of the buffer.
+	*/
+	2,
+
+	/*
+	The type of data in the buffer. Since this example put
+	floating-point data into the buffer (by using a
+	Float32Array), it pulls floating-point data out of the
+	buffer.
+	*/
+	gl.FLOAT,
+
+	/*
+	Whether to normalize data after pulling it out of the
+	buffer. The functionality of this option changes
+	depending on the type of data in the buffer. Check the
+	documentation for details.
+	*/
+	false,
+
+	/*
+	The number of bytes to skip forward after each
+	iteration. Setting this value to 0 causes WebGL to
+	assume that the data is tightly-packed; that is, each
+	value is adjacent to the next, and all values are used
+	in order.
+	*/
+	0,
+
+	// The offset in bytes of the first element.
+	0
+);
+```
+
+The VAO defined in the example above makes it so that `a_position` pulls tightly-packed non-normalized floating-point
+data from `positionBuffer` in intervals of $2$. Umbra has an equivalent function that looks like this:
+
+```js
+const vao = new VAO(program,
+	[new AttributeState("a_position", positionBuffer, 2)]);
+```
+
+The "thing" defined by the data stored in the buffers can be drawn by executing the appropriate draw function with
+the correct VAO active.
+
+```js
+// Use the program that is used to draw the "thing."
+gl.useProgram(program);
+
+// Bind the VAO of the "thing."
+gl.bindVertexArray(vao);
+
+/*
+Execute the draw function. The proper draw function for the
+VAO in this example is drawArrays since the VAO does not
+have indices.
+*/
+gl.drawArrays(
+	// The type of primitive to draw.
+	gl.TRIANGLES,
+
+	// The number of vertices to skip.
+	0,
+
+	/*
+	The number of vertices to draw. 1 triangle times 3
+	vertices per triangle equals 3 vertices.
+	*/
+	3
+);
+```
+
+Umbra has an equivalent function to the code block above that looks like this:
+
+```js
+vao.draw();
+```
+
+## Indices
+
+WebGL allows vertices to be reused by specifying *indices* in the *element array buffer*.
+
+Imagine that you want to draw a square, which has four vertices. A square is not a type of primitive, so it must
+be drawn using two triangles, which totals six vertices. However, since two pairs of those six vertices overlap,
+they can be defined using only four vertices if they are given indices.
+
+```js
+const positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+	0, 1, // Vertex 0 at (0, 1).
+	0, 0, // Vertex 1 at (0, 0).
+	1, 0, // Vertex 2 at (1, 0).
+	1, 1 // Vertex 3 at (1, 1).
+]), gl.STATIC_DRAW);
+
+const vao = gl.createVertexArray();
+gl.enableVertexAttribArray(positionAttributeLocation);
+gl.vertexAttribPointer(positionAttributeLocation,
+	2, gl.FLOAT, false, 0, 0);
+
+// Create the index buffer.
+const indexBuffer = gl.createBuffer();
+
+// Index buffers are bound to ELEMENT_ARRAY_BUFFER.
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+/*
+Whenever data is put into the index buffer, the indices are
+automatically applied to the current VAO. There is no need
+to assign the buffer to the VAO afterward. This is because
+while ARRAY_BUFFER is a global binding point,
+ELEMENT_ARRAY_BUFFER is part of the current VAO.
+*/
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array([
+	0, 1, 2, // First triangle with vertices 0, 1, and 2.
+	0, 2, 3 // Second triangle with vertices 0, 2, and 3.
+]), gl.STATIC_DRAW);
+```
+
+In Umbra, an extra argument can be passed to the `VAO`
+constructor to apply indices:
+
+```js
+const positionBuffer = new Buffer(gl,
+	new Float32Array([0, 1, 0, 0, 1, 0, 1, 1]));
+
+const indices = new Uint8Array([0, 1, 2, 0, 2, 3]);
+
+const vao = new VAO(program,
+	[new AttributeState("a_position", positionBuffer, 2)],
+	indices);
+```
+
+When the VAO that is being drawn has indices, the correct draw function is `drawElements`.
+
+```js
+gl.drawElements(
+	// The type of primitive to draw.
+	gl.TRIANGLES,
+
+	/*
+	The number of indices to draw. 1 square times two
+	triangles per square times 3 indices per triangle
+	equals 6 indices.
+	*/
+	6,
+
+	/*
+	The type of data in the index buffer. Since this
+	example put unsigned 8-bit integer data into the index
+	buffer (by using a Uint8Array), it pulls unsigned 8-bit
+	integer data out of the buffer.
+	*/
+	gl.UNSIGNED_BYTE,
+
+	/*
+	The number of bytes to skip at the beginning of the
+	index buffer.
+	*/
+	0
+);
+```
+
+Note that Umbra automatically uses the correct draw function, so no changes are necessary when adding indices
+to an Umbra VAO.
+
+The next article is about [uniforms](/a/webgl/uniforms).
