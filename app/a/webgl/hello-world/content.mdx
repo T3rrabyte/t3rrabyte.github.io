@@ -23,7 +23,7 @@ Umbra provides a function called `makeFullscreenCanvas` that **replaces all cont
 const canvas = makeFullscreenCanvas();
 ```
 
-The rendering context can be obtained via a method on the canvas:
+The rendering context can be obtained via a method on the canvas.
 
 ```js
 const gl = canvas.getContext("webgl2");
@@ -91,7 +91,7 @@ the "vanilla" ways to do this.
 ### Buffers
 
 This program will draw only one shape (a triangle) with one attribute (`a_position`) per shape, so only one buffer is
-needed. In Umbra, a buffer can be created like this:
+needed. In Umbra, the following line of code creates a buffer.
 
 ```js
 const trianglePositionBuffer = new Buffer(gl,
@@ -102,8 +102,8 @@ If you aren't using Umbra, see the [attributes](/a/webgl/attributes) article for
 
 ### Vertex array objects
 
-This program will only draw one shape (a triangle), so only one vertex array object (VAO) is needed. In Umbra, a VAO
-can be created like this:
+This program will only draw one shape (a triangle), so only one vertex array object (VAO) is needed. In Umbra, the following
+block of code creates a VAO.
 
 ```js
 const triangleVao = new VAO(program, [
@@ -115,7 +115,7 @@ const triangleVao = new VAO(program, [
 ## Render step
 
 The render step is run once each frame. The `requestAnimationFrame` function (vanilla JavaScript) can be used to loop
-through the render step as fast as the browser is able to render it:
+through the render step as fast as the browser is able to render it.
 
 ```js
 function renderStep() {
@@ -173,7 +173,7 @@ Umbra's `resizeContext` automatically handles this.
 
 ### Rasterizing
 
-Since this program doesn't use any uniforms, all of the rasterization work can be done with one method call:
+Since this program doesn't use any uniforms, all of the rasterization work can be done with one method call.
 
 ```js
 vao.draw();

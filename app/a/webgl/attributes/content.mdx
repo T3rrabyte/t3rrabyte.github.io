@@ -35,7 +35,7 @@ const positionAttributeLocation = gl.getAttribLocation(
 
 Attributes can only read data from arrays of binary data called *buffers*.
 
-A buffer can be created like this:
+A buffer can be created with the WebGL API.
 
 ```js
 const positionBuffer = gl.createBuffer();
@@ -80,7 +80,7 @@ gl.bufferData(
 );
 ```
 
-Umbra has a function that is equivalent to the block of code above:
+With Umbra, the following line of code is equivalent to the block above.
 
 ```js
 const positionBuffer = new Buffer(gl,
@@ -157,7 +157,7 @@ gl.vertexAttribPointer(
 ```
 
 The VAO defined in the example above makes it so that `a_position` pulls tightly-packed non-normalized floating-point
-data from `positionBuffer` in intervals of $2$. Umbra has an equivalent function that looks like this:
+data from `positionBuffer` in intervals of $2$. With Umbra, the following line of code is equivalent to the block above.
 
 ```js
 const vao = new VAO(program,
@@ -194,7 +194,7 @@ gl.drawArrays(
 );
 ```
 
-Umbra has an equivalent function to the code block above that looks like this:
+With Umbra, the following line of code is equivalent to the block above.
 
 ```js
 vao.draw();
@@ -242,8 +242,7 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array([
 ]), gl.STATIC_DRAW);
 ```
 
-In Umbra, an extra argument can be passed to the `VAO`
-constructor to apply indices:
+In Umbra, an extra argument can be passed to the `VAO` constructor to apply indices.
 
 ```js
 const positionBuffer = new Buffer(gl,

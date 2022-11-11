@@ -3,6 +3,9 @@
 import { Program, Buffer, VAO, AttributeState, Color, Texture2D, TextureFormat, TextureFilter, clearContext, resizeContext, Primitive } from "@lakuna/umbra.js";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
+import defaultDomain from "../../../domain";
+
+const textureUrl = `${defaultDomain}/images/webgl-example-texture.png`;
 
 const vss = `#version 300 es
 in vec4 a_position;
@@ -381,7 +384,7 @@ export default function ProjectionMapping(props) {
 			projectedTexture.update();
 		});
 		projectedImage.crossOrigin = "";
-		projectedImage.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
+		projectedImage.src = textureUrl;
 
 		const planeMat = mat4.create();
 		const icoMat = mat4.create();

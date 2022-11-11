@@ -3,6 +3,9 @@
 import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureWrapFunction, VAO } from "@lakuna/umbra.js";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
+import defaultDomain from "../../../domain";
+
+const textureUrl = `${defaultDomain}/images/webgl-example-texture.png`;
 
 const vss = `#version 300 es
 in vec4 a_position;
@@ -76,7 +79,7 @@ export default function TextureParameters(props) {
 			texture.update();
 		});
 		image.crossOrigin = "";
-		image.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
+		image.src = textureUrl;
 
 		const mat = mat4.create();
 
