@@ -1,8 +1,111 @@
 # Lighting
 
+You may need to read the previous articles about [3D](/a/webgl/3d) and [varyings](/a/webgl/varyings) in order to
+understand this one.
+
+## Directional lighting
+
+*Directional lighting* is the simplest form of lighting. It assumes that the light is coming uniformly from one
+direction. One common use case of directional lighting is to emulate light from the sun.
+
+If the direction that the light is traveling and the direction that a surface is facing are both known, it is
+possible to determine the cosine of the angle between the two directions by taking the dot product. That value
+represents the "brightness" of the light on that surface.
+
+The direction that a surface is facing is represented by a unit vector called a *normal*.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_matrix;
+
+out vec3 v_normal;
+
+void main() {
+	gl_Position = u_matrix * a_position;
+	v_normal = a_normal;
+}
+```
+
+```glsl
+#version 300 es
+
+in vec3 v_normal;
+
+uniform vec4 u_color;
+
+/*
+Instead of taking the direction that the light is moving as
+input, it is easier to take the position of the light
+source (in other words, the direction to the light source).
+*/
+uniform vec4 u_reverseLightDirection;
+
+out vec4 outColor;
+
+void main() {
+	/*
+	Since v_normal is a varying, its value is interpolated.
+	Therefore, it must be re-normalized to a unit vector.
+	*/
+	vec3 normal = normalize(v_normal);
+
+	float light = dot(normal, u_reverseLightDirection);
+
+	outColor = u_color;
+
+	outColor.rgb *= light;
+}
+```
+
+import DirectionalLightingFixedNormals from "./DirectionalLightingFixedNormals";
+
+<DirectionalLightingFixedNormals style={{ width: "100%" }} />
+
+Notice that although sides of the cube above are being lit properly, the light isn't changing when the cube rotates.
+This is because the normals aren't being re-oriented like the positions are. Multiplying the normals by the object's
+world matrix will have the desired effect. Note that this requires the world matrix and the view projection matrix to
+be passed separately.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+
+out vec3 v_normal;
+
+void main() {
+	mat4 mat = u_viewProjMat * u_worldMat;
+
+	gl_Position = mat * a_position;
+
+	v_normal = mat3(u_worldMat) * a_normal;
+}
+```
+
+import DirectionalLighting from "./DirectionalLighting";
+
+<DirectionalLighting style={{ width: "100%" }} />
+
+## Point lighting
+
 This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
 
-- [Directional lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-directional.html).
 - [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 - [Point lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-point.html).
+
+## Spot lighting
+
+This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+
+- [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 - [Spot lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-spot.html).
+
+The next article is about [shadows](/a/webgl/shadows).
