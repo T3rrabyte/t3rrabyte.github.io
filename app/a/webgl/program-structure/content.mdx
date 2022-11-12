@@ -1,67 +1,30 @@
-# Uniforms
+# Program Structure
 
 You may need to read the previous article about [WebGL](/a/webgl/what-is) in order to understand this one.
 
-Another way to pass data to the GPU is with *uniforms*.
+Most of the WebGL API is dedicated to setting up state for the shader program. A typical program that uses the WebGL
+API follows this structure:
 
-Uniforms are variables that are uniform for each vertex. They can be defined in either the vertex shader or the
-fragment shader.
+- *Initialization step* (run once at the beginning of the program).
+	- Get the rendering context.
+	- Create all of the shaders and link them into shader programs.
+	- Look up the locations of every variable in every shader program.
+	- Create buffers and upload vertex data to them.
+	- Create a vertex array object (VAO) for each "thing" that needs to be rasterized.
+		- For each attribute that will accept data from a buffer:
+			- Turn on the attribute.
+			- Assign a buffer to the attribute.
+			- Tell WebGL how to get data out of that buffer.
+	- Create textures and upload data to them.
+- *Render step* (run once each frame).
+	- Clear the viewport.
+	- Resize the viewport.
+	- Set global state.
+	- For each "thing" that needs to be rasterized:
+		- Activate the shader program that is used to rasterize it.
+		- Bind the VAO that represents it.
+		- Set uniforms to the correct values for it.
+			- Assign textures to texture units.
+		- Execute the shader program.
 
-```glsl
-#version 300 es
-
-precision highp float;
-
-/*
-The naming convention for uniforms is camelCase prefixed by
-"u_".
-*/
-uniform vec4 u_color;
-
-out vec4 outColor;
-
-void main() {
-	outColor = u_color;
-}
-```
-
-Once a uniform has been declared in a shader program, it can be accessed with the WebGL API by getting its location.
-Umbra does this step automatically when linking shader programs.
-
-```js
-const colorUniformLocation = gl.getUniformLocation(
-	program, "u_color");
-```
-
-In order to set a uniform's value, the function that matches that value's type must be called. For example, setting a
-`vec4`-valued uniform looks like this:
-
-```js
-gl.uniform4fv(colorUniformLocation, [0, 0, 0, 1]);
-```
-
-Umbra automatically determines the correct setter function, so the following line has the same effect:
-
-```js
-program.uniforms.get("u_color").value = [0, 0, 0, 1];
-```
-
-Setting uniforms should be done between binding a VAO and drawing it:
-
-```js
-program.use();
-vao.bind();
-
-program.uniforms.get("u_color").value = [0, 0, 0, 1];
-// More uniforms...
-
-vao.draw();
-```
-
-There is also a shorthand equivalent to the block of code above:
-
-```js
-vao.draw({ "u_color": [0, 0, 0, 1] });
-```
-
-The next article covers the typical [program structure](/a/webgl/program-structure) when using the WebGL API.
+The next article walks through a minimal ["Hello, world!"](/a/webgl/hello-world) WebGL API program.
