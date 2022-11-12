@@ -21,7 +21,7 @@ const ubuntu = Ubuntu({
 const ubuntuMono = Ubuntu_Mono({
 	weight: "400",
 	subsets: ["latin"],
-	variable: "--font-ubuntu-mono",
+	variable: "--font-monospace",
 	fallback: ["Courier New", "monospace"]
 });
 

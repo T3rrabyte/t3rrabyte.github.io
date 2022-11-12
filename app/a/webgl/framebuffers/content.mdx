@@ -1,7 +1,95 @@
 # Framebuffers
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+You may need to read the previous article about [textures](/a/webgl/textures) in order to understand this one.
 
-- [Framebuffers](https://webgl2fundamentals.org/webgl/lessons/webgl-framebuffers.html).
-- [Render to texture](https://webgl2fundamentals.org/webgl/lessons/webgl-render-to-texture.html).
-- [Framebuffers and renderbuffers](https://xem.github.io/articles/webgl-guide-part-2.html#1c).
+*Framebuffers* are collections of attachments. They are used for rendering to textures and *renderbuffers*.
+Renderbuffers are similar to textures, but they support more formats and options and can't be directly used as
+input to a shader.
+
+A framebuffer can be created with the WebGL API.
+
+```js
+const fb = gl.createFramebuffer();
+```
+
+Like textures and buffers, framebuffers must be bound to a binding point in order to be accessed with other functions.
+Framebuffers have three binding points.
+
+- When a framebuffer is bound to `DRAW_FRAMEBUFFER`, any WebGL API functions that would modify the color and depth buffers
+instead modify the framebuffer's attachments.
+- When a framebuffer is bound to `READ_FRAMEBUFFER`, any WebGL API functions that would read from the color and depth buffers
+instead read from the framebuffer's attachments.
+- When a framebuffer is bound to `FRAMEBUFFER`, it is bound to both `DRAW_FRAMEBUFFER` and `READ_FRAMEBUFFER`.
+
+Attachments can be added using the `framebufferTexture2D`, `framebufferRenderbuffer`, and `framebufferTextureLayer`
+functions. **Every attachment to a framebuffer must have the same dimensions.**
+
+```js
+gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+
+gl.framebufferTexture2D(
+	// The binding point of the framebuffer.
+	gl.FRAMEBUFFER,
+
+	// The point of attachment to the framebuffer.
+	gl.COLOR_ATTACHMENT0,
+
+	// The binding point of the attached texture.
+	gl.TEXTURE_2D,
+
+	// The texture to attach.
+	texture,
+
+	// The level of the texture.
+	0
+);
+```
+
+With Umbra, framebuffer binding points are not necessary.
+
+```js
+const renderTexture = new Texture2D({
+	gl,
+	width: 256,
+	height: 256,
+	minFilter: TextureFilter.LINEAR
+});
+
+const fb = new Framebuffer(gl);
+
+fb.attach(renderTexture,
+	FramebufferAttachmentPoint.COLOR_ATTACHMENT0);
+```
+
+## Render to texture
+
+Instead of writing image data to the color buffer and depth data to the depth buffer, we can use a
+framebuffer to write that data to textures and renderbuffers. In order to do so, a framebuffer must
+be bound when the render function is called. With Umbra, this can be accomplished with the `bind` method.
+
+```js
+fb.bind();
+```
+
+Using the example above, image data is written to `texture`, which is attached to `COLOR_ATTACHMENT0`.
+
+import RenderToTexture from "./RenderToTexture";
+
+<RenderToTexture style={{ width: "100%" }} />
+
+In the example above, there is no depth attachment on the framebuffer. To write depth data to a
+texture, attach a depth renderbuffer to the framebuffer.
+
+```js
+const depthRenderbuffer = new Renderbuffer(gl,
+	RenderbufferFormat.DEPTH_COMPONENT24, 256, 256);
+
+fb.attach(depthRenderbuffer,
+	FramebufferAttachmentPoint.DEPTH_ATTACHMENT);
+```
+
+import DepthAttachment from "./DepthAttachment";
+
+<DepthAttachment style={{ width: "100%" }} />
+
+The next article is about [lighting](/a/webgl/lighting).

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BsRss } from "react-icons/bs";
 import CardList from "../CardList";
 import Card from "../Card";
@@ -6,7 +5,7 @@ import Card from "../Card";
 export default function Page() {
 	return (
 		<>
-			<h1>Blog <Link href="/rss.xml"><BsRss /></Link></h1>
+			<h1>Blog <a href="/rss.xml"><BsRss /></a></h1>
 			<CardList>
 				<Card href="/a/webgl">
 					<h2>WebGL2 Tutorial</h2>

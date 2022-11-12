@@ -381,7 +381,6 @@ export default function ProjectionMapping(props) {
 			projectedTexture.pixels = projectedImage;
 			projectedTexture.width = undefined;
 			projectedTexture.height = undefined;
-			projectedTexture.update();
 		});
 		projectedImage.crossOrigin = "";
 		projectedImage.src = textureUrl;

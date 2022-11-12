@@ -76,7 +76,6 @@ export default function TextureParameters(props) {
 			texture.pixels = image;
 			texture.width = undefined;
 			texture.height = undefined;
-			texture.update();
 		});
 		image.crossOrigin = "";
 		image.src = textureUrl;
