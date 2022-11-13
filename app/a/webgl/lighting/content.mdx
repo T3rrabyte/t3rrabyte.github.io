@@ -5,8 +5,8 @@ understand this one.
 
 ## Directional lighting
 
-*Directional lighting* is the simplest form of lighting. It assumes that the light is coming uniformly from one
-direction. One common use case of directional lighting is to emulate light from the sun.
+*Directional lighting* (or *diffuse lighting*) is the simplest form of lighting. It assumes that the light is coming
+uniformly from one direction. One common use case of directional lighting is to emulate light from the sun.
 
 If the direction that the light is traveling and the direction that a surface is facing are both known, it is
 possible to determine the cosine of the angle between the two directions by taking the dot product. That value
@@ -93,6 +93,27 @@ void main() {
 import DirectionalLighting from "./DirectionalLighting";
 
 <DirectionalLighting style={{ width: "100%" }} />
+
+The light can be given a color by adding a color to the calculation.
+
+```glsl
+#version 300 es
+
+in vec3 v_normal;
+
+uniform vec4 u_color;
+uniform vec4 u_reverseLightDirection;
+uniform vec3 u_lightColor;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	float light = dot(normal, u_reverseLightDirection);
+	outColor = u_color;
+	outColor.rgb *= u_lightColor * light;
+}
+```
 
 ## Point lighting
 
