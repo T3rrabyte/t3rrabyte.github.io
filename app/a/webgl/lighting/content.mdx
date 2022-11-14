@@ -33,6 +33,8 @@ void main() {
 ```glsl
 #version 300 es
 
+precision highp float;
+
 in vec3 v_normal;
 
 uniform vec4 u_color;
@@ -42,7 +44,7 @@ Instead of taking the direction that the light is moving as
 input, it is easier to take the position of the light
 source (in other words, the direction to the light source).
 */
-uniform vec4 u_reverseLightDirection;
+uniform vec3 u_reverseLightDirection;
 
 out vec4 outColor;
 
@@ -56,14 +58,13 @@ void main() {
 	float light = dot(normal, u_reverseLightDirection);
 
 	outColor = u_color;
-
 	outColor.rgb *= light;
 }
 ```
 
-import DirectionalLightingFixedNormals from "./DirectionalLightingFixedNormals";
+import DirectionalLightingStaticBrokenNormals from "./DirectionalLightingStaticBrokenNormals";
 
-<DirectionalLightingFixedNormals style={{ width: "100%" }} />
+<DirectionalLightingStaticBrokenNormals style={{ width: "100%" }} />
 
 Notice that although sides of the cube above are being lit properly, the light isn't changing when the cube rotates.
 This is because the normals aren't being re-oriented like the positions are. Multiplying the normals by the object's
@@ -90,30 +91,108 @@ void main() {
 }
 ```
 
+import DirectionalLightingBrokenNormals from "./DirectionalLightingBrokenNormals";
+
+<DirectionalLightingBrokenNormals style={{ width: "100%" }} />
+
+One issue with the solution above is that the normals get skewed when the world matrix gets scaled. This can be fixed by using
+the inverse transpose of the world matrix instead.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+uniform mat4 u_invTransWorldMat;
+
+out vec3 v_normal;
+
+void main() {
+	mat4 mat = u_viewProjMat * u_worldMat;
+
+	gl_Position = mat * a_position;
+
+	v_normal = mat3(u_invTransWorldMat) * a_normal;
+}
+```
+
+The example below doesn't look any different because the cube isn't being scaled, but it uses the world inverse transpose matrix
+instead of just the world matrix.
+
 import DirectionalLighting from "./DirectionalLighting";
 
 <DirectionalLighting style={{ width: "100%" }} />
+
+## Colored lighting
 
 The light can be given a color by adding a color to the calculation.
 
 ```glsl
 #version 300 es
 
+precision highp float;
+
 in vec3 v_normal;
 
 uniform vec4 u_color;
-uniform vec4 u_reverseLightDirection;
-uniform vec3 u_lightColor;
+uniform vec3 u_reverseLightDirection;
+uniform vec4 u_lightColor;
 
 out vec4 outColor;
 
 void main() {
 	vec3 normal = normalize(v_normal);
-	float light = dot(normal, u_reverseLightDirection);
+
+	vec3 light = u_lightColor.rgb
+		* dot(normal, u_reverseLightDirection);
+
 	outColor = u_color;
-	outColor.rgb *= u_lightColor * light;
+	outColor.rgb *= light;
 }
 ```
+
+import DirectionalLightingColored from "./DirectionalLightingColored";
+
+<DirectionalLightingColored style={{ width: "100%" }} />
+
+## Ambient lighting
+
+*Ambient lighting* is lighting that is applied equally to all triangles, regardless of their normal vector. This is used to set a
+"minimum" brightness to ensure that nothing in the scene is too dark.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_normal;
+
+uniform vec4 u_color;
+uniform vec3 u_reverseLightDirection;
+uniform vec4 u_lightColor;
+uniform vec4 u_ambientLightColor;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+
+	vec3 directionalLight = u_lightColor.rgb
+		* dot(normal, u_reverseLightDirection);
+
+	vec3 ambientLight = u_ambientLightColor.rgb;
+
+	outColor = u_color;
+	outColor.rgb *= directionalLight + ambientLight;
+}
+```
+
+import AmbientDirectionalLightingColored from "./AmbientDirectionalLightingColored";
+
+<AmbientDirectionalLightingColored style={{ width: "100%" }} />
 
 ## Point lighting
 
@@ -128,5 +207,11 @@ This article is a work-in-progress. In the meantime, consider reading these othe
 
 - [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 - [Spot lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-spot.html).
+
+## Specular lighting
+
+This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+
+- [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 
 The next article is about [shadows](/a/webgl/shadows).

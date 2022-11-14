@@ -22,12 +22,15 @@ precision highp float;
 in vec3 v_normal;
 uniform vec4 u_color;
 uniform vec3 u_reverseLightDirection;
+uniform vec4 u_lightColor;
+uniform vec4 u_ambientLightColor;
 out vec4 outColor;
 void main() {
 	vec3 normal = normalize(v_normal);
-	float light = dot(normal, u_reverseLightDirection);
+	vec3 directionalLight = u_lightColor.rgb * dot(normal, u_reverseLightDirection);
+	vec3 ambientLight = u_ambientLightColor.rgb;
 	outColor = u_color;
-	outColor.rgb *= light;
+	outColor.rgb *= directionalLight + ambientLight;
 }`;
 
 const positionBufferData = new Float32Array([
@@ -134,13 +137,15 @@ const indexData = new Uint8Array([
 
 const transparent = new Color(0, 0, 0, 0);
 const cubeColor = new Color(1, 1, 1, 1);
+const lightColor = new Color(0, 1, 0, 1);
+const ambientLightColor = new Color(0.2, 0.2, 0.2, 1);
 
 const camDist = 5;
 
 const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
 vec3.normalize(lightPosition, lightPosition);
 
-export default function DirectionalLighting(props) {
+export default function AmbientDirectionalLightingColored(props) {
 	return AnimatedCanvas((canvas) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -183,7 +188,15 @@ export default function DirectionalLighting(props) {
 			mat4.invert(invTransMat, mat);
 			mat4.transpose(invTransMat, invTransMat);
 
-			vao.draw({ "u_viewProjMat": viewProjMat, "u_worldMat": mat, "u_invTransWorldMat": invTransMat, "u_color": cubeColor, "u_reverseLightDirection": lightPosition });
+			vao.draw({
+				"u_viewProjMat": viewProjMat,
+				"u_worldMat": mat,
+				"u_invTransWorldMat": invTransMat,
+				"u_color": cubeColor,
+				"u_reverseLightDirection": lightPosition,
+				"u_lightColor": lightColor,
+				"u_ambientLightColor": ambientLightColor
+			});
 		}
 	}, props);
 }

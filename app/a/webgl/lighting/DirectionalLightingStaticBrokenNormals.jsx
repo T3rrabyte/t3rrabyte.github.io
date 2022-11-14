@@ -130,14 +130,14 @@ const indexData = new Uint8Array([
 ]);
 
 const transparent = new Color(0, 0, 0, 0);
-const green = new Color(0, 1, 0, 1);
+const cubeColor = new Color(1, 1, 1, 1);
 
 const camDist = 5;
 
 const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
 vec3.normalize(lightPosition, lightPosition);
 
-export default function DirectionalLightingFixedNormals(props) {
+export default function DirectionalLightingStaticBrokenNormals(props) {
 	return AnimatedCanvas((canvas) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -177,7 +177,7 @@ export default function DirectionalLightingFixedNormals(props) {
 			mat4.rotateY(mat, mat, 0.001 * now);
 			mat4.multiply(mat, viewProjMat, mat);
 
-			vao.draw({ "u_matrix": mat, "u_color": green, "u_reverseLightDirection": lightPosition });
+			vao.draw({ "u_matrix": mat, "u_color": cubeColor, "u_reverseLightDirection": lightPosition });
 		}
 	}, props);
 }

@@ -26,7 +26,7 @@ export default function Page() {
 				<Card>
 					<h3>My website</h3>
 					<p>This website, which has gone through several iterations since it was first put online on <time>November 13, 2017</time>.</p>
-					<p>Written in <strong>TypeScript</strong>, <strong>JSX</strong>, and <strong>Sass</strong> with <Link href={"https://nextjs.org/"}>Next.js</Link> and <Link href={"https://reactjs.org/"}>React</Link>.</p>
+					<p>Written in <strong>JavaScript</strong>, <strong>JSX</strong>, and <strong>Sass</strong> with <Link href={"https://nextjs.org/"}>Next.js 13</Link> and <Link href={"https://reactjs.org/"}>React</Link>.</p>
 					<p>The source code is available on <Link href="https://github.com/Lakuna/Lakuna.github.io">its GitHub repository</Link>.</p>
 				</Card>
 				<Card>

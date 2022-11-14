@@ -9,12 +9,11 @@ in vec4 a_position;
 in vec3 a_normal;
 uniform mat4 u_viewProjMat;
 uniform mat4 u_worldMat;
-uniform mat4 u_invTransWorldMat;
 out vec3 v_normal;
 void main() {
 	mat4 mat = u_viewProjMat * u_worldMat;
 	gl_Position = mat * a_position;
-	v_normal = mat3(u_invTransWorldMat) * a_normal;
+	v_normal = mat3(u_worldMat) * a_normal;
 }`;
 
 const fss = `#version 300 es
@@ -140,7 +139,7 @@ const camDist = 5;
 const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
 vec3.normalize(lightPosition, lightPosition);
 
-export default function DirectionalLighting(props) {
+export default function DirectionalLightingBrokenNormals(props) {
 	return AnimatedCanvas((canvas) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -160,7 +159,6 @@ export default function DirectionalLighting(props) {
 		const viewMat = mat4.create();
 		const viewProjMat = mat4.create();
 		const mat = mat4.create();
-		const invTransMat = mat4.create();
 
 		return function render(now) {
 			clearContext(gl, transparent, 1);
@@ -180,10 +178,7 @@ export default function DirectionalLighting(props) {
 			mat4.rotateX(mat, mat, Math.PI / 4);
 			mat4.rotateY(mat, mat, 0.001 * now);
 
-			mat4.invert(invTransMat, mat);
-			mat4.transpose(invTransMat, invTransMat);
-
-			vao.draw({ "u_viewProjMat": viewProjMat, "u_worldMat": mat, "u_invTransWorldMat": invTransMat, "u_color": cubeColor, "u_reverseLightDirection": lightPosition });
+			vao.draw({ "u_viewProjMat": viewProjMat, "u_worldMat": mat, "u_color": cubeColor, "u_reverseLightDirection": lightPosition });
 		}
 	}, props);
 }
