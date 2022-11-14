@@ -87,6 +87,10 @@ void main() {
 
 	gl_Position = mat * a_position;
 
+	/*
+	The upper 3x3 of a transformation matrix is the part
+	that deals with rotation.
+	*/
 	v_normal = mat3(u_worldMat) * a_normal;
 }
 ```
@@ -196,6 +200,68 @@ import AmbientDirectionalLightingColored from "./AmbientDirectionalLightingColor
 
 ## Point lighting
 
+*Point lighting* is when light extends in every direction from a point. To emulate it, pass the position of the light to the
+vertex shader as a uniform, then pass the distance from the light source to the surface as a varying.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+uniform mat4 u_invTransWorldMat;
+uniform vec3 u_lightPos;
+
+out vec3 v_normal;
+out vec3 v_lightDir;
+
+void main() {
+	mat4 mat = u_viewProjMat * u_worldMat;
+
+	gl_Position = mat * a_position;
+
+	v_normal = mat3(u_invTransWorldMat) * a_normal;
+
+	// Determine the position of the surface.
+	vec3 surfacePos = (u_worldMat * a_position).xyz;
+
+	// Pass the direction from the surface to the light.
+	v_lightDir = u_lightPos - surfacePos;
+}
+```
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_normal;
+in vec3 v_lightDir;
+
+uniform vec4 u_color;
+uniform vec4 u_lightColor;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	vec3 lightDir = normalize(v_lightDir);
+
+	vec3 light = u_lightColor.rgb * dot(normal, lightDir);
+
+	outColor = u_color;
+	outColor.rgb *= light;
+}
+```
+
+import PointLighting from "./PointLighting";
+
+<PointLighting style={{ width: "100%" }} />
+
+## Specular lighting
+
 This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
 
 - [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
@@ -207,11 +273,5 @@ This article is a work-in-progress. In the meantime, consider reading these othe
 
 - [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 - [Spot lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-spot.html).
-
-## Specular lighting
-
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
-
-- [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
 
 The next article is about [shadows](/a/webgl/shadows).
