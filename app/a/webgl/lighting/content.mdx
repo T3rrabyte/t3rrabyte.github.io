@@ -176,27 +176,24 @@ in vec3 v_normal;
 
 uniform vec4 u_color;
 uniform vec3 u_reverseLightDirection;
-uniform vec4 u_lightColor;
-uniform vec4 u_ambientLightColor;
+uniform float u_ambientLight;
 
 out vec4 outColor;
 
 void main() {
 	vec3 normal = normalize(v_normal);
 
-	vec3 directionalLight = u_lightColor.rgb
-		* dot(normal, u_reverseLightDirection);
-
-	vec3 ambientLight = u_ambientLightColor.rgb;
+	float directionalLight =
+		dot(normal, u_reverseLightDirection);
 
 	outColor = u_color;
-	outColor.rgb *= directionalLight + ambientLight;
+	outColor.rgb *= directionalLight + u_ambientLight;
 }
 ```
 
-import AmbientDirectionalLightingColored from "./AmbientDirectionalLightingColored";
+import AmbientDirectionalLighting from "./AmbientDirectionalLighting";
 
-<AmbientDirectionalLightingColored style={{ width: "100%" }} />
+<AmbientDirectionalLighting style={{ width: "100%" }} />
 
 ## Point lighting
 
@@ -241,7 +238,6 @@ in vec3 v_normal;
 in vec3 v_lightDir;
 
 uniform vec4 u_color;
-uniform vec4 u_lightColor;
 
 out vec4 outColor;
 
@@ -249,7 +245,7 @@ void main() {
 	vec3 normal = normalize(v_normal);
 	vec3 lightDir = normalize(v_lightDir);
 
-	vec3 light = u_lightColor.rgb * dot(normal, lightDir);
+	float light = dot(normal, lightDir);
 
 	outColor = u_color;
 	outColor.rgb *= light;
@@ -260,12 +256,123 @@ import PointLighting from "./PointLighting";
 
 <PointLighting style={{ width: "100%" }} />
 
+Notice that the code for point lighting is almost identical to the point for directional lighting. The only difference is that
+the light direction is interpolated between fragments.
+
 ## Specular lighting
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+*Specular lighting* is when light reflects off of a shiny object. Light reflects off of a surface at the same angle that it hits
+that surface, so it is possible to determine whether specular light should be rendered if the angle from the light to the surface
+is the same as the angle from the surface to the camera.
 
-- [Lighting and shading](https://xem.github.io/articles/webgl-guide.html#3e).
-- [Point lighting](https://webgl2fundamentals.org/webgl/lessons/webgl-3d-lighting-point.html).
+As explained above, the angle between two vectors can be determined using the dot product. Then, if the two dot products are added
+together and normalized, you get the half vector (the vector that sits halfway between them). The brightness of the specular light
+can then be determined based on how similar the half vector is to the surface's normal (again using the dot product).
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+uniform mat4 u_invTransWorldMat;
+uniform vec3 u_lightPos;
+uniform vec3 u_camPos;
+
+out vec3 v_normal;
+out vec3 v_lightDir;
+out vec3 v_camDir;
+
+void main() {
+	mat4 mat = u_viewProjMat * u_worldMat;
+
+	gl_Position = mat * a_position;
+
+	v_normal = mat3(u_invTransWorldMat) * a_normal;
+
+	vec3 surfacePos = (u_worldMat * a_position).xyz;
+
+	v_lightDir = u_lightPos - surfacePos;
+
+	v_camDir = u_camPos - surfacePos;
+}
+```
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_normal;
+in vec3 v_lightDir;
+in vec3 v_camDir;
+
+uniform vec4 u_color;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	vec3 lightDir = normalize(v_lightDir);
+	vec3 camDir = normalize(v_camDir);
+	vec3 halfVector = normalize(lightDir + camDir);
+
+	float pointLight = dot(normal, lightDir);
+
+	float specularLight = dot(normal, halfVector);
+
+	outColor = u_color;
+	outColor.rgb *= pointLight;
+	outColor.rgb += specularLight;
+}
+```
+
+import SpecularLightingLinearFalloff from "./SpecularLightingLinearFalloff";
+
+<SpecularLightingLinearFalloff style={{ width: "100%" }} />
+
+The shine can be made to look more realistic by raising the angle between the normal and the half vector to a certain power that
+represents the "shininess" of the surface. This has the effect of changing the specular light from a linear falloff to an exponential
+falloff.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_normal;
+in vec3 v_lightDir;
+in vec3 v_camDir;
+
+uniform vec4 u_color;
+uniform float u_shininess;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	vec3 lightDir = normalize(v_lightDir);
+	vec3 camDir = normalize(v_camDir);
+	vec3 halfVector = normalize(lightDir + camDir);
+
+	float pointLight = dot(normal, lightDir);
+
+	// `pow` is undefined on negative numbers in WebGL.
+	float specularLight = pointLight >= 0.0
+		? pow(dot(normal, halfVector), u_shininess)
+		: 0.0;
+
+	outColor = u_color;
+	outColor.rgb *= pointLight;
+	outColor.rgb += specularLight;
+}
+```
+
+import SpecularLighting from "./SpecularLighting";
+
+<SpecularLighting style={{ width: "100%" }} />
 
 ## Spot lighting
 

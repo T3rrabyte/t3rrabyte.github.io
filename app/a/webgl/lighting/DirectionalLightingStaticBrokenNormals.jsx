@@ -132,10 +132,9 @@ const indexData = new Uint8Array([
 const transparent = new Color(0, 0, 0, 0);
 const cubeColor = new Color(1, 1, 1, 1);
 
-const camDist = 5;
-
-const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
-vec3.normalize(lightPosition, lightPosition);
+const camPos = vec3.set(vec3.create(), 0, 0, 5);
+const lightPos = vec3.set(vec3.create(), 0.5, 0.7, 1);
+vec3.normalize(lightPos, lightPos);
 
 export default function DirectionalLightingStaticBrokenNormals(props) {
 	return AnimatedCanvas((canvas) => {
@@ -166,7 +165,7 @@ export default function DirectionalLightingStaticBrokenNormals(props) {
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 
 			mat4.identity(camMat);
-			mat4.translate(camMat, camMat, [0, 0, camDist]);
+			mat4.translate(camMat, camMat, camPos);
 
 			mat4.invert(viewMat, camMat);
 
@@ -177,7 +176,7 @@ export default function DirectionalLightingStaticBrokenNormals(props) {
 			mat4.rotateY(mat, mat, 0.001 * now);
 			mat4.multiply(mat, viewProjMat, mat);
 
-			vao.draw({ "u_matrix": mat, "u_color": cubeColor, "u_reverseLightDirection": lightPosition });
+			vao.draw({ "u_matrix": mat, "u_color": cubeColor, "u_reverseLightDirection": lightPos });
 		}
 	}, props);
 }

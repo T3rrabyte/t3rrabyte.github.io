@@ -11,28 +11,37 @@ uniform mat4 u_viewProjMat;
 uniform mat4 u_worldMat;
 uniform mat4 u_invTransWorldMat;
 uniform vec3 u_lightPos;
+uniform vec3 u_camPos;
 out vec3 v_normal;
 out vec3 v_lightDir;
+out vec3 v_camDir;
 void main() {
 	mat4 mat = u_viewProjMat * u_worldMat;
 	gl_Position = mat * a_position;
 	v_normal = mat3(u_invTransWorldMat) * a_normal;
 	vec3 surfacePos = (u_worldMat * a_position).xyz;
 	v_lightDir = u_lightPos - surfacePos;
+	v_camDir = u_camPos - surfacePos;
 }`;
 
 const fss = `#version 300 es
 precision highp float;
 in vec3 v_normal;
 in vec3 v_lightDir;
+in vec3 v_camDir;
 uniform vec4 u_color;
+uniform float u_shininess;
 out vec4 outColor;
 void main() {
 	vec3 normal = normalize(v_normal);
 	vec3 lightDir = normalize(v_lightDir);
-	float light = dot(normal, lightDir);
+	vec3 camDir = normalize(v_camDir);
+	vec3 halfVector = normalize(lightDir + camDir);
+	float pointLight = dot(normal, lightDir);
+	float specularLight = pointLight > 0.0 ? pow(dot(normal, halfVector), u_shininess) : 0.0;
 	outColor = u_color;
-	outColor.rgb *= light;
+	outColor.rgb *= pointLight;
+	outColor.rgb += specularLight;
 }`;
 
 const positionBufferData = new Float32Array([
@@ -139,11 +148,12 @@ const indexData = new Uint8Array([
 
 const transparent = new Color(0, 0, 0, 0);
 const cubeColor = new Color(1, 1, 1, 1);
+const cubeShininess = 5;
 
-const camPos = vec3.set(vec3.create(), 0, 0, 5);
 const lightPos = vec3.set(vec3.create(), 0, 0, 5);
+const camPos = vec3.set(vec3.create(), 0, 0, 5);
 
-export default function PointLighting(props) {
+export default function SpecularLighting(props) {
 	return AnimatedCanvas((canvas) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -191,7 +201,9 @@ export default function PointLighting(props) {
 				"u_worldMat": mat,
 				"u_invTransWorldMat": invTransMat,
 				"u_lightPos": lightPos,
-				"u_color": cubeColor
+				"u_camPos": camPos,
+				"u_color": cubeColor,
+				"u_shininess": cubeShininess
 			});
 		}
 	}, props);

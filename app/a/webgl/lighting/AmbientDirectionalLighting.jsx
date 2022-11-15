@@ -22,15 +22,13 @@ precision highp float;
 in vec3 v_normal;
 uniform vec4 u_color;
 uniform vec3 u_reverseLightDirection;
-uniform vec4 u_lightColor;
-uniform vec4 u_ambientLightColor;
+uniform float u_ambientLight;
 out vec4 outColor;
 void main() {
 	vec3 normal = normalize(v_normal);
-	vec3 directionalLight = u_lightColor.rgb * dot(normal, u_reverseLightDirection);
-	vec3 ambientLight = u_ambientLightColor.rgb;
+	float directionalLight = dot(normal, u_reverseLightDirection);
 	outColor = u_color;
-	outColor.rgb *= directionalLight + ambientLight;
+	outColor.rgb *= directionalLight + u_ambientLight;
 }`;
 
 const positionBufferData = new Float32Array([
@@ -137,15 +135,13 @@ const indexData = new Uint8Array([
 
 const transparent = new Color(0, 0, 0, 0);
 const cubeColor = new Color(1, 1, 1, 1);
-const lightColor = new Color(0, 1, 0, 1);
-const ambientLightColor = new Color(0.2, 0.2, 0.2, 1);
+const ambientLight = 0.4;
 
-const camDist = 5;
+const camPos = vec3.set(vec3.create(), 0, 0, 5);
+const lightPos = vec3.set(vec3.create(), 0.5, 0.7, 1);
+vec3.normalize(lightPos, lightPos);
 
-const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
-vec3.normalize(lightPosition, lightPosition);
-
-export default function AmbientDirectionalLightingColored(props) {
+export default function AmbientDirectionalLighting(props) {
 	return AnimatedCanvas((canvas) => {
 		const gl = canvas.getContext("webgl2");
 		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
@@ -175,7 +171,7 @@ export default function AmbientDirectionalLightingColored(props) {
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 
 			mat4.identity(camMat);
-			mat4.translate(camMat, camMat, [0, 0, camDist]);
+			mat4.translate(camMat, camMat, camPos);
 
 			mat4.invert(viewMat, camMat);
 
@@ -193,9 +189,8 @@ export default function AmbientDirectionalLightingColored(props) {
 				"u_worldMat": mat,
 				"u_invTransWorldMat": invTransMat,
 				"u_color": cubeColor,
-				"u_reverseLightDirection": lightPosition,
-				"u_lightColor": lightColor,
-				"u_ambientLightColor": ambientLightColor
+				"u_reverseLightDirection": lightPos,
+				"u_ambientLight": ambientLight
 			});
 		}
 	}, props);

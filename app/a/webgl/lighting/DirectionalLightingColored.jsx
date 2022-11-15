@@ -137,10 +137,9 @@ const transparent = new Color(0, 0, 0, 0);
 const cubeColor = new Color(1, 1, 1, 1);
 const lightColor = new Color(0, 1, 0, 1);
 
-const camDist = 5;
-
-const lightPosition = vec3.set(vec3.create(), 0.5, 0.7, 1);
-vec3.normalize(lightPosition, lightPosition);
+const camPos = vec3.set(vec3.create(), 0, 0, 5);
+const lightPos = vec3.set(vec3.create(), 0.5, 0.7, 1);
+vec3.normalize(lightPos, lightPos);
 
 export default function DirectionalLightingColored(props) {
 	return AnimatedCanvas((canvas) => {
@@ -172,7 +171,7 @@ export default function DirectionalLightingColored(props) {
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 
 			mat4.identity(camMat);
-			mat4.translate(camMat, camMat, [0, 0, camDist]);
+			mat4.translate(camMat, camMat, camPos);
 
 			mat4.invert(viewMat, camMat);
 
@@ -190,7 +189,7 @@ export default function DirectionalLightingColored(props) {
 				"u_worldMat": mat,
 				"u_invTransWorldMat": invTransMat,
 				"u_color": cubeColor,
-				"u_reverseLightDirection": lightPosition,
+				"u_reverseLightDirection": lightPos,
 				"u_lightColor": lightColor
 			});
 		}
