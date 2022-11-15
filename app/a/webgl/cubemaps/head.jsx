@@ -6,10 +6,10 @@ import CanonicalUrl from "../../../CanonicalUrl";
 export default function Head() {
 	return (
 		<>
-			<Title>WebGL Skyboxes</Title>
-			<Description>An introduction to skyboxes in WebGL.</Description>
+			<Title>WebGL Cubemaps</Title>
+			<Description>An introduction to cubemaps in WebGL.</Description>
 			<ImageUrl>/favicon.png</ImageUrl>
-			<CanonicalUrl>/a/webgl/skyboxes</CanonicalUrl>
+			<CanonicalUrl>/a/webgl/cubemaps</CanonicalUrl>
 		</>
 	);
 }
