@@ -29,6 +29,9 @@
 		<loc>https://www.lakuna.pw/a/webgl/attributes</loc>
 	</url>
 	<url>
+		<loc>https://www.lakuna.pw/a/webgl/cubemaps</loc>
+	</url>
+	<url>
 		<loc>https://www.lakuna.pw/a/webgl/fog</loc>
 	</url>
 	<url>
@@ -63,9 +66,6 @@
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/skinning</loc>
-	</url>
-	<url>
-		<loc>https://www.lakuna.pw/a/webgl/skyboxes</loc>
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/text</loc>

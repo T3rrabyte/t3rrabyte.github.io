@@ -1,6 +1,6 @@
 # 3D
 
-You may need to read the previous article about the [scene graph](/a/webgl/scene-graph) in order to understand this one.
+You may need to read the previous article about [the scene graph](/a/webgl/scene-graph) in order to understand this one.
 
 ## Orthographic
 
@@ -83,7 +83,7 @@ common to move the camera to view the scene. To do so, a transformation matrix c
 called the *camera matrix*. The camera matrix can be inverted to make a *view matrix*. The *projection matrix*
 (which is calculated according to different algorithms depending on the type of projection) can be multiplied by
 the view matrix to make a *view projection matrix*. Objects in a scene can be "viewed" by a camera by multiplying their
-transformation matrices by the view projection matrix.
+world matrix by the view projection matrix to make a *world view projection matrix*.
 
 import Cameras from "./Cameras";
 
