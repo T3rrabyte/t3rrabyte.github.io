@@ -45,7 +45,7 @@ gl.framebufferTexture2D(
 );
 ```
 
-With Umbra, framebuffer binding points are not necessary.
+With μGL, framebuffer binding points are not necessary.
 
 ```js
 const renderTexture = new Texture2D({
@@ -65,7 +65,7 @@ fb.attach(renderTexture,
 
 Instead of writing image data to the color buffer and depth data to the depth buffer, we can use a
 framebuffer to write that data to textures and renderbuffers. In order to do so, a framebuffer must
-be bound when the render function is called. With Umbra, this can be accomplished with the `bind` method.
+be bound when the render function is called. With μGL, this can be accomplished with the `bind` method.
 
 ```js
 fb.bind();

@@ -146,10 +146,10 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
 The WebGL API is very verbose, so a variety of libraries exist to reduce the complexity of using it. Some of these
 are high-level, such as [three.js](https://threejs.org/) and [Babylon.js](https://www.babylonjs.com/). Others are
-low-level, such as [TWGL](https://twgljs.org/) and [Umbra](https://umbra.lakuna.pw/). Umbra is my library, so
+low-level, such as [TWGL](https://twgljs.org/) and [μGL](https://ugl.lakuna.pw/). μGL is my library, so
 it is what will be used in this tutorial series.
 
-With Umbra, the following line of code is equivalent to the block above.
+With μGL, the following line of code is equivalent to the block above.
 
 ```js
 const program = Program.fromSource(gl, vss, fss);

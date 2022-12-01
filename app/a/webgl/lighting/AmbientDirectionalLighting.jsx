@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, VAO } from "@lakuna/umbra.js";
+import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, VAO } from "uugl";
 import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 

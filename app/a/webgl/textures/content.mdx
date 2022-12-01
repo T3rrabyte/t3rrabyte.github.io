@@ -65,7 +65,7 @@ gl.bindTexture(gl.TEXTURE_2D, texture);
 gl.uniform1i(imageUniformLocation, 0);
 ```
 
-Umbra handles texture units automatically.
+μGL handles texture units automatically.
 
 ```js
 const texture = new Texture2D({
@@ -103,7 +103,7 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
 	gl.CLAMP_TO_EDGE);
 ```
 
-As with other situations where binding points are necessary, Umbra uses an object-oriented approach to texture parameters.
+As with other situations where binding points are necessary, μGL uses an object-oriented approach to texture parameters.
 
 ```js
 texture.wrapSFunction = TextureWrapFunction.CLAMP_TO_EDGE;
@@ -143,7 +143,7 @@ easiest way to generate a complete mipmap is with the WebGL API's `generateMipma
 gl.generateMipmap(gl.TEXTURE_2D);
 ```
 
-Umbra textures have an equivalent method, but it is automatically executed when necessary.
+μGL textures have an equivalent method, but it is automatically executed when necessary.
 
 import Mipmaps from "./Mipmaps";
 
@@ -184,7 +184,7 @@ gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
 	height, border, format, type, data);
 ```
 
-Umbra automatically determines the correct format and data type based on the specified internal format.
+μGL automatically determines the correct format and data type based on the specified internal format.
 
 ```js
 texture.internalFormat = TextureFormat.R8;
@@ -199,7 +199,7 @@ done before executing the function that is being used to update the texture (i.e
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 ```
 
-Umbra updates the unpack alignment as necessary.
+μGL updates the unpack alignment as necessary.
 
 import DataTextures from "./DataTextures";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "@lakuna/umbra.js";
+import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "uugl";
 
 const vss = `#version 300 es
 in vec4 a_position;

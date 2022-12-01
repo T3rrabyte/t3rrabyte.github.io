@@ -17,7 +17,7 @@ To draw on a canvas that already exists in the DOM, first get that canvas in Jav
 const canvas = document.querySelector("canvas");
 ```
 
-Umbra provides a function called `makeFullscreenCanvas` that **replaces all content in the DOM** with a fullscreen canvas.
+μGL provides a function called `makeFullscreenCanvas` that **replaces all content in the DOM** with a fullscreen canvas.
 
 ```js
 const canvas = makeFullscreenCanvas();
@@ -64,7 +64,7 @@ variables called `vss` and `fss`, respectively, the shader program can be linked
 const program = Program.fromSource(gl, vss, fss);
 ```
 
-If you aren't using Umbra, see the [introductory article](/a/webgl/what-is) for the "vanilla" way to do this.
+If you aren't using μGL, see the [introductory article](/a/webgl/what-is) for the "vanilla" way to do this.
 
 **If your shader program is not linking or compiling correctly, make sure that there is no white space or any
 comments before the `#version 300 es` line in the shader strings.** For example, the following shader string will
@@ -81,28 +81,28 @@ void main() {
 
 ### Variable locations
 
-Umbra automatically creates a map of variable names to their locations when it links a shader program, so no
+μGL automatically creates a map of variable names to their locations when it links a shader program, so no
 additional code is required to get variable locations. These maps are called `program.uniforms` for uniforms and
 `program.attributes` for attributes.
 
-If you aren't using Umbra, see the [attributes](/a/webgl/attributes) and [uniforms](/a/webgl/uniforms) articles for
+If you aren't using μGL, see the [attributes](/a/webgl/attributes) and [uniforms](/a/webgl/uniforms) articles for
 the "vanilla" ways to do this.
 
 ### Buffers
 
 This program will draw only one shape (a triangle) with one attribute (`a_position`) per shape, so only one buffer is
-needed. In Umbra, the following line of code creates a buffer.
+needed. In μGL, the following line of code creates a buffer.
 
 ```js
 const trianglePositionBuffer = new Buffer(gl,
 	new Float32Array([0, 0, 0, 0.5, 0.7, 0]));
 ```
 
-If you aren't using Umbra, see the [attributes](/a/webgl/attributes) article for the "vanilla" way to do this.
+If you aren't using μGL, see the [attributes](/a/webgl/attributes) article for the "vanilla" way to do this.
 
 ### Vertex array objects
 
-This program will only draw one shape (a triangle), so only one vertex array object (VAO) is needed. In Umbra, the following
+This program will only draw one shape (a triangle), so only one vertex array object (VAO) is needed. In μGL, the following
 block of code creates a VAO.
 
 ```js
@@ -136,7 +136,7 @@ gl.clearColor(0, 0, 0, 0);
 gl.clear(gl.COLOR_BUFFER_BIT);
 ```
 
-Umbra provides a function called `clearContext` that clears all of the viewport's buffers to the provided values. It
+μGL provides a function called `clearContext` that clears all of the viewport's buffers to the provided values. It
 becomes more useful in later programs, when multiple viewport buffers are used.
 
 ```js
@@ -154,7 +154,7 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 ```
 
-Umbra provides a function called `resizeContext` that has similar functionality to the code above but is more performant.
+μGL provides a function called `resizeContext` that has similar functionality to the code above but is more performant.
 
 ```js
 resizeContext(gl);
@@ -169,7 +169,7 @@ that WebGL can properly convert from clip space coordinates to *screen space coo
 gl.viewport(0, 0, canvas.width, canvas.height);
 ```
 
-Umbra's `resizeContext` automatically handles this.
+μGL's `resizeContext` automatically handles this.
 
 ### Rasterizing
 
@@ -179,7 +179,7 @@ Since this program doesn't use any uniforms, all of the rasterization work can b
 vao.draw();
 ```
 
-If you aren't using Umbra, see the [attributes](/a/webgl/attributes) article for the "vanilla" way to do this.
+If you aren't using μGL, see the [attributes](/a/webgl/attributes) article for the "vanilla" way to do this.
 
 ## Final code
 
@@ -187,11 +187,12 @@ Combining all of the above, the final code looks like this:
 
 ```js
 /*
-Import Umbra. In the browser, this will be imported from a
+Import μGL. In the browser, this will be imported from a
 CDN link such as:
-- Skypack: "https://cdn.skypack.dev/@lakuna/umbra.js"
-- jsDelivr: "https://cdn.jsdelivr.net/npm/@lakuna/umbra.js"
-- unpkg: "https://unpkg.com/@lakuna/umbra.js"
+- Skypack: "https://cdn.skypack.dev/uugl"
+- jsDelivr: "https://cdn.jsdelivr.net/npm/uugl"
+- unpkg: "https://unpkg.com/uugl"
+When μGL is installed locally, it is imported as "uugl."
 */
 import {
 	Program,
@@ -201,7 +202,15 @@ import {
 	clearContext,
 	Color,
 	resizeContext
-} from "@lakuna/umbra.js";
+} from "uugl";
+
+/*
+The following also works:
+
+import Program from "uugl/program";
+import Buffer from "uugl/buffer";
+// Et cetera.
+*/
 
 const gl = document
 	.querySelector("canvas")

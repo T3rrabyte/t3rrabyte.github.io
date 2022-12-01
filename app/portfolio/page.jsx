@@ -17,11 +17,11 @@ export default function Page() {
 			<h2>Projects</h2>
 			<CardList>
 				<Card>
-					<h3>Umbra</h3>
+					<h3>μGL</h3>
 					<Cameras style={{ width: "100%" }} />
 					<p>A lightweight visual application framework for WebGL2.</p>
 					<p>Written in <strong>TypeScript</strong>.</p>
-					<p>The source code is available on <Link href="https://github.com/Lakuna/Umbra">its GitHub repository</Link>, and the documentation is on <Link href="https://umbra.lakuna.pw/">its website</Link>.</p>
+					<p>The source code is available on <Link href="https://github.com/Lakuna/ugl">its GitHub repository</Link>, and the documentation is on <Link href="https://ugl.lakuna.pw/">its website</Link>.</p>
 				</Card>
 				<Card>
 					<h3>My website</h3>

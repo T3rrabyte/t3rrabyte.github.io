@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Color, Program, Buffer, VAO, AttributeState, clearContext, resizeContext, Primitive } from "@lakuna/umbra.js";
+import { Color, Program, Buffer, VAO, AttributeState, clearContext, resizeContext, Primitive } from "uugl";
 import { mat4 } from "gl-matrix";
 
 const vss = `#version 300 es

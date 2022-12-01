@@ -24,7 +24,7 @@ void main() {
 ```
 
 Once an attribute has been declared in a shader program, it can be accessed with the WebGL API by getting its
-*location*. Umbra does this step automatically when linking shader programs.
+*location*. μGL does this step automatically when linking shader programs.
 
 ```js
 const positionAttributeLocation = gl.getAttribLocation(
@@ -80,7 +80,7 @@ gl.bufferData(
 );
 ```
 
-With Umbra, the following line of code is equivalent to the block above.
+With μGL, the following line of code is equivalent to the block above.
 
 ```js
 const positionBuffer = new Buffer(gl,
@@ -157,7 +157,7 @@ gl.vertexAttribPointer(
 ```
 
 The VAO defined in the example above makes it so that `a_position` pulls tightly-packed non-normalized floating-point
-data from `positionBuffer` in intervals of $2$. With Umbra, the following line of code is equivalent to the block above.
+data from `positionBuffer` in intervals of $2$. With μGL, the following line of code is equivalent to the block above.
 
 ```js
 const vao = new VAO(program,
@@ -194,7 +194,7 @@ gl.drawArrays(
 );
 ```
 
-With Umbra, the following line of code is equivalent to the block above.
+With μGL, the following line of code is equivalent to the block above.
 
 ```js
 vao.draw();
@@ -242,7 +242,7 @@ gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array([
 ]), gl.STATIC_DRAW);
 ```
 
-In Umbra, an extra argument can be passed to the `VAO` constructor to apply indices.
+In μGL, an extra argument can be passed to the `VAO` constructor to apply indices.
 
 ```js
 const positionBuffer = new Buffer(gl,
@@ -285,7 +285,7 @@ gl.drawElements(
 );
 ```
 
-Note that Umbra automatically uses the correct draw function, so no changes are necessary when adding indices
-to an Umbra VAO.
+Note that μGL automatically uses the correct draw function, so no changes are necessary when adding indices
+to an μGL VAO.
 
 The next article is about [uniforms](/a/webgl/uniforms).
