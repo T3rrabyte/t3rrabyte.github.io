@@ -50,6 +50,7 @@ const oneLiners = [
 	<span key={44}><a href="https://discord.gg/sdcleague">SDC</a> champion.</span>,
 	<span key={45}>Time favors the Thallids.</span>,
 	<span key={46}>WD-40 Fan</span>
+	<span key={47}>Another way to feel what you don{"'"}t want yourself to know.</span>
 ];
 
 export default function OneLiner() {
