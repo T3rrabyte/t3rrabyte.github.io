@@ -1,6 +1,8 @@
 import { BsRss } from "react-icons/bs";
 import CardList from "../CardList";
 import Card from "../Card";
+import Image from "next/image";
+import minecraftServerPreview from "../a/mc/preview.png";
 
 export default function Page() {
 	return (
@@ -18,6 +20,7 @@ export default function Page() {
 				<Card href="/a/mc">
 					<h2>Minecraft Server</h2>
 					<p>My public Minecraft server.</p>
+					<Image src={minecraftServerPreview} alt="Minecraft server preview." style={{ width: "100%", height: "auto" }} placeholder="blur" />
 				</Card>
 				<Card href="/a/mtg">
 					<h2>MTG Deck Building Compendium</h2>
