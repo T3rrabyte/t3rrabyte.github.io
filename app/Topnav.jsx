@@ -1,9 +1,9 @@
 import Link from "next/link";
 import style from "./topnav.module.scss";
 
-export default function Topnav() {
+export default function Topnav(props) {
 	return (
-		<nav className={style["base"]}>
+		<nav className={style["base"]} {...props}>
 			<ul>
 				<li>
 					<Link href="/">Index</Link>
