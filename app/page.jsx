@@ -6,7 +6,7 @@ export default function Page() {
 	return (
 		<>
 			<h1 style={{ textAlign: "center" }}>Travis Martin</h1>
-			<p style={{ textAlign: "center" }}><OneLiner /></p>
+			<OneLiner style={{ textAlign: "center" }} />
 			<hr />
 			<div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
 				<ButtonLink href="https://github.com/Lakuna"><BsGithub /></ButtonLink>
