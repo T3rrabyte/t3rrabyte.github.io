@@ -42,7 +42,7 @@ const positionBuffer = gl.createBuffer();
 ```
 
 In order to access a buffer with the WebGL API, that buffer must be bound to a *binding point*. Different binding
-points are used for different things.
+points are used for different purposes.
 
 ```js
 // The ARRAY_BUFFER binding point is used for most buffers.
@@ -94,11 +94,12 @@ necessary data has been put into buffers, a shader program can be told how to us
 *vertex array object* (VAO). VAOs contain information like which buffer is supposed to be used for each attribute,
 and what type of data is stored in each buffer.
 
-Each VAO represents one "thing" that will be rasterized by a shader program. For example, imagine that you want to
+Each VAO represents one shape that will be rasterized by a shader program. For example, imagine that you want to
 draw two shapes: a cube and a sphere. A cube and a sphere are different shapes, so each one is made up of a different
 set of vertices. Instead of writing two shader programs (one for each shape), you can instead make a VAO that uses
 a buffer containing the positions to make a cube, and another VAO that uses a buffer containing the positions to
-make a sphere.
+make a sphere. Note that if you want to draw two cubes, they would both use the same VAO; it would be their *uniforms*
+that differ. Uniforms are covered in [the next article](/a/webgl/uniforms).
 
 ```js
 // Create a VAO.
@@ -164,14 +165,14 @@ const vao = new VAO(program,
 	[new AttributeState("a_position", positionBuffer, 2)]);
 ```
 
-The "thing" defined by the data stored in the buffers can be drawn by executing the appropriate draw function with
+The shape defined by the data stored in the buffers can be drawn by executing the appropriate draw function with
 the correct VAO active.
 
 ```js
-// Use the program that is used to draw the "thing."
+// Use the program that is used to draw the shape.
 gl.useProgram(program);
 
-// Bind the VAO of the "thing."
+// Bind the VAO of the shape.
 gl.bindVertexArray(vao);
 
 /*

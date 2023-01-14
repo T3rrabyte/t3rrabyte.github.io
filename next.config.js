@@ -7,8 +7,7 @@ const withMdx = nextMdx({
 	extension: /\.mdx?$/,
 	options: {
 		remarkPlugins: [remarkPrism, remarkMath],
-		rehypePlugins: [rehypeKatex],
-		providerImportSource: undefined // https://github.com/vercel/next.js/issues/42153
+		rehypePlugins: [rehypeKatex]
 	}
 });
 
