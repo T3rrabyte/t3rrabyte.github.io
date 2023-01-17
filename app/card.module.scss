@@ -1,15 +1,12 @@
 @use "variables" as *;
 
-div.base {
+div.base,
+a.base {
 	background-color: $fg-color;
 	color: $text-color;
 	border-radius: 10px;
 	width: 300px;
-
-	a.outer-link {
-		text-decoration: none;
-		color: $text-color;
-	}
+	text-decoration: none;
 
 	div.content-wrapper {
 		padding: 10px;

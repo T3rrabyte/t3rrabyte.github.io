@@ -3,6 +3,7 @@ import CardList from "../CardList";
 import Card from "../Card";
 import Image from "next/image";
 import minecraftServerPreview from "../a/mc/preview.png";
+import SpecularLighting from "../a/webgl/lighting/SpecularLighting";
 
 export default function Page() {
 	return (
@@ -12,6 +13,7 @@ export default function Page() {
 				<Card href="/a/webgl">
 					<h2>WebGL2 Tutorial</h2>
 					<p>The index of my WebGL2 tutorial.</p>
+					<SpecularLighting style={{ width: "100%" }} />
 				</Card>
 				<Card href="/a/srs">
 					<h2>Story Rating System</h2>

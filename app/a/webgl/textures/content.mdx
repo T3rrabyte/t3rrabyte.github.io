@@ -258,21 +258,36 @@ uniform sampler2D u_projTexture;
 out vec4 outColor;
 
 void main() {
+	/*
+	Apply perspective manually, since it isn't automatic
+	here like it is with `gl_Position`.
+	*/
 	vec3 projTexcoord =
 		v_projTexcoord.xyz / v_projTexcoord.w;
 	
+	// Check if the fragment is in the projection frustum.
 	bool inRange =
 		projTexcoord.x >= 0.0
 		&& projTexcoord.x <= 1.0
 		&& projTexcoord.y >= 0.0
 		&& projTexcoord.y <= 1.0;
 	
+	// Get the color of the projected texture.
 	vec4 projTexColor =
 		texture(u_projTexture, projTexcoord.xy);
+
+	// Get the color of the regular texture.
 	vec4 texColor = texture(u_texture, v_texcoord);
 
+	/*
+	Use 100% of the projected texture (and 0% of the
+	regular texture) if the fragment is in the projection
+	frustum, or 100% of the regular texture (and 0% of the
+	projected texture) otherwise.
+	*/
 	float projAmount = inRange ? 1.0 : 0.0;
 
+	// Use the mix amount decided above to set the color.
 	outColor = mix(texColor, projTexColor, projAmount);
 }
 ```
