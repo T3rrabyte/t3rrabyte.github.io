@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, VAO } from "uugl";
+import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, VAO } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import defaultDomain from "../../../domain";

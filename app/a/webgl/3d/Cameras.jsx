@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "uugl";
+import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 
 const vss = `#version 300 es
