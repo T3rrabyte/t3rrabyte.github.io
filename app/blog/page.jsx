@@ -15,10 +15,6 @@ export default function Page() {
 					<p>The index of my WebGL2 tutorial.</p>
 					<SpecularLighting style={{ width: "100%" }} />
 				</Card>
-				<Card href="/a/srs">
-					<h2>Story Rating System</h2>
-					<p>The rating system I use for stories and literature.</p>
-				</Card>
 				<Card href="/a/mc">
 					<h2>Minecraft Server</h2>
 					<p>My public Minecraft server.</p>
