@@ -66,20 +66,20 @@ export default function HypergeometricCalculator(props) {
 
 	return (
 		<form className={style["base"]} {...props}>
-			<label htmlFor="N">Cards in deck (N):</label>
+			<label htmlFor="N">Cards in deck:</label>
 			<input type="number" id="N" name="N" value={N} onChange={onChange(setN)} />
-			<label htmlFor="K">Copies of [card] in deck (K):</label>
+			<label htmlFor="K">Copies of [card] in deck:</label>
 			<input type="number" id="K" name="K" value={K} onChange={onChange(setK)} />
-			<label htmlFor="n">Cards drawn (n):</label>
+			<label htmlFor="n">Cards drawn:</label>
 			<input type="number" id="n" name="n" value={n} onChange={onChange(setn)} />
-			<label htmlFor="k">Preferred copies of [card] drawn (k):</label>
+			<label htmlFor="k">Preferred copies of [card] drawn:</label>
 			<input type="number" id="k" name="k" value={k} onChange={onChange(setk)} />
 			<label htmlFor="e">Chance to draw exactly {k} [card]s:</label>
-			<output id="e" name="e">{e}</output>
+			<output id="e" name="e">{`~${(e * 100).toFixed(2)}%`}</output>
 			<label htmlFor="lt">Chance to draw less than {k} [card]s:</label>
-			<output id="lt" name="lt">{lt}</output>
+			<output id="lt" name="lt">{`~${(lt * 100).toFixed(2)}%`}</output>
 			<label htmlFor="gt">Chance to draw more than {k} [card]s:</label>
-			<output id="gt" name="gt">{gt}</output>
+			<output id="gt" name="gt">{`~${(gt * 100).toFixed(2)}%`}</output>
 		</form>
 	);
 }
