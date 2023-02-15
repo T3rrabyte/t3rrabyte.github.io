@@ -1,8 +1,8 @@
-import Link from "next/link";
+import DynamicLink from "./app/DynamicLink";
 
 export function useMDXComponents(components) {
 	return {
-		a: (props) => <Link {...props} />,
+		a: (props) => <DynamicLink {...props} />,
 		...components
 	};
 }

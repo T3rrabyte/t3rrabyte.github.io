@@ -4,11 +4,12 @@ import Card from "../Card";
 import Image from "next/image";
 import minecraftServerPreview from "../a/mc/preview.png";
 import SpecularLighting from "../a/webgl/lighting/SpecularLighting";
+import Link from "next/link";
 
 export default function Page() {
 	return (
 		<>
-			<h1>Blog <a href="/rss.xml"><BsRss /></a></h1>
+			<h1>Blog <Link href="/rss.xml"><BsRss /></Link></h1>
 			<CardList>
 				<Card href="/a/webgl">
 					<h2>WebGL2 Tutorial</h2>

@@ -1,6 +1,6 @@
-import Link from "next/link";
+import DynamicLink from "./DynamicLink";
 import style from "./button-link.module.scss";
 
 export default function ButtonLink({ className = "", ...props }) {
-	return <Link className={`${style["base"]} ${className}`} {...props} />;
+	return <DynamicLink className={`${style["base"]} ${className}`} {...props} />;
 }
