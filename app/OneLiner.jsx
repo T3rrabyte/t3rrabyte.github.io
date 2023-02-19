@@ -51,7 +51,7 @@ const oneLiners = [
 	<span key={44}><DynamicLink href="https://discord.gg/sdcleague">{"SDC"}</DynamicLink>{" champion."}</span>, // The Seasonal Draft Championship; League of Legends
 	<span key={45}>{"Time favors the Thallids."}</span>, // Magic: The Gathering
 	<span key={46}>{"WD-40 Fan"}</span>, // Inside joke
-	<span key={47}>{"Another way to feel what you don't want yourself to know."}</span>, // I Really Want to Stay at Your House; Cyberpunk: Edgerunners
+	<span key={47}>{"Another way to feel what you didn't want yourself to know."}</span>, // I Really Want to Stay at Your House; Cyberpunk: Edgerunners
 	<code key={48}>{":(){ :|:&};:"}</code>, // Shell fork bomb
 	<span key={49}>{"Excelsior!"}</span>, // "Ever upward!"; Stan Lee; Marvel
 	<span key={50}>{"Day before yesterday I saw a rabbit, and yesterday a deer, and today, you."}</span>, // The Dandelion Girl; Clannad
