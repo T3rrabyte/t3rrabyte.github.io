@@ -1,6 +1,6 @@
 "use client";
 
-import { Program, Buffer, VAO, AttributeState, Color, Texture2D, TextureFormat, TextureFilter, clearContext, resizeContext, Primitive } from "@lakuna/ugl";
+import { Program, Buffer, VAO, AttributeState, Color, Texture2D, TextureInternalFormat, TextureMagFilter, TextureMinFilter, Context, Primitive, FaceDirection, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import defaultDomain from "../../../domain";
@@ -325,8 +325,7 @@ const icoPos = new Float32Array([50, 50, 100]);
 
 export default function ProjectionMapping(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 		const wireframeProgram = Program.fromSource(gl, wireframeVss, wireframeFss);
@@ -356,31 +355,40 @@ export default function ProjectionMapping(props) {
 			new AttributeState("a_position", frustumPositionBuffer)
 		], frustumIndexData);
 
-		const tileTexture = new Texture2D({
+		const tileTexture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([
-				0x80, 0xC0,
-				0xC0, 0x80
-			]),
-			width: 2,
-			height: 2,
-			internalFormat: TextureFormat.LUMINANCE,
-			minFilter: TextureFilter.NEAREST,
-			magFilter: TextureFilter.NEAREST
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([
+						0x80, 0xC0,
+						0xC0, 0x80
+					]),
+					TextureInternalFormat.LUMINANCE,
+					2,
+					2
+				)]
+			])),
+			TextureMagFilter.NEAREST,
+			TextureMinFilter.NEAREST
+		);
 
-		const projectedTexture = new Texture2D({
+		const projectedTexture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-			width: 1,
-			height: 1
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+					undefined,
+					1,
+					1
+				)]
+			]))
+		);
 
 		const projectedImage = new Image();
 		projectedImage.addEventListener("load", () => {
-			projectedTexture.pixels = projectedImage;
-			projectedTexture.width = undefined;
-			projectedTexture.height = undefined;
+			projectedTexture.face.getMip(0).source = projectedImage;
+			projectedTexture.face.getMip(0).width = undefined;
+			projectedTexture.face.getMip(0).height = undefined;
 		});
 		projectedImage.crossOrigin = "";
 		projectedImage.src = textureUrl;
@@ -395,9 +403,9 @@ export default function ProjectionMapping(props) {
 		const texMat = mat4.create();
 
 		return function render(now) {
-			clearContext(gl, transparent, 1);
-			resizeContext(gl);
-			gl.enable(gl.CULL_FACE);
+			gl.clear(transparent, 1);
+			gl.resize();
+			gl.cullFace = FaceDirection.BACK;
 
 			mat4.identity(planeMat);
 			mat4.rotateX(planeMat, planeMat, Math.PI * 3 / 2);

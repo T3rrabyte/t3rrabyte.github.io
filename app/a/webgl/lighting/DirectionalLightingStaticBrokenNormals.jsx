@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, VAO } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection } from "@lakuna/ugl";
 import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -138,8 +138,7 @@ vec3.normalize(lightPos, lightPos);
 
 export default function DirectionalLightingStaticBrokenNormals(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -158,9 +157,9 @@ export default function DirectionalLightingStaticBrokenNormals(props) {
 		const mat = mat4.create();
 
 		return function render(now) {
-			clearContext(gl, transparent, 1);
-			resizeContext(gl);
-			gl.enable(gl.CULL_FACE);
+			gl.clear(transparent, 1);
+			gl.resize();
+			gl.cullFace = FaceDirection.BACK;
 
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 

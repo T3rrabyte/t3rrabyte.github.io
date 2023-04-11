@@ -1,6 +1,6 @@
 "use client";
 
-import { Color, Program, Buffer, VAO, AttributeState, clearContext, resizeContext } from "@lakuna/ugl";
+import { Color, Program, Buffer, VAO, AttributeState, Context } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -40,8 +40,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function SceneGraph({ ...props }) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -72,9 +71,9 @@ export default function SceneGraph({ ...props }) {
 		const tempMat = mat4.create();
 
 		return function render(now) {
-			clearContext(gl, transparent);
+			gl.clear(transparent);
 
-			resizeContext(gl);
+			gl.resize();
 
 			const deltaTime = now - then;
 			then = now;

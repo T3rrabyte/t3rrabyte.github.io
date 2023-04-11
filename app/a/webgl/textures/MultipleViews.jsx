@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Color, Program, Buffer, VAO, AttributeState, clearContext, resizeContext, Primitive } from "@lakuna/ugl";
+import { Color, Program, Buffer, VAO, AttributeState, Context, Primitive, FaceDirection } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 
 const vss = `#version 300 es
@@ -235,8 +235,7 @@ const rightEye = new Float32Array([500, 100, 500]);
 
 export default function MultipleViews(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 		const wireframeProgram = Program.fromSource(gl, wireframeVss, wireframeFss);
@@ -267,10 +266,10 @@ export default function MultipleViews(props) {
 		const tempMat = mat4.create();
 
 		return function render(now) {
-			gl.enable(gl.CULL_FACE);
+			gl.cullFace = FaceDirection.BACK;
 
-			resizeContext(gl, 0, 0, canvas.clientWidth / 2, canvas.clientHeight);
-			clearContext(gl, paleBlue, 1);
+			gl.resize(0, 0, canvas.clientWidth / 2, canvas.clientHeight);
+			gl.clear(paleBlue, 1);
 
 			mat4.identity(fMat);
 			mat4.translate(fMat, fMat, fPosition);
@@ -288,8 +287,8 @@ export default function MultipleViews(props) {
 
 			fVao.draw({ "u_color": green, "u_matrix": tempMat });
 
-			resizeContext(gl, canvas.clientWidth / 2, 0, canvas.clientWidth / 2, canvas.clientHeight);
-			clearContext(gl, paleYellow, 1);
+			gl.resize(canvas.clientWidth / 2, 0, canvas.clientWidth / 2, canvas.clientHeight);
+			gl.clear(paleYellow, 1);
 
 			mat4.perspective(projMat, rightCamFov, (canvas.clientWidth / 2) / canvas.clientHeight, rightCamNear, rightCamFar);
 			mat4.identity(rightCamMat);

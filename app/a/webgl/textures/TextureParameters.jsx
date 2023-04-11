@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureWrapFunction, VAO } from "@lakuna/ugl";
+import { AttributeState, Buffer, Context, Color, Program, Texture2D, TextureWrapFunction, VAO, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import defaultDomain from "../../../domain";
@@ -49,8 +49,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function TextureParameters(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -62,20 +61,27 @@ export default function TextureParameters(props) {
 			new AttributeState("a_texcoord", texcoordBuffer, 2)
 		], indexData);
 
-		const texture = new Texture2D({
+		const texture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-			width: 1,
-			height: 1,
-			wrapSFunction: TextureWrapFunction.CLAMP_TO_EDGE,
-			wrapTFunction: TextureWrapFunction.CLAMP_TO_EDGE
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+					undefined,
+					1,
+					1
+				)]
+			])),
+			undefined,
+			undefined,
+			TextureWrapFunction.CLAMP_TO_EDGE,
+			TextureWrapFunction.CLAMP_TO_EDGE
+		);
 
 		const image = new Image();
 		image.addEventListener("load", () => {
-			texture.pixels = image;
-			texture.width = undefined;
-			texture.height = undefined;
+			texture.face.getMip(0).source = image;
+			texture.face.getMip(0).width = undefined;
+			texture.face.getMip(0).height = undefined;
 		});
 		image.crossOrigin = "";
 		image.src = textureUrl;
@@ -83,9 +89,9 @@ export default function TextureParameters(props) {
 		const mat = mat4.create();
 
 		return function render() {
-			clearContext(gl, transparent);
+			gl.clear(transparent);
 
-			resizeContext(gl);
+			gl.resize();
 
 			mat4.identity(mat);
 			if (canvas.clientWidth > canvas.clientHeight) {

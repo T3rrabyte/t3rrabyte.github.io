@@ -1,6 +1,6 @@
 "use client";
 
-import { Color, Program, Buffer, VAO, AttributeState, clearContext, resizeContext } from "@lakuna/ugl";
+import { Color, Program, Buffer, VAO, AttributeState, Context, FaceDirection } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -89,8 +89,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function Perspective(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -104,11 +103,11 @@ export default function Perspective(props) {
 		const perspectiveMat = mat4.create();
 
 		return function render() {
-			clearContext(gl, transparent, 1);
+			gl.clear(transparent, 1);
 
-			resizeContext(gl);
+			gl.resize();
 
-			gl.enable(gl.CULL_FACE);
+			gl.cullFace = FaceDirection.BACK;
 
 			mat4.ortho(orthoMat, 0, canvas.clientWidth, 0, canvas.clientHeight, 0, 1000);
 			mat4.translate(orthoMat, orthoMat, [canvas.clientWidth / 4, canvas.clientHeight / 2, -500]);

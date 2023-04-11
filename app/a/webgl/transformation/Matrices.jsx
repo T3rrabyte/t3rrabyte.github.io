@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "@lakuna/ugl";
+import { Program, Buffer, VAO, AttributeState, Color, Context } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 
 const vss = `#version 300 es
@@ -28,8 +28,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function Matrices(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -42,9 +41,9 @@ export default function Matrices(props) {
 		const mat = mat4.create();
 
 		return function render(now) {
-			clearContext(gl, transparent);
+			gl.clear(transparent);
 
-			resizeContext(gl);
+			gl.resize();
 
 			mat4.ortho(mat, 0, canvas.clientWidth, 0, canvas.clientHeight, 0, 1);
 			mat4.translate(mat, mat, [canvas.clientWidth / 2, canvas.clientHeight / 2, 0]);

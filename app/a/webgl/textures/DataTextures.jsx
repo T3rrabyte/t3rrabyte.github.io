@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureFilter, TextureFormat, VAO } from "@lakuna/ugl";
+import { AttributeState, Buffer, Context, Color, Program, Texture2D, TextureMagFilter, TextureMinFilter, TextureInternalFormat, VAO, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -46,8 +46,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function DataTextures(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -59,25 +58,29 @@ export default function DataTextures(props) {
 			new AttributeState("a_texcoord", texcoordBuffer, 2)
 		], indexData);
 
-		const texture = new Texture2D({
+		const texture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([
-				0x80, 0x40, 0x80,
-				0x00, 0xC0, 0x00
-			]),
-			width: 3,
-			height: 2,
-			internalFormat: TextureFormat.R8,
-			minFilter: TextureFilter.NEAREST,
-			magFilter: TextureFilter.NEAREST
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([
+						0x80, 0x40, 0x80,
+						0x00, 0xC0, 0x00
+					]),
+					TextureInternalFormat.R8,
+					3,
+					2
+				)]
+			])),
+			TextureMagFilter.NEAREST,
+			TextureMinFilter.NEAREST
+		);
 
 		const mat = mat4.create();
 
 		return function render() {
-			clearContext(gl, transparent);
+			gl.clear(transparent);
 
-			resizeContext(gl);
+			gl.resize();
 
 			mat4.identity(mat);
 			if (canvas.clientWidth > canvas.clientHeight) {

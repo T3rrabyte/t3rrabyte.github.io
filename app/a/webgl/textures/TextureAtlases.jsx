@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Program, resizeContext, Texture2D, TextureFilter, VAO } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Program, Context, Texture2D, TextureMinFilter, TextureMagFilter, VAO, FaceDirection, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import defaultDomain from "../../../domain";
@@ -135,8 +135,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function TextureAtlases(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -148,20 +147,25 @@ export default function TextureAtlases(props) {
 			new AttributeState("a_texcoord", texcoordBuffer, 2)
 		], indexData);
 
-		const texture = new Texture2D({
+		const texture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-			width: 1,
-			height: 1,
-			minFilter: TextureFilter.NEAREST,
-			magFilter: TextureFilter.NEAREST
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+					undefined,
+					1,
+					1
+				)]
+			])),
+			TextureMagFilter.NEAREST,
+			TextureMinFilter.NEAREST
+		);
 
 		const image = new Image();
 		image.addEventListener("load", () => {
-			texture.pixels = image;
-			texture.width = undefined;
-			texture.height = undefined;
+			texture.face.getMip(0).source = image;
+			texture.face.getMip(0).width = undefined;
+			texture.face.getMip(0).height = undefined;
 		});
 		image.crossOrigin = "";
 		image.src = textureUrl;
@@ -176,11 +180,11 @@ export default function TextureAtlases(props) {
 		mat4.scale(mat, mat, [cubeSideLength, cubeSideLength, cubeSideLength]);
 
 		return function render(now) {
-			clearContext(gl, transparent, 1);
+			gl.clear(transparent, 1);
 
-			resizeContext(gl);
+			gl.resize();
 
-			gl.enable(gl.CULL_FACE);
+			gl.cullFace = FaceDirection.BACK;
 
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 			mat4.identity(camMat);

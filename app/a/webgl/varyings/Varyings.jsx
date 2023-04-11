@@ -1,7 +1,7 @@
 "use client";
 
 import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, clearContext, Color, resizeContext } from "@lakuna/ugl";
+import { Program, Buffer, VAO, AttributeState, Color, Context } from "@lakuna/ugl";
 
 const vss = `#version 300 es
 in vec4 a_position;
@@ -36,8 +36,7 @@ const transparent = new Color(0, 0, 0, 0);
 
 export default function Varyings(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -50,9 +49,9 @@ export default function Varyings(props) {
 		]);
 
 		return function render() {
-			clearContext(gl, transparent);
+			gl.clear(transparent);
 
-			resizeContext(gl);
+			gl.resize();
 
 			vao.draw();
 		}

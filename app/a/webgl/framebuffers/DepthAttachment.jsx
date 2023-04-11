@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, clearContext, Color, Framebuffer, FramebufferAttachmentPoint, Program, Renderbuffer, RenderbufferFormat, resizeContext, Texture2D, TextureFilter, TextureFormat, VAO } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Framebuffer, FramebufferAttachmentPoint, Program, Renderbuffer, RenderbufferFormat, Context, Texture2D, TextureMinFilter, TextureMagFilter, TextureInternalFormat, VAO, Mipmap, Texture2DMip, FaceDirection } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 
@@ -132,8 +132,7 @@ const camDist = 5;
 
 export default function RenderToTexture(props) {
 	return AnimatedCanvas((canvas) => {
-		const gl = canvas.getContext("webgl2");
-		if (!gl) { throw new Error("Your browser does not support WebGL2."); }
+		const gl = new Context(canvas);
 
 		const program = Program.fromSource(gl, vss, fss);
 
@@ -145,38 +144,49 @@ export default function RenderToTexture(props) {
 			new AttributeState("a_texcoord", texcoordBuffer, 2)
 		], indexData);
 
-		const redTexture = new Texture2D({
+		const redTexture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([0xFF]),
-			width: 1,
-			height: 1,
-			internalFormat: TextureFormat.R8,
-			minFilter: TextureFilter.NEAREST,
-			magFilter: TextureFilter.NEAREST
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([0xFF]),
+					TextureInternalFormat.R8,
+					1,
+					1
+				)]
+			])),
+			TextureMagFilter.NEAREST,
+			TextureMinFilter.NEAREST
+		);
 
-		const blueTexture = new Texture2D({
+		const blueTexture = new Texture2D(
 			gl,
-			pixels: new Uint8Array([0x0, 0x0, 0xFF]),
-			width: 1,
-			height: 1,
-			internalFormat: TextureFormat.RGB8,
-			minFilter: TextureFilter.NEAREST,
-			magFilter: TextureFilter.NEAREST
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array([0x0, 0x0, 0xFF]),
+					TextureInternalFormat.RGB8,
+					1,
+					1
+				)]
+			])),
+			TextureMagFilter.NEAREST,
+			TextureMinFilter.NEAREST
+		);
 
-		const renderTexture = new Texture2D({
+		const renderTexture = new Texture2D(
 			gl,
-			width: 256,
-			height: 256,
-			minFilter: TextureFilter.LINEAR
-		});
+			new Mipmap(new Map([
+				[0, new Texture2DMip(
+					new Uint8Array(256 * 256 * 4),
+					undefined,
+					256,
+					256
+				)]
+			]))
+		);
 
 		const depthRenderbuffer = new Renderbuffer(gl, RenderbufferFormat.DEPTH_COMPONENT24, 256, 256);
 
-		const framebuffer = new Framebuffer(gl);
-		framebuffer.attach(renderTexture, FramebufferAttachmentPoint.COLOR_ATTACHMENT0);
-		framebuffer.attach(depthRenderbuffer, FramebufferAttachmentPoint.DEPTH_ATTACHMENT);
+		const framebuffer = new Framebuffer(gl, [renderTexture.face], depthRenderbuffer);
 
 		const projMat = mat4.create();
 		const camMat = mat4.create();
@@ -188,13 +198,13 @@ export default function RenderToTexture(props) {
 
 		return function render(now) {
 			// Global state applies to all buffers.
-			gl.enable(gl.CULL_FACE);
+			gl.cullFace = FaceDirection.BACK;
 
 			// Render to texture first.
 			framebuffer.bind();
-			resizeContext(gl, 0, 0, renderTexture.width, renderTexture.height);
-			clearContext(gl, green, 1);
-			mat4.perspective(projMat, Math.PI / 4, renderTexture.width / renderTexture.height, 1, 1000);
+			gl.resize(0, 0, renderTexture.face.getMip(0).width, renderTexture.face.getMip(0).height);
+			gl.clear(green, 1);
+			mat4.perspective(projMat, Math.PI / 4, renderTexture.face.getMip(0).width / renderTexture.face.getMip(0).height, 1, 1000);
 			mat4.identity(camMat);
 			mat4.rotateX(camMat, camMat, 0.001 * now);
 			mat4.translate(camMat, camMat, [0, 0, camDist]);
@@ -211,8 +221,8 @@ export default function RenderToTexture(props) {
 
 			// Render to the canvas after.
 			Framebuffer.unbind(gl);
-			resizeContext(gl);
-			clearContext(gl, transparent, 1);
+			gl.resize();
+			gl.clear(transparent, 1);
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 			mat4.identity(camMat);
 			mat4.rotateX(camMat, camMat, 0.001 * now);
