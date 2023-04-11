@@ -2,7 +2,7 @@ import "./global.scss";
 import style from "./layout.module.scss";
 import Gtag from "./Gtag";
 import Topnav from "./Topnav";
-import { Arvo, Ubuntu, Ubuntu_Mono } from "@next/font/google";
+import { Arvo, Ubuntu, Ubuntu_Mono } from "next/font/google";
 
 const arvo = Arvo({
 	weight: "400",

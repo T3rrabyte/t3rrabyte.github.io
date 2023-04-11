@@ -9,6 +9,7 @@ import prepareModeratelyPreview from "./prepare-moderately.png";
 import mobaPreview from "./moba.png";
 import outpostPreview from "./outpost.png";
 import Cameras from "../a/webgl/3d/Cameras";
+import generateMetadata from "../generateMetadata";
 
 export default function Page() {
 	return (
@@ -78,3 +79,5 @@ export default function Page() {
 		</>
 	);
 }
+
+export const metadata = generateMetadata("Portfolio", "Travis Martin's software development portfolio.", "/favicon.png", "/portfolio");
