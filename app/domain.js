@@ -1,3 +1,3 @@
-export default typeof process?.env?.VERCEL_URL != "undefined"
-	? `https://${process.env.VERCEL_URL}`
-	: `https://localhost:${process?.env?.PORT || 3000}`;
+export default process.env.NODE_ENV == "development"
+	? `http://localhost:${process.env.PORT ?? 3000}`
+	: "https://www.lakuna.pw";
