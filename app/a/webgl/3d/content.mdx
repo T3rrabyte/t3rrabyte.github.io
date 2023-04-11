@@ -20,6 +20,18 @@ being rasterized in a counter-clockwise orientation relative to the camera. To d
 gl.enable(gl.CULL_FACE);
 ```
 
+You can also choose whether you want to cull polygons that are facing towards or away from the camera.
+
+```js
+gl.cullFace(gl.BACK);
+```
+
+In μGL, polygon culling is enabled via the `cullFace` accessor.
+
+```js
+gl.cullFace = FaceDirection.BACK;
+```
+
 Enabling `CULL_FACE` will make any triangles that are defined in the wrong orientation invisible.
 
 import OrthoBadVertices from "./OrthoBadVertices";

@@ -176,7 +176,7 @@ export default function RenderToTexture(props) {
 			gl,
 			new Mipmap(new Map([
 				[0, new Texture2DMip(
-					new Uint8Array(256 * 256 * 4),
+					undefined,
 					undefined,
 					256,
 					256

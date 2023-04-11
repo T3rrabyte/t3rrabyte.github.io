@@ -55,10 +55,21 @@ const renderTexture = new Texture2D({
 	minFilter: TextureFilter.LINEAR
 });
 
-const fb = new Framebuffer(gl);
+const renderTexture = new Texture2D(
+	gl,
+	new Mipmap(new Map([
+		[0, new Texture2DMip(
+			undefined,
+			undefined,
+			256,
+			256
+		)]
+	])),
+	undefined,
+	TextureMinFilter.LINEAR
+);
 
-fb.attach(renderTexture,
-	FramebufferAttachmentPoint.COLOR_ATTACHMENT0);
+const fb = new Framebuffer(gl, [renderTexture]);
 ```
 
 ## Render to texture
@@ -84,8 +95,7 @@ texture, attach a depth renderbuffer to the framebuffer.
 const depthRenderbuffer = new Renderbuffer(gl,
 	RenderbufferFormat.DEPTH_COMPONENT24, 256, 256);
 
-fb.attach(depthRenderbuffer,
-	FramebufferAttachmentPoint.DEPTH_ATTACHMENT);
+fb.depthAttachment = depthRenderbuffer;
 ```
 
 import DepthAttachment from "./DepthAttachment";

@@ -149,6 +149,12 @@ are high-level, such as [three.js](https://threejs.org/) and [Babylon.js](https:
 low-level, such as [TWGL](https://twgljs.org/) and [μGL](https://ugl.lakuna.pw/). μGL is my library, so
 it is what will be used in this tutorial series.
 
+μGL uses its own `Context` class instead of the WebGL API's provided `WebGL2RenderingContext` class.
+
+```js
+const gl = new Context(canvas);
+```
+
 With μGL, the following line of code is equivalent to the block above.
 
 ```js

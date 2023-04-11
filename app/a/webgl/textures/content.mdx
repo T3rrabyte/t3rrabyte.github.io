@@ -68,18 +68,23 @@ gl.uniform1i(imageUniformLocation, 0);
 μGL handles texture units automatically.
 
 ```js
-const texture = new Texture2D({
+const texture = new Texture2D(
 	gl,
-	pixels: new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-	width: 1,
-	height: 1
-});
+	new Mipmap(new Map([
+		[0, new Texture2DMip(
+			new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
+			undefined,
+			1,
+			1
+		)]
+	]))
+);
 
 const image = new Image();
 image.addEventListener("load", () => {
-	texture.pixels = image;
-	texture.width = undefined;
-	texture.height = undefined;
+	texture.face.getMip(0).source = image;
+	texture.face.getMip(0).width = undefined;
+	texture.face.getMip(0).height = undefined;
 });
 image.crossOrigin = "";
 image.src = "https://www.lakuna.pw/images/" +
@@ -187,7 +192,8 @@ gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
 μGL automatically determines the correct format and data type based on the specified internal format.
 
 ```js
-texture.internalFormat = TextureFormat.R8;
+texture.face.getMip(0).internalFormat
+	= TextureInternalFormat.R8;
 ```
 
 **Textures will not update if their width is not a multiple of their *unpack alignment***. The unpack alignment defaults to

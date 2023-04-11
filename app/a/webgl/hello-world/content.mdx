@@ -29,6 +29,12 @@ The rendering context can be obtained via a method on the canvas.
 const gl = canvas.getContext("webgl2");
 ```
 
+In μGL, the `Context` constructor would be used instead.
+
+```js
+const gl = new Context(canvas);
+```
+
 ### Shader program
 
 The vertex shader for this shader program will have only one attribute that stores vertex position data.
@@ -140,7 +146,7 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 becomes more useful in later programs, when multiple viewport buffers are used.
 
 ```js
-clearContext(gl, new Color(0, 0, 0, 0));
+gl.clear(new Color(0, 0, 0, 0));
 ```
 
 ### Resizing the viewport
@@ -157,7 +163,7 @@ canvas.height = canvas.clientHeight;
 μGL provides a function called `resizeContext` that has similar functionality to the code above but is more performant.
 
 ```js
-resizeContext(gl);
+gl.resize();
 ```
 
 ### Global state
@@ -212,9 +218,7 @@ import Buffer from "uugl/buffer";
 // Et cetera.
 */
 
-const gl = document
-	.querySelector("canvas")
-	.getContext("webgl2");
+const gl = new Context(document.querySelector("canvas"));
 
 const program = Program.fromSource(gl,
 `#version 300 es
@@ -234,9 +238,9 @@ const vao = new VAO(program,
 function renderStep() {
 	requestAnimationFrame(renderStep);
 
-	clearContext(gl, new Color(0, 0, 0, 0));
+	gl.clear(new Color(0, 0, 0, 0));
 
-	resizeContext(gl);
+	gl.resize();
 
 	vao.draw();
 }
