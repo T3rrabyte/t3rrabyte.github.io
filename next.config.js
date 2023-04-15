@@ -17,8 +17,14 @@ export default withMdx({
 	},
 	rewrites: [
 		{
-			source: "/test",
-			destination: "http://mc.lakuna.pw:8183/"
+			source: "/:path*",
+			has: [
+				{
+					type: "host",
+					value: "map.mc.lakuna.pw"
+				}
+			],
+			destination: "http://mc.lakuna.pw:8183/:path*"
 		}
 	]
 });
