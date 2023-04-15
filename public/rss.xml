@@ -15,6 +15,14 @@
 			<link>https://www.lakuna.pw/</link>
 		</image>
 		<item>
+			<title>Esoteric JavaScript</title>
+			<link>https://www.lakuna.pw/a/esojs</link>
+			<description>How to write any JavaScript program with just six unique characters.</description>
+			<author>tjmartin2003@gmail.com (Travis Martin)</author>
+			<guid>https://www.lakuna.pw/a/esojs</guid>
+			<pubDate>Tues, 11 Aug 2023 17:00:00 GMT</pubDate>
+		</item>
+		<item>
 			<title>Introduction to WebGL2</title>
 			<link>https://www.lakuna.pw/a/webgl</link>
 			<description>The table of contents for my WebGL2 tutorial series.</description>

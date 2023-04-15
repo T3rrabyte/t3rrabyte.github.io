@@ -12,6 +12,10 @@ export default function Page() {
 		<>
 			<h1>Blog <Link href="/rss.xml"><BsRss /></Link></h1>
 			<CardList>
+				<Card href="/a/esojs">
+					<h2>Esoteric JavaScript</h2>
+					<p>How to write any JavaScript program with just six unique characters.</p>
+				</Card>
 				<Card href="/a/webgl">
 					<h2>WebGL2 Tutorial</h2>
 					<p>The index of my WebGL2 tutorial.</p>

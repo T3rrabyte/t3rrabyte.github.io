@@ -1,0 +1,293 @@
+# Esoteric JavaScript
+
+It is possible to write any JavaScript program with just six unique characters. Those characters are
+both square brackets, both parenthesis, the plus symbol, and the exclamation point (`[]()+!`). This
+concept is known as "[JSFuck](https://en.wikipedia.org/wiki/JSFuck)," named for a well-known esoteric
+programming language called "[Brainfuck](https://en.wikipedia.org/wiki/Brainfuck)."
+
+One of the most unique features of JavaScript is its type system. JavaScript is not strictly-typed like
+most other languages (such as C and Java). Instead, variables are declared with either `let` or `const`,
+and can hold any data type. The feature that makes JSFuck possible is implicit type coercion: the system
+by which JavaScript converts variables to other types as necessary.
+
+```js
+("b" + "a" + + "a" + "a").toLowerCase(); // "banana"
+```
+
+In the example above, JavaScript tries to convert the second `"a"` into a number because of the extra `+`
+before it. Since `"a"` isn't a number, it gets converted to `NaN`. `NaN` then gets converted to a string
+when it is concatenated with the rest of the strings, making `"baNaNa"`. The call to `toLowerCase` makes
+the final string look like a normal word. This example uses implicit type coercion twice: once to convert
+`"a"` to a number, and once to convert `NaN` to a string.
+
+There are too many type coercion rules to list, but some important ones are as follows:
+
+- A number, when added to a string, becomes a string: `"a" + 0 == "a0"`.
+- A boolean, when added to a number, becomes a number: `true + 0 == 1`. `false` becomes `0` and `true`
+becomes `1`.
+- `+` and `-` can be used as unary operators to convert anything into a number. `+[] == 0`, `+true == 1`,
+and `+"a" == NaN` are all examples of this.
+- `!` can be used as a unary operator to convert anything into a boolean. Falsy values (those that evaluate
+to `false`, such as `0`, `""`, and `false`) become `true`, and truthy values (those that evaluate to
+`true`, such as `1`, `"a"`, `[]`, `{}`, and `true`) become `false`.
+- Adding an array to anything converts it into a string: `[] + [] == ""`.
+
+## JavaScript with thirteen characters
+
+Before I get into true JSFuck (which uses only six characters), I will cover the version covered in
+[this](https://youtu.be/sRWE5tnaxlI) video (which uses thirteen characters: `({[/>+!-=\]})`).
+
+The basic elements that we can use to create everything else are empty objects (`{}`) and empty arrays (`[]`).
+Everything else is created by using operators to coerce and combine those values into others.
+
+```js
+const _object = "{}";
+const _array = "[]";
+```
+
+The most basic values to start by making are the booleans: `true` and `false`. `false` can be created by
+negating any truthy value, such as an empty array. `true` can be created by negating `false`.
+
+```js
+const _false = `!${_array}`;
+const _true = `!${_false}`;
+```
+
+Zero can be obtained easily by casting an empty array to a number. One can be obtained by casting
+`true` to a number.
+
+```js
+const _0 = `+${_array}`;
+const _1 = `+${_true}`;
+```
+
+Note that another common way of making true is by negating zero (`!+[]`).
+
+Every other number can be created by adding ones.
+
+```js
+// Only non-negative numbers are needed.
+const _number = (n) => n == 0
+	? _0
+	: n == 1
+		? _1
+		: `${_1}${_number(n - 1)}`;
+```
+
+Note that the original video created the above function by combining ones with `" + "`. This includes spaces, which are not
+part of the allowed thirteen characters. The spaces cannot be removed because then the leading pluses in the one strings would
+combine with the combining pluses to make increment operators (`++`). This issue can be resolved in various ways.
+
+- Add true strings instead of one strings (`!![]+!![] == 2`; doesn't work to make `1`).
+- Combine one strings without pluses (`+!![]+!![] == 2`; wastes one character unless making `1`; shown above).
+- A combination of the above, returning the one string for `1` and combining true strings otherwise.
+
+Additionally, numbers with more than one digit can be created by utilizing the way in which arrays are converted to strings.
+For example, `[1] + [2] == "12"`, which can be cast back into a number by wrapping the entire line in parenthesis with a plus
+prefix (`+{[1] + [2]} == 12`).
+
+The video proceeds from this point by attempting to obtain the following
+characters: `"f"`, `"r"`, `"o"`, `"m"`, `"C"`, `"h"`, `"a"`, `"d"`, `"e"`, `"t"`, `"S"`, `"i"`, `"n"`, `"g"`,
+`"c"`, `"s"`, `"u"`, `"p"`, `" "`, and `"\"`.
+
+`"a"` can be obtained from `"NaN"` at index `1`. `"NaN"` can be obtained by adding an array to `NaN`. `NaN` can be obtained
+by converting an object to a number.
+
+```js
+const _NaN = `+${_object}`;
+const _NaN_string = `${_NaN}+${_array}`;
+const _a = `(${_NaN_string})[${_1}]`;
+```
+
+When an object is converted to a string, it becomes `"[object Object]"`. This string yields the characters `"o"`, `"e"`,
+`"c"`, `"t"`, and `" "` from the list above.
+
+```js
+const _object_string = `(${_object}+${_array})`;
+const _o = `${_object_string}[${_1}]`;
+const _e = `${_object_string}[${_number(4)}]`;
+const _c = `${_object_string}[${_number(5)}]`;
+const _t = `${_object_string}[${_number(6)}]`;
+const _space = `${_object_string}[${_number(7)}]`;
+```
+
+The characters `"f"` and `"s"` can be extracted from `"false"`, and `"r"` and `"u"` can be extracted from `"true"`.
+
+```js
+const _false_string = `(${_false}+${_array})`;
+const _f = `${_false_string}[${_0}]`;
+const _s = `${_false_string}[${_number(3)}]`;
+
+const _true_string = `(${_true}+${_array})`;
+const _r = `${_true_string}[${_1}]`;
+const _u = `${_true_string}[${_number(2)}]`;
+```
+
+The characters `"n"` and `"i"` can be obtained from `"Infinity"`, which is the string form of `Infinity`, which can
+be obtained by dividing any non-zero number (one, in our case) by zero.
+
+```js
+const _Infinity = `${_1}/${_0}`;
+const _Infinity_string = `(${_Infinity}+${_array})`;
+const _n = `${_Infinity_string}[${_1}]`;
+const _i = `${_Infinity_string}[${_number(3)}]`;
+```
+
+In JavaScript, everything is an object. Properties of objects can be accessed using either dot notation (`foo.bar`) or bracket
+notation (`foo["bar"]`). We now have the letters necessary to build the string `"constructor"`, which means that we can use bracket
+notation to access the constructor of any object. Converting the constructor of a string yields either `"function String() { [native code] }`
+or `"function String() {\n[native code]\n}` (depending on the interpreter), which yields `"i"`, `"n"`, `"S"`, `"g"`, and `"d"`
+from our list of characters.
+
+```js
+const _constructor_string =
+	`${_c}+${_o}+${_n}+${_s}+${_t}+${_r}+${_u}+${_c}`
+	+ `+${_t}+${_o}+${_r}`;
+
+const _empty_string = `(${_array}+${_array})`;
+
+const _string_constructor =
+	`${_empty_string}[${_constructor_string}]`;
+
+const _string_constructor_string =
+	`(${_string_constructor}+${_array})`;
+
+const _i = `${_string_constructor_string}[${_number(5)}]`;
+const _n = `${_string_constructor_string}[${_number(7)}]`;
+const _S = `${_string_constructor_string}[${_number(9)}]`;
+const _g = `${_string_constructor_string}[${_number(14)}]`;
+const _d = `${_string_constructor_string}[${_number(30)}]`;
+```
+
+The regular expression constructor yields `"p"`.
+
+```js
+const _regex = `/-/`; // Minimal regular expression.
+
+const _regex_constructor =
+	`${_regex}[${_constructor_string}]`;
+
+const _regex_constructor_string =
+	`(${_regex_constructor}+${_array})`;
+
+const _p = `${_regex_constructor_string}[${_number(14)}]`;
+```
+
+We can also convert a regular expression that contains a backslash directly to a string to obtain `"\"`.
+
+```js
+const _backslash_regex = "/\\\\/";
+
+const _backslash_regex_string =
+	`(${_backslash_regex}+${_array})`;
+
+const _backslash = `${_backslash_regex_string}[${_1}]`;
+```
+
+Every lowercase letter can be obtained by converting a number to a string using a sufficiently high base.
+We will use the `Number.toString` method to obtain our last two lowercase letters, `"h"` and `"m"`.
+
+```js
+const _toString_string =
+	`${_t}+${_o}+${_S}+${_t}+${_r}+${_i}+${_n}+${_g}`;
+
+const _h =
+	`(${_number(17)})[${_toString_string}](${_number(18)})`;
+
+const _m =
+	`(${_number(22)})[${_toString_string}](${_number(23)})`;
+```
+
+Finally, the last character from the list, `"C"`, can be obtained by executing the function constructor. The
+function constructor is very similar to the infamous `eval` function in that it takes a string representing
+JavaScript code and executes it. A basic function can be created using the arrow notation. The function's
+constructor can be obtained like any other object's. Executing the function constructor with `"return escape"`
+as its parameter will cause it to return a function that returns the built-in `escape` function, which replaces
+a character with its escape sequence. Finally, a backslash can be passed to `escape` to create `"%5C"`, which
+contains `"C"`.
+
+```js
+const _function = "()=>{}";
+
+const _function_constructor =
+	`(${_function})[${_constructor_string}]`;
+
+const _return_escape_string =
+	`${_r}+${_e}+${_t}+${_u}+${_r}+${_n}+${_space}`
+	+ `+${_e}+${_s}+${_c}+${_a}+${_p}+${_e}`;
+
+const _escape =
+	`${_function_constructor}(${_return_escape_string})()`;
+
+const _percent5C = `${_escape}(${_backslash})`;
+
+const _C = `${_percent5C}[${_number(2)}]`;
+```
+
+With this, we now have the ability to construct the string `"toCharCode"`, which will allow us to convert
+any character into our allowed symbols.
+
+```js
+const _fromCharCode_string =
+	`${_f}+${_r}+${_o}+${_m}+${_C}+${_h}+${_a}+${_r}`
+	+ `+${_C}+${_o}+${_d}+${_e}`;
+
+const _string = (s) => s.split("").map((c) => {
+	switch (c) {
+		case "f": return _f;
+		case "r": return _r;
+		case "o": return _o;
+		case "m": return _m;
+		case "C": return _C;
+		case "h": return _h;
+		case "a": return _a;
+		case "d": return _d;
+		case "e": return _e;
+		case "t": return _t;
+		case "S": return _S;
+		case "i": return _i;
+		case "n": return _n;
+		case "g": return _g;
+		case " ": return _space;
+		case "\\": return _backslash;
+		default:
+			return `${_string_constructor}`
+				+ `[${_fromCharCode_string}]`
+				+ `(${_number(c.charCodeAt(0))})`;
+	}
+}).join("+");
+```
+
+The final step is to take the string of code that we produce and execute it. As mentioned previously,
+the function constructor allows us to execute a string of JavaScript code.
+
+```js
+const compile = (code) =>
+	`${_function_constructor}(${_string(code)})()`;
+```
+
+## JavaScript with six characters
+
+JSFuck uses only six characters (`[]()+!`), losing `{}>-=\` from the thirteen used above (`({[/>+!-=\]})`).
+Notably, this means that the only basic value that can be used to make other things is an empty array, since we
+no longer have access to curly braces to make objects with. We also can't use regular expressions or arrow functions.
+
+`undefined` can be obtained by accessing the empty array property of an empty array.
+
+```js
+const _undefined = "[][[]]";
+```
+
+Between `"true"`, `"false"`, and `"undefined"`, it is possible to obtain the characters necessary to create the strings
+`"at"` and `"entries"`, both of which are names of methods on arrays. `"at"` is important because using it is the shortest way
+to create a function string. `"entries"` is important because executing it gives an array iterator, which becomes
+`"[object Array Iterator]"` when converted to a string. Those strings yield the characters necessary to form the string `"constructor"`.
+Just like before, this string can be used to obtain the function, string, number, and array constructors. The `name` property of the
+string constructor can be concatenated with `"to"` to make `"toString"`, which again grants access to all lowercase letters.
+
+With that, it is possible to create the following string: `"try{String().normalize(false)}catch(f){return f}"`. This string can
+be executed using the function constructor, returning a `RangeError`. With the characters from converting that value to a string,
+it is possible to execute `"return RegExp"` to obtain a `RegExp`. Executing `RegExp` without any parameters returns a forward slash.
+Executing `RegExp` with just a forward slash returns a backslash. `[]+[[]].concat([[]])` returns a comma.
+`Function(try{Function([]+[[]].concat([[]]))}catch(f){return f})()` returns `"SyntaxError: Unexpected ','"`. With those characters,
+it is possible to obtain any unicode character by executing `Function("return '\uXXXX'")`, where `XXXX` is the character code **in hexadecimal**.
