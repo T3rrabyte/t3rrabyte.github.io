@@ -14,5 +14,11 @@ const withMdx = nextMdx({
 export default withMdx({
 	experimental: {
 		appDir: true
-	}
+	},
+	rewrites: [
+		{
+			source: "/test",
+			destination: "http://mc.lakuna.pw:8183/"
+		}
+	]
 });
