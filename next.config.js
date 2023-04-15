@@ -15,16 +15,18 @@ export default withMdx({
 	experimental: {
 		appDir: true
 	},
-	rewrites: [
-		{
-			source: "/:path*",
-			has: [
-				{
-					type: "host",
-					value: "map.mc.lakuna.pw"
-				}
-			],
-			destination: "http://mc.lakuna.pw:8183/:path*"
-		}
-	]
+	async rewrites() {
+		return [
+			{
+				source: "/:path*",
+				has: [
+					{
+						type: "host",
+						value: "map.mc.lakuna.pw"
+					}
+				],
+				destination: "http://mc.lakuna.pw:8183/:path*"
+			}
+		];
+	}
 });
