@@ -82,7 +82,7 @@ combine with the combining pluses to make increment operators (`++`). This issue
 - Combine one strings without pluses (`+!![]+!![] == 2`; wastes one character unless making `1`; shown above).
 - A combination of the above, returning the one string for `1` and combining true strings otherwise.
 
-Additionally, numbers with more than one digit can be created by utilizing the way in which arrays are converted to strings.
+Additionally, numbers with more than one digit can be created by utilizing the way that arrays are converted to strings.
 For example, `[1] + [2] == "12"`, which can be cast back into a number by wrapping the entire line in parenthesis with a plus
 prefix (`+{[1] + [2]} == 12`).
 
@@ -291,3 +291,5 @@ it is possible to execute `"return RegExp"` to obtain a `RegExp`. Executing `Reg
 Executing `RegExp` with just a forward slash returns a backslash. `[]+[[]].concat([[]])` returns a comma.
 `Function(try{Function([]+[[]].concat([[]]))}catch(f){return f})()` returns `"SyntaxError: Unexpected ','"`. With those characters,
 it is possible to obtain any unicode character by executing `Function("return '\uXXXX'")`, where `XXXX` is the character code **in hexadecimal**.
+
+Since `NaN` cannot be created using an object anymore, it can instead be created like `+[false]`.
