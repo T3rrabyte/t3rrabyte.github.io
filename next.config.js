@@ -21,7 +21,8 @@ export default withMdx({
 				source: "/:path*",
 				has: [
 					{
-						type: "host",
+						type: "header",
+						key: "host",
 						value: "map.mc.lakuna.pw"
 					}
 				],
