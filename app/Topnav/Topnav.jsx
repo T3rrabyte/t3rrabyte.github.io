@@ -1,4 +1,4 @@
-import Link from "next/link";
+import DynamicLink from "../../shared/DynamicLink";
 import style from "./topnav.module.scss";
 
 export default function Topnav(props) {
@@ -6,13 +6,13 @@ export default function Topnav(props) {
 		<nav className={style["base"]} {...props}>
 			<ul>
 				<li>
-					<Link href="/">Index</Link>
+					<DynamicLink href="/">Index</DynamicLink>
 				</li>
 				<li>
-					<Link href="/blog">Blog</Link>
+					<DynamicLink href="/blog">Blog</DynamicLink>
 				</li>
 				<li>
-					<Link href="/portfolio">Portfolio</Link>
+					<DynamicLink href="/portfolio">Portfolio</DynamicLink>
 				</li>
 			</ul>
 		</nav>

@@ -1,7 +1,7 @@
 "use client";
 
 import style from "./hypergeometric-calculator.module.scss";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function factorial(n) {
 	return n < 0 || Number.isNaN(n)

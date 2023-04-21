@@ -1,4 +1,4 @@
-import DynamicLink from "./app/DynamicLink";
+import DynamicLink from "./shared/DynamicLink";
 
 export function useMDXComponents(components) {
 	return {

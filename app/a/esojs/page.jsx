@@ -1,5 +1,5 @@
 import Content from "./content.mdx";
-import generateMetadata from "../../generateMetadata";
+import generateMetadata from "../../../shared/generateMetadata";
 import "prism-themes/themes/prism-atom-dark.min.css";
 
 export default function Page() {

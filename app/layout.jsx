@@ -1,7 +1,7 @@
 import "./global.scss";
 import style from "./layout.module.scss";
 import Gtag from "./Gtag";
-import Topnav from "./Topnav";
+import Topnav from "./Topnav/Topnav";
 import { Arvo, Ubuntu, Ubuntu_Mono } from "next/font/google";
 
 const arvo = Arvo({
@@ -28,18 +28,6 @@ const ubuntuMono = Ubuntu_Mono({
 export default function Layout({ children }) {
 	return (
 		<html lang="en-US" className={`${arvo.variable} ${ubuntu.variable} ${ubuntuMono.variable}`}>
-			<head>
-				<meta charSet="UTF-8" key="charset" />
-				<meta name="author" content="Travis Martin" key="author" />
-				<meta name="viewport" content="width=device-width,initial-scale=1.0" key="viewport" />
-				<meta name="og:type" content="website" key="ogtype" />
-				<meta name="og:locale" content="en_US" key="oglocale" />
-				<meta name="og:site_name" content="lakuna.pw" key="ogsitename" />
-				<meta name="twitter:card" content="summary" key="twittercard" />
-				<meta name="twitter:site" content="@T3Lakuna" key="twittersite" />
-				<meta name="twitter:creator" content="@T3Lakuna" key="twittercreator" />
-				<link rel="icon" type="image/x-icon" href="/favicon.ico" key="favicon" />
-			</head>
 			<body>
 				<div className={style["spacer"]}>
 					<header>
@@ -51,7 +39,7 @@ export default function Layout({ children }) {
 					<footer className={style["footer"]} />
 				</div>
 			</body>
-			<Gtag />
+			<Gtag id="G-HHPHD31E3M" />
 		</html>
 	);
 }

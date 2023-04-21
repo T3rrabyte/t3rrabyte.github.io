@@ -3,7 +3,7 @@
 import { AttributeState, Buffer, Context, Color, Program, Texture2D, TextureMinFilter, TextureMagFilter, VAO, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
-import defaultDomain from "../../../domain";
+import defaultDomain from "../../../../shared/domain";
 
 const textureUrl = `${defaultDomain}/images/webgl-example-texture.png`;
 

@@ -1,15 +1,14 @@
-import Link from "next/link";
-import DynamicLink from "../DynamicLink";
+import DynamicLink from "../../shared/DynamicLink";
 import Image from "next/image";
-import CardList from "../CardList";
-import Card from "../Card";
+import CardList from "../../shared/CardList/CardList";
+import Card from "../../shared/Card/Card";
 import residuumPreview from "./residuum.png";
 import statecraftPreview from "./statecraft.png";
 import prepareModeratelyPreview from "./prepare-moderately.png";
 import mobaPreview from "./moba.png";
 import outpostPreview from "./outpost.png";
 import Cameras from "../a/webgl/3d/Cameras";
-import generateMetadata from "../generateMetadata";
+import generateMetadata from "../../shared/generateMetadata";
 
 export default function Page() {
 	return (

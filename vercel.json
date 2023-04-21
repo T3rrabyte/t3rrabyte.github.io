@@ -1,8 +1,0 @@
-{
-	"routes": [
-		{
-			"src": "/test",
-			"dest": "http://mc.lakuna.pw:8183/"
-		}
-	]
-}

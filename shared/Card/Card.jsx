@@ -1,5 +1,5 @@
 import style from "./card.module.scss";
-import DynamicLink from "./DynamicLink";
+import DynamicLink from "../DynamicLink";
 
 export default function Card({ className = "", children, href = "", ...props }) {
 	return href

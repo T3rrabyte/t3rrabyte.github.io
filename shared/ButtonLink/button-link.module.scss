@@ -1,6 +1,6 @@
-@use "variables" as *;
+@use "../variables" as *;
 
-a.base {
+html body a.base {
 	color: $text-color;
 	background-color: $fg-color;
 	border: 1px solid $text-color;

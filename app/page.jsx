@@ -1,6 +1,6 @@
 import OneLiner from "./OneLiner";
-import Socials from "./Socials";
-import generateMetadata from "./generateMetadata";
+import Socials from "./Socials/Socials";
+import generateMetadata from "../shared/generateMetadata";
 
 export default function Page() {
 	return (

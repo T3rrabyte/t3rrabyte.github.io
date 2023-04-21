@@ -1,5 +1,5 @@
 import style from "./socials.module.scss";
-import ButtonLink from "./ButtonLink";
+import ButtonLink from "../../shared/ButtonLink/ButtonLink";
 import { BsGithub, BsReddit, BsLinkedin, BsTwitch, BsTwitter, BsFacebook, BsYoutube } from "react-icons/bs";
 
 export default function Socials(props) {

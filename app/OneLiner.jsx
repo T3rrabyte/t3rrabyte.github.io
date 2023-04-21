@@ -1,6 +1,6 @@
 "use client";
 
-import DynamicLink from "./DynamicLink";
+import DynamicLink from "../shared/DynamicLink";
 import { useState, useEffect } from "react";
 
 const oneLiners = [

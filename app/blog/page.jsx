@@ -1,17 +1,21 @@
 import { BsRss } from "react-icons/bs";
-import CardList from "../CardList";
-import Card from "../Card";
+import CardList from "../../shared/CardList/CardList";
+import Card from "../../shared/Card/Card";
 import Image from "next/image";
 import minecraftServerPreview from "../a/mc/preview.png";
 import SpecularLighting from "../a/webgl/lighting/SpecularLighting";
 import Link from "next/link";
-import generateMetadata from "../generateMetadata";
+import generateMetadata from "../../shared/generateMetadata";
 
 export default function Page() {
 	return (
 		<>
 			<h1>Blog <Link href="/rss.xml"><BsRss /></Link></h1>
 			<CardList>
+				<Card href="/a/q_rsqrt">
+					<h2>Fast Inverse Square Root</h2>
+					<p>An in-depth review of the famous fast inverse square root algorithm as implemented in Quake III Arena.</p>
+				</Card>
 				<Card href="/a/esojs">
 					<h2>Esoteric JavaScript</h2>
 					<p>How to write any JavaScript program with just six unique characters.</p>

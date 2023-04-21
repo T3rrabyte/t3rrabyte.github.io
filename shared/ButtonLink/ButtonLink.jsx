@@ -1,4 +1,4 @@
-import DynamicLink from "./DynamicLink";
+import DynamicLink from "../DynamicLink";
 import style from "./button-link.module.scss";
 
 export default function ButtonLink({ className = "", ...props }) {
