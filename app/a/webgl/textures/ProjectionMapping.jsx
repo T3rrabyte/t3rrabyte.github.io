@@ -3,9 +3,9 @@
 import { Program, Buffer, VAO, AttributeState, Color, Texture2D, TextureInternalFormat, TextureMagFilter, TextureMinFilter, Context, Primitive, FaceDirection, Mipmap, Texture2DMip } from "@lakuna/ugl";
 import { mat4 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
-import defaultDomain from "../../../../shared/domain";
+import domain from "../../../../shared/domain";
 
-const textureUrl = `${defaultDomain}/images/webgl-example-texture.png`;
+const textureUrl = `${domain}images/webgl-example-texture.png`;
 
 const vss = `#version 300 es
 in vec4 a_position;

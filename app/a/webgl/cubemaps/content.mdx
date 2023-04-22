@@ -3,23 +3,153 @@
 You may need to read the previous articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures)
 in order to understand this one.
 
-A *cubemap* is a type of texture that consists of $6$ faces. Rather than texture coordinates, cubemaps are accessed
-using normals (3D directions).
+A *cubemap* is a type of texture that consists of six faces, each being referenced by their direction from the center
+of the cube. Rather than texture coordinates, cubemaps are accessed using normals (3D directions).
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+In GLSL, a cubemap is referenced with a `samplerCube`, and accessing it with the `texture` method requires a normalized
+vector.
 
-- [Cubemaps](https://webgl2fundamentals.org/webgl/lessons/webgl-cube-maps.html).
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_normal;
+uniform samplerCube u_texture;
+out vec4 outColor;
+
+void main() {
+	outColor = texture(u_texture, normalize(v_normal));
+}
+```
+
+Rather than representing the direction of a vertex, these normals will represent the direction from the center of the
+shape to the point that the texture is being sampled from. For a shape that is centered around the origin, simply normalizing
+the positions of the vectors accomplishes this. Modifying an example from [the lighting article](/a/webgl/lighting) in this way
+makes the light disregard edges.
+
+import SmoothNormals from "./SmoothNormals";
+
+<SmoothNormals style={{ width: "100%" }} />
+
+Instead of using a texture atlas, it is possible to apply a different texture to each side of a cube in this way. Note that
+this is not standard (using a texture atlas is), and it is only being done here as a proof-of-concept.
+
+import SolidColorCubemap from "./SolidColorCubemap";
+
+<SolidColorCubemap style={{ width: "100%" }} />
 
 ## Environment maps
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+The most common thing that a cubemap is used for is an *environment map*. An environment map represents the environment of the
+objects that are being drawn. In other words, it is a way to approximate reflections.
 
-- [Environment maps](https://webgl2fundamentals.org/webgl/lessons/webgl-environment-maps.html).
+A reflection effect can be achieved using GLSL's built-in `reflect` function. The reflective primitive will need its own normals
+so that the direction between the viewer and its surface can be calculated.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec3 a_normal;
+
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+
+out vec3 v_worldPos;
+out vec3 v_worldNormal;
+
+void main() {
+	gl_Position = u_viewProjMat * u_worldMat * a_position;
+	v_worldPos = (u_worldMat * a_position).xyz;
+	v_worldNormal = mat3(u_worldMat) * a_normal;
+}
+```
+
+Using the information about the shape recieved from the vertex shader, the fragment shader can calculate the angle between the
+surface of the primitive and the viewer.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec3 v_worldPos;
+in vec3 v_worldNormal;
+
+uniform samplerCube u_texture;
+uniform vec3 u_worldCamPos;
+
+out vec4 outColor;
+
+void main() {
+	vec3 worldNormal = normalize(v_worldNormal);
+	vec3 eyeToSurfaceDir =
+		normalize(v_worldPos - u_worldCamPos);
+	vec3 dir = reflect(eyeToSurfaceDir, worldNormal);
+	outColor = texture(u_texture, dir);
+}
+```
+
+*The environment map texture used in the following examples is of Leadenhall Market, taken from
+[Poly Haven](https://polyhaven.com/a/leadenhall_market). It was created by [Andreas Mischok](https://www.artstation.com/andreasmischok),
+and allowed for any use under the [CC0](https://creativecommons.org/publicdomain/zero/1.0/) license.*
+
+import EnvironmentMap from "./EnvironmentMap";
+
+<EnvironmentMap style={{ width: "100%" }} />
 
 ## Skyboxes
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+A *skybox* is a cubemap that represents the background of a scene. It gets its name from the fact that it often depicts a sky.
 
-- [Skybox](https://webgl2fundamentals.org/webgl/lessons/webgl-skybox.html).
+While it would be possible to implement a skybox by rasterizing a large cube around the scene, that method comes with some drawbacks:
+
+- The cube might cover up objects in the scene.
+- If the cube is drawn without utilizing the depth buffer in order to prevent it from covering other objects, it doesn't benefit from
+the performance improvements that the depth buffer offers.
+
+Instead, the skybox can be implemented by using the inverse of the view projection matrix to draw the skybox to a rectangle that covers
+the entire viewport. The vertex shader should ensure that the skybox is always at the back of the depth buffer.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+out vec4 v_position;
+
+void main() {
+	gl_Position = a_position;
+
+	// Ensure that the skybox is always at the back.
+	gl_Position.z = 1.0;
+
+	v_position = a_position;
+}
+```
+
+The fragment shader multiplies the fragment position by the inverse of the view projection matrix, effectively undoing the view
+projection. It then manually divides the $x$, $y$, and $z$ components by the $w$ component, which is usually automatically done
+by the vertex shader for perspective-correct texture mapping.
+
+```glsl
+#version 300 es
+
+precision highp float;
+
+in vec4 v_position;
+uniform samplerCube u_texture;
+uniform mat4 u_invViewProjMat;
+out vec4 outColor;
+
+void main() {
+	vec4 t = u_invViewProjMat * v_position;
+	outColor = texture(u_texture, normalize(t.xyz / t.w));
+}
+```
+
+import Skybox from "./Skybox";
+
+<Skybox style={{ width: "100%" }} />
 
 The next article is about [shadows](/a/webgl/shadows).
