@@ -8,7 +8,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@lakuna/ugl": "^14.1.0",
+		"@lakuna/ugl": "^14.1.1",
 		"@mdx-js/loader": "^2.3.0",
 		"@mdx-js/react": "^2.3.0",
 		"@next/mdx": "^13.3.1",
