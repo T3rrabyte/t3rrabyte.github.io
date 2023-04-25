@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap, Mipmap, CubemapMip } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap, Mipmap, CubemapMip, TextureMagFilter, TextureMinFilter } from "@lakuna/ugl";
 import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 

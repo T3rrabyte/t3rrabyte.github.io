@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap, TestFunction } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap, TestFunction, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
 import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import domain from "../../../../shared/domain";
@@ -45,10 +45,10 @@ const skyboxFss = `#version 300 es
 precision highp float;
 in vec4 v_position;
 uniform samplerCube u_texture;
-uniform mat4 u_invViewProjMat;
+uniform mat4 u_invViewDirProjMat;
 out vec4 outColor;
 void main() {
-	vec4 t = u_invViewProjMat * v_position;
+	vec4 t = u_invViewDirProjMat * v_position;
 	outColor = texture(u_texture, normalize(t.xyz / t.w));
 }`;
 
@@ -174,6 +174,9 @@ const pzUrl = `${domain}images/webgl-example-environment-map/pz.png`;
 const nzUrl = `${domain}images/webgl-example-environment-map/nz.png`;
 
 const transparent = new Color(0, 0, 0, 0);
+const cubePos = vec3.fromValues(0, 0, 0);
+const up = vec3.fromValues(0, 1, 0);
+const camDist = 5;
 
 export default function Skybox(props) {
 	return AnimatedCanvas((canvas) => {
@@ -196,6 +199,8 @@ export default function Skybox(props) {
 		], quadIndexData);
 
 		const cubemap = Cubemap.fromImageUrls(gl, pxUrl, nxUrl, pyUrl, nyUrl, pzUrl, nzUrl);
+		cubemap.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
+		cubemap.magFilter = TextureMagFilter.LINEAR;
 
 		const camPos = vec3.create();
 
@@ -204,8 +209,9 @@ export default function Skybox(props) {
 		const viewMat = mat4.create();
 		const viewProjMat = mat4.create();
 		const mat = mat4.create();
-		const invTransMat = mat4.create();
-		const invViewProjMat = mat4.create();
+		const viewDirMat = mat4.create();
+		const viewDirProjMat = mat4.create();
+		const invViewDirProjMat = mat4.create();
 
 		return function render(now) {
 			gl.depthFunction = TestFunction.LEQUAL;
@@ -215,22 +221,16 @@ export default function Skybox(props) {
 
 			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
 
-			vec3.zero(camPos);
-			mat4.identity(camMat);
-			mat4.rotateY(camMat, camMat, 0.0002 * now);
-			mat4.translate(camMat, camMat, [0, 0, 5]);
-			vec3.transformMat4(camPos, camPos, camMat);
-			mat4.targetTo(camMat, camPos, [0, 0, 0], [0, 1, 0]);
+			vec3.set(camPos, Math.cos(now * 0.0001) * camDist, 0, Math.sin(now * 0.0001) * camDist);
+			mat4.targetTo(camMat, camPos, cubePos, up);
 
 			mat4.invert(viewMat, camMat);
 
 			mat4.multiply(viewProjMat, projMat, viewMat);
 
 			mat4.identity(mat);
-			mat4.rotateZ(mat, mat, 0.00005 * now);
-
-			mat4.invert(invTransMat, mat);
-			mat4.transpose(invTransMat, invTransMat);
+			mat4.translate(mat, mat, cubePos);
+			mat4.rotateX(mat, mat, 0.00011 * now);
 
 			cubeVao.draw({
 				"u_viewProjMat": viewProjMat,
@@ -239,11 +239,18 @@ export default function Skybox(props) {
 				"u_worldCamPos": camPos
 			});
 
-			mat4.invert(invViewProjMat, viewProjMat);
+			mat4.copy(viewDirMat, viewMat);
+			viewDirMat[12] = 0;
+			viewDirMat[13] = 0;
+			viewDirMat[14] = 0;
+
+			mat4.multiply(viewDirProjMat, projMat, viewDirMat);
+
+			mat4.invert(invViewDirProjMat, viewDirProjMat);
 
 			quadVao.draw({
 				"u_texture": cubemap,
-				"u_invViewProjMat": invViewProjMat
+				"u_invViewDirProjMat": invViewDirProjMat
 			});
 		}
 	}, props);

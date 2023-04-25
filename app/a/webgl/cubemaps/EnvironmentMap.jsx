@@ -1,6 +1,6 @@
 "use client";
 
-import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap } from "@lakuna/ugl";
+import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection, Cubemap, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
 import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import domain from "../../../../shared/domain";
@@ -158,6 +158,8 @@ export default function EnvironmentMap(props) {
 		], indexData);
 
 		const cubemap = Cubemap.fromImageUrls(gl, pxUrl, nxUrl, pyUrl, nyUrl, pzUrl, nzUrl);
+		cubemap.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
+		cubemap.magFilter = TextureMagFilter.LINEAR;
 
 		const camPos = vec3.create();
 
@@ -166,7 +168,6 @@ export default function EnvironmentMap(props) {
 		const viewMat = mat4.create();
 		const viewProjMat = mat4.create();
 		const mat = mat4.create();
-		const invTransMat = mat4.create();
 
 		return function render(now) {
 			gl.clear(transparent, 1);
@@ -188,9 +189,6 @@ export default function EnvironmentMap(props) {
 
 			mat4.identity(mat);
 			mat4.rotateZ(mat, mat, 0.0001 * now);
-
-			mat4.invert(invTransMat, mat);
-			mat4.transpose(invTransMat, invTransMat);
 
 			vao.draw({
 				"u_viewProjMat": viewProjMat,
