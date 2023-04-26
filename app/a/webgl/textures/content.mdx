@@ -214,7 +214,7 @@ import DataTextures from "./DataTextures";
 ## Projection mapping
 
 *Projection mapping* is the process of projecting an image. In the following animation, the left and right halves of the canvas are
-drawn separately by making use of `resizeCanvas`. The left half shows the view of a camera that is spinning around a letter F, and the
+drawn separately by making use of `Context.resize`. The left half shows the view of a camera that is spinning around a letter F, and the
 right side shows the view of a camera that is floating above the scene. The frustum of the left camera is displayed by the right camera
 by multiplying a wireframe cube by the left camera's projection matrix.
 
@@ -266,10 +266,12 @@ out vec4 outColor;
 void main() {
 	/*
 	Apply perspective manually, since it isn't automatic
-	here like it is with `gl_Position`.
+	here like it is with `gl_Position`. The result is the
+	texture coordinate of the fragment within the
+	projection.
 	*/
-	vec3 projTexcoord =
-		v_projTexcoord.xyz / v_projTexcoord.w;
+	vec2 projTexcoord =
+		(v_projTexcoord.xyz / v_projTexcoord.w).xy;
 	
 	// Check if the fragment is in the projection frustum.
 	bool inRange =
@@ -280,23 +282,21 @@ void main() {
 	
 	// Get the color of the projected texture.
 	vec4 projTexColor =
-		texture(u_projTexture, projTexcoord.xy);
+		texture(u_projTexture, projTexcoord);
 
 	// Get the color of the regular texture.
 	vec4 texColor = texture(u_texture, v_texcoord);
 
 	/*
-	Use 100% of the projected texture (and 0% of the
-	regular texture) if the fragment is in the projection
-	frustum, or 100% of the regular texture (and 0% of the
-	projected texture) otherwise.
+	Use the correct texture depending on whether the
+	fragment is within the projection.
 	*/
-	float projAmount = inRange ? 1.0 : 0.0;
-
-	// Use the mix amount decided above to set the color.
-	outColor = mix(texColor, projTexColor, projAmount);
+	outColor = inRange ? projTexColor : texColor;
 }
 ```
+
+Notice that rather than drawing the texture on top of the objects in the scene, texture projection works by checking if
+a fragment is within the projection range and sampling from the relevant texture when rasterizing.
 
 import ProjectionMapping from "./ProjectionMapping";
 

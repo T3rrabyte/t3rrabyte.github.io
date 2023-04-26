@@ -1,7 +1,7 @@
 "use client";
 
 import { Program, Buffer, VAO, AttributeState, Color, Texture2D, TextureInternalFormat, TextureMagFilter, TextureMinFilter, Context, Primitive, FaceDirection, Mipmap, Texture2DMip } from "@lakuna/ugl";
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import AnimatedCanvas from "../AnimatedCanvas";
 import domain from "../../../../shared/domain";
 
@@ -10,16 +10,14 @@ const textureUrl = `${domain}images/webgl-example-texture.png`;
 const vss = `#version 300 es
 in vec4 a_position;
 in vec2 a_texcoord;
-uniform mat4 u_projMat;
-uniform mat4 u_viewMat;
-uniform mat4 u_matrix;
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
 uniform mat4 u_texMat;
 out vec2 v_texcoord;
 out vec4 v_projectedTexcoord;
 void main() {
-	vec4 pos = u_matrix * a_position;
-	mat4 viewProjMat = u_projMat * u_viewMat;
-	gl_Position = viewProjMat * pos;
+	vec4 pos = u_worldMat * a_position;
+	gl_Position = u_viewProjMat * pos;
 	v_texcoord = a_texcoord;
 	v_projectedTexcoord = u_texMat * pos;
 }`;
@@ -33,28 +31,23 @@ uniform sampler2D u_texture;
 uniform sampler2D u_projectedTexture;
 out vec4 outColor;
 void main() {
-	vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
+	vec2 projectedTexcoord = (v_projectedTexcoord.xyz / v_projectedTexcoord.w).xy;
 	bool inRange =
 		projectedTexcoord.x >= 0.0
 		&& projectedTexcoord.x <= 1.0
 		&& projectedTexcoord.y >= 0.0
 		&& projectedTexcoord.y <= 1.0;
-	
-	vec4 projectedTexColor = texture(u_projectedTexture, projectedTexcoord.xy);
+	vec4 projectedTexColor = texture(u_projectedTexture, projectedTexcoord);
 	vec4 texColor = texture(u_texture, v_texcoord) * u_color;
-	float projectedAmount = inRange ? 1.0 : 0.0;
-	outColor = mix(texColor, projectedTexColor, projectedAmount);
+	outColor = inRange ? projectedTexColor : texColor;
 }`;
 
 const wireframeVss = `#version 300 es
 in vec4 a_position;
-uniform mat4 u_projMat;
-uniform mat4 u_viewMat;
-uniform mat4 u_matrix;
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
 void main() {
-	vec4 pos = u_matrix * a_position;
-	mat4 viewProjMat = u_projMat * u_viewMat;
-	gl_Position = viewProjMat * pos;
+	gl_Position = u_viewProjMat * u_worldMat * a_position;
 }`;
 
 const wireframeFss = `#version 300 es
@@ -64,21 +57,21 @@ void main() {
 	outColor = vec4(0, 0, 0, 1);
 }`;
 
-const planePositionBufferData = new Float32Array([
+const quadPositionBufferData = new Float32Array([
 	-1, 1,
 	-1, -1,
 	1, -1,
 	1, 1
 ]);
 
-const planeTexcoordBufferData = new Float32Array([
+const quadTexcoordBufferData = new Float32Array([
 	0, 0,
 	0, 10,
 	10, 10,
 	10, 0
 ]);
 
-const planeIndexData = new Uint8Array([
+const quadIndexData = new Uint8Array([
 	0, 1, 2,
 	0, 2, 3
 ]);
@@ -309,19 +302,19 @@ const frustumIndexData = new Uint8Array([
 const transparent = new Color(0, 0, 0, 0);
 const red = new Color(0xFF0000);
 const green = new Color(0x00FF00);
-
-const projectorFov = Math.PI / 12;
-const projectorNear = 1;
-const projectorFar = 25;
-const projectorScale = new Float32Array([25, 25, 25]);
-const up = new Float32Array([0, 1, 0]);
-const fov = Math.PI / 4;
-const near = 1;
-const far = 1500;
-const planeScale = new Float32Array([500, 500, 1]);
-const planePos = new Float32Array([0, 0, 0]);
-const icoScale = new Float32Array([50, 50, 50]);
-const icoPos = new Float32Array([50, 50, 100]);
+const viewCamFov = Math.PI / 4;
+const viewCamNear = 1;
+const viewCamFar = 1500;
+const projCamFov = Math.PI / 12;
+const projCamAspect = 1
+const projCamNear = 1;
+const projCamFar = 1000;
+const projCamScale = vec3.fromValues(25, 25, 25);
+const up = vec3.fromValues(0, 1, 0);
+const quadScale = vec3.fromValues(500, 500, 1);
+const quadPos = vec3.fromValues(0, 0, 0);
+const icoScale = vec3.fromValues(50, 50, 50);
+const icoPos = vec3.fromValues(50, 50, 100);
 
 export default function ProjectionMapping(props) {
 	return AnimatedCanvas((canvas) => {
@@ -330,17 +323,17 @@ export default function ProjectionMapping(props) {
 		const program = Program.fromSource(gl, vss, fss);
 		const wireframeProgram = Program.fromSource(gl, wireframeVss, wireframeFss);
 
-		const planePositionBuffer = new Buffer(gl, planePositionBufferData);
-		const planeTexcoordBuffer = new Buffer(gl, planeTexcoordBufferData);
+		const quadPositionBuffer = new Buffer(gl, quadPositionBufferData);
+		const quadTexcoordBuffer = new Buffer(gl, quadTexcoordBufferData);
 		const icoPositionBuffer = new Buffer(gl, icoPositionBufferData);
 		const icoTexcoordBuffer = new Buffer(gl, icoTexcoordBufferData);
 		const projectorPositionBuffer = new Buffer(gl, projectorPositionBufferData);
 		const frustumPositionBuffer = new Buffer(gl, frustumPositionBufferData);
 
-		const planeVao = new VAO(program, [
-			new AttributeState("a_position", planePositionBuffer, 2),
-			new AttributeState("a_texcoord", planeTexcoordBuffer, 2)
-		], planeIndexData);
+		const quadVao = new VAO(program, [
+			new AttributeState("a_position", quadPositionBuffer, 2),
+			new AttributeState("a_texcoord", quadTexcoordBuffer, 2)
+		], quadIndexData);
 
 		const icoVao = new VAO(program, [
 			new AttributeState("a_position", icoPositionBuffer),
@@ -367,98 +360,93 @@ export default function ProjectionMapping(props) {
 					2,
 					2
 				)]
-			])),
-			TextureMagFilter.NEAREST,
-			TextureMinFilter.NEAREST
-		);
-
-		const projectedTexture = new Texture2D(
-			gl,
-			new Mipmap(new Map([
-				[0, new Texture2DMip(
-					new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-					undefined,
-					1,
-					1
-				)]
 			]))
 		);
 
-		const projectedImage = new Image();
-		projectedImage.addEventListener("load", () => {
-			projectedTexture.face.getMip(0).source = projectedImage;
-			projectedTexture.face.getMip(0).width = undefined;
-			projectedTexture.face.getMip(0).height = undefined;
-		});
-		projectedImage.crossOrigin = "";
-		projectedImage.src = textureUrl;
+		const projectedTexture = Texture2D.fromImageUrl(gl, textureUrl);
+		projectedTexture.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
+		projectedTexture.magFilter = TextureMagFilter.LINEAR;
 
-		const planeMat = mat4.create();
-		const icoMat = mat4.create();
-		const projectorMat = mat4.create();
-		const frustumMat = mat4.create();
-		const camMat = mat4.create();
-		const projMat = mat4.create();
-		const viewMat = mat4.create();
-		const texMat = mat4.create();
+		const quadWorldMat = mat4.create();
+		const icoWorldMat = mat4.create();
+		const viewCamPos = vec3.create();
+		const viewCamWorldMat = mat4.create();
+		const viewCamViewMat = mat4.create();
+		const viewCamProjMat = mat4.create();
+		const viewCamViewProjMat = mat4.create();
+		const projCamPos = mat4.create();
+		const projCamWorldMat = mat4.create();
+		const projCamDisplayWorldMat = mat4.create();
+		const projCamViewMat = mat4.create();
+		const projCamProjMat = mat4.create();
+		const projCamViewProjMat = mat4.create();
+		const projCamInvViewProjMat = mat4.create();
+
+		console.log(program);
 
 		return function render(now) {
 			gl.clear(transparent, 1);
 			gl.resize();
 			gl.cullFace = FaceDirection.BACK;
 
-			mat4.identity(planeMat);
-			mat4.rotateX(planeMat, planeMat, Math.PI * 3 / 2);
-			mat4.translate(planeMat, planeMat, planePos);
-			mat4.scale(planeMat, planeMat, planeScale);
+			mat4.identity(quadWorldMat);
+			mat4.rotateX(quadWorldMat, quadWorldMat, Math.PI * 3 / 2); // XZ plane.
+			mat4.translate(quadWorldMat, quadWorldMat, quadPos);
+			mat4.scale(quadWorldMat, quadWorldMat, quadScale);
 
-			mat4.identity(icoMat);
-			mat4.translate(icoMat, icoMat, icoPos);
-			mat4.scale(icoMat, icoMat, icoScale);
+			mat4.identity(icoWorldMat);
+			mat4.translate(icoWorldMat, icoWorldMat, icoPos);
+			mat4.scale(icoWorldMat, icoWorldMat, icoScale);
 
-			mat4.perspective(projMat, projectorFov, canvas.clientWidth / canvas.clientHeight, projectorNear, projectorFar);
-			mat4.targetTo(projectorMat, [Math.cos(now * 0.0008) * 400, 200, Math.sin(now * 0.0008) * 400], planePos, up);
-			mat4.scale(projectorMat, projectorMat, projectorScale);
-			mat4.invert(viewMat, projectorMat);
-			mat4.multiply(texMat, projMat, viewMat);
+			vec3.set(viewCamPos, 500 * Math.cos(0.0002 * now), 300, 500 * Math.sin(0.0002 * now));
 
-			mat4.invert(frustumMat, projMat);
-			mat4.multiply(frustumMat, projectorMat, frustumMat);
+			vec3.set(projCamPos, 400 * Math.cos(-0.0008 * now), 200, 400 * Math.sin(-0.0008 * now));
 
-			mat4.perspective(projMat, fov, canvas.clientWidth / canvas.clientHeight, near, far);
-			mat4.targetTo(camMat, [Math.sin(now * 0.0002) * 500, 300, Math.cos(now * 0.0002) * 500], planePos, up);
-			mat4.invert(viewMat, camMat);
+			mat4.perspective(viewCamProjMat, viewCamFov, canvas.clientWidth / canvas.clientHeight, viewCamNear, viewCamFar); // projectionMatrix
 
-			planeVao.draw({
+			mat4.perspective(projCamProjMat, projCamFov, projCamAspect, projCamNear, projCamFar); // textureProjectionMatrix
+
+			mat4.targetTo(viewCamWorldMat, viewCamPos, quadPos, up); // cameraMatrix
+
+			mat4.targetTo(projCamWorldMat, projCamPos, quadPos, up); // textureWorldMatrix
+			mat4.scale(projCamDisplayWorldMat, projCamWorldMat, projCamScale);
+
+			mat4.invert(viewCamViewMat, viewCamWorldMat); // viewMatrix
+
+			mat4.invert(projCamViewMat, projCamWorldMat);
+
+			mat4.multiply(viewCamViewProjMat, viewCamProjMat, viewCamViewMat);
+
+			mat4.multiply(projCamViewProjMat, projCamProjMat, projCamViewMat); // textureMatrix
+
+			mat4.invert(projCamInvViewProjMat, projCamViewProjMat); // mat
+
+			quadVao.draw({
 				"u_color": red,
-				"u_projMat": projMat,
-				"u_viewMat": viewMat,
-				"u_matrix": planeMat,
-				"u_texture": projectedTexture,
-				"u_projectedTexture": tileTexture,
-				"u_texMat": texMat
+				"u_viewProjMat": viewCamViewProjMat,
+				"u_worldMat": quadWorldMat,
+				"u_texture": tileTexture,
+				"u_projectedTexture": projectedTexture,
+				"u_texMat": projCamViewProjMat
 			});
 
 			icoVao.draw({
 				"u_color": green,
-				"u_projMat": projMat,
-				"u_viewMat": viewMat,
-				"u_matrix": icoMat,
-				"u_texture": projectedTexture,
-				"u_projectedTexture": tileTexture,
-				"u_texMat": texMat
+				"u_viewProjMat": viewCamViewProjMat,
+				"u_worldMat": icoWorldMat,
+				"u_texture": tileTexture,
+				"u_projectedTexture": projectedTexture,
+				"u_texMat": projCamViewProjMat
 			});
 
 			projectorVao.draw({
-				"u_projMat": projMat,
-				"u_viewMat": viewMat,
-				"u_matrix": projectorMat
+				"u_viewProjMat": viewCamViewProjMat,
+				"u_worldMat": projCamDisplayWorldMat
 			}, Primitive.LINES);
 
 			frustumVao.draw({
-				"u_projMat": projMat,
-				"u_viewMat": viewMat,
-				"u_matrix": frustumMat
+				"u_viewProjMat": viewCamViewProjMat,
+				"u_worldMat": projCamInvViewProjMat
 			}, Primitive.LINES);
 		}
 	}, props);
