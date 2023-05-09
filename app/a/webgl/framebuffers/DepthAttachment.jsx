@@ -202,9 +202,9 @@ export default function RenderToTexture(props) {
 
 			// Render to texture first.
 			framebuffer.bind();
-			gl.resize(0, 0, renderTexture.face.getMip(0).width, renderTexture.face.getMip(0).height);
+			gl.resize(0, 0, renderTexture.face.top.width, renderTexture.face.top.height);
 			gl.clear(green, 1);
-			mat4.perspective(projMat, Math.PI / 4, renderTexture.face.getMip(0).width / renderTexture.face.getMip(0).height, 1, 1000);
+			mat4.perspective(projMat, Math.PI / 4, renderTexture.face.top.width / renderTexture.face.top.height, 1, 1000);
 			mat4.identity(camMat);
 			mat4.rotateX(camMat, camMat, 0.001 * now);
 			mat4.translate(camMat, camMat, [0, 0, camDist]);
