@@ -56,7 +56,8 @@ const oneLiners = [
 	<span key={49}>{"Excelsior!"}</span>, // "Ever upward!"; Stan Lee; Marvel
 	<span key={50}>{"Day before yesterday I saw a rabbit, and yesterday a deer, and today, you."}</span>, // The Dandelion Girl; Clannad
 	<span key={51}>{"El Psy Kongroo"}</span>, // Steins;Gate
-	<span key={52}>{"If everyone is not special, maybe you can be what you want to be."}</span> // 99; MOB CHOIR; Mob Psycho 100
+	<span key={52}>{"If everyone is not special, maybe you can be what you want to be."}</span>, // 99; MOB CHOIR; Mob Psycho 100
+	<span key={53}>{"God drinks Java."}</span> // world.execute(me);; Mili
 ];
 
 export default function OneLiner(props) {
