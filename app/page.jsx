@@ -4,7 +4,7 @@ import generateMetadata from "../shared/generateMetadata";
 import domain from "../shared/domain";
 
 export default async function Page() {
-	const rng = await (await fetch(`${domain}api/rng`, { cache: "no-store" })).json();
+	const rng = parseFloat(await (await fetch(`${domain}api/rng`, { cache: "no-store" })).text());
 
 	return (
 		<>
