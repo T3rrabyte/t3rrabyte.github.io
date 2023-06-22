@@ -1,12 +1,15 @@
 import OneLiner from "./OneLiner";
 import Socials from "./Socials/Socials";
 import generateMetadata from "../shared/generateMetadata";
+import domain from "../shared/domain";
 
-export default function Page() {
+export default async function Page() {
+	const rng = await (await fetch(`${domain}rng`, { cache: "no-store" })).json();
+
 	return (
 		<>
 			<h1 style={{ textAlign: "center" }}>Travis Martin</h1>
-			<OneLiner style={{ textAlign: "center" }} />
+			<OneLiner rng={rng} style={{ textAlign: "center" }} />
 			<hr />
 			<Socials style={{ textAlign: "center" }} />
 		</>

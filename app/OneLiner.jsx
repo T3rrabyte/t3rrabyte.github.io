@@ -1,7 +1,6 @@
 "use client";
 
 import DynamicLink from "../shared/DynamicLink";
-import { useState, useEffect } from "react";
 
 const oneLiners = [
 	<span key={0}>{"Also check out "}<DynamicLink href="https://griff.pw/">{"griff.pw"}</DynamicLink>{"!"}</span>, // Griffon Hanson
@@ -60,12 +59,10 @@ const oneLiners = [
 	<span key={53}>{"God drinks Java."}</span> // world.execute(me);; Mili
 ];
 
-export default function OneLiner(props) {
-	const [i, seti] = useState(0);
-	useEffect(() => seti(Math.floor(Math.random() * oneLiners.length)), []);
+export default function OneLiner({ rng, ...props}) {
 	return (
 		<p {...props}>
-			{oneLiners[i]}
+			{oneLiners[Math.floor(rng * oneLiners.length)]}
 		</p>
 	);
 }
