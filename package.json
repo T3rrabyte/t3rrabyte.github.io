@@ -1,6 +1,10 @@
 {
 	"private": true,
 	"type": "module",
+	"name": "site",
+	"exports": {
+		"./*": "./src/*"
+	},
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
