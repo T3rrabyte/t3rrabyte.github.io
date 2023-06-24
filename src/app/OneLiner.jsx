@@ -63,7 +63,7 @@ const oneLiners = [
 
 export default function OneLiner(props) {
 	const [i, setI] = useState(0);
-	useEffect(() => setI(Math.floor(Math.random() * (oneLiners.length - 1))), []); // Subtract one so that the loading string isn't selected.
+	useEffect(() => setI(Math.floor(Math.random() * (oneLiners.length - 2) + 1)), []); // Subtract one so that the loading string isn't selected.
 
 	return (
 		<p {...props}>
