@@ -1,8 +1,10 @@
 "use client";
 
 import DynamicLink from "site/components/DynamicLink";
+import { useState, useEffect } from "react";
 
 const oneLiners = [
+	<span key={-1}>{"Loading..."}</span>, // Pre-render value.
 	<span key={0}>{"Also check out "}<DynamicLink href="https://griff.pw/">{"griff.pw"}</DynamicLink>{"!"}</span>, // Griffon Hanson
 	<span key={1}>{"Also check out "}<DynamicLink href="https://ty.business/">{"ty.business"}</DynamicLink>{"!"}</span>, // Ty Morrow
 	<span key={2}>{"Also check out "}<DynamicLink href="https://www.xanycki.art/">{"xanycki.art"}</DynamicLink>{"!"}</span>, // Anonymous friend
@@ -17,7 +19,7 @@ const oneLiners = [
 	<span key={11}>{"What was, shall be. What shall be, was."}</span>, // The Worm-in-Waiting; Horizon Signal; Stellaris
 	<span key={12}>{"There's blood on the crown, go and take it."}</span>, // Rise; League of Legends
 	<span key={13}>{"It's dangerous to go alone!"}</span>, // The Legend of Zelda
-	<span key={14}>{"▲ ▲ ▼ ▼ ◄ ► ◄ ► B A S"}</span>, // The Konami Code
+	<span key={14}>{"^ ^ v v < > < > B A S"}</span>, // The Konami Code
 	<span key={15}>{"You are in a maze of twisty little passages, all alike."}</span>, // Colossal Cave Adventure
 	<span key={16}>{"Xyzzy"}</span>, // Colossal Cave Adventure
 	<span key={17}>{"Segmentation fault (core dumped)"}</span>, // Memory access error in C
@@ -59,10 +61,13 @@ const oneLiners = [
 	<span key={53}>{"God drinks Java."}</span> // world.execute(me);; Mili
 ];
 
-export default function OneLiner({ rng, ...props}) {
+export default function OneLiner(props) {
+	const [i, setI] = useState(0);
+	useEffect(() => setI(Math.floor(Math.random() * (oneLiners.length - 1))), []); // Subtract one so that the loading string isn't selected.
+
 	return (
 		<p {...props}>
-			{oneLiners[Math.floor(rng * oneLiners.length)]}
+			{oneLiners[i]}
 		</p>
 	);
 }
