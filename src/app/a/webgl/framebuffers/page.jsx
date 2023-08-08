@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Framebuffers", "An introduction to framebuffers in WebGL.", "/favicon.png", "/a/webgl/framebuffers");
+export const metadata = generateMetadata("Framebuffers | WebGL | Lakuna", "An introduction to framebuffers in WebGL.", "/favicon.png", "/a/webgl/framebuffers");

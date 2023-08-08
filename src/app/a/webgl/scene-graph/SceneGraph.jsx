@@ -1,92 +1,81 @@
 "use client";
 
-import { Color, Program, Buffer, VAO, AttributeState, Context } from "@lakuna/ugl";
-import { mat4 } from "gl-matrix";
-import AnimatedCanvas from "../AnimatedCanvas";
+import { Context, Buffer, BufferInfo, Program, VAO } from "@lakuna/ugl";
+import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
+import { ortho, translate, rotateZ, scale } from "@lakuna/umath/Matrix4";
 
-const vss = `#version 300 es
+const vss = `\
+#version 300 es
+
 in vec4 a_position;
-uniform mat4 u_matrix;
+
+uniform mat4 u_world;
+
 void main() {
-	gl_Position = u_matrix * a_position;
+	gl_Position = u_world * a_position;
 }`;
 
-const fss = `#version 300 es
+const fss = `\
+#version 300 es
+
 precision highp float;
-uniform vec4 u_color;
+
 out vec4 outColor;
+
 void main() {
-	outColor = u_color;
+	outColor = vec4(0, 0, 0, 1);
 }`;
 
-const bufferData = new Float32Array([
-	-500, 500,
-	-500, -500,
-	500, -500,
-	500, 500
+const data = new Float32Array([
+	-1, 1,
+	-1, -1,
+	1, -1,
+	1, 1
 ]);
 
-const indexData = new Uint8Array([
+const indices = new Uint8Array([
 	0, 1, 2,
 	0, 2, 3
 ]);
 
-const squareCount = 50;
-const parentScaling = new Float32Array([0.1, 0.1, 1]);
-const childScaling = new Float32Array([0.9, 0.9, 1]);
-const childTranslation = new Float32Array([500, 0, 0]);
+const rotationSpeed = 0.001;
+const squareCount = 20;
+const scaleFalloff = 0.9;
+const childDistance = 10;
 
-const transparent = new Color(0, 0, 0, 0);
-
-export default function SceneGraph({ ...props }) {
+export default (props) => {
 	return AnimatedCanvas((canvas) => {
 		const gl = new Context(canvas);
-
 		const program = Program.fromSource(gl, vss, fss);
 
-		const buffer = new Buffer(gl, bufferData);
-
+		const buffer = new Buffer(gl, data);
 		const vao = new VAO(program, [
-			new AttributeState("a_position", buffer, 2)
-		], indexData);
+			new BufferInfo("a_position", buffer, 2)
+		], indices);
 
-		const squares = [];
-		squares[0] = {
-			mat: mat4.scale(mat4.create(), mat4.create(), parentScaling),
-			color: new Color(Math.random(), Math.random(), Math.random(), 1)
-		};
-		for (let i = 1; i < squareCount; i++) {
-			const mat = mat4.create();
-			mat4.scale(mat, mat, childScaling);
-			mat4.translate(mat, mat, childTranslation);
+		const matrix = new Float32Array(16);
+		let canvasMin = 0;
 
-			squares[i] = {
-				mat,
-				color: new Color(Math.random(), Math.random(), Math.random(), 1)
-			};
-		}
-
-		let then = 0;
-
-		const tempMat = mat4.create();
-
-		return function render(now) {
-			gl.clear(transparent);
-
+		return (now) => {
 			gl.resize();
+			gl.clear([0, 0, 0, 0]);
 
-			const deltaTime = now - then;
-			then = now;
+			canvasMin = Math.min(canvas.width, canvas.height);
 
-			mat4.ortho(tempMat, 0, canvas.clientWidth, 0, canvas.clientHeight, 0, 1);
-			mat4.translate(tempMat, tempMat, [canvas.clientWidth / 2, canvas.clientHeight / 2, 0]);
+			ortho(0, canvas.width, 0, canvas.height, -1, 1, matrix);
+			translate(matrix, [canvas.width / 2, canvasMin / 5, 0], matrix);
+			scale(matrix, [
+				canvasMin / 20,
+				canvasMin / 20,
+				1
+			], matrix);
+			for (let i = 0; i < squareCount; i++) {
+				translate(matrix, [childDistance * Math.sin(now * rotationSpeed), 0, 0], matrix);
+				rotateZ(matrix, now * rotationSpeed, matrix);
+				scale(matrix, [scaleFalloff, scaleFalloff, 1], matrix);
 
-			for (let i = 0; i < squares.length; i++) {
-				const square = squares[i];
-				mat4.rotateZ(square.mat, square.mat, 0.001 * deltaTime);
-				mat4.multiply(tempMat, tempMat, square.mat);
-				vao.draw({ "u_color": square.color, "u_matrix": tempMat });
+				vao.draw({ "u_world": matrix });
 			}
-		}
+		};
 	}, props);
-}
+};

@@ -1,105 +1,55 @@
 # Framebuffers
 
-You may need to read the previous article about [textures](/a/webgl/textures) in order to understand this one.
+You may need to read [the article about textures](/a/webgl/textures) before this one.
 
-*Framebuffers* are collections of attachments. They are used for rendering to textures and *renderbuffers*.
-Renderbuffers are similar to textures, but they support more formats and options and can't be directly used as
-input to a shader.
+---
 
-A framebuffer can be created with the WebGL API.
+A framebuffer can be thought of as a collection of attachments, which are buffers with purposes.
+They can be used to rendering to textures and *renderbuffers*, which are objects that contain images.
+
+Renderbuffers differ from images in that they support more formats but can't be sampled. Renderbuffers
+also support *multisampling*, which is a process for reducing *aliasing*, which is an effect that
+reduces the quality of images that are under-sampled. This means that multisampling is a form of *antialiasing*.
+
+A framebuffer can be created like this:
 
 ```js
-const fb = gl.createFramebuffer();
+const framebuffer = gl.createFramebuffer();
 ```
 
-Like textures and buffers, framebuffers must be bound to a binding point in order to be accessed with other functions.
-Framebuffers have three binding points.
+Like textures and buffers, framebuffers must be bound to a binding point in order to be accessed by
+functions. Framebuffers have three binding points:
 
-- When a framebuffer is bound to `DRAW_FRAMEBUFFER`, any WebGL API functions that would modify the color and depth buffers
-instead modify the framebuffer's attachments.
-- When a framebuffer is bound to `READ_FRAMEBUFFER`, any WebGL API functions that would read from the color and depth buffers
-instead read from the framebuffer's attachments.
-- When a framebuffer is bound to `FRAMEBUFFER`, it is bound to both `DRAW_FRAMEBUFFER` and `READ_FRAMEBUFFER`.
+- `DRAW_FRAMEBUFFER`, which causes functions that modify attachments to target the attachments of this framebuffer.
+- `READ_FRAMEBUFFER`, which causes functions that read from attachments to target the attachments of this framebuffer.
+- `FRAMEBUFFER`, which causes functions that read from or modify attachments to target the attachments of this framebuffer.
+
+There is a default framebuffer that is rasterized to the canvas. When no framebuffer is explicitly
+attached to any of the framebuffer binding points, the default framebuffer is used.
 
 Attachments can be added using the `framebufferTexture2D`, `framebufferRenderbuffer`, and `framebufferTextureLayer`
-functions. **Every attachment to a framebuffer must have the same dimensions.**
+functions. **Every attachment in a framebuffer must have the same dimensions.** For example:
 
 ```js
-gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-
-gl.framebufferTexture2D(
-	// The binding point of the framebuffer.
-	gl.FRAMEBUFFER,
-
-	// The point of attachment to the framebuffer.
-	gl.COLOR_ATTACHMENT0,
-
-	// The binding point of the attached texture.
-	gl.TEXTURE_2D,
-
-	// The texture to attach.
-	texture,
-
-	// The level of the texture.
-	0
-);
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+	gl.TEXTURE_2D, texture, 0);
 ```
 
-With μGL, framebuffer binding points are not necessary.
+In order to use the default framebuffer, simply attach `undefined` to the desired binding point.
 
-```js
-const renderTexture = new Texture2D({
-	gl,
-	width: 256,
-	height: 256,
-	minFilter: TextureFilter.LINEAR
-});
+## Rendering to Textures
 
-const renderTexture = new Texture2D(
-	gl,
-	new Mipmap(new Map([
-		[0, new Texture2DMip(
-			undefined,
-			undefined,
-			256,
-			256
-		)]
-	])),
-	undefined,
-	TextureMinFilter.LINEAR
-);
+Rather than writing to the default framebuffer and having that data rasterized to the rendering
+context, it is possible to write to a custom framebuffer to store that data in textures or renderbuffers.
 
-const fb = new Framebuffer(gl, [renderTexture]);
-```
+import RenderingToTextures from "./RenderingToTextures.jsx";
 
-## Render to texture
+<RenderingToTextures style={{ width: "100%"}} />
 
-Instead of writing image data to the color buffer and depth data to the depth buffer, we can use a
-framebuffer to write that data to textures and renderbuffers. In order to do so, a framebuffer must
-be bound when the render function is called. With μGL, this can be accomplished with the `bind` method.
+Note that framebuffers don't have all of the attachments that the default one does by default. For
+example, in order to use depth testing in a framebuffer, it needs to have a depth attachment.
 
-```js
-fb.bind();
-```
-
-Using the example above, image data is written to `texture`, which is attached to `COLOR_ATTACHMENT0`.
-
-import RenderToTexture from "./RenderToTexture";
-
-<RenderToTexture style={{ width: "100%" }} />
-
-In the example above, there is no depth attachment on the framebuffer. To write depth data to a
-texture, attach a depth renderbuffer to the framebuffer.
-
-```js
-const depthRenderbuffer = new Renderbuffer(gl,
-	RenderbufferFormat.DEPTH_COMPONENT24, 256, 256);
-
-fb.depthAttachment = depthRenderbuffer;
-```
-
-import DepthAttachment from "./DepthAttachment";
-
-<DepthAttachment style={{ width: "100%" }} />
+---
 
 The next article is about [lighting](/a/webgl/lighting).

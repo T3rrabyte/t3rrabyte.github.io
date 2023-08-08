@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function AnimatedCanvas(init, props) {
+export default (init, props) => {
 	const canvasRef = useRef();
 	let render;
 

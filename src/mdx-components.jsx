@@ -1,9 +1,6 @@
-import DynamicLink from "site/components/DynamicLink";
+import DynamicLink from "#DynamicLink";
 
-export function useMDXComponents(components) {
-	return {
-		a: (props) => <DynamicLink {...props} />,
-		code: (props) => <code className="language-" {...props} />, // Use Prism style on inline code.
-		...components
-	};
-}
+export const useMDXComponents = (components) => ({
+	a: (props) => <DynamicLink {...props} />,
+	...components
+});

@@ -1,0 +1,12 @@
+@use "mixins";
+@use "sass:meta";
+
+@include mixins.is-light-theme using ($is-light-theme) {
+    @if $is-light-theme {
+        @include meta.load-css("node_modules/highlight.js/styles/panda-syntax-light.css")
+    }
+
+    @else {
+        @include meta.load-css("node_modules/highlight.js/styles/panda-syntax-dark.css")
+    }
+}

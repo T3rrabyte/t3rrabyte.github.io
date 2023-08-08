@@ -1,6 +1,6 @@
 "use client";
 
-import DynamicLink from "site/components/DynamicLink";
+import DynamicLink from "#DynamicLink";
 import { useState, useEffect } from "react";
 
 const oneLiners = [
@@ -63,13 +63,11 @@ const oneLiners = [
 	<span key={55}>{"Dodge, duck, dip, dive, and dodge."}</span> // Dodgeball: A True Underdog Story
 ];
 
-export default function OneLiner(props) {
+export default (props) => {
 	const [i, setI] = useState(0);
 	useEffect(() => setI(Math.floor(Math.random() * (oneLiners.length - 2) + 1)), []); // Subtract one so that the loading string isn't selected.
 
-	return (
-		<p {...props}>
-			{oneLiners[i]}
-		</p>
-	);
+	return <p {...props}>
+		{oneLiners[i]}
+	</p>;
 }

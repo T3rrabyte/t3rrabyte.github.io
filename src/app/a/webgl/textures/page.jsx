@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Textures", "An introduction to textures in WebGL.", "/favicon.png", "/a/webgl/textures");
+export const metadata = generateMetadata("Textures | WebGL | Lakuna", "An introduction to textures in WebGL.", "/favicon.png", "/a/webgl/textures");

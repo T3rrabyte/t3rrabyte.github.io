@@ -1,6 +1,4 @@
-import DynamicLink from "site/components/DynamicLink";
+import DynamicLink from "#DynamicLink";
 import style from "./style.module.scss";
 
-export default function ButtonLink({ className = "", ...props }) {
-	return <DynamicLink className={`${style["base"]} ${className}`} {...props} />;
-}
+export default ({ className = "", ...props }) => <DynamicLink className={`${style["base"]} ${className}`} {...props} />;

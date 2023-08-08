@@ -1,142 +1,87 @@
 "use client";
 
-import AnimatedCanvas from "../AnimatedCanvas";
-import { Program, Buffer, VAO, AttributeState, Color, Context, FaceDirection } from "@lakuna/ugl";
-import { mat4 } from "gl-matrix";
+import { Context, Buffer, BufferInfo, FaceDirection, Program, VAO } from "@lakuna/ugl";
+import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
+import { perspective, translate, rotateX, rotateY, identity, invert, multiply, fromTranslation } from "@lakuna/umath/Matrix4";
+import { positions, colors } from "./f.js";
 
-const vss = `#version 300 es
+const vss = `\
+#version 300 es
+
 in vec4 a_position;
+in vec4 a_color;
+
 uniform mat4 u_matrix;
+
 out vec4 v_color;
+
 void main() {
 	gl_Position = u_matrix * a_position;
-	v_color = a_position;
+    v_color = a_color;
 }`;
 
-const fss = `#version 300 es
+const fss = `\
+#version 300 es
+
 precision highp float;
+
 in vec4 v_color;
+
 out vec4 outColor;
+
 void main() {
 	outColor = v_color;
 }`;
 
-const bufferData = new Float32Array([
-	// Front
-	-1, 1, 1,
-	-1, -1, 1,
-	1, -1, 1,
-	1, 1, 1,
+const speed = 0.001;
+const objectCount = 5;
+const radius = 200;
+const cameraRadius = 500;
 
-	// Back
-	1, 1, -1,
-	1, -1, -1,
-	-1, -1, -1,
-	-1, 1, -1,
+export default (props) => {
+    return AnimatedCanvas((canvas) => {
+        const gl = new Context(canvas);
+        const program = Program.fromSource(gl, vss, fss);
 
-	// Left
-	-1, 1, -1,
-	-1, -1, -1,
-	-1, -1, 1,
-	-1, 1, 1,
+        const positionBuffer = new Buffer(gl, positions);
+        const colorBuffer = new Buffer(gl, colors);
+        const vao = new VAO(program, [
+            new BufferInfo("a_position", positionBuffer),
+            new BufferInfo("a_color", colorBuffer, 3, true)
+        ]);
 
-	// Right
-	1, 1, 1,
-	1, -1, 1,
-	1, -1, -1,
-	1, 1, -1,
+        const worldMatrices = [];
+        for (let i = 0; i < objectCount; i++) {
+            const r = i * Math.PI * 2 / objectCount;
+            worldMatrices[i] = fromTranslation([
+                Math.cos(r) * radius,
+                0,
+                Math.sin(r) * radius
+            ], new Float32Array(16));
+        }
 
-	// Top
-	-1, 1, -1,
-	-1, 1, 1,
-	1, 1, 1,
-	1, 1, -1,
+        const projectionMatrix = new Float32Array(16);
+        const cameraMatrix = new Float32Array(16);
+        const viewMatrix = new Float32Array(16);
+        const viewProjectionMatrix = new Float32Array(16);
 
-	// Bottom
-	-1, -1, 1,
-	-1, -1, -1,
-	1, -1, -1,
-	1, -1, 1
-]);
+        return (now) => {
+            gl.resize();
+            gl.clear([0, 0, 0, 0], 1);
+            gl.cullFace = FaceDirection.BACK;
 
-const indexData = new Uint8Array([
-	// Top
-	0, 1, 2,
-	0, 2, 3,
+            perspective(Math.PI / 4, canvas.width / canvas.height, 1, 1000, projectionMatrix);
+            identity(cameraMatrix);
+            rotateY(cameraMatrix, now * speed, cameraMatrix);
+            rotateX(cameraMatrix, Math.PI * 9 / 10, cameraMatrix);
+            translate(cameraMatrix, [0, 0, cameraRadius], cameraMatrix);
+            invert(cameraMatrix, viewMatrix);
+            multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
 
-	// Bottom
-	4, 5, 6,
-	4, 6, 7,
-
-	// Left
-	8, 9, 10,
-	8, 10, 11,
-
-	// Right
-	12, 13, 14,
-	12, 14, 15,
-
-	// Top
-	16, 17, 18,
-	16, 18, 19,
-
-	// Bottom
-	20, 21, 22,
-	20, 22, 23
-]);
-
-const cubeCircleRad = 200;
-const cubeSideLen = 50;
-const cubeCount = 5;
-const cameraCircleRad = 400;
-
-const transparent = new Color(0, 0, 0, 0);
-
-export default function Cameras(props) {
-	return AnimatedCanvas((canvas) => {
-		const gl = new Context(canvas);
-
-		const program = Program.fromSource(gl, vss, fss);
-
-		const buffer = new Buffer(gl, bufferData);
-
-		const vao = new VAO(program, [
-			new AttributeState("a_position", buffer)
-		], indexData);
-
-		const cubeMats = [];
-		for (let i = 0; i < cubeCount; i++) {
-			const r = i * Math.PI * 2 / cubeCount;
-			const mat = mat4.create();
-			mat4.translate(mat, mat, [Math.cos(r) * cubeCircleRad, 0, Math.sin(r) * cubeCircleRad]);
-			mat4.scale(mat, mat, [cubeSideLen, cubeSideLen, cubeSideLen]);
-			cubeMats[i] = mat;
-		}
-
-		const camMat = mat4.create();
-		const viewMat = mat4.create();
-		const projMat = mat4.create();
-		const viewProjMat = mat4.create();
-		const tempMat = mat4.create();
-
-		return function render(now) {
-			gl.clear(transparent, 1);
-
-			gl.resize();
-
-			gl.cullFace = FaceDirection.BACK;
-
-			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
-			mat4.identity(camMat);
-			mat4.rotateY(camMat, camMat, 0.001 * now);
-			mat4.translate(camMat, camMat, [0, 0, cameraCircleRad]);
-			mat4.invert(viewMat, camMat);
-			mat4.multiply(viewProjMat, projMat, viewMat);
-
-			for (let i = 0; i < cubeMats.length; i++) {
-				mat4.multiply(tempMat, viewProjMat, cubeMats[i]);
-				vao.draw({ "u_matrix": tempMat });
-			}
-		}
-	}, props);
-}
+            for (let i = 0; i < objectCount; i++) {
+                multiply(viewProjectionMatrix, worldMatrices[i], cameraMatrix);
+                vao.draw({ "u_matrix": cameraMatrix });
+            }
+        };
+    }, props);
+};

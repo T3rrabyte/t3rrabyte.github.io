@@ -1,43 +1,62 @@
 "use client";
 
-import { AttributeState, Buffer, Color, Program, Context, VAO, FaceDirection } from "@lakuna/ugl";
-import { mat4, vec3 } from "gl-matrix";
-import AnimatedCanvas from "../AnimatedCanvas";
+import { Context, Buffer, BufferInfo, Program, VAO, FaceDirection } from "@lakuna/ugl";
+import { identity, invert, multiply, perspective, translate, rotateX, rotateY } from "@lakuna/umath/Matrix4";
+import { normalize } from "@lakuna/umath/Vector3";
+import { normalFromMatrix4 } from "@lakuna/umath/Matrix3";
+import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 
-const vss = `#version 300 es
+const vss = `\
+#version 300 es
+
 in vec4 a_position;
 in vec3 a_normal;
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-uniform mat4 u_invTransWorldMat;
-uniform vec3 u_lightPos;
+
+uniform mat4 u_viewProjection;
+uniform mat4 u_world;
+uniform mat3 u_normal;
+uniform vec3 u_lightPosition;
+
 out vec3 v_normal;
-out vec3 v_lightDir;
+out vec3 v_directionToLight;
+
 void main() {
-	mat4 mat = u_viewProjMat * u_worldMat;
-	gl_Position = mat * a_position;
-	v_normal = mat3(u_invTransWorldMat) * a_normal;
-	vec3 surfacePos = (u_worldMat * a_position).xyz;
-	v_lightDir = u_lightPos - surfacePos;
+	gl_Position = u_viewProjection * u_world * a_position;
+	v_normal = u_normal * a_normal;
+	vec3 surfacePosition = (u_world * a_position).xyz;
+	v_directionToLight = u_lightPosition - surfacePosition;
 }`;
 
-const fss = `#version 300 es
+const fss = `\
+#version 300 es
+
 precision highp float;
+
 in vec3 v_normal;
-in vec3 v_lightDir;
+in vec3 v_directionToLight;
+
 uniform vec4 u_color;
-uniform vec3 u_reverseLightDir;
-uniform float u_lightDotLimit;
+uniform vec3 u_reverseLightDirection;
+uniform float u_innerLimit;
+uniform float u_outerLimit;
+
 out vec4 outColor;
+
 void main() {
 	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
-	float light = dot(lightDir, u_reverseLightDir) >= u_lightDotLimit ? dot(normal, lightDir) : 0.0;
+	vec3 directionToLight = normalize(v_directionToLight);
+
+	float angularDistance =
+		dot(directionToLight, u_reverseLightDirection);
+	float brightness =
+		smoothstep(u_outerLimit, u_innerLimit, angularDistance)
+		* dot(normal, directionToLight);
+
 	outColor = u_color;
-	outColor.rgb *= light;
+	outColor.rgb *= brightness;
 }`;
 
-const positionBufferData = new Float32Array([
+const positionData = new Float32Array([
 	// Front
 	-1, 1, 1,
 	-1, -1, 1,
@@ -75,7 +94,7 @@ const positionBufferData = new Float32Array([
 	1, -1, 1
 ]);
 
-const normalBufferData = new Float32Array([
+const normalData = new Float32Array([
 	// Front
 	0, 0, 1,
 	0, 0, 1,
@@ -113,7 +132,7 @@ const normalBufferData = new Float32Array([
 	0, -1, 0
 ]);
 
-const indexData = new Uint8Array([
+const indices = new Uint8Array([
 	// Top
 	0, 1, 2,
 	0, 2, 3,
@@ -139,66 +158,62 @@ const indexData = new Uint8Array([
 	20, 22, 23
 ]);
 
-const transparent = new Color(0, 0, 0, 0);
-const cubeColor = new Color(1, 1, 1, 1);
+const speed = 0.001;
+const lightPosition = [1, 1.4, 2];
+const reverseLightDirection = [];
+normalize(lightPosition, reverseLightDirection);
+const innerLimit = Math.cos(Math.PI / 16);
+const outerLimit = Math.cos(Math.PI / 14);
 
-const camPos = vec3.set(vec3.create(), 0, 0, 5);
-const lightPos = vec3.set(vec3.create(), 0, 0, 5);
-const reverseLightDir = vec3.set(vec3.create(), 0, 0, 5);
-vec3.normalize(reverseLightDir, reverseLightDir);
-const lightDotLimit = Math.cos(Math.PI / 16);
-
-export default function SpotLighting(props) {
+export default (props) => {
 	return AnimatedCanvas((canvas) => {
 		const gl = new Context(canvas);
-
 		const program = Program.fromSource(gl, vss, fss);
 
-		const positionBuffer = new Buffer(gl, positionBufferData);
-		const normalBuffer = new Buffer(gl, normalBufferData);
-
+		const positionBuffer = new Buffer(gl, positionData);
+		const normalBuffer = new Buffer(gl, normalData);
 		const vao = new VAO(program, [
-			new AttributeState("a_position", positionBuffer),
-			new AttributeState("a_normal", normalBuffer)
-		], indexData);
+			new BufferInfo("a_position", positionBuffer),
+			new BufferInfo("a_normal", normalBuffer)
+		], indices);
 
-		const projMat = mat4.create();
-		const camMat = mat4.create();
-		const viewMat = mat4.create();
-		const viewProjMat = mat4.create();
-		const mat = mat4.create();
-		const invTransMat = mat4.create();
+		const cameraMatrix = new Float32Array(16);
+		identity(cameraMatrix);
+		rotateX(cameraMatrix, -Math.PI / 5, cameraMatrix);
+		translate(cameraMatrix, [0, 0, 5], cameraMatrix);
 
-		return function render(now) {
-			gl.clear(transparent, 1);
+		const viewMatrix = new Float32Array(16);
+		invert(cameraMatrix, viewMatrix);
+
+		const matrix = new Float32Array(16);
+		const projectionMatrix = new Float32Array(16);
+		const viewProjectionMatrix = new Float32Array(16);
+		const normalMatrix = new Float32Array(9);
+
+		return (now) => {
 			gl.resize();
+			gl.clear([0, 0, 0, 0], 1);
 			gl.cullFace = FaceDirection.BACK;
 
-			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
+			perspective(Math.PI / 4, canvas.width / canvas.height, 1, 10, projectionMatrix);
 
-			mat4.identity(camMat);
-			mat4.translate(camMat, camMat, camPos);
+			multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
 
-			mat4.invert(viewMat, camMat);
+			identity(matrix);
+			rotateY(matrix, now * speed, matrix);
 
-			mat4.multiply(viewProjMat, projMat, viewMat);
-
-			mat4.identity(mat);
-			mat4.rotateX(mat, mat, Math.PI / 4);
-			mat4.rotateY(mat, mat, 0.001 * now);
-
-			mat4.invert(invTransMat, mat);
-			mat4.transpose(invTransMat, invTransMat);
+			normalFromMatrix4(matrix, normalMatrix);
 
 			vao.draw({
-				"u_viewProjMat": viewProjMat,
-				"u_worldMat": mat,
-				"u_invTransWorldMat": invTransMat,
-				"u_lightPos": lightPos,
-				"u_color": cubeColor,
-				"u_reverseLightDir": reverseLightDir,
-				"u_lightDotLimit": lightDotLimit
+				"u_viewProjection": viewProjectionMatrix,
+				"u_world": matrix,
+				"u_normal": normalMatrix,
+				"u_lightPosition": lightPosition,
+				"u_reverseLightDirection": reverseLightDirection,
+				"u_color": [1, 1, 1, 1],
+				"u_innerLimit": innerLimit,
+				"u_outerLimit": outerLimit
 			});
-		}
+		};
 	}, props);
-}
+};

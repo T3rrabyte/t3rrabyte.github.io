@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Skinning", "An introduction to skinning in WebGL.", "/favicon.png", "/a/webgl/skinning");
+export const metadata = generateMetadata("Skinning | WebGL | Lakuna", "An introduction to skinning in WebGL.", "/favicon.png", "/a/webgl/skinning");

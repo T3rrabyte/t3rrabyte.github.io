@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("Story Rating System", "Travis Martin's rating system for stories.", "/favicon.png", "/a/srs");
+export const metadata = generateMetadata("Story Rating System | Blog | Lakuna", "Travis Martin's rating system for stories.", "/favicon.png", "/a/srs");

@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Program Structure", "A reference page for the typical structure of a WebGL API program.", "/favicon.png", "/a/webgl/program-structure");
+export const metadata = generateMetadata("Program Structure | WebGL | Lakuna", "A reference page for the typical structure of a program that uses the WebGL API.", "/favicon.png", "/a/webgl/program-structure");

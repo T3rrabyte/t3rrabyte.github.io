@@ -1,59 +1,73 @@
-# Introduction to WebGL2
+# WebGL2 Tutorial
 
-This tutorial series serves as an introduction to WebGL2 with [μGL](https://ugl.lakuna.pw/) - a framework
-of my own design. It is based on the tutorial series by [Gregg Tavares](https://webgl2fundamentals.org/) and
-[Maxime Euzière](https://xem.github.io/articles/webgl-guide.html).
+This is a tutorial series for WebGL2. Many examples use
+[μGL](https://ugl.lakuna.pw/) and/or
+[μMath](https://umath.lakuna.pw/) after their concept has been
+demonstrated without a library in order to reduce their
+complexity. It is based on
+[the tutorial series by Gregg Tavares](https://webgl2fundamentals.org/).
 
-## Table of contents
+## Index
 
-1. [Index](/a/webgl)
-2. [What is WebGL?](/a/webgl/what-is)
-	- WebGL
-	- Shaders
+1. [Introduction to WebGL](/a/webgl/introduction)
 	- The WebGL API
-3. [Attributes](/a/webgl/attributes)
+2. [Shaders](/a/webgl/shaders)
+	- GLSL
+	- Shader Programs
+3. [Program Structure](/a/webgl/program-structure)
+	- Initialization
+	- Rasterization
+		- Clearing Color Buffers
+		- Resizing the Viewport
+	- Cheat Sheet
+4. [Attributes](/a/webgl/attributes)
 	- Buffers
-	- Vertex array objects
+	- Vertex Array Objects
+	- Rasterizing
 	- Indices
-4. [Uniforms](/a/webgl/uniforms)
-5. [Program structure](/a/webgl/program-structure)
-6. ["Hello, world!"](/a/webgl/hello-world)
-7. [Varyings](/a/webgl/varyings)
-8. [Transformation](/a/webgl/transformation)
+5. [Uniforms](/a/webgl/uniforms)
+6. [Varyings](/a/webgl/varyings)
+7. [Transformation](/a/webgl/transformation)
 	- Translation
 	- Rotation
 	- Scaling
 	- Matrices
-	- Animation
-9. [Scene graph](/a/webgl/scene-graph)
-10. [3D](/a/webgl/3d)
-	- Orthographic
+		- Matrix Translation
+		- Matrix Rotation
+		- Matrix Scaling
+		- Orthographic Projection
+8. [The Scene Graph](/a/webgl/scene-graph)
+9. [3D](/a/webgl/3d)
+	- Orthographic 3D
+	- Polygon Culling
+	- Depth Testing
 	- Perspective
 	- Cameras
-11. [Textures](/a/webgl/textures)
-	- Texture parameters
-	- Texture atlases
-	- Data textures
-	- Projection mapping
-12. [Framebuffers](/a/webgl/framebuffers)
-	- Render to texture
-13. [Lighting](/a/webgl/lighting)
-	- Directional lighting
-	- Colored lighting
-	- Ambient lighting
-	- Point lighting
-	- Specular lighting
-	- Spot lighting
-14. [Cubemaps](/a/webgl/cubemaps)
-	- Environment maps
+10. [Textures](/a/webgl/textures)
+	- Parameters
+	- Texture Atlases
+	- Data Textures
+	- Projection Mapping
+11. [Framebuffers](/a/webgl/framebuffers)
+	- Rendering to Textures
+12. [Lighting](/a/webgl/lighting)
+	- Directional Lighting
+	- Colored Lighting
+	- Ambient Lighting
+	- Point Lighting
+	- Specular Lighting
+	- Spot Lighting
+13. [Cubemaps](/a/webgl/cubemaps)
+	- Environment Maps
 	- Skyboxes
-15. [Shadows](/a/webgl/shadows)
-16. [Fog](/a/webgl/fog)
-17. [Transparency](/a/webgl/transparency)
-18. [Text](/a/webgl/text)
-	- Glyph textures
-19. [GPGPU](/a/webgl/gpgpu)
-20. [Picking](/a/webgl/picking)
-21. [Image processing](/a/webgl/image-processing)
-22. [Skinning](/a/webgl/skinning)
-23. [Lost context](/a/webgl/lost-context)
+14. [Shadows](/a/webgl/shadows)
+	- Shadow Maps
+15. [Fog](/a/webgl/fog)
+16. [Transparency](/a/webgl/transparency)
+17. [Text](/a/webgl/text)
+	- Glyph Textures
+18. [GPGPU](/a/webgl/gpgpu)
+19. [Picking](/a/webgl/picking)
+20. [Image Processing](/a/webgl/image-processing)
+21. [Skinning](/a/webgl/skinning)
+22. [Handling Lost Context](/a/webgl/lost-context)

@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Fog", "An introduction to the techniques used to emulate fog in WebGL.", "/favicon.png", "/a/webgl/fog");
+export const metadata = generateMetadata("Fog | WebGL | Lakuna", "An introduction to the techniques used to emulate fog in WebGL.", "/favicon.png", "/a/webgl/fog");

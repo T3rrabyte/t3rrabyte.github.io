@@ -1,13 +1,14 @@
 import nextMdx from "@next/mdx";
-import remarkPrism from "remark-prism";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeHighlight from "rehype-highlight";
+import glsl from "highlight.js/lib/languages/glsl";
 
 const withMdx = nextMdx({
 	extension: /\.mdx?$/,
 	options: {
-		remarkPlugins: [remarkPrism, remarkMath],
-		rehypePlugins: [rehypeKatex]
+		remarkPlugins: [remarkMath],
+		rehypePlugins: [rehypeKatex, [rehypeHighlight, { detect: true, languages: { glsl } }]]
 	}
 });
 

@@ -48,13 +48,16 @@
 		<loc>https://www.lakuna.pw/a/webgl/framebuffers</loc>
 	</url>
 	<url>
+		<loc>https://www.lakuna.pw/a/webgl/glossary</loc>
+	</url>
+	<url>
 		<loc>https://www.lakuna.pw/a/webgl/gpgpu</loc>
 	</url>
 	<url>
-		<loc>https://www.lakuna.pw/a/webgl/hello-world</loc>
+		<loc>https://www.lakuna.pw/a/webgl/image-processing</loc>
 	</url>
 	<url>
-		<loc>https://www.lakuna.pw/a/webgl/image-processing</loc>
+		<loc>https://www.lakuna.pw/a/webgl/introduction</loc>
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/lighting</loc>
@@ -70,6 +73,9 @@
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/scene-graph</loc>
+	</url>
+	<url>
+		<loc>https://www.lakuna.pw/a/webgl/shaders</loc>
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/shadows</loc>
@@ -94,8 +100,5 @@
 	</url>
 	<url>
 		<loc>https://www.lakuna.pw/a/webgl/varyings</loc>
-	</url>
-	<url>
-		<loc>https://www.lakuna.pw/a/webgl/what-is</loc>
 	</url>
 </urlset>

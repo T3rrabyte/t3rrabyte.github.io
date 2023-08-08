@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Cubemaps", "An introduction to cubemaps in WebGL.", "/favicon.png", "/a/webgl/cubemaps");
+export const metadata = generateMetadata("Cubemaps | WebGL | Lakuna", "An introduction to cubemaps in WebGL.", "/favicon.png", "/a/webgl/cubemaps");

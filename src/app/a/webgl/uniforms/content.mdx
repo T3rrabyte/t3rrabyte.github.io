@@ -1,21 +1,19 @@
 # Uniforms
 
-You may need to read the previous article about [WebGL](/a/webgl/what-is) in order to understand this one.
+You may need to read [the article about attributes](/a/webgl/attributes) before this one.
 
-Another way to pass data to the GPU is with *uniforms*.
+---
 
-Uniforms are variables that are uniform for each vertex. They can be defined in either the vertex shader or the
-fragment shader.
+Another way to pass data to the GPU is with *uniforms*, which variables that are uniform for each
+vertex. They can be defined in both vertex and fragment shaders.
+
+Uniforms are declared using the `uniform` keyword. For example:
 
 ```glsl
 #version 300 es
 
 precision highp float;
 
-/*
-The naming convention for uniforms is camelCase prefixed by
-"u_".
-*/
 uniform vec4 u_color;
 
 out vec4 outColor;
@@ -25,43 +23,24 @@ void main() {
 }
 ```
 
-Once a uniform has been declared in a shader program, it can be accessed with the WebGL API by getting its location.
-μGL does this step automatically when linking shader programs.
+In order to manipulate a uniform from JavaScript, the WebGL API must first be queried for its location.
 
-```js
-const colorUniformLocation = gl.getUniformLocation(
-	program, "u_color");
+```ts
+const location: WebGLUniformLocation | null =
+	gl.getUniformLocation(program, "u_color");
 ```
 
-In order to set a uniform's value, the function that matches that value's type must be called. For example, setting a
-`vec4`-valued uniform looks like this:
+A uniform's value can be updated by calling the function that corresponds to the type of data that
+it holds. For example:
 
-```js
-gl.uniform4fv(colorUniformLocation, [0, 0, 0, 1]);
+```ts
+gl.uniform4fv(location, [1, 0, 0, 1]);
 ```
 
-μGL automatically determines the correct setter function, so the following line has the same effect:
+import Uniforms from "./Uniforms.jsx";
 
-```js
-program.uniforms.get("u_color").value = [0, 0, 0, 1];
-```
+<Uniforms style={{ width: "100%" }} />
 
-Setting uniforms should be done between binding a VAO and drawing it:
+---
 
-```js
-program.use();
-vao.bind();
-
-program.uniforms.get("u_color").value = [0, 0, 0, 1];
-// More uniforms...
-
-vao.draw();
-```
-
-There is also a shorthand equivalent to the block of code above:
-
-```js
-vao.draw({ "u_color": [0, 0, 0, 1] });
-```
-
-The next article covers the typical [program structure](/a/webgl/program-structure) when using the WebGL API.
+The next article is about [varyings](/a/webgl/varyings).

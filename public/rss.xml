@@ -6,7 +6,7 @@
 		<link>https://www.lakuna.pw/</link>
 		<description>A list of articles written by Travis Martin.</description>
 		<language>en-us</language>
-		<copyright>Copyright 2022, Travis Martin</copyright>
+		<copyright>Copyright 2023, Travis Martin</copyright>
 		<docs>https://validator.w3.org/feed/docs/rss2.html</docs>
 		<atom:link href="https://www.lakuna.pw/rss.xml" rel="self" type="application/rss+xml" />
 		<image>
@@ -31,7 +31,7 @@
 			<pubDate>Tue, 11 Apr 2023 17:00:00 GMT</pubDate>
 		</item>
 		<item>
-			<title>Introduction to WebGL2</title>
+			<title>WebGL2 Tutorial</title>
 			<link>https://www.lakuna.pw/a/webgl</link>
 			<description>The table of contents for my WebGL2 tutorial series.</description>
 			<author>tjmartin2003@gmail.com (Travis Martin)</author>

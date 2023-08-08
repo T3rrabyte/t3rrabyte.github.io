@@ -1,16 +1,17 @@
 # Transformation
 
-You may need to read the previous articles about [attributes](/a/webgl/attributes) and [uniforms](/a/webgl/uniforms)
-in order to understand this one.
+You may need to read [the article about uniforms](/a/webgl/uniforms) before this one. Additionally,
+although it isn't necessary, it might be useful to have prior knowledge of linear algebra.
 
-A *transformation* is a way to change something. There are three basic transformations: *translation*, *rotation*, and *scaling*.
+---
+
+A transformation is a way to change something. There are three basic transformations: translation,
+rotation, and scaling.
 
 ## Translation
 
-A translation is a movement. It is performed by adding a vector value to each vertex. For an initial vector
-$(x_0,y_0,z_0)$ and a translation vector $(x_t,y_t,z_t)$, the resulting vector is $(x_0+x_t,y_0+y_t,z_0+z_t)$.
-
-In a vertex shader, a translation could be implemented with a vector uniform.
+A translation is performed by adding a vector value to each vertex. For an initial vector $(x_0,y_0,z_0)$
+and a translation vector $(x_t,y_t,z_t)$, the resulting vector is $(x_0+x_t,y_0+y_t,z_0+z_t)$. For example:
 
 ```glsl
 #version 300 es
@@ -24,20 +25,18 @@ void main() {
 }
 ```
 
+import Translation from "./Translation.jsx";
+
+<Translation style={{ width: "100%" }} />
+
 ## Rotation
 
-A rotation is performed by multiplying each vertex by a point on the *unit circle*. The unit circle is the circle
-with a radius of $1$. As such, it can be thought of as a rotating $1$, in that multiplying a vertex by a point on
-the unit circle will not change its value (shape) except by rotating it.
-
-A point on the unit circle can be calculated with the *sine* and *cosine* functions for the $x$ and $y$ values, respectively.
-For an initial vector $(x_0,y_0)$ and a rotation value of $r$ radians, the resulting vector is $(x\sin(r)+y\cos(r),y\sin(r)-x\cos(r))$.
-Different algorithms are used for different axes in higher dimensions (more details below).
-
-In a vertex shader, a rotation could be implemented with a floating-point uniform.
+A rotation is performed by multiplying each vertex by a point on the unit circle. Given a rotation of
+$r$ radians, an equivalent point on the unit circle is $(\cos(r),\sin(r))$. To rotate an initial vector
+$(x,y)$ by $r$ radians, use $(x\sin(r)+y\cos(r),y\sin(r)-x\cos(r))$. For example:
 
 ```glsl
-#version 3000 es
+#version 300 es
 
 in vec4 a_position;
 
@@ -46,23 +45,29 @@ uniform float u_rotation;
 void main() {
 	float x = a_position.x * sin(u_rotation)
 		+ a_position.y * cos(u_rotation);
-	
+
 	float y = a_position.y * sin(u_rotation)
-		+ a_position.x * sin(u_rotation);
-	
+		- a_position.x * cos(u_rotation);
+
 	gl_Position = vec4(x, y, a_position.zw);
 }
 ```
 
+Note that the above code uses `a_position.zw`. This is equivalent to `vec2(a_position.z, a_position.w)`.
+It is possible to use any dimensions of a vector in any order to make another vector, such as `a_position.xyz`
+or `a_position.xzx`. This is called *swizzling*.
+
+import Rotation from "./Rotation.jsx";
+
+<Rotation style={{ width: "50%", aspectRatio: "1", margin: "auto" }} />
+
 ## Scaling
 
-A scaling is performed by multiplying each vertex by a vector. For an initial vector $(x_0,y_0,z_0)$ and a scaling
-vector $(x_s,y_s,z_s)$, the resulting vector is $(x_0x_s,y_0y_s,z_0z_s)$.
-
-In a vertex shader, a scaling could be implemented with a vector uniform.
+A scaling is performed by multiplying each vertex by a vector. For an initial vector $(x_0,y_0,z_0)$
+and a scaling vector $(x_s,y_s,z_s)$, the resulting vector is $(x_0x_s,y_0y_s,z_0z_s)$. For example:
 
 ```glsl
-#version 300
+#version 300 es
 
 in vec4 a_position;
 
@@ -73,85 +78,71 @@ void main() {
 }
 ```
 
+import Scaling from "./Scaling.jsx";
+
+<Scaling style={{ width: "100%" }} />
+
 ## Matrices
 
-There are various problems with using individual uniforms for translation, rotation, and scaling as described above.
-It can be tedious to use three different uniforms to describe the transformation of a vertex. Additionally,
-since the transformation logic is written into the vertex shader, a completely different shader program is required
-in order to apply the transformations in a different order.
+Using the techniques described above works fine until you want to combine multiple, at which point a
+different shader is needed for each permutation of transformations.
 
-A better way to pass transformations to the vertex shader is with *matrices*. Matrices are rectangular arrays of
-numbers arranged in rows and columns and manipulated according to [particular rules](https://en.wikipedia.org/wiki/Linear_algebra).
+The standard approach to applying transformations is with *transformation matrices*, which are square
+matrices that represent transformations. By using transformation matrices, the transformations can be
+applied to the matrix in any order in JavaScript before being passed to the shader. To transform a
+vertex by a transformation matrix, simply multiply the matrix by the vertex. For example:
 
-**Matrices are column-major**, which means that a matrix defined in JavaScript looks "sideways."
+```glsl
+#version 300 es
 
-```js
-const matrix = [
-	1, 2, 3, // Column 1
-	4, 5, 6, // Column 2
-	7, 8, 9 // Column 3
-];
+in vec4 a_position;
+
+uniform mat4 u_matrix;
+
+void main() {
+	gl_Position = u_matrix * a_position;
+}
 ```
 
-The JavaScript "matrix" above is equivalent to the matrix below.
+Matrix multiplication is noncommutative. When two transformation matrices are multiplied to combine
+their transformations, the transformations of the multiplicand are applied before those of the multiplier.
+In order for two matrices to be multipliable, the multiplicand must be of size $m\times{n}$ and the multiplier
+must be of size $n\times{p}$. Note that vectors are matrices with only one column.
+
+Given the following matrix $m$:
 
 $$$
-\begin{bmatrix}
-1 & 4 & 7 \\
-2 & 5 & 8 \\
-3 & 6 & 9
-\end{bmatrix}
+\begin{bmatrix}m_{(1,1)}&m_{(1,2)}&m_{(1,3)}&m_{(1,4)}\\m_{(2,1)}&m_{(2,2)}&m_{(2,3)}&m_{(2,4)}\\m_{(3,1)}&m_{(3,2)}&m_{(3,3)}&m_{(3,4)}\\m_{(4,1)}&m_{(4,2)}&m_{(4,3)}&m_{(4,4)}\end{bmatrix}
 $$$
 
-A *transformation matrix* is a matrix with $n$ rows and $n$ columns, where $n-1$ is the number of dimensions being
-transformed. To transform a vertex by a transformation matrix, simply multiply the vertex by the matrix.
+For a vector $v=(x_0,y_0,z_0,w_0)$, the product $mv=(x_1,y_1,z_1,w_1)$ can be computed as follows:
 
 $$$
-\begin{bmatrix}
-x_0 \\
-y_0 \\
-z_0 \\
-1
-\end{bmatrix}
+x_1=m_{(1,1)}x_0+m_{(1,2)}y_0+m_{(1,3)}z_0+m_{(1,4)}w_0
 $$$
 
 $$$
-\begin{bmatrix}
-m_{1,1} & m_{1,2} & m_{1,3} & m_{1,4} \\
-m_{2,1} & m_{2,2} & m_{2,3} & m_{2,4} \\
-m_{3,1} & m_{3,2} & m_{3,3} & m_{3,4} \\
-m_{4,1} & m_{4,2} & m_{4,3} & m_{4,4}
-\end{bmatrix}
-$$$
-
-The product of the above matrices (a vector/vertex is just a matrix with one column) is a vector $(x_1,y_1,z_1)$.
-
-$$$
-x_1=m_{1,1}x_0+m_{1,2}y_0+m_{1,3}z_0+m_{1,4}1
+y_1=m_{(2,1)}x_0+m_{(2,2)}y_0+m_{(2,3)}z_0+m_{(2,4)}w_0
 $$$
 
 $$$
-y_1=m_{2,1}x_0+m_{2,2}y_0+m_{2,3}z_0+m_{2,4}1
+z_1=m_{(3,1)}x_0+m_{(3,2)}y_0+m_{(3,3)}z_0+m_{(3,4)}w_0
 $$$
 
 $$$
-z_1=m_{3,1}x_0+m_{3,2}y_0+m_{3,3}z_0+m_{3,4}1
+w_1=m_{(4,1)}x_0+m_{(4,2)}y_0+m_{(4,3)}z_0+m_{(4,4)}w_0
 $$$
 
-Matrices can be constructed in specific ways such that the matrix multiplication described above has the same function
-as various transformations.
+Matrices can be constructed in specific ways such that the matrix multiplication described above
+has the same function as various transformations.
 
-### Matrix translation
+### Matrix Translation
 
-The following matrix translates an initial vector $(x_0,y_0,z_0)$ by $(x_t,y_t,z_t)$, resulting in a vector $(x_1,y_1,z_1)$.
+The following matrix translates an initial vector $(x_0,y_0,z_0)$ by $(x_t,y_t,z_t)$, resulting in
+a vector $(x_1,y_1,z_1)$.
 
 $$$
-\begin{bmatrix}
-1 & 0 & 0 & x_t \\
-0 & 1 & 0 & y_t \\
-0 & 0 & 1 & z_t \\
-0 & 0 & 0 & 1
-\end{bmatrix}
+\begin{bmatrix}1&0&0&x_t\\0&1&0&y_t\\0&0&1&z_t\\0&0&0&1\end{bmatrix}
 $$$
 
 $$$
@@ -166,18 +157,27 @@ $$$
 z_1=0x_0+0y_0+1z_0+z_t1=z_0+z_t
 $$$
 
-### Matrix rotation
+### Matrix Rotation
 
-The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $z$ axis (most common in two dimensions),
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $x$ axis,
 resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
 
 $$$
-\begin{bmatrix}
-c & s & 0 & 0 \\
--s & c & 0 & 0 \\
-0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
+\begin{bmatrix}1&0&0&0\\0&c&s&0\\0&-s&c&0\\0&0&0&1\end{bmatrix}
+$$$
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $y$ axis,
+resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+
+$$$
+\begin{bmatrix}c&0&-s&0\\0&1&0&0\\s&0&c&0\\0&0&0&1\end{bmatrix}
+$$$
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $z$ axis,
+resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+
+$$$
+\begin{bmatrix}c&s&0&0\\-s&c&0&0\\0&0&1&0\\0&0&0&1\end{bmatrix}
 $$$
 
 $$$
@@ -192,50 +192,20 @@ $$$
 z_1=0x_0+0y_0+1z_0+0\cdot1=z_0
 $$$
 
-The following matrix is the equivalent for the $x$ axis.
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $(x_a,y_a,z_a)$ axis,
+resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$, $s=\sin(r)$, $t=1-c$, and $l=\sqrt{{x_a}^2+{y_a}^2+{z_a}^2}$.
 
 $$$
-\begin{bmatrix}
-1 & 0 & 0 & 0 \\
-0 & c & s & 0 \\
-0 & -s & c & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
+\begin{bmatrix}(x_al)^2t+c&y_ax_al^2t+z_als&z_ax_al^2t-y_als&0\\x_ay_al^2t-z_als&(y_al)^2t+c&z_ay_al^2t+x_als&0\\x_az_al^2t+y_als&y_az_al^2t-x_als&(z_al)^2t+c&0\\0&0&0&1\end{bmatrix}
 $$$
 
-The following matrix is the equivalent for the $y$ axis.
+### Matrix Scaling
+
+The following matrix scales an initial vector $(x_0,y_0,z_0)$ by a scaling vector $(x_s,y_s,z_s)$,
+resulting in a vector $(x_1,y_1,z_1)$.
 
 $$$
-\begin{bmatrix}
-c & 0 & -s & 0 \\
-0 & 1 & 0 & 0 \\
-s & 0 & c & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$$
-
-The following matrix is the equivalent for the $(x_a,y_a,z_a)$ axis, where $l=\sqrt{{x_a}^2+{y_a}^2+{z_a}^2}$ and $t=1-c$.
-
-$$$
-\begin{bmatrix}
-(x_al)^2t+c & y_ax_al^2t+z_als & z_ax_al^2t-y_als & 0 \\
-x_ay_al^2t-z_als & (y_al)^2t+c & z_ay_al^2t+x_als & 0 \\
-x_az_al^2t+y_als & y_az_al^2t-x_als & (z_al)^2t+c & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
-$$$
-
-### Matrix scaling
-
-The following matrix scales an initial vector $(x_0,y_0,z_0)$ by a scaling vector $(x_s,y_s,z_s)$, resulting in a vector $(x_1,y_1,z_1)$.
-
-$$$
-\begin{bmatrix}
-x_s & 0 & 0 & 0 \\
-0 & y_s & 0 & 0 \\
-0 & 0 & z_s & 0 \\
-0 & 0 & 0 & 1
-\end{bmatrix}
+\begin{bmatrix}x_s&0&0&0\\0&y_s&0&0\\0&0&z_s&0\\0&0&0&1\end{bmatrix}
 $$$
 
 $$$
@@ -250,20 +220,20 @@ $$$
 z_1=0x_0+0y_0+z_sz_0+0\cdot1=z_sz_0
 $$$
 
-### Orthographic projection
+### Orthographic Projection
 
-It is also possible to make a matrix that converts from screen space to clip space (known as an *orthographic projection*),
-since that operation is just a scale and a rotation. The following matrix converts a clip space vector $(x_0,y_0,z_0,w_0)$ to a
-screen space vector $(x_1,y_1,z_1,w_1)$, where $l$, $r$, $b$, $t$, $n$, and $f$ are the left, right, bottom, top, near, and far
-bounds of the frustum, respectively.
+A *projection* is a linear transformation from a vector space to itself. An *orthographic projection*
+is a projection that uses parallel lines to project its shape. A *projection matrix* is a
+transformation matrix that applied a projection.
+
+An orthographic projection can be used to convert from screen space to clip space.
+
+The following orthographic projection matrix converts a vector $(x_0,y_0,z_0,w_0)$ to a vector
+$(x_1,y_1,z_1,w_1)$, where $l$, $r$, $b$, $t$, $n$, and $f$ are the left, right, bottom, top, near,
+and far bounds of the view frustum, respectively.
 
 $$$
-\begin{bmatrix}
-\frac{-2}{l-r} & 0 & 0 & 0 \\
-0 & \frac{-2}{b-t} & 0 & 0 \\
-0 & 0 & \frac{2}{n-f} & 0 \\
-\frac{l+r}{l-r} & \frac{b+t}{b-t} & \frac{n+f}{n-f} & 1
-\end{bmatrix}
+\begin{bmatrix}\frac{-2}{l-r}&0&0&0\\0&\frac{-2}{b-t}&0&0\\0&0&\frac{2}{n-f}&0\\\frac{l+r}{l-r}&\frac{b+t}{b-t}&\frac{n+f}{n-f}&1\end{bmatrix}
 $$$
 
 $$$
@@ -282,72 +252,10 @@ $$$
 w_1=\frac{l+r}{l-r}x_0+\frac{b+t}{b-t}y_0+\frac{n+f}{n-f}z_0+1\cdot1
 $$$
 
-### Matrix multiplication
-
-Like numbers, matrices can be multiplied together. The product of two transformation matrices has the combined
-transformations of both. Matrix multiplication is not commutative, which means that the order of the operands
-matters. The first operand's transformations are applied first, followed by the second operand's transformations.
-
-Matrices can be passed as uniforms.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-
-uniform mat4 u_matrix;
-
-void main() {
-	gl_Position = u_matrix * a_position;
-}
-```
-
-In order to avoid implementing all of the algorithms described above, subsequent examples will use [glMatrix](https://glmatrix.net/)
-to perform matrix math.
-
-## Animation
-
-Animation in WebGL is accomplished by changing the uniform (and sometimes attribute) values between frames.
-
-```js
-const mat = mat4.create();
-
-function renderStep() {
-	requestAnimationFrame(renderStep);
-
-	// Rotate the matrix slightly.
-	mat4.rotateZ(mat, mat, 0.01);
-
-	// Set the new uniform value.
-	program.uniforms.get("u_matrix").value = mat;
-}
-requestAnimationFrame(renderStep);
-```
-
-Note that since `requestAnimationFrame` executes once each frame rather than at regular intervals, the time between
-render steps can vary. In other words, animations being calculated within the render step can vary in speed based
-on the framerate of the user. In order to ensure that animations remain smooth, the size of each transformation
-should be scaled by the amount of time that passed between frames. The first argument passed to any function passed to
-`requestAnimationFrame` is the amount of time that that function has been running.
-
-```js
-// Store the time of the last frame.
-let then = 0;
-
-function renderStep(now) {
-	requestAnimationFrame(renderStep);
-
-	// Calculate the amount of time between frames.
-	const deltaTime = now - then;
-	then = now;
-
-	mat4.rotateZ(mat, mat, 0.001 * deltaTime);
-}
-requestAnimationFrame(renderStep);
-```
-
-import Matrices from "./Matrices";
+import Matrices from "./Matrices.jsx";
 
 <Matrices style={{ width: "100%" }} />
 
-The next article is about the [scene graph](/a/webgl/scene-graph).
+---
+
+The next article is about [the scene graph](/a/webgl/scene-graph).

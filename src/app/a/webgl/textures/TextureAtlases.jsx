@@ -1,32 +1,41 @@
 "use client";
 
-import { AttributeState, Buffer, Color, Program, Context, Texture2D, TextureMinFilter, TextureMagFilter, VAO, FaceDirection, Mipmap, Texture2DMip } from "@lakuna/ugl";
-import { mat4 } from "gl-matrix";
-import AnimatedCanvas from "../AnimatedCanvas";
-import domain from "site/domain";
+import { Context, Buffer, BufferInfo, Program, Texture2D, VAO, FaceDirection } from "@lakuna/ugl";
+import { identity, perspective, rotateX, rotateY, translate, invert, multiply } from "@lakuna/umath/Matrix4";
+import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
+import domain from "#domain";
 
-const textureUrl = `${domain}images/webgl-example-texture-atlas.png`;
+const vss = `\
+#version 300 es
 
-const vss = `#version 300 es
 in vec4 a_position;
 in vec2 a_texcoord;
+
 uniform mat4 u_matrix;
+
 out vec2 v_texcoord;
+
 void main() {
-	v_texcoord = a_texcoord;
 	gl_Position = u_matrix * a_position;
+	v_texcoord = a_texcoord;
 }`;
 
-const fss = `#version 300 es
+const fss = `\
+#version 300 es
+
 precision highp float;
+
 in vec2 v_texcoord;
+
 uniform sampler2D u_texture;
+
 out vec4 outColor;
+
 void main() {
 	outColor = texture(u_texture, v_texcoord);
 }`;
 
-const positionBufferData = new Float32Array([
+const positionData = new Float32Array([
 	// Front
 	-1, 1, 1,
 	-1, -1, 1,
@@ -64,7 +73,7 @@ const positionBufferData = new Float32Array([
 	1, -1, 1
 ]);
 
-const texcoordBufferData = new Float32Array([
+const texcoordData = new Float32Array([
 	// Front
 	0 / 3, 0 / 2,
 	0 / 3, 1 / 2,
@@ -102,7 +111,7 @@ const texcoordBufferData = new Float32Array([
 	3 / 3, 1 / 2
 ]);
 
-const indexData = new Uint8Array([
+const indices = new Uint8Array([
 	// Top
 	0, 1, 2,
 	0, 2, 3,
@@ -128,75 +137,50 @@ const indexData = new Uint8Array([
 	20, 22, 23
 ]);
 
-const cameraRadius = 400;
-const cubeSideLength = 50;
+const textureUrl = `${domain}images/webgl-example-texture-atlas.png`;
 
-const transparent = new Color(0, 0, 0, 0);
+const rotationSpeedX = 0.0005;
+const rotationSpeedY = 0.001;
 
-export default function TextureAtlases(props) {
+export default (props) => {
 	return AnimatedCanvas((canvas) => {
 		const gl = new Context(canvas);
-
 		const program = Program.fromSource(gl, vss, fss);
 
-		const positionBuffer = new Buffer(gl, positionBufferData);
-		const texcoordBuffer = new Buffer(gl, texcoordBufferData);
-
+		const positionBuffer = new Buffer(gl, positionData);
+		const texcoordBuffer = new Buffer(gl, texcoordData);
 		const vao = new VAO(program, [
-			new AttributeState("a_position", positionBuffer),
-			new AttributeState("a_texcoord", texcoordBuffer, 2)
-		], indexData);
+			new BufferInfo("a_position", positionBuffer),
+			new BufferInfo("a_texcoord", texcoordBuffer, 2)
+		], indices);
 
-		const texture = new Texture2D(
-			gl,
-			new Mipmap(new Map([
-				[0, new Texture2DMip(
-					new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-					undefined,
-					1,
-					1
-				)]
-			])),
-			TextureMagFilter.NEAREST,
-			TextureMinFilter.NEAREST
-		);
+		const texture = Texture2D.fromImageUrl(gl, textureUrl);
+		// texture.magFilter = TextureMagFilter.NEAREST;
+		// texture.minFilter = TextureMinFilter.NEAREST;
 
-		const image = new Image();
-		image.addEventListener("load", () => {
-			texture.face.getMip(0).source = image;
-			texture.face.getMip(0).width = undefined;
-			texture.face.getMip(0).height = undefined;
-		});
-		image.crossOrigin = "";
-		image.src = textureUrl;
+		const projectionMatrix = new Float32Array(16);
+		const cameraMatrix = new Float32Array(16);
+		const viewMatrix = new Float32Array(16);
+		const viewProjectionMatrix = new Float32Array(16);
+		const matrix = new Float32Array(16);
 
-		const projMat = mat4.create();
-		const camMat = mat4.create();
-		const viewMat = mat4.create();
-		const viewProjMat = mat4.create();
-		const tempMat = mat4.create();
+		identity(cameraMatrix);
+		translate(cameraMatrix, [0, 0, 5], cameraMatrix);
+		invert(cameraMatrix, viewMatrix);
 
-		const mat = mat4.create();
-		mat4.scale(mat, mat, [cubeSideLength, cubeSideLength, cubeSideLength]);
-
-		return function render(now) {
-			gl.clear(transparent, 1);
-
+		return (now) => {
 			gl.resize();
-
+			gl.clear([0, 0, 0, 0], 1);
 			gl.cullFace = FaceDirection.BACK;
 
-			mat4.perspective(projMat, Math.PI / 4, canvas.clientWidth / canvas.clientHeight, 1, 1000);
-			mat4.identity(camMat);
-			mat4.rotateX(camMat, camMat, 0.001 * now);
-			mat4.rotateY(camMat, camMat, 0.0005 * now);
-			mat4.rotateZ(camMat, camMat, 0.00025 * now);
-			mat4.translate(camMat, camMat, [0, 0, cameraRadius]);
-			mat4.invert(viewMat, camMat);
-			mat4.multiply(viewProjMat, projMat, viewMat);
-			mat4.multiply(tempMat, viewProjMat, mat);
+			perspective(Math.PI / 4, canvas.width / canvas.height, 1, 10, projectionMatrix);
+			multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
+			identity(matrix);
+			rotateX(matrix, now * rotationSpeedX, matrix);
+			rotateY(matrix, now * rotationSpeedY, matrix);
+			multiply(viewProjectionMatrix, matrix, matrix);
 
-			vao.draw({ "u_matrix": tempMat, "u_texture": texture });
-		}
+			vao.draw({ "u_matrix": matrix, "u_texture": texture });
+		};
 	}, props);
-}
+};

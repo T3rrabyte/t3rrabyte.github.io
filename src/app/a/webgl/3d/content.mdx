@@ -1,104 +1,98 @@
 # 3D
 
-You may need to read the previous article about [the scene graph](/a/webgl/scene-graph) in order to understand this one.
+You may need to read [the article about transformation](/a/webgl/transformation) before this one.
 
-## Orthographic
+---
 
-An *orthographic* projection is a way to draw 3D without regard to perspective.
+## Orthographic 3D
 
-import OrthoNoCull from "./OrthoNoCull";
+Using an orthographic projection matrix, primitives can be drawn in three dimensions without regard
+to perspective.
 
-<OrthoNoCull style={{ width: "100%" }} />
+import Orthographic3d from "./Orthographic3d.jsx";
 
-### Cull face
+<Orthographic3d style={{ width: "100%" }} />
 
-Notice that the back of the rotating shape in the example above shows through to the front in some places. One way to
-fix this is to draw only front-facing triangles. By default, a triangle is considered front-facing if its vertices are
-being rasterized in a counter-clockwise orientation relative to the camera. To do so, enable the `CULL_FACE` feature.
+## Polygon Culling
+
+In the example above, the back of the rotating shape shows through to the front in some places. One
+way to fix this is with *polygon culling*, which is where only front-facing polygons are rasterized.
+By default, a polygon is considered front-facing if its vertices are defined in a counter-clockwise
+orientation relative to the camera.
+
+To enable polygon culling, enable the `CULL_FACE` feature like this:
 
 ```js
 gl.enable(gl.CULL_FACE);
 ```
 
-You can also choose whether you want to cull polygons that are facing towards or away from the camera.
+It is also possible to choose whether front- or back-facing polygons should be culled with the
+`cullFaces` function like this:
 
 ```js
 gl.cullFace(gl.BACK);
 ```
 
-In μGL, polygon culling is enabled via the `cullFace` accessor.
+Enabling polygon culling will make any triangles that are defined in the wrong orientation invisible.
+The orientation of a triangle can be reversed by swapping the order of the last two vertices.
 
-```js
-gl.cullFace = FaceDirection.BACK;
-```
+import PolygonCulling from "./PolygonCulling.jsx";
 
-Enabling `CULL_FACE` will make any triangles that are defined in the wrong orientation invisible.
+<PolygonCulling style={{ width: "100%" }} />
 
-import OrthoBadVertices from "./OrthoBadVertices";
+## Depth Testing
 
-<OrthoBadVertices style={{ width: "100%" }} />
+In the example above, some polygons are showing through others that are in front of them. To fix
+this, enable *depth testing*, which tests the depth of fragments and only rasterizes them if they
+pass. The depth of fragments is taken from `gl_Position.z` and is stored in the *depth buffer*.
 
-The orientation of a triangle can be reversed by swapping the last two vertices.
-
-import OrthoNoDepth from "./OrthoNoDepth";
-
-<OrthoNoDepth style={{ width: "100%" }} />
-
-### Depth test
-
-Even when culling backwards-facing triangles, some triangles still show through others. This is because WebGL
-doesn't remember the depth of a triangle unless the *depth buffer* is enabled.
+To enable depth testing, enable the `DEPTH_TEST` feature like this:
 
 ```js
 gl.enable(gl.DEPTH_TEST);
 ```
 
-While the color buffer stores the RGBA values of each pixel, the depth buffer stores the depth of each pixel. The
-third ("$z$") value of `gl_Position` is stored in the depth buffer. The depth buffer should be cleared before every
-frame just like the color buffer.
+Like the color buffer, the depth buffer should be cleared at the beginning of every frame. Also like
+the color buffer, this is done by setting a default value and then clearing like this:
 
 ```js
-gl.clearColor(0, 0, 0, 0);
 gl.clearDepth(1);
+gl.clear(gl.DEPTH_BUFFER_BIT);
+```
+
+The color and depth buffers can be cleared at the same time with a bitwise or operator like this:
+
+```js
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 ```
 
-μGL's `clearContext` function can be used to clear both the color and depth buffers in one line, and also enables
-the depth buffer if necessary.
+import DepthTesting from "./DepthTesting.jsx";
 
-```js
-clearContext(gl, new Color(0, 0, 0, 0), 1);
-```
-
-import Ortho from "./Ortho";
-
-<Ortho style={{ width: "100%" }} />
+<DepthTesting style={{ width: "100%" }} />
 
 ## Perspective
 
-*Perspective* is when things that are further away from the camera appear smaller. WebGL automatically divides the
-value assigned to `gl_Position` by its fourth ("$w$") value. This is usefule for applying perspective because it
-is equivalent to a scaling operation.
+WebGL automatically divides `gl_Position.xyz` by `gl_Position.w`. This means that perspective can
+be applied using `gl_Position.w`. A *perspective projection* is a projection that scales its shape
+based on its distance from the camera.
 
-The example below shows two cubes (one on each side of the canvas). The cube on the left uses an orthographic
-projection, and the cube on the right uses a perspective projection. Notice that the sides of the orthographic cube
-are not visible despite being to the left of the camera.
-
-import Perspective from "./Perspective";
+import Perspective from "./Perspective.jsx";
 
 <Perspective style={{ width: "100%" }} />
 
 ## Cameras
 
-Rather than move a scene to fit in the frustum of a camera (as is the case in all of the examples above), it is more
-common to move the camera to view the scene. To do so, a transformation matrix can be made to represent the camera,
-called the *camera matrix*. The camera matrix can be inverted to make a *view matrix*. The *projection matrix*
-(which is calculated according to different algorithms depending on the type of projection) can be multiplied by
-the view matrix to make a *view projection matrix*. Objects in a scene can be "viewed" by a camera by multiplying their
-world matrix by the view projection matrix to make a *world view projection matrix*.
+Rather than move a scene to fit in the frustum of the camera, it is more common to move the camera
+to view the scene. To do so, a matrix called the *camera matrix* can be made to represent the
+transformation of the camera. This can be inverted to make a *view matrix*. The projection matrix
+can be multiplied by the view matrix to make a *view projection matrix*, which can be used to
+multiply world matrices to make *world view projection matrices*, which transforms vertices to
+appear from the point of view of the camera.
 
-import Cameras from "./Cameras";
+import Cameras from "./Cameras.jsx";
 
 <Cameras style={{ width: "100%" }} />
+
+---
 
 The next article is about [textures](/a/webgl/textures).

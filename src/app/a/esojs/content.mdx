@@ -32,7 +32,7 @@ to `false`, such as `0`, `""`, and `false`) become `true`, and truthy values (th
 `true`, such as `1`, `"a"`, `[]`, `{}`, and `true`) become `false`.
 - Adding an array to anything converts it into a string: `[] + [] == ""`.
 
-## JavaScript with thirteen characters
+## JavaScript With Thirteen Characters
 
 Before I get into true JSFuck (which uses only six characters), I will cover the version covered in
 [this](https://youtu.be/sRWE5tnaxlI) video (which uses thirteen characters: `({[/>+!-=\]})`).
@@ -266,7 +266,7 @@ const compile = (code) =>
 	`${_function_constructor}(${_string(code)})()`;
 ```
 
-## JavaScript with six characters
+## JavaScript With Six Characters
 
 JSFuck uses only six characters (`[]()+!`), losing `{}>-=\` from the thirteen used above (`({[/>+!-=\]})`).
 Notably, this means that the only basic value that can be used to make other things is an empty array, since we

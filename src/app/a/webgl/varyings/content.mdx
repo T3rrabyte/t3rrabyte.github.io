@@ -1,25 +1,26 @@
 # Varyings
 
-You may need to read the previous article about [attributes](/a/webgl/uniforms) in order to understand this one.
+You may need to read [the article about attributes](/a/webgl/attributes) before this one.
 
-The final way to pass data to the GPU is with *varyings*.
+---
 
-Varyings are variables that vary between each vertex. They are outputs from vertex shaders and inputs to fragment shaders.
+Another way to pass data to the GPU is with *varyings*, which are variables that vary between vertices.
+They are outputs from vertex shaders and inputs to fragment shaders, so they are declared using the
+`out` and `in` keywords, respectively.
+
+A varying must be declared in both the vertex shader and the fragment shader. For example:
 
 ```glsl
 #version 300 es
 
+in vec4 a_position;
 in vec4 a_color;
 
-/*
-Varyings are outputs from vertex shaders. The naming
-convention for varyings is camelCase prefixed by "v_".
-*/
 out vec4 v_color;
 
 void main() {
-	v_color = a_color;
-	gl_Position = vec4(0, 0, 0, 0);
+	gl_Position = a_position;
+	v_color = a_position;
 }
 ```
 
@@ -28,7 +29,6 @@ void main() {
 
 precision highp float;
 
-// Varyings are inputs to fragment shaders.
 in vec4 v_color;
 
 out vec4 outColor;
@@ -38,11 +38,13 @@ void main() {
 }
 ```
 
-Once WebGL starts to rasterize a primitive, the value of the varying is interpolated between the values set on each
-vertex of that primitive.
+The value of the varying for a fragment is interpolated between the values passed to that varying
+from the vertices in the primitive that contains it.
 
-import Varyings from "./Varyings";
+import Varyings from "./Varyings.jsx";
 
 <Varyings style={{ width: "100%" }} />
 
-The next article is about [transformation](/a/webgl/transformation).
+---
+
+The next article covers [transformation](/a/webgl/transformation).

@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Shadows", "An introduction to the techniques used to emulate shadows in WebGL.", "/favicon.png", "/a/webgl/shadows");
+export const metadata = generateMetadata("Shadows | WebGL | Lakuna", "An introduction to the techniques used to emulate shadows in WebGL.", "/favicon.png", "/a/webgl/shadows");

@@ -1,8 +1,6 @@
 import Content from "./content.mdx";
-import generateMetadata from "site/generateMetadata";
+import generateMetadata from "#generateMetadata";
 
-export default function Page() {
-	return <Content />;
-}
+export default () => <Content />;
 
-export const metadata = generateMetadata("WebGL Lost Context", "An introduction to handling lost context in WebGL.", "/favicon.png", "/a/webgl/lost-context");
+export const metadata = generateMetadata("Handling Lost Context | WebGL | Lakuna", "An introduction to handling lost context in WebGL.", "/favicon.png", "/a/webgl/lost-context");

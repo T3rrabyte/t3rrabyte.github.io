@@ -1,13 +1,13 @@
 # Cubemaps
 
-You may need to read the previous articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures)
-in order to understand this one.
+You may need to read the articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures)
+before this one.
 
-A *cubemap* is a type of texture that consists of six faces, each being referenced by their direction from the center
-of the cube. Rather than texture coordinates, cubemaps are accessed using normals (3D directions).
+---
 
-In GLSL, a cubemap is referenced with a `samplerCube`, and accessing it with the `texture` method requires a normalized
-vector.
+A *cubemap* is a type of texture that consists of six faces, each referenced by their direction from
+the center of a cube. Cubemaps are sampled using normals instead of texture coordinates. A cubemap
+can be sampled using a `samplerCube` variable. For example:
 
 ```glsl
 #version 300 es
@@ -15,107 +15,60 @@ vector.
 precision highp float;
 
 in vec3 v_normal;
+
 uniform samplerCube u_texture;
+
 out vec4 outColor;
 
 void main() {
-	outColor = texture(u_texture, normalize(v_normal));
+	vec3 normal = normalize(v_normal);
+	outColor = texture(u_texture, normal);
 }
 ```
 
-Rather than representing the direction of a vertex, these normals will represent the direction from the center of the
-shape to the point that the texture is being sampled from. For a shape that is centered around the origin, simply normalizing
-the positions of the vectors accomplishes this. Modifying an example from [the lighting article](/a/webgl/lighting) in this way
-makes the light disregard edges.
+## Environment Maps
 
-import SmoothNormals from "./SmoothNormals";
-
-<SmoothNormals style={{ width: "100%" }} />
-
-Instead of using a texture atlas, it is possible to apply a different texture to each side of a cube in this way. Note that
-this is not standard (using a texture atlas is), and it is only being done here as a proof-of-concept.
-
-import SolidColorCubemap from "./SolidColorCubemap";
-
-<SolidColorCubemap style={{ width: "100%" }} />
-
-## Environment maps
-
-The most common thing that a cubemap is used for is an *environment map*. An environment map represents the environment of the
-objects that are being drawn. In other words, it is a way to approximate reflections.
-
-A reflection effect can be achieved using GLSL's built-in `reflect` function. The reflective primitive will need its own normals
-so that the direction between the viewer and its surface can be calculated.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-in vec3 a_normal;
-
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-
-out vec3 v_worldPos;
-out vec3 v_worldNormal;
-
-void main() {
-	gl_Position = u_viewProjMat * u_worldMat * a_position;
-	v_worldPos = (u_worldMat * a_position).xyz;
-
-	/*
-	Normals only care about rotation (not position), so
-	cut off the fourth dimension.
-	*/
-	v_worldNormal = mat3(u_worldMat) * a_normal;
-}
-```
-
-Using the information about the shape recieved from the vertex shader, the fragment shader can calculate the angle between the
-surface of the primitive and the viewer.
+The most common thing that cubemaps are used as are *environment maps*, which represent the environment
+of the scene. Environment maps are a way to approximate reflections. If the fragment shader knows the
+position and normal of its fragment relative to the origin, it can use the `reflect` function to calculate
+a reflection. For example:
 
 ```glsl
 #version 300 es
 
 precision highp float;
 
-in vec3 v_worldPos;
-in vec3 v_worldNormal;
+in vec3 v_surfacePosition;
+in vec3 v_normal;
 
 uniform samplerCube u_texture;
-uniform vec3 u_worldCamPos;
+uniform vec3 u_cameraPosition;
 
 out vec4 outColor;
 
 void main() {
-	vec3 worldNormal = normalize(v_worldNormal);
-	vec3 eyeToSurfaceDir =
-		normalize(v_worldPos - u_worldCamPos);
-	vec3 dir = reflect(eyeToSurfaceDir, worldNormal);
-	outColor = texture(u_texture, dir);
+	vec3 normal = normalize(v_normal);
+	vec3 cameraToSurfaceDirection =
+		normalize(v_surfacePosition - u_cameraPosition);
+	vec3 reflectionDirection =
+		reflect(cameraToSurfaceDirection, normal);
+	outColor = texture(u_texture, reflectionDirection);
 }
 ```
 
-*The environment map texture used in the following examples is of Leadenhall Market, taken from
-[Poly Haven](https://polyhaven.com/a/leadenhall_market). It was created by [Andreas Mischok](https://www.artstation.com/andreasmischok),
-and allowed for any use under the [CC0](https://creativecommons.org/publicdomain/zero/1.0/) license.*
+import EnvironmentMaps from "./EnvironmentMaps.jsx";
 
-import EnvironmentMap from "./EnvironmentMap";
+<EnvironmentMaps style={{ width: "100%" }} />
 
-<EnvironmentMap style={{ width: "100%" }} />
+Check out the source of the example texture [here](https://polyhaven.com/a/leadenhall_market).
 
 ## Skyboxes
 
-A *skybox* is a cubemap that represents the background of a scene. It gets its name from the fact that it often depicts a sky.
+A *skybox* is a cubemap that represents the background of a scene (often a sky). Skyboxes can be
+implemented by using the inverse of the view projection matrix to draw the skybox to a plane that
+covers the entire rendering context.
 
-While it would be possible to implement a skybox by rasterizing a large cube around the scene, that method comes with some drawbacks:
-
-- The cube might cover up objects in the scene.
-- If the cube is drawn without utilizing the depth buffer in order to prevent it from covering other objects, it doesn't benefit from
-the performance improvements that the depth buffer offers.
-
-Instead, the skybox can be implemented by using the inverse of the view projection matrix to draw the skybox to a rectangle that covers
-the entire viewport. The vertex shader should ensure that the skybox is always at the back of the depth buffer.
+The vertex shader should ensure that the skybox is always at the back of the depth buffer. For example:
 
 ```glsl
 #version 300 es
@@ -125,17 +78,16 @@ out vec4 v_position;
 
 void main() {
 	gl_Position = a_position;
-
-	// Ensure that the skybox is always at the back.
 	gl_Position.z = 1.0;
 
 	v_position = a_position;
 }
 ```
 
-The fragment shader multiplies the fragment position by the inverse of the view direction projection matrix, effectively undoing the view
-direction projection. It then manually divides the $x$, $y$, and $z$ components by the $w$ component, which is usually automatically done
-by the vertex shader for perspective-correct texture mapping.
+The fragment shader can multiply the fragment position by the inverse of the view direction projection
+matrix (the product of the view matrix without the translation component and the projection matrix)
+to undo it. Then, it needs to manually divide the `xyz` vector by `w` to manually apply perspective.
+The result can be sampled from the environment map to make a skybox. For example:
 
 ```glsl
 #version 300 es
@@ -143,33 +95,23 @@ by the vertex shader for perspective-correct texture mapping.
 precision highp float;
 
 in vec4 v_position;
+
 uniform samplerCube u_texture;
-uniform mat4 u_invViewDirProjMat;
+uniform mat4 u_inverseViewDirectionProjection;
+
 out vec4 outColor;
 
 void main() {
-	vec4 t = u_invViewDirProjMat * v_position;
-	outColor = texture(u_texture, normalize(t.xyz / t.w));
+	vec4 t = u_inverseViewDirectionProjection * v_position;
+	vec3 skyboxNormal = normalize(t.xyz / t.w);
+	outColor = texture(u_texture, skyboxNormal);
 }
 ```
 
-The view direction projection matrix can be calculated in the same way as the view projection matrix, but with indices
-$m_{4,1}$, $m_{4,2}$, and $m_{4,3}$ (the position coordinates) of the view matrix set to zero before multiplying it with the projection matrix.
-It is important to remove the position coordinates because otherwise the skybox will be backwards.
+import Skyboxes from "./Skyboxes.jsx";
 
-```js
-mat4.copy(viewDirMat, viewMat);
-viewDirMat[12] = 0;
-viewDirMat[13] = 0;
-viewDirMat[14] = 0;
+<Skyboxes style={{ width: "100%" }} />
 
-mat4.multiply(viewDirProjMat, projMat, viewDirMat);
-
-mat4.invert(invViewDirProjMat, viewDirProjMat);
-```
-
-import Skybox from "./Skybox";
-
-<Skybox style={{ width: "100%" }} />
+---
 
 The next article is about [shadows](/a/webgl/shadows).

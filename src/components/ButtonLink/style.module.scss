@@ -1,16 +1,16 @@
-@use "../../variables" as *;
+@use "../../variables";
 
 html body a.base {
-	color: $text-color;
-	background-color: $fg-color;
-	border: 1px solid $text-color;
+	color: variables.$text-color;
+	background-color: variables.$fg-color;
+	border: 1px solid variables.$text-color;
 	border-radius: 100px;
 	padding: 10px;
 	text-decoration: none;
 
 	&:hover {
-		color: $fg-color;
-		background-color: $text-color;
-		border: 1px solid $fg-color;
+		color: variables.$fg-color;
+		background-color: variables.$text-color;
+		border: 1px solid variables.$fg-color;
 	}
 }

@@ -1,18 +1,18 @@
 # Lighting
 
-You may need to read the previous articles about [3D](/a/webgl/3d) and [varyings](/a/webgl/varyings) in order to
-understand this one.
+You may need to read the articles about [3D](/a/webgl/3d) and [varyings](/a/webgl/varyings) before this one.
 
-## Directional lighting
+---
 
-*Directional lighting* (or *diffuse lighting*) is the simplest form of lighting. It assumes that the light is coming
-uniformly from one direction. One common use case of directional lighting is to emulate light from the sun.
+## Directional Lighting
 
-If the direction that the light is traveling and the direction that a surface is facing are both known, it is
-possible to determine the cosine of the angle between the two directions by taking the dot product. That value
-represents the "brightness" of the light on that surface.
+*Directional lighting* (also called *diffuse lighting*) is light that comes uniformly from one direction.
+If the direction that the light is traveling and the direction that a surface is facing are both known,
+it is possible to determine the brightness of the light on that surface. This is equivalent to the cosine
+of the angle between the directions, which is equivalent to the dot product of the directions.
 
-The direction that a surface is facing is represented by a unit vector called a *normal*.
+The direction that a surface is facing is represented by a unit vector called a *normal*. Normals are
+typically passed to the vertex shader with an attribute, then to the fragment shader with a varying. For example:
 
 ```glsl
 #version 300 es
@@ -20,15 +20,29 @@ The direction that a surface is facing is represented by a unit vector called a 
 in vec4 a_position;
 in vec3 a_normal;
 
-uniform mat4 u_matrix;
+uniform mat4 u_viewProjection;
+uniform mat4 u_world;
+uniform mat3 u_normal;
 
 out vec3 v_normal;
 
 void main() {
-	gl_Position = u_matrix * a_position;
-	v_normal = a_normal;
+	gl_Position = u_viewProjection * u_world * a_position;
+	v_normal = u_normal * a_normal;
 }
 ```
+
+Notice that the normals are multiplied by a matrix called `u_normal`. A *normal matrix* is the
+inverse transpose of the rotation portion of a transformation matrix. The upper-left three-by-three
+part of a transformation matrix is the part that stores rotation data, so the fourth row and column
+can be ignored. Inverting and transposing this matrix causes the normals to remain correct even when
+the shape is scaled. The normals are multiplied by the normal matrix but not the view projection matrix,
+since the light source shouldn't move when the camera moves.
+
+The brightness of a surface is equivalent to the cosine of the angle between that surface's normal
+and the direction from that surface to the light source. The direction to the light source is the
+opposite of the direction that the light is traveling. The cosine can be calculated by taking the
+dot product of the angles. For example:
 
 ```glsl
 #version 300 es
@@ -37,102 +51,31 @@ precision highp float;
 
 in vec3 v_normal;
 
-uniform vec4 u_color;
-
-/*
-Instead of taking the direction that the light is moving as
-input, it is easier to take the position of the light
-source (in other words, the direction to the light source).
-*/
 uniform vec3 u_reverseLightDirection;
+uniform vec4 u_color;
 
 out vec4 outColor;
 
 void main() {
-	/*
-	Since v_normal is a varying, its value is interpolated.
-	Therefore, it must be re-normalized to a unit vector.
-	*/
 	vec3 normal = normalize(v_normal);
 
-	float light = dot(normal, u_reverseLightDirection);
+	float brightness = dot(normal, u_reverseLightDirection);
 
 	outColor = u_color;
-	outColor.rgb *= light;
+	outColor.rgb *= brightness;
 }
 ```
 
-import DirectionalLightingStaticBrokenNormals from "./DirectionalLightingStaticBrokenNormals";
+Notice that since the normal is interpolated when being passed to the fragment shader, it has to be
+normalized before it can be used.
 
-<DirectionalLightingStaticBrokenNormals style={{ width: "100%" }} />
-
-Notice that although sides of the cube above are being lit properly, the light isn't changing when the cube rotates.
-This is because the normals aren't being re-oriented like the positions are. Multiplying the normals by the object's
-world matrix will have the desired effect. Note that this requires the world matrix and the view projection matrix to
-be passed separately.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-in vec3 a_normal;
-
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-
-out vec3 v_normal;
-
-void main() {
-	mat4 mat = u_viewProjMat * u_worldMat;
-
-	gl_Position = mat * a_position;
-
-	/*
-	The upper 3x3 of a transformation matrix is the part
-	that deals with rotation.
-	*/
-	v_normal = mat3(u_worldMat) * a_normal;
-}
-```
-
-import DirectionalLightingBrokenNormals from "./DirectionalLightingBrokenNormals";
-
-<DirectionalLightingBrokenNormals style={{ width: "100%" }} />
-
-One issue with the solution above is that the normals get skewed when the world matrix gets scaled. This can be fixed by using
-the inverse transpose of the world matrix instead.
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-in vec3 a_normal;
-
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-uniform mat4 u_invTransWorldMat;
-
-out vec3 v_normal;
-
-void main() {
-	mat4 mat = u_viewProjMat * u_worldMat;
-
-	gl_Position = mat * a_position;
-
-	v_normal = mat3(u_invTransWorldMat) * a_normal;
-}
-```
-
-The example below doesn't look any different because the cube isn't being scaled, but it uses the world inverse transpose matrix
-instead of just the world matrix.
-
-import DirectionalLighting from "./DirectionalLighting";
+import DirectionalLighting from "./DirectionalLighting.jsx";
 
 <DirectionalLighting style={{ width: "100%" }} />
 
-## Colored lighting
+## Colored Lighting
 
-The light can be given a color by adding a color to the calculation.
+Color can be given to a light source by multiplying the brightness by that color. For example:
 
 ```glsl
 #version 300 es
@@ -141,8 +84,8 @@ precision highp float;
 
 in vec3 v_normal;
 
-uniform vec4 u_color;
 uniform vec3 u_reverseLightDirection;
+uniform vec4 u_color;
 uniform vec4 u_lightColor;
 
 out vec4 outColor;
@@ -158,14 +101,10 @@ void main() {
 }
 ```
 
-import DirectionalLightingColored from "./DirectionalLightingColored";
+## Ambient Lighting
 
-<DirectionalLightingColored style={{ width: "100%" }} />
-
-## Ambient lighting
-
-*Ambient lighting* is lighting that is applied equally to all triangles, regardless of their normal vector. This is used to set a
-"minimum" brightness to ensure that nothing in the scene is too dark.
+*Ambient lighting* is lighting that is applied equally to all surfaces regardless of normal.
+It is used to set a minimum brighness so that nothing in the scene is too dark. For example:
 
 ```glsl
 #version 300 es
@@ -174,8 +113,8 @@ precision highp float;
 
 in vec3 v_normal;
 
-uniform vec4 u_color;
 uniform vec3 u_reverseLightDirection;
+uniform vec4 u_color;
 uniform float u_ambientLight;
 
 out vec4 outColor;
@@ -183,22 +122,17 @@ out vec4 outColor;
 void main() {
 	vec3 normal = normalize(v_normal);
 
-	float directionalLight =
-		dot(normal, u_reverseLightDirection);
+	float directionalLight = dot(normal, u_reverseLightDirection);
 
 	outColor = u_color;
 	outColor.rgb *= directionalLight + u_ambientLight;
 }
 ```
 
-import AmbientDirectionalLighting from "./AmbientDirectionalLighting";
+## Point Lighting
 
-<AmbientDirectionalLighting style={{ width: "100%" }} />
-
-## Point lighting
-
-*Point lighting* is when light extends in every direction from a point. To emulate it, pass the position of the light to the
-vertex shader as a uniform, then pass the distance from the light source to the surface as a varying.
+*Point lighting* is when light extends in every direction from a point. To emulate it, first pass
+the direction from the surface to the light source as a varying. For example:
 
 ```glsl
 #version 300 es
@@ -206,99 +140,48 @@ vertex shader as a uniform, then pass the distance from the light source to the 
 in vec4 a_position;
 in vec3 a_normal;
 
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-uniform mat4 u_invTransWorldMat;
-uniform vec3 u_lightPos;
+uniform mat4 u_viewProjection;
+uniform mat4 u_world;
+uniform mat3 u_normal;
+uniform vec3 u_lightPosition;
 
 out vec3 v_normal;
-out vec3 v_lightDir;
+out vec3 v_directionToLight.
 
 void main() {
-	mat4 mat = u_viewProjMat * u_worldMat;
+	gl_Position = u_viewProjection * u_world * a_position;
 
-	gl_Position = mat * a_position;
+	v_normal = u_normal * a_normal;
 
-	v_normal = mat3(u_invTransWorldMat) * a_normal;
-
-	// Determine the position of the surface.
-	vec3 surfacePos = (u_worldMat * a_position).xyz;
-
-	// Pass the direction from the surface to the light.
-	v_lightDir = u_lightPos - surfacePos;
+	vec3 surfacePosition = (u_world * a_position).xyz;
+	v_directionToLight = u_lightPosition - surfacePosition;
 }
 ```
 
-```glsl
-#version 300 es
+The direction to the light can then be used in exactly the same way as with directional lighting.
+Point lighting is almost identical to directional lighting, except that the light direction is
+interpolated between fragments.
 
-precision highp float;
-
-in vec3 v_normal;
-in vec3 v_lightDir;
-
-uniform vec4 u_color;
-
-out vec4 outColor;
-
-void main() {
-	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
-
-	float light = dot(normal, lightDir);
-
-	outColor = u_color;
-	outColor.rgb *= light;
-}
-```
-
-import PointLighting from "./PointLighting";
+import PointLighting from "./PointLighting.jsx";
 
 <PointLighting style={{ width: "100%" }} />
 
-Notice that the code for point lighting is almost identical to the point for directional lighting. The only difference is that
-the light direction is interpolated between fragments.
+## Specular Lighting
 
-## Specular lighting
+*Specular lighting* is when light reflects off of a shiny surface.
 
-*Specular lighting* is when light reflects off of a shiny object. Light reflects off of a surface at the same angle that it hits
-that surface, so it is possible to determine whether specular light should be rendered if the angle from the light to the surface
-is the same as the angle from the surface to the camera.
+Light reflects off of a surface at the same angle that it hits that surface, so specular lighting
+should occur if the angle from the light to the surface is the same as the angle from the surface to
+the camera. Both angles can be calculated by taking the dot product of their vectors, then they can
+be added together and normalized to get the *half vector*, which is the vector that sits halfway
+between them. The brightness of specular light can be determined based on how similar the half vector
+is to the normal.
 
-As explained above, the angle between two vectors can be determined using the dot product. Then, if the two dot products are added
-together and normalized, you get the half vector (the vector that sits halfway between them). The brightness of the specular light
-can then be determined based on how similar the half vector is to the surface's normal (again using the dot product).
-
-```glsl
-#version 300 es
-
-in vec4 a_position;
-in vec3 a_normal;
-
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-uniform mat4 u_invTransWorldMat;
-uniform vec3 u_lightPos;
-uniform vec3 u_camPos;
-
-out vec3 v_normal;
-out vec3 v_lightDir;
-out vec3 v_camDir;
-
-void main() {
-	mat4 mat = u_viewProjMat * u_worldMat;
-
-	gl_Position = mat * a_position;
-
-	v_normal = mat3(u_invTransWorldMat) * a_normal;
-
-	vec3 surfacePos = (u_worldMat * a_position).xyz;
-
-	v_lightDir = u_lightPos - surfacePos;
-
-	v_camDir = u_camPos - surfacePos;
-}
-```
+First, the direction from the surface to the light and from the surface to the camera must be passed
+as varyings (using the same process as with point lighting). Then, the brightness of the specular
+lighting can be calculated as the dot product between the half angle and the normal. The object can
+be given a shininess value to change the specular lighting from a linear to an exponential falloff,
+which makes it look more realistic. For example:
 
 ```glsl
 #version 300 es
@@ -306,45 +189,8 @@ void main() {
 precision highp float;
 
 in vec3 v_normal;
-in vec3 v_lightDir;
-in vec3 v_camDir;
-
-uniform vec4 u_color;
-
-out vec4 outColor;
-
-void main() {
-	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
-	vec3 camDir = normalize(v_camDir);
-	vec3 halfVector = normalize(lightDir + camDir);
-
-	float pointLight = dot(normal, lightDir);
-
-	float specularLight = dot(normal, halfVector);
-
-	outColor = u_color;
-	outColor.rgb *= pointLight;
-	outColor.rgb += specularLight;
-}
-```
-
-import SpecularLightingLinearFalloff from "./SpecularLightingLinearFalloff";
-
-<SpecularLightingLinearFalloff style={{ width: "100%" }} />
-
-The shine can be made to look more realistic by raising the angle between the normal and the half vector to a certain power that
-represents the "shininess" of the surface. This has the effect of changing the specular light from a linear falloff to an exponential
-falloff.
-
-```glsl
-#version 300 es
-
-precision highp float;
-
-in vec3 v_normal;
-in vec3 v_lightDir;
-in vec3 v_camDir;
+in vec3 v_directionToLight;
+in vec3 v_directionToCamera;
 
 uniform vec4 u_color;
 uniform float u_shininess;
@@ -353,80 +199,35 @@ out vec4 outColor;
 
 void main() {
 	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
-	vec3 camDir = normalize(v_camDir);
-	vec3 halfVector = normalize(lightDir + camDir);
+	vec3 directionToLight = normalize(v_directionToLight);
+	vec3 directionToCamera = normalize(v_directionToCamera);
+	vec3 halfVector =
+		normalize(directionToLight + directionToCamera);
 
-	float pointLight = dot(normal, lightDir);
-
-	// `pow` is undefined on negative numbers in WebGL.
-	float specularLight = pointLight >= 0.0
+	float pointBrightness = dot(normal, directionToLight);
+	float specularBrightness = pointBrightness >= 0.0
 		? pow(dot(normal, halfVector), u_shininess)
 		: 0.0;
 
 	outColor = u_color;
-	outColor.rgb *= pointLight;
-	outColor.rgb += specularLight;
+	outColor.rgb *= pointBrightness;
+	outColor.rgb += specularBrightness;
 }
 ```
 
-import SpecularLighting from "./SpecularLighting";
+import SpecularLighting from "./SpecularLighting.jsx";
 
 <SpecularLighting style={{ width: "100%" }} />
 
-## Spot lighting
+## Spot Lighting
 
-*Spot lighting* is almost the same thing as point lighting, with the difference being that the light only extends from the point
-in a cone. To emulate spot lighting, WebGL needs to know the direction of the cone and the angle from that direction to the sides
-of the cone (referred to as the "limit"). From the limit, we can create a dot limit by taking the cosine of the limit. If the dot
-product of the direction to the surface is above the dot limit, the surface is within the cone.
+*Spot lighting* is the same as point lighting except that the light only extends in a cone. To
+emulate spot lighting, the cone needs a direction and a *limit*, which is the angle from the
+direction of the cone to its sides. If the dot product of the direction to the normal is above
+the cosine of the limit (the *dot limit*), the surface is within the cone.
 
-```glsl
-#version 300 es
-
-precision highp float;
-
-in vec3 v_normal;
-
-/*
-`v_lightDir` represents the direction from the current
-fragment to the light.
-*/
-in vec3 v_lightDir;
-
-uniform vec4 u_color;
-
-/*
-`u_reverseLightDir` represents the opposite of the
-direction that the light is facing, just like with
-directional lighting.
-*/
-uniform vec3 u_reverseLightDir;
-
-uniform float u_limit;
-
-out vec4 outColor;
-
-void main() {
-	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
-
-	float light =
-		dot(lightDir, u_reverseLightDir) >= u_limit
-			? dot(normal, lightDir)
-			: 0.0;
-
-	outColor = u_color;
-	outColor.rgb *= light;
-}
-```
-
-import SpotLighting from "./SpotLighting";
-
-<SpotLighting style={{ width: "100%" }} />
-
-It is also possible to set an outer limit and an inner limit and interpolate the brightness between them to give the spotlight
-a smooth edge.
+The cone can be given an outer limit and an inner limit between which the brightness values are
+interpolated, which would give the spotlight a smooth edge. For example:
 
 ```glsl
 #version 300 es
@@ -434,10 +235,10 @@ a smooth edge.
 precision highp float;
 
 in vec3 v_normal;
-in vec3 v_lightDir;
+in vec3 v_directionToLight;
 
 uniform vec4 u_color;
-uniform vec3 u_reverseLightDir;
+uniform vec3 u_reverseLightDirection;
 uniform float u_innerLimit;
 uniform float u_outerLimit;
 
@@ -445,31 +246,23 @@ out vec4 outColor;
 
 void main() {
 	vec3 normal = normalize(v_normal);
-	vec3 lightDir = normalize(v_lightDir);
+	vec3 directionToLight = normalize(v_directionToLight);
 
-	float angularDist = dot(lightDir, u_reverseLightDir);
-
-	// `smoothstep` uses a Hermite interpolation.
-	float light =
-		smoothstep(u_outerLimit, u_innerLimit, angularDist)
-		* dot(normal, lightDir);
-
-	/*
-	// This could also be done with a linear interpolation:
-	float limitRange = u_innerLimit - u_outerLimit;
-	float light =
-		clamp((angularDist - u_outerLimit) / limitRange,
-			0.0, 1.0)
-		* dot(normal, lightDir);
-	*/
+	float angularDistance =
+		dot(directionToLight, u_reverseLightDirection);
+	float brightness =
+		smoothstep(u_outerLimit, u_innerLimit, angularDistance)
+		* dot(normal, directionToLight);
 
 	outColor = u_color;
-	outColor.rgb *= light;
+	outColor.rgb *= brightness;
 }
 ```
 
-import SpotLightingSmooth from "./SpotLightingSmooth";
+import SpotLighting from "./SpotLighting.jsx";
 
-<SpotLightingSmooth style={{ width: "100%" }} />
+<SpotLighting style={{ width: "100%" }} />
+
+---
 
 The next article is about [cubemaps](/a/webgl/cubemaps).

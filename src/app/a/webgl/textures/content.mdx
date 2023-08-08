@@ -1,13 +1,15 @@
 # Textures
 
-You may need to read the previous articles about [attributes](/a/webgl/attributes), [uniforms](/a/webgl/uniforms), and
-[varyings](/a/webgl/varyings) in order to understand this one.
+You may need to read the articles about [uniforms](/a/webgl/uniforms) and [varyings](/a/webgl/varyings)
+before this one.
 
-A *texture* is an array of data that can be randomly accessed in a shader program. Textures are mostly used to store image data.
+---
 
-In a shader, a *sampler* uniform is used to reference a texture. The `texture` function is used to get data out of
-a texture at the given *texture coordinates*. Texture space is a coordinate system in the interval $[0,1]$ from
-left to right and from the first pixel on the first line to the last pixel on the last line.
+A *texture* is an array of data that can be randomly accessed. Textures are mostly used to store image data.
+
+A *sampler* is a uniform that is used to sample a texture. The `texture` function is used to get the
+*texel* (texture element) from the given texture at the given *texture space* coordinates, which represent
+the texture on the interval $[0,1]$ from left to right, first pixel to last pixel. For example:
 
 ```glsl
 #version 300 es
@@ -25,111 +27,63 @@ void main() {
 }
 ```
 
-In order to access a texture in WebGL, a texture object must be created and bound to an appropriate binding point with the
-WebGL API (much like a buffer).
+Like buffers, textures need to be bound to a binding point in order to be manipulated. The `TEXTURE_2D`
+binding point is used or two-dimensional textures, which can be supplied data with the `texImage2D`
+function. The following example creates a one-by-one pink placeholder texture, then loads an image into it.
 
-```js
-const texture = gl.createTexture();
+```ts
+const texture: WebGLTexture = gl.createTexture();
 
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
-// Fill the texture with one blue pixel as a placeholder.
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
-	gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+	gl.UNSIGNED_BYTE, new Uint8Array([0xFF, 0, 0xFF, 0xFF]));
 
-/*
-Create an image, make it load data, and put it into the
-texture once it's ready.
-*/
-const image = new Image();
+const image: HTMLImageElement = new Image();
 image.addEventListener("load", () => {
 	gl.bindTexture(gl.TEXTURE_2D, texture);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
 		gl.UNSIGNED_BYTE, image);
 });
-image.crossOrigin = ""; // CORS
-image.src = "https://www.lakuna.pw/images/" +
-	"webgl-example-texture.png";
+image.crossOrigin = "";
+image.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
 ```
 
-Instead of taking a texture as the value of a sampler uniform directly, WebGL expects a *texture unit* representing the texture.
+To pass a texture to a sampler uniform, it must be bound to a *texture unit* that represents it. The
+texture unit is passed to the shader program instead of the texture. For example:
 
-```js
-// Select a texture unit.
+```ts
 gl.activeTexture(gl.TEXTURE0);
-
-// Assign a texture to the texture unit.
 gl.bindTexture(gl.TEXTURE_2D, texture);
-
-// Pass the texture unit to the sampler uniform.
 gl.uniform1i(imageUniformLocation, 0);
 ```
 
-μGL handles texture units automatically.
-
-```js
-const texture = new Texture2D(
-	gl,
-	new Mipmap(new Map([
-		[0, new Texture2DMip(
-			new Uint8Array([0xFF, 0x00, 0xFF, 0xFF]),
-			undefined,
-			1,
-			1
-		)]
-	]))
-);
-
-const image = new Image();
-image.addEventListener("load", () => {
-	texture.face.getMip(0).source = image;
-	texture.face.getMip(0).width = undefined;
-	texture.face.getMip(0).height = undefined;
-});
-image.crossOrigin = "";
-image.src = "https://www.lakuna.pw/images/" +
-	"webgl-example-texture.png";
-
-program.uniforms.get("u_texture").value = texture;
-```
-
-import Textures from "./Textures";
+import Textures from "./Textures.jsx";
 
 <Textures style={{ width: "100%" }} />
 
-Check out the artist of the example textures on [her website](https://www.xanycki.art/).
+Check out the artist of the example texture on [her website](https://www.xanycki.art/).
 
-## Texture parameters
+## Texture Parameters
 
-Certain parameters of a texture can be modified with the WebGL API via the `texParameteri` function.
+Textures have various parameters that can be modified. For example:
 
-```js
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S,
-	gl.CLAMP_TO_EDGE);
+```ts
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 ```
 
-As with other situations where binding points are necessary, μGL uses an object-oriented approach to texture parameters.
+The texture's behavior when using texture coordinates outside of texture space can be modified by
+using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respectively.
 
-```js
-texture.wrapSFunction = TextureWrapFunction.CLAMP_TO_EDGE;
-```
+- `REPEAT` makes the texture repeat. This is the default functionality.
+- `CLAMP_TO_EDGE` repeats the last texel.
+- `MIRRORED_REPEAT` repeats the texture, but mirrors it for each repetition.
 
-WebGL can be told what to do when supplied texture coordinates outside of the interval $[0,1]$ in the $s$ and
-$t$ directions with the `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` texture parameters, respectively.
-
-- `REPEAT` is the default functionality. It makes the texture repeat in the given direction.
-- `CLAMP_TO_EDGE` makes the texture not repeat at all.
-- `MIRRORED_REPEAT` makes the texture repeat, but flips the texture across the corresponding axis for each repetition.
-
-import TextureParameters from "./TextureParameters";
-
-<TextureParameters style={{ width: "100%" }} />
-
-A *mipmap* is a collection of smaller versions of a texture that is used to render a texture at different sizes. A
-*mip* is one level of a mipmap. The way that the mipmap is generated can be specified with the `TEXTURE_MIN_FILTER`
-and `TEXTURE_MAG_FILTER` parameters. The minification filter (which corresponds to the former) is used when
-drawing anything smaller than the largest mip, and the magnification filter (which corresponds to the latter) is
-used when drawing anything larger than the largest mip.
+A *mipmap* is a collection of *mips*, which are smaller versions of a texture that are used to rasterize
+the texture at different sizes. The way that the mipmap is generated can be specified with the
+minification and magnification filter parameters. The minification filter is used when drawing anything
+smaller than the largest mip, and the magnification filter is used when drawing anything larger than the
+largest mip.
 
 - `NEAREST` chooses one pixel from the largest mip.
 - `LINEAR` chooses four pixels from the largest mip and blends them.
@@ -138,40 +92,34 @@ used when drawing anything larger than the largest mip.
 - `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
 - `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
 
-Since the magnification filter is used when drawing larger than the largest mip, it can only be `NEAREST` or `LINEAR`.
+Since the magnification filter is only used when drawing larger than the largest mip, it can only
+be `NEAREST` or `LINEAR`.
 
-**In order for a texture to render, it must be *texture complete***. A texture is texture complete if it either
-only reads the first mip (i.e. uses `NEAREST` or `LINEAR` as its minification filter) or has a complete mipmap. The
-easiest way to generate a complete mipmap is with the WebGL API's `generateMipmap` function.
+In order for a texture to be rasterized, it must be *texture complete*, meaning that it either only
+reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with
+the `generateMipmap` function like this:
 
 ```js
 gl.generateMipmap(gl.TEXTURE_2D);
 ```
 
-μGL textures have an equivalent method, but it is automatically executed when necessary.
+## Texture Atlases
 
-import Mipmaps from "./Mipmaps";
+A *texture atlas* is a texture that contains multiple images. Using a texture atlas can simplify a
+shader and reduce the number of calls to rasterization functions.
 
-<Mipmaps style={{ width: "100%" }} />
-
-## Texture atlases
-
-A *texture atlas* is a texture that contains multiple images. This method has a few advantages, such as keeping
-the shader that uses it simple and reducing the number of draw calls required to draw multiple images. A texture
-atlas is used the same way as any other texture, but the texture coordinates of each vertex should be modified so
-that its primitive only displays the relevant part of the texture.
-
-import TextureAtlases from "./TextureAtlases";
+import TextureAtlases from "./TextureAtlases.jsx";
 
 <TextureAtlases style={{ width: "100%" }} />
 
-## Data textures
+## Data Textures
 
-Instead of loading texture data from an image, texture data can also be supplied directly from JavaScript. The way that
-the data is interpreted depends on the *internal format* of the texture. For example, setting the internal format to
-`R8` causes the texture to expect one eight-bit number per *texel* (short for *texture element*; roughly equivalent to a pixel),
-which it normalizes to a fraction. Each internal format has a corresponding format and data type that must also be specified.
-For example, with an internal format of `R8`, the format must be set to `RED` and the data type must be set to `UNSIGNED_BYTE`.
+Rather than loading texture data from an image, texture data can also be supplied directly. The way
+that the data is interpreted depends on the internal format of the texture. For example, setting the
+internal format to `R8` causes the texture to expect one unsigned byte per texel, which it normalizes
+to color space. Each internal format has a corresponding format and data type that must also be
+specified. For example, with an internal format of `R8`, the format must be set to `RED` and the data
+type must be set to `UNSIGNED_BYTE`.
 
 ```js
 const level = 0;
@@ -189,41 +137,28 @@ gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
 	height, border, format, type, data);
 ```
 
-μGL automatically determines the correct format and data type based on the specified internal format.
+Textures will be malformed if their row alignment is not a multiple of their *unpack alignment*, which
+specifies the expected alignment of the rows in the supplied texture data. The unpack alignment defaults
+to four in order to maintain backwards compatibility, but it can be set to one, two, four, or eight.
 
-```js
-texture.face.getMip(0).internalFormat
-	= TextureInternalFormat.R8;
-```
-
-**Textures will not update if their width is not a multiple of their *unpack alignment***. The unpack alignment defaults to
-four in order to maintain backwards compatibility with WebGL 1.0, but it can be set to one, two, four, or eight. The texture in the
-example above has a width of three, so the unpack alignment must be set to one in order for the texture to render. This must be
-done before executing the function that is being used to update the texture (i.e. `texImage2D`).
+For example, the texture above has a width of three pixels per row and uses one byte per pixel, meaning
+that each row is three bytes wide. Since three is not a multiple of two, four, or eight, the unpack
+alignment must be set to one like this:
 
 ```js
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 ```
 
-μGL updates the unpack alignment as necessary.
-
-import DataTextures from "./DataTextures";
+import DataTextures from "./DataTextures.jsx";
 
 <DataTextures style={{ width: "100%" }} />
 
-## Projection mapping
+## Projection Mapping
 
-*Projection mapping* is the process of projecting an image. In the following animation, the left and right halves of the canvas are
-drawn separately by making use of `Context.resize`. The left half shows the view of a camera that is spinning around a letter F, and the
-right side shows the view of a camera that is floating above the scene. The frustum of the left camera is displayed by the right camera
-by multiplying a wireframe cube by the left camera's projection matrix.
-
-import MultipleViews from "./MultipleViews";
-
-<MultipleViews style={{ width: "100%" }} />
-
-In order to perform projection mapping, some changes need to be made to the shader program. The vertex shader needs to pass the view projection
-matrix of the projecting camera to the fragment shader.
+*Projection mapping* is the process of projecting an image. It can be accomplished by making another
+camera to act as a projector, then passing the projector's view projection matrix to the shader program
+so that the surface's position can be determined from the point of view of both the viewer and the
+projector. For example:
 
 ```glsl
 #version 300 es
@@ -231,24 +166,23 @@ matrix of the projecting camera to the fragment shader.
 in vec4 a_position;
 in vec2 a_texcoord;
 
-// Split up u_matrix into two parts.
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
-
-// Also take the view projection matrix of the projector.
-uniform mat4 u_texMat;
+uniform mat4 u_world;
+uniform mat4 u_viewerViewProjection;
+uniform mat4 u_projectorViewProjection;
 
 out vec2 v_texcoord;
-out vec4 v_projTexcoord;
+out vec4 v_projectedTexcoord;
 
 void main() {
-	gl_Position = u_viewProjMat * u_worldMat * a_position;
+	gl_Position = u_viewerViewProjection * u_world * a_position;
 	v_texcoord = a_texcoord;
-	v_projTexcoord = u_texMat * u_worldMat * a_position;
+	v_projectedTexcoord =
+		u_projectorViewProjection * u_world * a_position;
 }
 ```
 
-The fragment shader needs to determine which texture to use at each position based on whether the position falls within the frustum of the projector.
+The fragment shader needs to determine which texture to use at each position based on whether the
+position falls within the frustum of the projector. For example:
 
 ```glsl
 #version 300 es
@@ -256,50 +190,46 @@ The fragment shader needs to determine which texture to use at each position bas
 precision highp float;
 
 in vec2 v_texcoord;
-in vec4 v_projTexcoord;
+in vec4 v_projectedTexcoord;
 
 uniform sampler2D u_texture;
-uniform sampler2D u_projTexture;
+uniform sampler2D u_projectedTexture;
 
 out vec4 outColor;
 
 void main() {
-	/*
-	Apply perspective manually, since it isn't automatic
-	here like it is with `gl_Position`. The result is the
-	texture coordinate of the fragment within the
-	projection.
-	*/
-	vec2 projTexcoord =
-		(v_projTexcoord.xyz / v_projTexcoord.w).xy;
+	vec2 projectedTexcoord =
+		(v_projectedTexcoord.xyz / v_projectedTexcoord.w).xy;
 	
-	// Check if the fragment is in the projection frustum.
-	bool inRange =
-		projTexcoord.x >= 0.0
-		&& projTexcoord.x <= 1.0
-		&& projTexcoord.y >= 0.0
-		&& projTexcoord.y <= 1.0;
+	bool inRange = projectedTexcoord.x >= 0.0
+		&& projectedTexcoord.x <= 1.0
+		&& projectedTexcoord.y >= 0.0
+		&& projectedTexcoord.y <= 1.0;
 	
-	// Get the color of the projected texture.
-	vec4 projTexColor =
-		texture(u_projTexture, projTexcoord);
+	vec4 projectedTextureColor =
+		texture(u_projectedTexture, projectedTexcoord);
 
-	// Get the color of the regular texture.
-	vec4 texColor = texture(u_texture, v_texcoord);
+	vec4 textureColor = texture(u_texture, v_texcoord);
 
-	/*
-	Use the correct texture depending on whether the
-	fragment is within the projection.
-	*/
-	outColor = inRange ? projTexColor : texColor;
+	outColor = inRange ? projectedTextureColor : textureColor;
 }
 ```
 
-Notice that rather than drawing the texture on top of the objects in the scene, texture projection works by checking if
-a fragment is within the projection range and sampling from the relevant texture when rasterizing.
+Notice that `v_projectorTexcoord.xyz` is manually divided by `v_projectorTexcoord.w` to determine
+the projected texture coordinates because perspective is typically only applied automatically only
+to `gl_Position`.
 
-import ProjectionMapping from "./ProjectionMapping";
+Also notice that rather than drawing the texture on top of existing fragments, texture projection
+works by checking if a fragment is within the projector's frustum and sampling from the correct
+texture based on that.
+
+import ProjectionMapping from "./ProjectionMapping.jsx";
 
 <ProjectionMapping style={{ width: "100%" }} />
+
+The frustum of the projector is shown in the example above by using the inverse of the projector's
+view projection matrix as the world matrix of a wireframe cube.
+
+---
 
 The next article is about [framebuffers](/a/webgl/framebuffers).

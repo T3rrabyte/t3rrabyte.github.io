@@ -1,4 +1,4 @@
-# Fast inverse square root
+# Fast Inverse Square Root
 
 "[Fast inverse square root](https://en.wikipedia.org/wiki/Fast_inverse_square_root)" refers to a famous
 algorithm invented by [William Kahan](https://en.wikipedia.org/wiki/William_Kahan), especially as implemented in
@@ -28,7 +28,7 @@ The thing that makes fast inverse square root so important is, as the name impli
 Division is very slow compared to the other basic arithmetic operations, so it is important to minimize its use. Even a
 small improvement means a lot in a function like fast inverse square root, which would see use hundreds of times per second.
 
-## Code analysis
+## Code Analysis
 
 The remainder of this article will be an analysis of the Quake III Arena code, which can be found
 [here](https://github.com/id-Software/Quake-III-Arena/blob/dbe4ddb10315479fc00086f08e25d968b4b43c49/code/game/q_math.c#L552).
@@ -107,7 +107,7 @@ For example, to store the number $3.75=1.875*2^1$ in IEEE 754:
 $0.875=\frac{7}{8}=\frac{1}{2}+\frac{1}{4}+\frac{1}{8}$, or `0b11100000000000000000000`.
 - All together, $3.75$ is represented as `0b01000000011100000000000000000000`.
 
-### The magic constant
+### The Magic Constant
 
 Since the floating-point values that fast inverse square root is designed to work with are always positive (the square root
 of a negative number is imaginary), the sign bit is always `0b0`, so it can be disregarded. Since the `8`-bit exponent is
@@ -145,7 +145,7 @@ $$$
 The appearance of $2^{23}e+m$ here is important because, as explained previously, that is the bit representation. In other words,
 the bit representation of a number is its own logarithm, albeit scaled and shifted by some constants.
 
-### Evil floating-point bit-level hacking
+### Evil Floating-Point Bit-Level Hacking
 
 The first notable line in the fast inverse square root implementation in Quake III Arena is similar to the following:
 
@@ -170,7 +170,7 @@ Note that, after the next step, the same operation is applied in reverse:
 y = *(float*)&i;
 ```
 
-### Applying the magic constant
+### Applying the Magic Constant
 
 Note that halving the exponent of a number yields the square root of that number ($x^{\frac{1}{2}}=\sqrt{x}$), and that negating the
 exponent yields its inverse ($x^{-1}=\frac{1}{x}$). Therefore, $x^{-\frac{1}{2}}=\frac{1}{\sqrt{x}}$.
@@ -216,7 +216,7 @@ $$$
 $-\frac{2^{23}e_y+m_y}{2}$ is equivalent to `- (i >> 1)` in the code, which leaves $\frac{3(2^{23})(127-\mu)}{2}$, which makes up the constant
 `0x5f3759DF`.
 
-### Newton's method
+### Newton's Method
 
 [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method) is an iterative algorithm which produces successively better approximations to the
 roots of a real-valued function. In other words, every time we run our approximation through Newton's method, it will become closer to the real value.

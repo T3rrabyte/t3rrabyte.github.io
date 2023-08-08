@@ -1,30 +1,108 @@
 # Program Structure
 
-You may need to read the previous article about [WebGL](/a/webgl/what-is) in order to understand this one.
+You may need to read [the article about shaders](/a/webgl/shaders) before this one.
 
-Most of the WebGL API is dedicated to setting up state for the shader program. A typical program that uses the WebGL
-API follows this structure:
+---
 
-- *Initialization step* (run once at the beginning of the program).
+Most of the WebGL API is dedicated to setting up state for shader programs. There are very few
+functions that actually rasterize.
+
+## Initialization
+
+The *initialization step* is executed once at the beginning of the program. It is typically used to
+get the rendering context, compile shaders, link shader programs, and prepare static data.
+
+## Rasterization
+
+The *rasterization step* is executed once for each *frame*, meaning once every time that the rendering
+context is updated. The *frame rate* is the speed at which new frames are rasterized. The frame rate
+typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
+
+The *viewport* specifies the affine transformation of the horizontal and vertical axes from clip space
+to *screen space*, which is a coordinate system that represents the rendering context on the intervals
+$[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of
+the rendering context in pixels and $y$ is the height of the rendering context in pixels.
+
+The rasterization step is typically used to clear and resize the viewport, modify dynamic data, and
+rasterize primitives.
+
+The `requestAnimationFrame` function can be used to execute the rasterization step as fast as the GPU
+can (up to a certain cap). Since the frame rate depends on the user's hardware, it is sometimes necessary
+to calculate it. The following example calculates the frame rate in frames per second as `frameRate`:
+
+```ts
+let then = 0;
+
+function rasterizationStep(now) {
+	requestAnimationFrame(rasterizationStep);
+
+	const deltaTime: number = now - then;
+	then = now;
+	const frameRate = 1000 / deltaTime;
+}
+requestAnimationFrame(rasterizationStep);
+```
+
+### Resizing the Viewport
+
+It is a good idea to resize the viewport every frame in case the rendering context resizes. If the
+viewport is not updated to match the rendering context, the rasterized primitives will appear blurry
+and/or stretched.
+
+The rendering context has two sizes: the physical size of the canvas, which is set by CSS, and the size
+of the draw buffer in pixels. If the size of the draw buffer does not match the physical size of the
+rendering context, the rasterized primitives will appear blurry and/or stretched.
+
+The following code resizes the drawing buffer to match the canvas, then resizes the viewport to match
+the drawing buffer:
+
+```ts
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+
+gl.viewport(0, 0, canvas.width, canvas.height);
+```
+
+### Clearing Color Buffers
+
+Before rasterizing a new frame, color buffers should be cleared of the fragments from the previous frame.
+First, a value must be set for fragments to be set to. Then, WebGL needs to be told which buffers to clear.
+For example, in order to clear the viewport to transparent black fragments, the following code would be used:
+
+```ts
+gl.clearColor(0, 0, 0, 0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+```
+
+## Cheat Sheet
+
+**If you're following this tutorial series in order, you won't know what most of the following cheat sheet means yet.**
+
+A typical program that uses the WebGL API follows this structure:
+
+- Initialization step:
 	- Get the rendering context.
-	- Create all of the shaders and link them into shader programs.
-	- Look up the locations of every variable in every shader program.
-	- Create buffers and upload vertex data to them.
-	- Create a vertex array object (VAO) for each "thing" that needs to be rasterized.
-		- For each attribute that will accept data from a buffer:
-			- Turn on the attribute.
-			- Assign a buffer to the attribute.
-			- Tell WebGL how to get data out of that buffer.
-	- Create textures and upload data to them.
-- *Render step* (run once each frame).
-	- Clear the viewport.
+	- Compile shaders.
+	- Link shader programs.
+	- Look up variable locations.
+	- Create and fill buffers.
+	- Create VAOs. For each attribute in each VAO:
+		- Enable the attribute.
+		- Bind a buffer to the attribute.
+		- Specify the layout of the buffer.
+	- Create and fill textures.
+- Rasterization step:
+	- Resize the drawing buffer.
 	- Resize the viewport.
+	- Clear color buffers.
 	- Set global state.
-	- For each "thing" that needs to be rasterized:
-		- Activate the shader program that is used to rasterize it.
-		- Bind the VAO that represents it.
-		- Set uniforms to the correct values for it.
-			- Assign textures to texture units.
-		- Execute the shader program.
+	- For each VAO:
+		- Use its shader program.
+		- Bind the VAO.
+		- Set uniforms.
+		- Assign textures to texture units.
+		- Rasterize.
 
-The next article walks through a minimal ["Hello, world!"](/a/webgl/hello-world) WebGL API program.
+---
+
+The next article is about [attributes](/a/webgl/attributes).

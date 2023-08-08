@@ -1,8 +1,6 @@
 import Link from "next/link";
-import defaultDomain from "site/domain";
+import domain from "#domain";
 
-export default function DynamicLink({ href, ...props }) {
-	return href.startsWith("/") || href.startsWith(defaultDomain)
-		? <Link href={href} {...props} />
-		: <a href={href} {...props} target="_blank" rel="noreferrer noopener" />;
-}
+export default ({ href, ...props }) => href.startsWith("/") || href.startsWith(domain)
+	? <Link href={href} {...props} />
+	: <a href={href} {...props} target="_blank" rel="noreferrer noopener" />;

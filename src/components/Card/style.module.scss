@@ -1,9 +1,9 @@
-@use "../../variables" as *;
+@use "../../variables";
 
 div.base,
 a.base {
-	background-color: $fg-color;
-	color: $text-color;
+	background-color: variables.$fg-color;
+	color: variables.$text-color;
 	border-radius: 10px;
 	flex: 1;
 	min-width: 300px;
@@ -19,7 +19,7 @@ a.base {
 		h5,
 		h6 {
 			text-align: center;
-			color: $text-color;
+			color: variables.$text-color;
 		}
 	}
 }

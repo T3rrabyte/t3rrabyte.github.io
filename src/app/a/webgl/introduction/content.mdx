@@ -1,0 +1,36 @@
+# Introduction to WebGL
+
+This article assumes that you have an advanced understanding of JavaScript, but assumes no prior
+knowledge about computer graphics.
+
+---
+
+Computers represent visual information in discrete units called *pixels*.
+
+Computers understand all shapes as collections of points, lines, and triangles. Collectively,
+these are referred to as *primitives*.
+
+Drawing one or more primitives with pixels is a process referred to as *rasterization*. Engines that
+are used to rasterize primitives are called *rasterization engines*. *WebGL* is a rasterization engine
+that is designed to work in the browser. The specification for version 2 of WebGL (*WebGL2*) can be
+found [here](https://registry.khronos.org/webgl/specs/latest/2.0/).
+
+WebGL2 is based on another rasterization engine called *OpenGL*. The specification for *OpenGL ES 3.0*
+(the version that WebGL2 is based on) can be found [here](https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf).
+
+## The WebGL API
+
+The *WebGL API* allows JavaScript to interface with WebGL. It can be accessed through the `WebGLRenderingContext`
+class. In order to use WebGL2, a `WebGL2RenderingContext` is required. Objects of either class can
+only be instantiated with the `HTMLCanvasElement.getContext` method. For example:
+
+```ts
+const canvas: HTMLCanvasElement = document.querySelector("canvas");
+const gl: WebGL2RenderingContext = canvas.getContext("webgl2");
+```
+
+Documentation for the WebGL API can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+
+---
+
+The next article is about [shaders](/a/webgl/shaders).

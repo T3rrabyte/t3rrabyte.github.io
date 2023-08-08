@@ -1,10 +1,6 @@
-import "katex/dist/katex.min.css";
-import "prism-themes/themes/prism-atom-dark.min.css";
+import "#highlight";
+import "#katex";
 
-export default function Layout({ children }) {
-	return (
-		<>
-			{children}
-		</>
-	);
-}
+// TODO: Link to index and glossary on every page.
+
+export default ({ children }) => <>{children}</>;
