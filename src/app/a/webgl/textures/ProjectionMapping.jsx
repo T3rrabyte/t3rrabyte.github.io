@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Texture2D, VAO, Mipmap, Texture2DMip, FaceDirection, TextureInternalFormat, Primitive, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Texture2d, Vao, Mipmap, Texture2dMip, FaceDirection, TextureInternalFormat, Primitive, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
 import { identity, invert, multiply, perspective, translate, rotateX, rotateY, scale } from "@lakuna/umath/Matrix4";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 import domain from "#domain";
@@ -248,19 +248,19 @@ export default (props) => {
 		const cubePositionBuffer = new Buffer(gl, cubePositionData);
 		const cubeTexcoordBuffer = new Buffer(gl, cubeTexcoordData);
 		const frustumPositionBuffer = new Buffer(gl, frustumPositionData);
-		const planeVao = new VAO(program, [
+		const planeVao = new Vao(program, [
 			new BufferInfo("a_position", planePositionBuffer, 2),
 			new BufferInfo("a_texcoord", planeTexcoordBuffer, 2)
 		], planeIndices);
-		const cubeVao = new VAO(program, [
+		const cubeVao = new Vao(program, [
 			new BufferInfo("a_position", cubePositionBuffer),
 			new BufferInfo("a_texcoord", cubeTexcoordBuffer, 2)
 		], cubeIndices);
-		const frustumVao = new VAO(frustumProgram, [
+		const frustumVao = new Vao(frustumProgram, [
 			new BufferInfo("a_position", frustumPositionBuffer)
 		], frustumIndices);
 
-		const texture = new Texture2D(gl, new Mipmap(new Texture2DMip(
+		const texture = new Texture2d(gl, new Mipmap(new Texture2dMip(
 			new Uint8Array([
 				0x80, 0xC0,
 				0xC0, 0x80
@@ -269,7 +269,7 @@ export default (props) => {
 			2,
 			2
 		)));
-		const projectedTexture = Texture2D.fromImageUrl(gl, projectedTextureUrl);
+		const projectedTexture = Texture2d.fromImageUrl(gl, projectedTextureUrl);
 		projectedTexture.magFilter = TextureMagFilter.LINEAR;
 		projectedTexture.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
 
@@ -309,7 +309,7 @@ export default (props) => {
 			gl.clear([0, 0, 0, 0], 1);
 			gl.cullFace = FaceDirection.BACK;
 
-			perspective(viewerFov, canvas.width / canvas.height, 1, 3, viewerProjectionMatrix);
+			perspective(viewerFov, canvas.width / canvas.height, 1, 5, viewerProjectionMatrix);
 
 			identity(viewerCameraMatrix);
 			rotateY(viewerCameraMatrix, now * speed, viewerCameraMatrix);

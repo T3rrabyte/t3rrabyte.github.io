@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, VAO } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 import { ortho, translate, rotateZ, scale } from "@lakuna/umath/Matrix4";
 
@@ -48,7 +48,7 @@ export default (props) => {
 		const program = Program.fromSource(gl, vss, fss);
 
 		const buffer = new Buffer(gl, data);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", buffer, 2)
 		], indices);
 

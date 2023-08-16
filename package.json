@@ -6,7 +6,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@lakuna/ugl": "^16.2.0",
+		"@lakuna/ugl": "^18.0.3",
 		"@lakuna/umath": "^1.2.0",
 		"@mdx-js/loader": "^2.3.0",
 		"@mdx-js/react": "^2.3.0",

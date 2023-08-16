@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Texture2D, VAO, FaceDirection } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Texture2d, Vao, FaceDirection } from "@lakuna/ugl";
 import { identity, perspective, rotateX, rotateY, translate, invert, multiply } from "@lakuna/umath/Matrix4";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 import domain from "#domain";
@@ -149,12 +149,12 @@ export default (props) => {
 
 		const positionBuffer = new Buffer(gl, positionData);
 		const texcoordBuffer = new Buffer(gl, texcoordData);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", positionBuffer),
 			new BufferInfo("a_texcoord", texcoordBuffer, 2)
 		], indices);
 
-		const texture = Texture2D.fromImageUrl(gl, textureUrl);
+		const texture = Texture2d.fromImageUrl(gl, textureUrl);
 		// texture.magFilter = TextureMagFilter.NEAREST;
 		// texture.minFilter = TextureMinFilter.NEAREST;
 

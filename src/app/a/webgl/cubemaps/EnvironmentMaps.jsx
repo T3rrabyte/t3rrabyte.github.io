@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, VAO, FaceDirection, Cubemap, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Vao, FaceDirection, Cubemap, TextureMinFilter, TextureMagFilter } from "@lakuna/ugl";
 import { identity, invert, multiply, perspective, translate, rotateZ, rotateY, getTranslation } from "@lakuna/umath/Matrix4";
 import { normalFromMatrix4 } from "@lakuna/umath/Matrix3";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
@@ -163,7 +163,7 @@ export default (props) => {
 
 		const positionBuffer = new Buffer(gl, positionData);
 		const normalBuffer = new Buffer(gl, normalData);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", positionBuffer),
 			new BufferInfo("a_normal", normalBuffer)
 		], indices);

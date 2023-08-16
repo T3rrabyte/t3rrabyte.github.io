@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, VAO } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 
 const vss = `\
@@ -55,7 +55,7 @@ export default (props) => {
 
 		const positionBuffer = new Buffer(gl, positionData);
 		const colorBuffer = new Buffer(gl, colorData);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", positionBuffer, 2),
 			new BufferInfo("a_color", colorBuffer)
 		], indices);

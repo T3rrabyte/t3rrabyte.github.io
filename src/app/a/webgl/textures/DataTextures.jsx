@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Texture2D, VAO, Mipmap, Texture2DMip, TextureInternalFormat } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Texture2d, Vao, Mipmap, Texture2dMip, TextureInternalFormat } from "@lakuna/ugl";
 import { identity, scale } from "@lakuna/umath/Matrix4";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 
@@ -60,12 +60,12 @@ export default (props) => {
 
 		const positionBuffer = new Buffer(gl, positionData);
 		const texcoordBuffer = new Buffer(gl, texcoordData);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", positionBuffer, 2),
 			new BufferInfo("a_texcoord", texcoordBuffer, 2)
 		], indices);
 
-		const texture = new Texture2D(gl, new Mipmap(new Texture2DMip(
+		const texture = new Texture2d(gl, new Mipmap(new Texture2dMip(
 			new Uint8Array([
 				0x80, 0x40, 0x80,
 				0x00, 0xC0, 0x00

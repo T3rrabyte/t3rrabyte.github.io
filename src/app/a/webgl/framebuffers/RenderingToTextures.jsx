@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, VAO, FaceDirection, Framebuffer, Texture2D, Mipmap, Texture2DMip, TextureInternalFormat, Renderbuffer, RenderbufferFormat } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, Program, Vao, FaceDirection, Framebuffer, Texture2d, Mipmap, Texture2dMip, TextureInternalFormat, Renderbuffer, RenderbufferFormat, FramebufferTarget } from "@lakuna/ugl";
 import { identity, rotateX, rotateY, rotateZ, perspective, invert, multiply, translate } from "@lakuna/umath/Matrix4";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 
@@ -145,24 +145,24 @@ export default (props) => {
 
 		const positionBuffer = new Buffer(gl, positionData);
 		const texcoordBuffer = new Buffer(gl, texcoordData);
-		const vao = new VAO(program, [
+		const vao = new Vao(program, [
 			new BufferInfo("a_position", positionBuffer),
 			new BufferInfo("a_texcoord", texcoordBuffer, 2)
 		], indices);
 
-		const redTexture = new Texture2D(gl, new Mipmap(new Texture2DMip(
+		const redTexture = new Texture2d(gl, new Mipmap(new Texture2dMip(
 			new Uint8Array([0xFF]),
 			TextureInternalFormat.R8,
 			1,
 			1
 		)));
-		const greenTexture = new Texture2D(gl, new Mipmap(new Texture2DMip(
+		const greenTexture = new Texture2d(gl, new Mipmap(new Texture2dMip(
 			new Uint8Array([0x0, 0xFF]),
 			TextureInternalFormat.RG8,
 			1,
 			1
 		)));
-		const renderTexture = new Texture2D(gl, new Mipmap(new Texture2DMip(undefined, undefined, 0x100, 0x100)));
+		const renderTexture = new Texture2d(gl, new Mipmap(new Texture2dMip(undefined, undefined, 0x100, 0x100)));
 		const renderDepth = new Renderbuffer(gl, RenderbufferFormat.DEPTH_COMPONENT24, 0x100, 0x100);
 		const framebuffer = new Framebuffer(gl, [renderTexture.face], renderDepth);
 
@@ -218,7 +218,7 @@ export default (props) => {
 			vao.draw({ "u_matrix": redMatrix, "u_texture": redTexture });
 			vao.draw({ "u_matrix": greenMatrix, "u_texture": greenTexture });
 
-			Framebuffer.unbind(gl);
+			Framebuffer.unbind(gl, FramebufferTarget.FRAMEBUFFER);
 			gl.resize();
 			gl.clear([0, 0, 0, 0], 1);
 			gl.cullFace = FaceDirection.BACK;

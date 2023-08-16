@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, FaceDirection, Program, VAO } from "@lakuna/ugl";
+import { Context, Buffer, BufferInfo, FaceDirection, Program, Vao } from "@lakuna/ugl";
 import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.jsx";
 import { perspective, translate, rotateX, rotateY, identity, invert, multiply, fromTranslation } from "@lakuna/umath/Matrix4";
 import { positions, colors } from "./f.js";
@@ -45,7 +45,7 @@ export default (props) => {
 
         const positionBuffer = new Buffer(gl, positions);
         const colorBuffer = new Buffer(gl, colors);
-        const vao = new VAO(program, [
+        const vao = new Vao(program, [
             new BufferInfo("a_position", positionBuffer),
             new BufferInfo("a_color", colorBuffer, 3, true)
         ]);
