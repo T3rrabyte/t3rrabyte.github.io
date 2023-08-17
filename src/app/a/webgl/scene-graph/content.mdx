@@ -4,15 +4,15 @@ You may need to read [the article about transformation](/a/webgl/transformation)
 
 ---
 
-A *scene graph* is a general data structure that arranges the logical representation of a graphical
+A _scene graph_ is a general data structure that arranges the logical representation of a graphical
 scene. It is a collection of nodes in a tree structure, with each node having one parent and a
 non-negative number of children. Only the top node has no parent.
 
-Each node's transformation matrix is multiplied by all of its ancestors' to generate its *world matrix*,
+Each node's transformation matrix is multiplied by all of its ancestors' to generate its _world matrix_,
 which represents its actual position in a scene relative to the origin. The transformation matrix
 represents its position relative to its parent.
 
-import SceneGraph from "./SceneGraph.jsx";
+import SceneGraph from "./SceneGraph.tsx";
 
 <SceneGraph style={{ width: "100%" }} />
 

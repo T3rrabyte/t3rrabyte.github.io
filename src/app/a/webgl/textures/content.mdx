@@ -5,10 +5,10 @@ before this one.
 
 ---
 
-A *texture* is an array of data that can be randomly accessed. Textures are mostly used to store image data.
+A _texture_ is an array of data that can be randomly accessed. Textures are mostly used to store image data.
 
-A *sampler* is a uniform that is used to sample a texture. The `texture` function is used to get the
-*texel* (texture element) from the given texture at the given *texture space* coordinates, which represent
+A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the
+_texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent
 the texture on the interval $[0,1]$ from left to right, first pixel to last pixel. For example:
 
 ```glsl
@@ -36,20 +36,28 @@ const texture: WebGLTexture = gl.createTexture();
 
 gl.bindTexture(gl.TEXTURE_2D, texture);
 
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
-	gl.UNSIGNED_BYTE, new Uint8Array([0xFF, 0, 0xFF, 0xFF]));
+gl.texImage2D(
+	gl.TEXTURE_2D,
+	0,
+	gl.RGBA,
+	1,
+	1,
+	0,
+	gl.RGBA,
+	gl.UNSIGNED_BYTE,
+	new Uint8Array([0xff, 0, 0xff, 0xff])
+);
 
 const image: HTMLImageElement = new Image();
 image.addEventListener("load", () => {
 	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
-		gl.UNSIGNED_BYTE, image);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 });
 image.crossOrigin = "";
 image.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
 ```
 
-To pass a texture to a sampler uniform, it must be bound to a *texture unit* that represents it. The
+To pass a texture to a sampler uniform, it must be bound to a _texture unit_ that represents it. The
 texture unit is passed to the shader program instead of the texture. For example:
 
 ```ts
@@ -58,7 +66,7 @@ gl.bindTexture(gl.TEXTURE_2D, texture);
 gl.uniform1i(imageUniformLocation, 0);
 ```
 
-import Textures from "./Textures.jsx";
+import Textures from "./Textures.tsx";
 
 <Textures style={{ width: "100%" }} />
 
@@ -79,7 +87,7 @@ using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respective
 - `CLAMP_TO_EDGE` repeats the last texel.
 - `MIRRORED_REPEAT` repeats the texture, but mirrors it for each repetition.
 
-A *mipmap* is a collection of *mips*, which are smaller versions of a texture that are used to rasterize
+A _mipmap_ is a collection of _mips_, which are smaller versions of a texture that are used to rasterize
 the texture at different sizes. The way that the mipmap is generated can be specified with the
 minification and magnification filter parameters. The minification filter is used when drawing anything
 smaller than the largest mip, and the magnification filter is used when drawing anything larger than the
@@ -95,7 +103,7 @@ largest mip.
 Since the magnification filter is only used when drawing larger than the largest mip, it can only
 be `NEAREST` or `LINEAR`.
 
-In order for a texture to be rasterized, it must be *texture complete*, meaning that it either only
+In order for a texture to be rasterized, it must be _texture complete_, meaning that it either only
 reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with
 the `generateMipmap` function like this:
 
@@ -105,10 +113,10 @@ gl.generateMipmap(gl.TEXTURE_2D);
 
 ## Texture Atlases
 
-A *texture atlas* is a texture that contains multiple images. Using a texture atlas can simplify a
+A _texture atlas_ is a texture that contains multiple images. Using a texture atlas can simplify a
 shader and reduce the number of calls to rasterization functions.
 
-import TextureAtlases from "./TextureAtlases.jsx";
+import TextureAtlases from "./TextureAtlases.tsx";
 
 <TextureAtlases style={{ width: "100%" }} />
 
@@ -129,15 +137,21 @@ const height = 2;
 const border = 0;
 const format = gl.RED;
 const type = gl.UNSIGNED_BYTE;
-const data = new Uint8Array([
-	0x80, 0x40, 0x80,
-	0x00, 0xC0, 0x00
-]);
-gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width,
-	height, border, format, type, data);
+const data = new Uint8Array([0x80, 0x40, 0x80, 0x00, 0xc0, 0x00]);
+gl.texImage2D(
+	gl.TEXTURE_2D,
+	level,
+	internalFormat,
+	width,
+	height,
+	border,
+	format,
+	type,
+	data
+);
 ```
 
-Textures will be malformed if their row alignment is not a multiple of their *unpack alignment*, which
+Textures will be malformed if their row alignment is not a multiple of their _unpack alignment_, which
 specifies the expected alignment of the rows in the supplied texture data. The unpack alignment defaults
 to four in order to maintain backwards compatibility, but it can be set to one, two, four, or eight.
 
@@ -149,13 +163,13 @@ alignment must be set to one like this:
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 ```
 
-import DataTextures from "./DataTextures.jsx";
+import DataTextures from "./DataTextures.tsx";
 
 <DataTextures style={{ width: "100%" }} />
 
 ## Projection Mapping
 
-*Projection mapping* is the process of projecting an image. It can be accomplished by making another
+_Projection mapping_ is the process of projecting an image. It can be accomplished by making another
 camera to act as a projector, then passing the projector's view projection matrix to the shader program
 so that the surface's position can be determined from the point of view of both the viewer and the
 projector. For example:
@@ -200,12 +214,12 @@ out vec4 outColor;
 void main() {
 	vec2 projectedTexcoord =
 		(v_projectedTexcoord.xyz / v_projectedTexcoord.w).xy;
-	
+
 	bool inRange = projectedTexcoord.x >= 0.0
 		&& projectedTexcoord.x <= 1.0
 		&& projectedTexcoord.y >= 0.0
 		&& projectedTexcoord.y <= 1.0;
-	
+
 	vec4 projectedTextureColor =
 		texture(u_projectedTexture, projectedTexcoord);
 
@@ -223,7 +237,7 @@ Also notice that rather than drawing the texture on top of existing fragments, t
 works by checking if a fragment is within the projector's frustum and sampling from the correct
 texture based on that.
 
-import ProjectionMapping from "./ProjectionMapping.jsx";
+import ProjectionMapping from "./ProjectionMapping.tsx";
 
 <ProjectionMapping style={{ width: "100%" }} />
 

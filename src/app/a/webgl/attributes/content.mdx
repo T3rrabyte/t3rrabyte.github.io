@@ -5,8 +5,8 @@ You may need to read [the article about program structure](/a/webgl/program-stru
 ---
 
 Since shaders run on the GPU, any data that they need to access must be passed to the GPU. One way
-to do so is with *attributes*, which are a type of variable that reads data from arrays of binary
-data called *buffers* and are used as inputs to vertex shaders. They are used to pass vertex-specific
+to do so is with _attributes_, which are a type of variable that reads data from arrays of binary
+data called _buffers_ and are used as inputs to vertex shaders. They are used to pass vertex-specific
 data to shader programs.
 
 Since attributes are inputs to vertex shaders, they are declared using the `in` keyword. They cannot
@@ -23,7 +23,7 @@ void main() {
 ```
 
 In order to manipulate an attribute from JavaScript, the WebGL API must first be queried for its
-*location*, which is a pointer to a variable in a shader program. For example:
+_location_, which is a pointer to a variable in a shader program. For example:
 
 ```ts
 const location: number = gl.getAttribLocation(program, "a_position");
@@ -32,8 +32,8 @@ const location: number = gl.getAttribLocation(program, "a_position");
 ## Buffers
 
 In order to manipulate a buffer with the WebGL API, it first needs to be pointed at with a type of
-pointer called a *binding point*. Each binding point has a specific purpose. For example, the *array
-buffer* binding point is used to specify a buffer that contains vertex attributes.
+pointer called a _binding point_. Each binding point has a specific purpose. For example, the _array
+buffer_ binding point is used to specify a buffer that contains vertex attributes.
 
 A buffer can be created and filled with data like this:
 
@@ -42,11 +42,7 @@ const buffer: WebGLBuffer = gl.createBuffer();
 
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-const data: BufferSource = new Float32Array([
-	0, 0,
-	0, 0.5,
-	0.7, 0
-]);
+const data: BufferSource = new Float32Array([0, 0, 0, 0.5, 0.7, 0]);
 
 gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 ```
@@ -72,7 +68,7 @@ passed some information when assigning a buffer to an attribute:
 - The stride, which is the offset in bytes between the beginnings of consecutive vertex attributes.
 - The offset in bytes of the first element that should be read.
 
-A *vertex array object* (VAO) is a collection of information that tells attributes which buffers they
+A _vertex array object_ (VAO) is a collection of information that tells attributes which buffers they
 should read data from and how they should do it.
 
 A VAO can be thought of as representing a type of shape. For example, every cube has the same vertex
@@ -94,8 +90,7 @@ const type: number = gl.FLOAT;
 const normalized = false;
 const stride = 0;
 const offset = 0;
-gl.vertexAttribPointer(
-	location, size, type, normalized, stride, offset);
+gl.vertexAttribPointer(location, size, type, normalized, stride, offset);
 ```
 
 Notice that neither `buffer` nor `ARRAY_BUFFER` are passed to `vertexAttribPointer`. This is because
@@ -109,7 +104,7 @@ there are three vertices' worth of data stored in the buffer.
 
 The `type` is set to `FLOAT` because the data in the buffer came from a `Float32Array`.
 
-The `stride` being set to `0` tells WebGL that the data is *tightly-packed*, meaning that the number
+The `stride` being set to `0` tells WebGL that the data is _tightly-packed_, meaning that the number
 of bytes from the start of one element to the next is the same as the byte size of the element.
 
 ## Rasterizing
@@ -127,13 +122,13 @@ const vertexCount = 3;
 gl.drawArrays(primitiveType, skippedVertexCount, vertexCount);
 ```
 
-import Attributes from "./Attributes.jsx";
+import Attributes from "./Attributes.tsx";
 
 <Attributes style={{ width: "100%" }} />
 
 ## Indices
 
-WebGL allows vertex data to be reused by specifying indices in the *element array buffer*.
+WebGL allows vertex data to be reused by specifying indices in the _element array buffer_.
 
 Imagine that you want to rasterize a rectangle (four vertices). Rectangles are not primitives, so
 it must be rasterized using two triangles (six vertices). However, since two pairs of those six
@@ -147,10 +142,14 @@ rectangle is being constructed using four vertices grouped into two triangles:
 const buffer: WebGLBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 const data = new Float32Array([
-	0, 0.5, // Vertex 0 at (0, 0.5).
-	0, 0, // Vertex 1 at (0, 0).
-	0.7, 0, // Vertex 2 at (0.7, 0).
-	0.7, 0.5 // Vertex 3 at (0.7, 0.5).
+	0,
+	0.5, // Vertex 0 at (0, 0.5).
+	0,
+	0, // Vertex 1 at (0, 0).
+	0.7,
+	0, // Vertex 2 at (0.7, 0).
+	0.7,
+	0.5 // Vertex 3 at (0.7, 0.5).
 ]);
 gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
@@ -161,8 +160,12 @@ gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
 const indexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 const indices = new Uint8Array([
-	0, 1, 2, // Triangle 0 with vertices 0, 1, and 2.
-	0, 2, 3 // Triangle 1 with vertices 0, 2, and 3.
+	0,
+	1,
+	2, // Triangle 0 with vertices 0, 1, and 2.
+	0,
+	2,
+	3 // Triangle 1 with vertices 0, 2, and 3.
 ]);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 ```
@@ -174,14 +177,13 @@ const primitive: number = gl.TRIANGLES;
 const indexCount = 6;
 const indexType: number = gl.UNSIGNED_BYTE;
 const skippedIndexCount = 0;
-gl.drawElements(
-	primitive, indexCount, indexType, skippedIndexCount);
+gl.drawElements(primitive, indexCount, indexType, skippedIndexCount);
 ```
 
 Note that the type of data stored in the element array buffer is never passed to the VAO, so it must
 be passed to `drawElements`. This is set to `UNSIGNED_BYTE` because the data is from a `Uint8Array`.
 
-import Indices from "./Indices.jsx";
+import Indices from "./Indices.tsx";
 
 <Indices style={{ width: "100%" }} />
 

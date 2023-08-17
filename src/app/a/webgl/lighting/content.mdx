@@ -6,12 +6,12 @@ You may need to read the articles about [3D](/a/webgl/3d) and [varyings](/a/webg
 
 ## Directional Lighting
 
-*Directional lighting* (also called *diffuse lighting*) is light that comes uniformly from one direction.
+_Directional lighting_ (also called _diffuse lighting_) is light that comes uniformly from one direction.
 If the direction that the light is traveling and the direction that a surface is facing are both known,
 it is possible to determine the brightness of the light on that surface. This is equivalent to the cosine
 of the angle between the directions, which is equivalent to the dot product of the directions.
 
-The direction that a surface is facing is represented by a unit vector called a *normal*. Normals are
+The direction that a surface is facing is represented by a unit vector called a _normal_. Normals are
 typically passed to the vertex shader with an attribute, then to the fragment shader with a varying. For example:
 
 ```glsl
@@ -32,7 +32,7 @@ void main() {
 }
 ```
 
-Notice that the normals are multiplied by a matrix called `u_normal`. A *normal matrix* is the
+Notice that the normals are multiplied by a matrix called `u_normal`. A _normal matrix_ is the
 inverse transpose of the rotation portion of a transformation matrix. The upper-left three-by-three
 part of a transformation matrix is the part that stores rotation data, so the fourth row and column
 can be ignored. Inverting and transposing this matrix causes the normals to remain correct even when
@@ -69,7 +69,7 @@ void main() {
 Notice that since the normal is interpolated when being passed to the fragment shader, it has to be
 normalized before it can be used.
 
-import DirectionalLighting from "./DirectionalLighting.jsx";
+import DirectionalLighting from "./DirectionalLighting.tsx";
 
 <DirectionalLighting style={{ width: "100%" }} />
 
@@ -103,7 +103,7 @@ void main() {
 
 ## Ambient Lighting
 
-*Ambient lighting* is lighting that is applied equally to all surfaces regardless of normal.
+_Ambient lighting_ is lighting that is applied equally to all surfaces regardless of normal.
 It is used to set a minimum brighness so that nothing in the scene is too dark. For example:
 
 ```glsl
@@ -131,7 +131,7 @@ void main() {
 
 ## Point Lighting
 
-*Point lighting* is when light extends in every direction from a point. To emulate it, first pass
+_Point lighting_ is when light extends in every direction from a point. To emulate it, first pass
 the direction from the surface to the light source as a varying. For example:
 
 ```glsl
@@ -162,18 +162,18 @@ The direction to the light can then be used in exactly the same way as with dire
 Point lighting is almost identical to directional lighting, except that the light direction is
 interpolated between fragments.
 
-import PointLighting from "./PointLighting.jsx";
+import PointLighting from "./PointLighting.tsx";
 
 <PointLighting style={{ width: "100%" }} />
 
 ## Specular Lighting
 
-*Specular lighting* is when light reflects off of a shiny surface.
+_Specular lighting_ is when light reflects off of a shiny surface.
 
 Light reflects off of a surface at the same angle that it hits that surface, so specular lighting
 should occur if the angle from the light to the surface is the same as the angle from the surface to
 the camera. Both angles can be calculated by taking the dot product of their vectors, then they can
-be added together and normalized to get the *half vector*, which is the vector that sits halfway
+be added together and normalized to get the _half vector_, which is the vector that sits halfway
 between them. The brightness of specular light can be determined based on how similar the half vector
 is to the normal.
 
@@ -215,16 +215,16 @@ void main() {
 }
 ```
 
-import SpecularLighting from "./SpecularLighting.jsx";
+import SpecularLighting from "./SpecularLighting.tsx";
 
 <SpecularLighting style={{ width: "100%" }} />
 
 ## Spot Lighting
 
-*Spot lighting* is the same as point lighting except that the light only extends in a cone. To
-emulate spot lighting, the cone needs a direction and a *limit*, which is the angle from the
+_Spot lighting_ is the same as point lighting except that the light only extends in a cone. To
+emulate spot lighting, the cone needs a direction and a _limit_, which is the angle from the
 direction of the cone to its sides. If the dot product of the direction to the normal is above
-the cosine of the limit (the *dot limit*), the surface is within the cone.
+the cosine of the limit (the _dot limit_), the surface is within the cone.
 
 The cone can be given an outer limit and an inner limit between which the brightness values are
 interpolated, which would give the spotlight a smooth edge. For example:
@@ -259,7 +259,7 @@ void main() {
 }
 ```
 
-import SpotLighting from "./SpotLighting.jsx";
+import SpotLighting from "./SpotLighting.tsx";
 
 <SpotLighting style={{ width: "100%" }} />
 

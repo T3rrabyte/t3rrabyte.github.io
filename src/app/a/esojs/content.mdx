@@ -11,7 +11,7 @@ and can hold any data type. The feature that makes JSFuck possible is implicit t
 by which JavaScript converts variables to other types as necessary.
 
 ```js
-("b" + "a" + + "a" + "a").toLowerCase(); // "banana"
+("b" + "a" + +"a" + "a").toLowerCase(); // "banana"
 ```
 
 In the example above, JavaScript tries to convert the second `"a"` into a number because of the extra `+`
@@ -24,12 +24,12 @@ There are too many type coercion rules to list, but some important ones are as f
 
 - A number, when added to a string, becomes a string: `"a" + 0 == "a0"`.
 - A boolean, when added to a number, becomes a number: `true + 0 == 1`. `false` becomes `0` and `true`
-becomes `1`.
+  becomes `1`.
 - `+` and `-` can be used as unary operators to convert anything into a number. `+[] == 0`, `+true == 1`,
-and `+"a" == NaN` are all examples of this.
+  and `+"a" == NaN` are all examples of this.
 - `!` can be used as a unary operator to convert anything into a boolean. Falsy values (those that evaluate
-to `false`, such as `0`, `""`, and `false`) become `true`, and truthy values (those that evaluate to
-`true`, such as `1`, `"a"`, `[]`, `{}`, and `true`) become `false`.
+  to `false`, such as `0`, `""`, and `false`) become `true`, and truthy values (those that evaluate to
+  `true`, such as `1`, `"a"`, `[]`, `{}`, and `true`) become `false`.
 - Adding an array to anything converts it into a string: `[] + [] == ""`.
 
 ## JavaScript With Thirteen Characters
@@ -67,11 +67,7 @@ Every other number can be created by adding ones.
 
 ```js
 // Only non-negative numbers are needed.
-const _number = (n) => n == 0
-	? _0
-	: n == 1
-		? _1
-		: `${_1}${_number(n - 1)}`;
+const _number = (n) => (n == 0 ? _0 : n == 1 ? _1 : `${_1}${_number(n - 1)}`);
 ```
 
 Note that the original video created the above function by combining ones with `" + "`. This includes spaces, which are not
@@ -141,16 +137,13 @@ from our list of characters.
 
 ```js
 const _constructor_string =
-	`${_c}+${_o}+${_n}+${_s}+${_t}+${_r}+${_u}+${_c}`
-	+ `+${_t}+${_o}+${_r}`;
+	`${_c}+${_o}+${_n}+${_s}+${_t}+${_r}+${_u}+${_c}` + `+${_t}+${_o}+${_r}`;
 
 const _empty_string = `(${_array}+${_array})`;
 
-const _string_constructor =
-	`${_empty_string}[${_constructor_string}]`;
+const _string_constructor = `${_empty_string}[${_constructor_string}]`;
 
-const _string_constructor_string =
-	`(${_string_constructor}+${_array})`;
+const _string_constructor_string = `(${_string_constructor}+${_array})`;
 
 const _i = `${_string_constructor_string}[${_number(5)}]`;
 const _n = `${_string_constructor_string}[${_number(7)}]`;
@@ -164,11 +157,9 @@ The regular expression constructor yields `"p"`.
 ```js
 const _regex = `/-/`; // Minimal regular expression.
 
-const _regex_constructor =
-	`${_regex}[${_constructor_string}]`;
+const _regex_constructor = `${_regex}[${_constructor_string}]`;
 
-const _regex_constructor_string =
-	`(${_regex_constructor}+${_array})`;
+const _regex_constructor_string = `(${_regex_constructor}+${_array})`;
 
 const _p = `${_regex_constructor_string}[${_number(14)}]`;
 ```
@@ -178,8 +169,7 @@ We can also convert a regular expression that contains a backslash directly to a
 ```js
 const _backslash_regex = "/\\\\/";
 
-const _backslash_regex_string =
-	`(${_backslash_regex}+${_array})`;
+const _backslash_regex_string = `(${_backslash_regex}+${_array})`;
 
 const _backslash = `${_backslash_regex_string}[${_1}]`;
 ```
@@ -188,14 +178,11 @@ Every lowercase letter can be obtained by converting a number to a string using 
 We will use the `Number.toString` method to obtain our last two lowercase letters, `"h"` and `"m"`.
 
 ```js
-const _toString_string =
-	`${_t}+${_o}+${_S}+${_t}+${_r}+${_i}+${_n}+${_g}`;
+const _toString_string = `${_t}+${_o}+${_S}+${_t}+${_r}+${_i}+${_n}+${_g}`;
 
-const _h =
-	`(${_number(17)})[${_toString_string}](${_number(18)})`;
+const _h = `(${_number(17)})[${_toString_string}](${_number(18)})`;
 
-const _m =
-	`(${_number(22)})[${_toString_string}](${_number(23)})`;
+const _m = `(${_number(22)})[${_toString_string}](${_number(23)})`;
 ```
 
 Finally, the last character from the list, `"C"`, can be obtained by executing the function constructor. The
@@ -209,15 +196,13 @@ contains `"C"`.
 ```js
 const _function = "()=>{}";
 
-const _function_constructor =
-	`(${_function})[${_constructor_string}]`;
+const _function_constructor = `(${_function})[${_constructor_string}]`;
 
 const _return_escape_string =
-	`${_r}+${_e}+${_t}+${_u}+${_r}+${_n}+${_space}`
-	+ `+${_e}+${_s}+${_c}+${_a}+${_p}+${_e}`;
+	`${_r}+${_e}+${_t}+${_u}+${_r}+${_n}+${_space}` +
+	`+${_e}+${_s}+${_c}+${_a}+${_p}+${_e}`;
 
-const _escape =
-	`${_function_constructor}(${_return_escape_string})()`;
+const _escape = `${_function_constructor}(${_return_escape_string})()`;
 
 const _percent5C = `${_escape}(${_backslash})`;
 
@@ -229,41 +214,62 @@ any character into our allowed symbols.
 
 ```js
 const _fromCharCode_string =
-	`${_f}+${_r}+${_o}+${_m}+${_C}+${_h}+${_a}+${_r}`
-	+ `+${_C}+${_o}+${_d}+${_e}`;
+	`${_f}+${_r}+${_o}+${_m}+${_C}+${_h}+${_a}+${_r}` +
+	`+${_C}+${_o}+${_d}+${_e}`;
 
-const _string = (s) => s.split("").map((c) => {
-	switch (c) {
-		case "f": return _f;
-		case "r": return _r;
-		case "o": return _o;
-		case "m": return _m;
-		case "C": return _C;
-		case "h": return _h;
-		case "a": return _a;
-		case "d": return _d;
-		case "e": return _e;
-		case "t": return _t;
-		case "S": return _S;
-		case "i": return _i;
-		case "n": return _n;
-		case "g": return _g;
-		case " ": return _space;
-		case "\\": return _backslash;
-		default:
-			return `${_string_constructor}`
-				+ `[${_fromCharCode_string}]`
-				+ `(${_number(c.charCodeAt(0))})`;
-	}
-}).join("+");
+const _string = (s) =>
+	s
+		.split("")
+		.map((c) => {
+			switch (c) {
+				case "f":
+					return _f;
+				case "r":
+					return _r;
+				case "o":
+					return _o;
+				case "m":
+					return _m;
+				case "C":
+					return _C;
+				case "h":
+					return _h;
+				case "a":
+					return _a;
+				case "d":
+					return _d;
+				case "e":
+					return _e;
+				case "t":
+					return _t;
+				case "S":
+					return _S;
+				case "i":
+					return _i;
+				case "n":
+					return _n;
+				case "g":
+					return _g;
+				case " ":
+					return _space;
+				case "\\":
+					return _backslash;
+				default:
+					return (
+						`${_string_constructor}` +
+						`[${_fromCharCode_string}]` +
+						`(${_number(c.charCodeAt(0))})`
+					);
+			}
+		})
+		.join("+");
 ```
 
 The final step is to take the string of code that we produce and execute it. As mentioned previously,
 the function constructor allows us to execute a string of JavaScript code.
 
 ```js
-const compile = (code) =>
-	`${_function_constructor}(${_string(code)})()`;
+const compile = (code) => `${_function_constructor}(${_string(code)})()`;
 ```
 
 ## JavaScript With Six Characters

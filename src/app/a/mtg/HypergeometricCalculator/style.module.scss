@@ -3,7 +3,7 @@ form.base {
 	grid-template-columns: 1fr 1fr;
 	column-gap: 10px;
 
-	&>label {
+	& > label {
 		text-align: right;
 	}
 }

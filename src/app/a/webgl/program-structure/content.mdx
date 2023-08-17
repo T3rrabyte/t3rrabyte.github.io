@@ -9,17 +9,17 @@ functions that actually rasterize.
 
 ## Initialization
 
-The *initialization step* is executed once at the beginning of the program. It is typically used to
+The _initialization step_ is executed once at the beginning of the program. It is typically used to
 get the rendering context, compile shaders, link shader programs, and prepare static data.
 
 ## Rasterization
 
-The *rasterization step* is executed once for each *frame*, meaning once every time that the rendering
-context is updated. The *frame rate* is the speed at which new frames are rasterized. The frame rate
+The _rasterization step_ is executed once for each _frame_, meaning once every time that the rendering
+context is updated. The _frame rate_ is the speed at which new frames are rasterized. The frame rate
 typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
 
-The *viewport* specifies the affine transformation of the horizontal and vertical axes from clip space
-to *screen space*, which is a coordinate system that represents the rendering context on the intervals
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space
+to _screen space_, which is a coordinate system that represents the rendering context on the intervals
 $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of
 the rendering context in pixels and $y$ is the height of the rendering context in pixels.
 
@@ -81,27 +81,27 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 A typical program that uses the WebGL API follows this structure:
 
 - Initialization step:
-	- Get the rendering context.
-	- Compile shaders.
-	- Link shader programs.
-	- Look up variable locations.
-	- Create and fill buffers.
-	- Create VAOs. For each attribute in each VAO:
-		- Enable the attribute.
-		- Bind a buffer to the attribute.
-		- Specify the layout of the buffer.
-	- Create and fill textures.
+  - Get the rendering context.
+  - Compile shaders.
+  - Link shader programs.
+  - Look up variable locations.
+  - Create and fill buffers.
+  - Create VAOs. For each attribute in each VAO:
+    - Enable the attribute.
+    - Bind a buffer to the attribute.
+    - Specify the layout of the buffer.
+  - Create and fill textures.
 - Rasterization step:
-	- Resize the drawing buffer.
-	- Resize the viewport.
-	- Clear color buffers.
-	- Set global state.
-	- For each VAO:
-		- Use its shader program.
-		- Bind the VAO.
-		- Set uniforms.
-		- Assign textures to texture units.
-		- Rasterize.
+  - Resize the drawing buffer.
+  - Resize the viewport.
+  - Clear color buffers.
+  - Set global state.
+  - For each VAO:
+    - Use its shader program.
+    - Bind the VAO.
+    - Set uniforms.
+    - Assign textures to texture units.
+    - Rasterize.
 
 ---
 

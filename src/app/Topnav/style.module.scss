@@ -1,7 +1,7 @@
 @use "../../variables";
 
 nav.base {
-	&>ul {
+	& > ul {
 		background-color: variables.$fg-color;
 		color: variables.$text-color;
 		list-style-type: none;
@@ -9,11 +9,11 @@ nav.base {
 		padding: 0px;
 		overflow: hidden;
 
-		&>li {
+		& > li {
 			display: inline-block;
 
-			&>a,
-			&>button {
+			& > a,
+			& > button {
 				background-color: variables.$fg-color;
 				color: variables.$text-color;
 				text-decoration: none;

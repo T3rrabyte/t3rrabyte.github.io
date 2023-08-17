@@ -2,7 +2,7 @@ ul.base {
 	list-style-type: none;
 	padding: 0px;
 
-	&>li {
+	& > li {
 		display: inline-block;
 		margin: 5px;
 	}

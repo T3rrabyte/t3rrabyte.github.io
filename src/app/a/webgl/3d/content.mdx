@@ -9,14 +9,14 @@ You may need to read [the article about transformation](/a/webgl/transformation)
 Using an orthographic projection matrix, primitives can be drawn in three dimensions without regard
 to perspective.
 
-import Orthographic3d from "./Orthographic3d.jsx";
+import Orthographic3d from "./Orthographic3d.tsx";
 
 <Orthographic3d style={{ width: "100%" }} />
 
 ## Polygon Culling
 
 In the example above, the back of the rotating shape shows through to the front in some places. One
-way to fix this is with *polygon culling*, which is where only front-facing polygons are rasterized.
+way to fix this is with _polygon culling_, which is where only front-facing polygons are rasterized.
 By default, a polygon is considered front-facing if its vertices are defined in a counter-clockwise
 orientation relative to the camera.
 
@@ -36,15 +36,15 @@ gl.cullFace(gl.BACK);
 Enabling polygon culling will make any triangles that are defined in the wrong orientation invisible.
 The orientation of a triangle can be reversed by swapping the order of the last two vertices.
 
-import PolygonCulling from "./PolygonCulling.jsx";
+import PolygonCulling from "./PolygonCulling.tsx";
 
 <PolygonCulling style={{ width: "100%" }} />
 
 ## Depth Testing
 
 In the example above, some polygons are showing through others that are in front of them. To fix
-this, enable *depth testing*, which tests the depth of fragments and only rasterizes them if they
-pass. The depth of fragments is taken from `gl_Position.z` and is stored in the *depth buffer*.
+this, enable _depth testing_, which tests the depth of fragments and only rasterizes them if they
+pass. The depth of fragments is taken from `gl_Position.z` and is stored in the _depth buffer_.
 
 To enable depth testing, enable the `DEPTH_TEST` feature like this:
 
@@ -66,30 +66,30 @@ The color and depth buffers can be cleared at the same time with a bitwise or op
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 ```
 
-import DepthTesting from "./DepthTesting.jsx";
+import DepthTesting from "./DepthTesting.tsx";
 
 <DepthTesting style={{ width: "100%" }} />
 
 ## Perspective
 
 WebGL automatically divides `gl_Position.xyz` by `gl_Position.w`. This means that perspective can
-be applied using `gl_Position.w`. A *perspective projection* is a projection that scales its shape
+be applied using `gl_Position.w`. A _perspective projection_ is a projection that scales its shape
 based on its distance from the camera.
 
-import Perspective from "./Perspective.jsx";
+import Perspective from "./Perspective.tsx";
 
 <Perspective style={{ width: "100%" }} />
 
 ## Cameras
 
 Rather than move a scene to fit in the frustum of the camera, it is more common to move the camera
-to view the scene. To do so, a matrix called the *camera matrix* can be made to represent the
-transformation of the camera. This can be inverted to make a *view matrix*. The projection matrix
-can be multiplied by the view matrix to make a *view projection matrix*, which can be used to
-multiply world matrices to make *world view projection matrices*, which transforms vertices to
+to view the scene. To do so, a matrix called the _camera matrix_ can be made to represent the
+transformation of the camera. This can be inverted to make a _view matrix_. The projection matrix
+can be multiplied by the view matrix to make a _view projection matrix_, which can be used to
+multiply world matrices to make _world view projection matrices_, which transforms vertices to
 appear from the point of view of the camera.
 
-import Cameras from "./Cameras.jsx";
+import Cameras from "./Cameras.tsx";
 
 <Cameras style={{ width: "100%" }} />
 

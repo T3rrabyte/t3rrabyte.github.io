@@ -5,11 +5,11 @@ You may need to read [the article about textures](/a/webgl/textures) before this
 ---
 
 A framebuffer can be thought of as a collection of attachments, which are buffers with purposes.
-They can be used to rendering to textures and *renderbuffers*, which are objects that contain images.
+They can be used to rendering to textures and _renderbuffers_, which are objects that contain images.
 
 Renderbuffers differ from images in that they support more formats but can't be sampled. Renderbuffers
-also support *multisampling*, which is a process for reducing *aliasing*, which is an effect that
-reduces the quality of images that are under-sampled. This means that multisampling is a form of *antialiasing*.
+also support _multisampling_, which is a process for reducing _aliasing_, which is an effect that
+reduces the quality of images that are under-sampled. This means that multisampling is a form of _antialiasing_.
 
 A framebuffer can be created like this:
 
@@ -32,8 +32,13 @@ functions. **Every attachment in a framebuffer must have the same dimensions.** 
 
 ```js
 gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-	gl.TEXTURE_2D, texture, 0);
+gl.framebufferTexture2D(
+	gl.FRAMEBUFFER,
+	gl.COLOR_ATTACHMENT0,
+	gl.TEXTURE_2D,
+	texture,
+	0
+);
 ```
 
 In order to use the default framebuffer, simply attach `undefined` to the desired binding point.
@@ -43,9 +48,9 @@ In order to use the default framebuffer, simply attach `undefined` to the desire
 Rather than writing to the default framebuffer and having that data rasterized to the rendering
 context, it is possible to write to a custom framebuffer to store that data in textures or renderbuffers.
 
-import RenderingToTextures from "./RenderingToTextures.jsx";
+import RenderingToTextures from "./RenderingToTextures.tsx";
 
-<RenderingToTextures style={{ width: "100%"}} />
+<RenderingToTextures style={{ width: "100%" }} />
 
 Note that framebuffers don't have all of the attachments that the default one does by default. For
 example, in order to use depth testing in a framebuffer, it needs to have a depth attachment.

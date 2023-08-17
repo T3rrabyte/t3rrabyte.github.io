@@ -11,9 +11,7 @@
 			--italic-color: #{variables.$dark-magenta};
 			--bold-color: #{variables.$sweet-brown};
 			color-scheme: light;
-		}
-
-		@else {
+		} @else {
 			--bg-color: #{variables.$raisin-black};
 			--fg-color: #{variables.$jet};
 			--text-color: #{variables.$silver-chalice};
@@ -68,7 +66,7 @@ caption {
 code {
 	font-family: variables.$font-monospace;
 
-	*:not(pre)>& {
+	*:not(pre) > & {
 		background-color: variables.$fg-color;
 	}
 }

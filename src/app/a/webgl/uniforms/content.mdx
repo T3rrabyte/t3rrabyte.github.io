@@ -4,7 +4,7 @@ You may need to read [the article about attributes](/a/webgl/attributes) before 
 
 ---
 
-Another way to pass data to the GPU is with *uniforms*, which variables that are uniform for each
+Another way to pass data to the GPU is with _uniforms_, which variables that are uniform for each
 vertex. They can be defined in both vertex and fragment shaders.
 
 Uniforms are declared using the `uniform` keyword. For example:
@@ -26,8 +26,10 @@ void main() {
 In order to manipulate a uniform from JavaScript, the WebGL API must first be queried for its location.
 
 ```ts
-const location: WebGLUniformLocation | null =
-	gl.getUniformLocation(program, "u_color");
+const location: WebGLUniformLocation | null = gl.getUniformLocation(
+	program,
+	"u_color"
+);
 ```
 
 A uniform's value can be updated by calling the function that corresponds to the type of data that
@@ -37,7 +39,7 @@ it holds. For example:
 gl.uniform4fv(location, [1, 0, 0, 1]);
 ```
 
-import Uniforms from "./Uniforms.jsx";
+import Uniforms from "./Uniforms.tsx";
 
 <Uniforms style={{ width: "100%" }} />
 
