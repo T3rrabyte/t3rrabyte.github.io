@@ -6,6 +6,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@lakuna/react-canvas": "^1.0.1",
 		"@lakuna/ugl": "^18.0.6",
 		"@lakuna/umath": "^1.2.1",
 		"@mdx-js/loader": "^2.3.0",

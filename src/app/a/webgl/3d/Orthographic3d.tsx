@@ -1,7 +1,7 @@
 "use client";
 
 import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
-import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.tsx";
+import AnimatedCanvas from "@lakuna/react-canvas";
 import {
 	ortho,
 	translate,

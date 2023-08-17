@@ -27,7 +27,7 @@ import {
 	translate,
 	type Matrix4Like
 } from "@lakuna/umath/Matrix4";
-import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.tsx";
+import AnimatedCanvas from "@lakuna/react-canvas";
 import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 
 const vss: string = `\

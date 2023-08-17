@@ -19,7 +19,7 @@ import {
 	type Matrix4Like
 } from "@lakuna/umath/Matrix4";
 import { normalFromMatrix4, type Matrix3Like } from "@lakuna/umath/Matrix3";
-import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.tsx";
+import AnimatedCanvas from "@lakuna/react-canvas";
 import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 
 const vss: string = `\

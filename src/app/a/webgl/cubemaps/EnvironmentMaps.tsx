@@ -23,7 +23,7 @@ import {
 	type Matrix4Like
 } from "@lakuna/umath/Matrix4";
 import { normalFromMatrix4 } from "@lakuna/umath/Matrix3";
-import AnimatedCanvas from "#app/a/webgl/AnimatedCanvas.tsx";
+import AnimatedCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
 import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 import type { Matrix3Like, Vector3Like } from "@lakuna/umath";
