@@ -1,13 +1,10 @@
 # Cubemaps
 
-You may need to read the articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures)
-before this one.
+You may need to read the articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures) before this one.
 
 ---
 
-A _cubemap_ is a type of texture that consists of six faces, each referenced by their direction from
-the center of a cube. Cubemaps are sampled using normals instead of texture coordinates. A cubemap
-can be sampled using a `samplerCube` variable. For example:
+A _cubemap_ is a type of texture that consists of six faces, each referenced by their direction from the center of a cube. Cubemaps are sampled using normals instead of texture coordinates. A cubemap can be sampled using a `samplerCube` variable. For example:
 
 ```glsl
 #version 300 es
@@ -28,10 +25,7 @@ void main() {
 
 ## Environment Maps
 
-The most common thing that cubemaps are used as are _environment maps_, which represent the environment
-of the scene. Environment maps are a way to approximate reflections. If the fragment shader knows the
-position and normal of its fragment relative to the origin, it can use the `reflect` function to calculate
-a reflection. For example:
+The most common thing that cubemaps are used as are _environment maps_, which represent the environment of the scene. Environment maps are a way to approximate reflections. If the fragment shader knows the position and normal of its fragment relative to the origin, it can use the `reflect` function to calculate a reflection. For example:
 
 ```glsl
 #version 300 es
@@ -64,9 +58,7 @@ Check out the source of the example texture [here](https://polyhaven.com/a/leade
 
 ## Skyboxes
 
-A _skybox_ is a cubemap that represents the background of a scene (often a sky). Skyboxes can be
-implemented by using the inverse of the view projection matrix to draw the skybox to a plane that
-covers the entire rendering context.
+A _skybox_ is a cubemap that represents the background of a scene (often a sky). Skyboxes can be implemented by using the inverse of the view projection matrix to draw the skybox to a plane that covers the entire rendering context.
 
 The vertex shader should ensure that the skybox is always at the back of the depth buffer. For example:
 
@@ -84,10 +76,7 @@ void main() {
 }
 ```
 
-The fragment shader can multiply the fragment position by the inverse of the view direction projection
-matrix (the product of the view matrix without the translation component and the projection matrix)
-to undo it. Then, it needs to manually divide the `xyz` vector by `w` to manually apply perspective.
-The result can be sampled from the environment map to make a skybox. For example:
+The fragment shader can multiply the fragment position by the inverse of the view direction projection matrix (the product of the view matrix without the translation component and the projection matrix) to undo it. Then, it needs to manually divide the `xyz` vector by `w` to manually apply perspective. The result can be sampled from the environment map to make a skybox. For example:
 
 ```glsl
 #version 300 es

@@ -1,15 +1,12 @@
 # Textures
 
-You may need to read the articles about [uniforms](/a/webgl/uniforms) and [varyings](/a/webgl/varyings)
-before this one.
+You may need to read the articles about [uniforms](/a/webgl/uniforms) and [varyings](/a/webgl/varyings) before this one.
 
 ---
 
 A _texture_ is an array of data that can be randomly accessed. Textures are mostly used to store image data.
 
-A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the
-_texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent
-the texture on the interval $[0,1]$ from left to right, first pixel to last pixel. For example:
+A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the _texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent the texture on the interval $[0,1]$ from left to right, first pixel to last pixel. For example:
 
 ```glsl
 #version 300 es
@@ -27,9 +24,7 @@ void main() {
 }
 ```
 
-Like buffers, textures need to be bound to a binding point in order to be manipulated. The `TEXTURE_2D`
-binding point is used or two-dimensional textures, which can be supplied data with the `texImage2D`
-function. The following example creates a one-by-one pink placeholder texture, then loads an image into it.
+Like buffers, textures need to be bound to a binding point in order to be manipulated. The `TEXTURE_2D` binding point is used or two-dimensional textures, which can be supplied data with the `texImage2D` function. The following example creates a one-by-one pink placeholder texture, then loads an image into it.
 
 ```ts
 const texture: WebGLTexture = gl.createTexture();
@@ -57,8 +52,7 @@ image.crossOrigin = "";
 image.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
 ```
 
-To pass a texture to a sampler uniform, it must be bound to a _texture unit_ that represents it. The
-texture unit is passed to the shader program instead of the texture. For example:
+To pass a texture to a sampler uniform, it must be bound to a _texture unit_ that represents it. The texture unit is passed to the shader program instead of the texture. For example:
 
 ```ts
 gl.activeTexture(gl.TEXTURE0);
@@ -80,18 +74,13 @@ Textures have various parameters that can be modified. For example:
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 ```
 
-The texture's behavior when using texture coordinates outside of texture space can be modified by
-using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respectively.
+The texture's behavior when using texture coordinates outside of texture space can be modified by using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respectively.
 
 - `REPEAT` makes the texture repeat. This is the default functionality.
 - `CLAMP_TO_EDGE` repeats the last texel.
 - `MIRRORED_REPEAT` repeats the texture, but mirrors it for each repetition.
 
-A _mipmap_ is a collection of _mips_, which are smaller versions of a texture that are used to rasterize
-the texture at different sizes. The way that the mipmap is generated can be specified with the
-minification and magnification filter parameters. The minification filter is used when drawing anything
-smaller than the largest mip, and the magnification filter is used when drawing anything larger than the
-largest mip.
+A _mipmap_ is a collection of _mips_, which are smaller versions of a texture that are used to rasterize the texture at different sizes. The way that the mipmap is generated can be specified with the minification and magnification filter parameters. The minification filter is used when drawing anything smaller than the largest mip, and the magnification filter is used when drawing anything larger than the largest mip.
 
 - `NEAREST` chooses one pixel from the largest mip.
 - `LINEAR` chooses four pixels from the largest mip and blends them.
@@ -100,12 +89,9 @@ largest mip.
 - `NEAREST_MIPMAP_LINEAR` chooses the best two mips, then chooses one pixel from each and blends them.
 - `LINEAR_MIPMAP_LINEAR` chooses the best two mips, then chooses four pixels from each and blends them.
 
-Since the magnification filter is only used when drawing larger than the largest mip, it can only
-be `NEAREST` or `LINEAR`.
+Since the magnification filter is only used when drawing larger than the largest mip, it can only be `NEAREST` or `LINEAR`.
 
-In order for a texture to be rasterized, it must be _texture complete_, meaning that it either only
-reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with
-the `generateMipmap` function like this:
+In order for a texture to be rasterized, it must be _texture complete_, meaning that it either only reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with the `generateMipmap` function like this:
 
 ```js
 gl.generateMipmap(gl.TEXTURE_2D);
@@ -113,8 +99,7 @@ gl.generateMipmap(gl.TEXTURE_2D);
 
 ## Texture Atlases
 
-A _texture atlas_ is a texture that contains multiple images. Using a texture atlas can simplify a
-shader and reduce the number of calls to rasterization functions.
+A _texture atlas_ is a texture that contains multiple images. Using a texture atlas can simplify a shader and reduce the number of calls to rasterization functions.
 
 import TextureAtlases from "./TextureAtlases.tsx";
 
@@ -122,12 +107,7 @@ import TextureAtlases from "./TextureAtlases.tsx";
 
 ## Data Textures
 
-Rather than loading texture data from an image, texture data can also be supplied directly. The way
-that the data is interpreted depends on the internal format of the texture. For example, setting the
-internal format to `R8` causes the texture to expect one unsigned byte per texel, which it normalizes
-to color space. Each internal format has a corresponding format and data type that must also be
-specified. For example, with an internal format of `R8`, the format must be set to `RED` and the data
-type must be set to `UNSIGNED_BYTE`.
+Rather than loading texture data from an image, texture data can also be supplied directly. The way that the data is interpreted depends on the internal format of the texture. For example, setting the internal format to `R8` causes the texture to expect one unsigned byte per texel, which it normalizes to color space. Each internal format has a corresponding format and data type that must also be specified. For example, with an internal format of `R8`, the format must be set to `RED` and the data type must be set to `UNSIGNED_BYTE`.
 
 ```js
 const level = 0;
@@ -151,13 +131,9 @@ gl.texImage2D(
 );
 ```
 
-Textures will be malformed if their row alignment is not a multiple of their _unpack alignment_, which
-specifies the expected alignment of the rows in the supplied texture data. The unpack alignment defaults
-to four in order to maintain backwards compatibility, but it can be set to one, two, four, or eight.
+Textures will be malformed if their row alignment is not a multiple of their _unpack alignment_, which specifies the expected alignment of the rows in the supplied texture data. The unpack alignment defaults to four in order to maintain backwards compatibility, but it can be set to one, two, four, or eight.
 
-For example, the texture above has a width of three pixels per row and uses one byte per pixel, meaning
-that each row is three bytes wide. Since three is not a multiple of two, four, or eight, the unpack
-alignment must be set to one like this:
+For example, the texture above has a width of three pixels per row and uses one byte per pixel, meaning that each row is three bytes wide. Since three is not a multiple of two, four, or eight, the unpack alignment must be set to one like this:
 
 ```js
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
@@ -169,10 +145,7 @@ import DataTextures from "./DataTextures.tsx";
 
 ## Projection Mapping
 
-_Projection mapping_ is the process of projecting an image. It can be accomplished by making another
-camera to act as a projector, then passing the projector's view projection matrix to the shader program
-so that the surface's position can be determined from the point of view of both the viewer and the
-projector. For example:
+_Projection mapping_ is the process of projecting an image. It can be accomplished by making another camera to act as a projector, then passing the projector's view projection matrix to the shader program so that the surface's position can be determined from the point of view of both the viewer and the projector. For example:
 
 ```glsl
 #version 300 es
@@ -195,8 +168,7 @@ void main() {
 }
 ```
 
-The fragment shader needs to determine which texture to use at each position based on whether the
-position falls within the frustum of the projector. For example:
+The fragment shader needs to determine which texture to use at each position based on whether the position falls within the frustum of the projector. For example:
 
 ```glsl
 #version 300 es
@@ -229,20 +201,15 @@ void main() {
 }
 ```
 
-Notice that `v_projectorTexcoord.xyz` is manually divided by `v_projectorTexcoord.w` to determine
-the projected texture coordinates because perspective is typically only applied automatically only
-to `gl_Position`.
+Notice that `v_projectorTexcoord.xyz` is manually divided by `v_projectorTexcoord.w` to determine the projected texture coordinates because perspective is typically only applied automatically only to `gl_Position`.
 
-Also notice that rather than drawing the texture on top of existing fragments, texture projection
-works by checking if a fragment is within the projector's frustum and sampling from the correct
-texture based on that.
+Also notice that rather than drawing the texture on top of existing fragments, texture projection works by checking if a fragment is within the projector's frustum and sampling from the correct texture based on that.
 
 import ProjectionMapping from "./ProjectionMapping.tsx";
 
 <ProjectionMapping style={{ width: "100%" }} />
 
-The frustum of the projector is shown in the example above by using the inverse of the projector's
-view projection matrix as the world matrix of a wireframe cube.
+The frustum of the projector is shown in the example above by using the inverse of the projector's view projection matrix as the world matrix of a wireframe cube.
 
 ---
 

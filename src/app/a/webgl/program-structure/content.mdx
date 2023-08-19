@@ -4,31 +4,21 @@ You may need to read [the article about shaders](/a/webgl/shaders) before this o
 
 ---
 
-Most of the WebGL API is dedicated to setting up state for shader programs. There are very few
-functions that actually rasterize.
+Most of the WebGL API is dedicated to setting up state for shader programs. There are very few functions that actually rasterize.
 
 ## Initialization
 
-The _initialization step_ is executed once at the beginning of the program. It is typically used to
-get the rendering context, compile shaders, link shader programs, and prepare static data.
+The _initialization step_ is executed once at the beginning of the program. It is typically used to get the rendering context, compile shaders, link shader programs, and prepare static data.
 
 ## Rasterization
 
-The _rasterization step_ is executed once for each _frame_, meaning once every time that the rendering
-context is updated. The _frame rate_ is the speed at which new frames are rasterized. The frame rate
-typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
+The _rasterization step_ is executed once for each _frame_, meaning once every time that the rendering context is updated. The _frame rate_ is the speed at which new frames are rasterized. The frame rate typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
 
-The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space
-to _screen space_, which is a coordinate system that represents the rendering context on the intervals
-$[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of
-the rendering context in pixels and $y$ is the height of the rendering context in pixels.
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the rendering context on the intervals $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the rendering context in pixels and $y$ is the height of the rendering context in pixels.
 
-The rasterization step is typically used to clear and resize the viewport, modify dynamic data, and
-rasterize primitives.
+The rasterization step is typically used to clear and resize the viewport, modify dynamic data, and rasterize primitives.
 
-The `requestAnimationFrame` function can be used to execute the rasterization step as fast as the GPU
-can (up to a certain cap). Since the frame rate depends on the user's hardware, it is sometimes necessary
-to calculate it. The following example calculates the frame rate in frames per second as `frameRate`:
+The `requestAnimationFrame` function can be used to execute the rasterization step as fast as the GPU can (up to a certain cap). Since the frame rate depends on the user's hardware, it is sometimes necessary to calculate it. The following example calculates the frame rate in frames per second as `frameRate`:
 
 ```ts
 let then = 0;
@@ -45,16 +35,11 @@ requestAnimationFrame(rasterizationStep);
 
 ### Resizing the Viewport
 
-It is a good idea to resize the viewport every frame in case the rendering context resizes. If the
-viewport is not updated to match the rendering context, the rasterized primitives will appear blurry
-and/or stretched.
+It is a good idea to resize the viewport every frame in case the rendering context resizes. If the viewport is not updated to match the rendering context, the rasterized primitives will appear blurry and/or stretched.
 
-The rendering context has two sizes: the physical size of the canvas, which is set by CSS, and the size
-of the draw buffer in pixels. If the size of the draw buffer does not match the physical size of the
-rendering context, the rasterized primitives will appear blurry and/or stretched.
+The rendering context has two sizes: the physical size of the canvas, which is set by CSS, and the size of the draw buffer in pixels. If the size of the draw buffer does not match the physical size of the rendering context, the rasterized primitives will appear blurry and/or stretched.
 
-The following code resizes the drawing buffer to match the canvas, then resizes the viewport to match
-the drawing buffer:
+The following code resizes the drawing buffer to match the canvas, then resizes the viewport to match the drawing buffer:
 
 ```ts
 canvas.width = canvas.clientWidth;
@@ -65,9 +50,7 @@ gl.viewport(0, 0, canvas.width, canvas.height);
 
 ### Clearing Color Buffers
 
-Before rasterizing a new frame, color buffers should be cleared of the fragments from the previous frame.
-First, a value must be set for fragments to be set to. Then, WebGL needs to be told which buffers to clear.
-For example, in order to clear the viewport to transparent black fragments, the following code would be used:
+Before rasterizing a new frame, color buffers should be cleared of the fragments from the previous frame. First, a value must be set for fragments to be set to. Then, WebGL needs to be told which buffers to clear. For example, in order to clear the viewport to transparent black fragments, the following code would be used:
 
 ```ts
 gl.clearColor(0, 0, 0, 0);

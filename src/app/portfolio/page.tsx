@@ -6,6 +6,7 @@ import prepareModeratelyPreview from "./prepare-moderately.png";
 import SceneGraph from "#app/a/webgl/scene-graph/SceneGraph.tsx";
 import generateMetadata from "#generateMetadata";
 import codehsPreview from "./codehs.png";
+import pdxPreview from "./pdx.png";
 import type { JSX } from "react";
 
 export default function page(): JSX.Element {
@@ -63,10 +64,10 @@ export default function page(): JSX.Element {
 						first put online on <time>November 13, 2017</time>.
 					</p>
 					<p>
-						Written in <strong>JavaScript</strong>, <strong>JSX</strong>, and{" "}
+						Written in <strong>TypeScript</strong>, <strong>JSX</strong>, and{" "}
 						<strong>Sass</strong> with{" "}
-						<DynamicLink href={"https://nextjs.org/"}>Next.js 13</DynamicLink>{" "}
-						and <DynamicLink href={"https://reactjs.org/"}>React</DynamicLink>.
+						<DynamicLink href={"https://nextjs.org/"}>Next.js</DynamicLink> and{" "}
+						<DynamicLink href={"https://reactjs.org/"}>React</DynamicLink>.
 					</p>
 					<p>
 						The source code is available on{" "}
@@ -93,20 +94,18 @@ export default function page(): JSX.Element {
 					</p>
 				</Card>
 				<Card>
-					<h3>EPS</h3>
+					<h3>PDX</h3>
+					<div style={{ textAlign: "center" }}>
+						<Image
+							src={pdxPreview}
+							alt="PDX preview."
+							style={{ width: "50%", height: "auto" }}
+							placeholder="blur"
+						/>
+					</div>
 					<p>
-						Change Healthcare{"'"}s{" "}
-						<DynamicLink href="https://www.changehealthcare.com/pharmacy/management/enterprise-pharmacy-system">
-							Enterprise Pharmacy System
-						</DynamicLink>
-						.
-					</p>
-					<p>
-						I worked on EPS as part of my internship with PDX, Inc. I worked
-						with a large team of developers and got my first experience with{" "}
-						<strong>Jira</strong> and the <strong>Agile methodology</strong>. I
-						participated in regular meetings and code reviews. All of my code
-						was written in <strong>Java</strong>.
+						I worked at PDX as an intern. All of my work was done in{" "}
+						<strong>Java</strong>.
 					</p>
 				</Card>
 				<Card>
@@ -135,11 +134,7 @@ export default function page(): JSX.Element {
 							its GitHub repository
 						</DynamicLink>
 						, and it can be downloaded from{" "}
-						<DynamicLink
-							href={
-								"https://steamcommunity.com/sharedfiles/filedetails/?id=2057362949"
-							}
-						>
+						<DynamicLink href="https://steamcommunity.com/sharedfiles/filedetails/?id=2057362949">
 							its Steam Workshop page
 						</DynamicLink>
 						.

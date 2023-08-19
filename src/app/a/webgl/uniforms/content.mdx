@@ -4,8 +4,7 @@ You may need to read [the article about attributes](/a/webgl/attributes) before 
 
 ---
 
-Another way to pass data to the GPU is with _uniforms_, which variables that are uniform for each
-vertex. They can be defined in both vertex and fragment shaders.
+Another way to pass data to the GPU is with _uniforms_, which variables that are uniform for each vertex. They can be defined in both vertex and fragment shaders.
 
 Uniforms are declared using the `uniform` keyword. For example:
 
@@ -32,8 +31,7 @@ const location: WebGLUniformLocation | null = gl.getUniformLocation(
 );
 ```
 
-A uniform's value can be updated by calling the function that corresponds to the type of data that
-it holds. For example:
+A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For example:
 
 ```ts
 gl.uniform4fv(location, [1, 0, 0, 1]);

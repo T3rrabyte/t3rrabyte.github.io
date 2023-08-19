@@ -4,9 +4,7 @@ You may need to read [the article about attributes](/a/webgl/attributes) before 
 
 ---
 
-Another way to pass data to the GPU is with _varyings_, which are variables that vary between vertices.
-They are outputs from vertex shaders and inputs to fragment shaders, so they are declared using the
-`out` and `in` keywords, respectively.
+Another way to pass data to the GPU is with _varyings_, which are variables that vary between vertices. They are outputs from vertex shaders and inputs to fragment shaders, so they are declared using the `out` and `in` keywords, respectively.
 
 A varying must be declared in both the vertex shader and the fragment shader. For example:
 
@@ -38,8 +36,7 @@ void main() {
 }
 ```
 
-The value of the varying for a fragment is interpolated between the values passed to that varying
-from the vertices in the primitive that contains it.
+The value of the varying for a fragment is interpolated between the values passed to that varying from the vertices in the primitive that contains it.
 
 import Varyings from "./Varyings.tsx";
 
