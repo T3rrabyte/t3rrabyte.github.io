@@ -1,0 +1,22 @@
+@use "../../variables";
+
+span.parent {
+	border-bottom: 1px dotted variables.$text-color;
+	position: relative;
+
+	& > dialog.child {
+		background-color: variables.$fg-color;
+		border-radius: 10px;
+		position: absolute;
+		bottom: 100%;
+		padding: 10px;
+		border: 1px solid variables.$highlight-color;
+		outline: none;
+		min-width: 150px;
+
+		& > * {
+			margin: 0px;
+			padding: 0px;
+		}
+	}
+}

@@ -37,6 +37,7 @@
 		"#ButtonLink": "./src/components/ButtonLink/index.tsx",
 		"#Card": "./src/components/Card/index.tsx",
 		"#CardList": "./src/components/CardList/index.tsx",
+		"#TooltipSpan": "./src/components/TooltipSpan/index.tsx",
 		"#domain": "./src/domain.ts",
 		"#DynamicLink": "./src/components/DynamicLink.tsx",
 		"#generateMetadata": "./src/generateMetadata.ts",
