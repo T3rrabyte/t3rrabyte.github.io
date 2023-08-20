@@ -68,6 +68,7 @@ code {
 
 	*:not(pre) > & {
 		background-color: variables.$fg-color;
+		padding: 2px;
 	}
 }
 

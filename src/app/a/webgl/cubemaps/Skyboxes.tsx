@@ -21,8 +21,8 @@ import {
 	rotateZ,
 	rotateY,
 	getTranslation,
-	copy,
-	type Matrix4Like
+	type Matrix4Like,
+	setTranslation
 } from "@lakuna/umath/Matrix4";
 import { normalFromMatrix4, type Matrix3Like } from "@lakuna/umath/Matrix3";
 import AnimatedCanvas from "@lakuna/react-canvas";
@@ -248,10 +248,7 @@ export default function Skyboxes(
 
 			invert(cameraMatrix, viewMatrix);
 
-			copy(viewMatrix, viewDirectionMatrix);
-			viewDirectionMatrix[12] = 0;
-			viewDirectionMatrix[13] = 0;
-			viewDirectionMatrix[14] = 0;
+			setTranslation(viewMatrix, [0, 0, 0], viewDirectionMatrix);
 
 			multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
 

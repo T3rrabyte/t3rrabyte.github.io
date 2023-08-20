@@ -18,7 +18,7 @@ void main() {
 }
 ```
 
-In order to manipulate an attribute from JavaScript, the WebGL API must first be queried for its _location_, which is a pointer to a variable in a shader program. For example:
+In order to manipulate an attribute from JavaScript, the WebGL API must first be queried for its _location_, which is a pointer to a variable in a shader program. This can be done with [`getAttribLocation`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getAttribLocation). For example:
 
 ```ts
 const location: number = gl.getAttribLocation(program, "a_position");
@@ -28,7 +28,7 @@ const location: number = gl.getAttribLocation(program, "a_position");
 
 In order to manipulate a buffer with the WebGL API, it first needs to be pointed at with a type of pointer called a _binding point_. Each binding point has a specific purpose. For example, the _array buffer_ binding point is used to specify a buffer that contains vertex attributes.
 
-A buffer can be created and filled with data like this:
+A buffer can be created with [`createBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createBuffer), bound to a binding point with [`bindBuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bindBuffer), and filled with data with [`bufferData`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bufferData). For example:
 
 ```ts
 const buffer: WebGLBuffer = gl.createBuffer();
@@ -40,11 +40,9 @@ const data: BufferSource = new Float32Array([0, 0, 0, 0.5, 0.7, 0]);
 gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 ```
 
-Notice that `buffer` is not passed to `bufferData`. This is because it is first bound to `ARRAY_BUFFER`, (the binding point used for buffers that contain vertex attributes), which is then passed in its stead.
+Notice that `buffer` is not passed to `bufferData`. This is because it is first bound to `ARRAY_BUFFER`, which is then passed in its stead.
 
-`Float32Array` is a type of `BufferSource` that contains 32-bit floating-point values as binary data. Although JavaScript is aware of the type of data, this context is lost when stored in the buffer.
-
-The third argument passed to `bufferData` is a hint to WebGL about how the data will be used. For example, `STATIC_DRAW` means that the data will be specified once and read many times. This hint is used for optimization purposes.
+[`Float32Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array) is a type of [`TypedArray`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray) that contains 32-bit floating-point values as binary data. Although JavaScript is aware of the type of data, this context is lost when stored in the buffer.
 
 ## Vertex Array Objects
 
@@ -56,11 +54,9 @@ Since binary data requires extra context in order to be interpreted correctly, W
 - The stride, which is the offset in bytes between the beginnings of consecutive vertex attributes.
 - The offset in bytes of the first element that should be read.
 
-A _vertex array object_ (VAO) is a collection of information that tells attributes which buffers they should read data from and how they should do it.
+A _vertex array object_ (VAO) is a collection of information that tells attributes which buffers they should read data from and how they should do it. A VAO can be thought of as representing a type of shape. For example, every cube has the same vertex positions and can therefore use the same VAO.
 
-A VAO can be thought of as representing a type of shape. For example, every cube has the same vertex positions and can therefore use the same VAO.
-
-In order to allow an attribute to accept data from buffers, it must be enabled. Once an attribute is enabled, it can be told to read a certain buffer by a VAO. The following code creates a VAO, enables an attribute, and passes the necessary information for the attribute to read from a buffer to the VAO.
+In order to allow an attribute to accept data from buffers, it must be enabled with [`enableVertexAttribArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/enableVertexAttribArray). Once an attribute is enabled, it can be told to read a certain buffer by a VAO. A [`WebGLVertexArrayObject`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLVertexArrayObject) can be created with [`createVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/createVertexArray) and given data with [`vertexAttribPointer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer). For example:
 
 ```ts
 const vao: WebGLVertexArrayObject = gl.createVertexArray();
@@ -77,7 +73,7 @@ const offset = 0;
 gl.vertexAttribPointer(location, size, type, normalized, stride, offset);
 ```
 
-Notice that neither `buffer` nor `ARRAY_BUFFER` are passed to `vertexAttribPointer`. This is because the buffer bound to `ARRAY_BUFFER` is automatically used, since `ARRAY_BUFFER` is the binding point for buffers that contain vertex data.
+Notice that neither `buffer` nor `ARRAY_BUFFER` are passed to `vertexAttribPointer`. This is because the array buffer is automatically used, since the array buffer is the buffer that contains vertex data.
 
 Since `size` (the number of components that should be read for each vertex) is set to `2`, each vertex will get its `x` and `y` values from the buffer, and its `z` and `w` values will be set to their default values of `0` and `1`, respectively. Since the buffer contains six values that are read two at a time, there are three vertices' worth of data stored in the buffer.
 
@@ -87,7 +83,7 @@ The `stride` being set to `0` tells WebGL that the data is _tightly-packed_, mea
 
 ## Rasterizing
 
-The data stored in a VAO can be rasterized by setting the active shader program and VAO, then executing one of a few rasterization functions. For example:
+The data stored in a VAO can be rasterized by using the correct shader program with [`useProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/useProgram), binding the correct VAO with [`bindVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/bindVertexArray), then executing one of a few rasterization functions, such as [`drawArrays`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays). For example:
 
 ```ts
 gl.useProgram(program);
@@ -107,9 +103,9 @@ import Attributes from "./Attributes.tsx";
 
 WebGL allows vertex data to be reused by specifying indices in the _element array buffer_.
 
-Imagine that you want to rasterize a rectangle (four vertices). Rectangles are not primitives, so it must be rasterized using two triangles (six vertices). However, since two pairs of those six vertices overlap, they can be defined using only four vertices if they are given indices.
+Imagine that you want to rasterize a rectangle (four vertices). Rectangles are not primitives, so they must be rasterized using two triangles (six vertices). However, since two pairs of those six vertices overlap, they can be defined using only four vertices if they are given indices.
 
-Indices can be added to a VAO by binding a buffer to the `ELEMENT_ARRAY_BUFFER` binding point and filling it with unsigned integer data. The following example uses comments to describe how a rectangle is being constructed using four vertices grouped into two triangles:
+Indices can be added to a VAO by filling the element array buffer with unsigned integer data. For example:
 
 ```ts
 const buffer: WebGLBuffer = gl.createBuffer();
@@ -143,7 +139,7 @@ const indices = new Uint8Array([
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 ```
 
-When rasterizing a VAO with indices, `drawElements` should be called instead of `drawArrays`. For example:
+When rasterizing a VAO with indices, [`drawElements`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements) should be called instead of `drawArrays`. For example:
 
 ```ts
 const primitive: number = gl.TRIANGLES;
@@ -153,7 +149,7 @@ const skippedIndexCount = 0;
 gl.drawElements(primitive, indexCount, indexType, skippedIndexCount);
 ```
 
-Note that the type of data stored in the element array buffer is never passed to the VAO, so it must be passed to `drawElements`. This is set to `UNSIGNED_BYTE` because the data is from a `Uint8Array`.
+Note that the type of data stored in the element array buffer is never passed to the VAO, so it must be passed to `drawElements`. This is set to `UNSIGNED_BYTE` because the data is from a [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array).
 
 import Indices from "./Indices.tsx";
 

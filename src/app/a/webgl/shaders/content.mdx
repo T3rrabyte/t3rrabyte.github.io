@@ -13,8 +13,8 @@ Whenever a primitive is rasterized, the vertex shader is first executed once for
 
 Both types of shaders return `vec4` values, which are vectors that contain four floating-point values. In order, the four values are referred to as `x`, `y`, `z`, and `w`.
 
-- The return value of the vertex shader represents the position of the vertex in _clip space_, which is a coordinate system that represents the rendering context on the interval $[-1,1]$. Everything outside of clip space is _clipped_ (not rasterized). The negative boundaries for each direction are left, down, and near, respectively. The fourth value is used as a divisor for the first three.
-- The return value of the fragment shader represents the color of the fragment in _color space_, which organizes the red, green, blue, and alpha values of the color on the interval $[0,1]$, respectively.
+- The return value of the vertex shader represents the position of the vertex in _clip space_, which is a coordinate system that represents the rendering context on the interval $[-1,1]$. Everything outside of clip space is _clipped_ (not rasterized). The negative boundaries for each direction are left, down, and near, respectively. The first three values are automatically divided by the fourth.
+- The return value of the fragment shader represents the color of the fragment in _color space_, which organizes the red, green, blue, and alpha values of the color on the interval $[0,1]$.
 
 ## GLSL
 
@@ -25,7 +25,7 @@ Every shader defines a function called `main` that is executed when the shader i
 - For vertex shaders, the return value is set with a special variable called `gl_Position`.
 - Fragment shaders can have many return values, so output variables must be defined using the `out` keyword.
 
-The fragments returned by a fragment shader constitute a bitmap image that is stored in a portion of contiguous memory called a _framebuffer_. A framebuffer can have multiple regions that hold color data called _color buffers_. Each color buffer corresponds to an output variable in a fragment shader. The _draw buffer_ is the color buffer that contains the fragments that are rasterized to the rendering context.
+The fragments returned by a fragment shader constitute a _bitmap image_ that is stored in a portion of contiguous memory called a _framebuffer_. A framebuffer can have multiple regions that hold color data called _color buffers_. Each color buffer corresponds to an output variable in a fragment shader. The _draw buffer_ is the color buffer that contains the fragments that are rasterized to the rendering context.
 
 In order to specify that a shader should use version ES 3.00 of GLSL, its first line must be `#version 300 es`. **If this is not the first line in a WebGL2 shader, it will not compile**.
 
@@ -57,7 +57,7 @@ The line `precision highp float;` in the fragment shader sets the precision of f
 
 ---
 
-The WebGL API can be used to compile shaders. For example, the minimal vertex shader from above can be compiled like this:
+The WebGL API can be used to compile shaders. First, a [`WebGLShader`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLShader) object must be created with [`createShader`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createShader). Then, it must be assigned source code with [`shaderSource`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/shaderSource) and compiled with [`compileShader`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/compileShader). Optionally, the shader status can be checked with [`getShaderParameter`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getShaderParameter) and logged with [`getShaderInfoLog`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getShaderInfoLog). For example:
 
 ```ts
 const vertexShaderSource = `\
@@ -81,11 +81,9 @@ if (!compileStatus) {
 }
 ```
 
-The process is nearly identical for compiling vertex shaders and fragment shaders, except that they should use the constant values `VERTEX_SHADER` and `FRAGMENT_SHADER`, respectively.
-
 ## Shader Programs
 
-One vertex shader and one fragment shader can be linked together to create a _shader program_, which can be used to rasterize primitives. The process for creating a shader program with the WebGL API is very similar to the process for creating a shader. For example:
+One vertex shader and one fragment shader can be linked together to create a _shader program_, which can be used to rasterize primitives. The process for creating a shader program with the WebGL API is very similar to the process for creating a shader. First, a [`WebGLProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLProgram) must be created with [`createProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createProgram). Then, it must be assigned a vertex shader and a fragment shader with [`attachShader`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/attachShader) and linked together with [`linkProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/linkProgram). Optionally, the shader program status can be checked with [`getProgramParameter`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getProgramParameter) and logged with [`getProgramInfoLog`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getProgramInfoLog). For example:
 
 ```ts
 const program: WebGLProgram = gl.createProgram();

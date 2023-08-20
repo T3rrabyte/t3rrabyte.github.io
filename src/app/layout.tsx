@@ -23,7 +23,8 @@ const ubuntuMono: NextFontWithVariable = Ubuntu_Mono({
 	weight: "400", // google/fonts#6593
 	subsets: ["latin"],
 	variable: "--font-monospace",
-	fallback: ["Courier New", "monospace"]
+	fallback: ["Courier New", "monospace"],
+	adjustFontFallback: false // Bugged in Next.js version 13.4.19.
 });
 
 export default function layout({

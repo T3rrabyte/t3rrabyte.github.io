@@ -37,7 +37,6 @@ const data: Float32Array = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
 
 const indices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
 
-const translationSpeed = 0.001;
 const scalingSpeed = 0.001;
 
 export default function Matrices(
@@ -75,15 +74,8 @@ export default function Matrices(
 				1,
 				matrix
 			);
-			translate(
-				matrix,
-				[
-					(canvasMin / 3) * Math.cos(now * translationSpeed),
-					(canvasMin / 3) * Math.sin(now * translationSpeed),
-					1
-				],
-				matrix
-			);
+			rotateZ(matrix, now * 0.001, matrix);
+			translate(matrix, [100, 0, 0], matrix);
 			rotateZ(matrix, now * 0.002, matrix);
 			scale(
 				matrix,

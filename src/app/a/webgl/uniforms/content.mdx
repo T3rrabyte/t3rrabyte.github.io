@@ -4,7 +4,7 @@ You may need to read [the article about attributes](/a/webgl/attributes) before 
 
 ---
 
-Another way to pass data to the GPU is with _uniforms_, which variables that are uniform for each vertex. They can be defined in both vertex and fragment shaders.
+Another way to pass data to the GPU is with _uniforms_, which are variables that are uniform for each vertex. They can be defined in both vertex and fragment shaders.
 
 Uniforms are declared using the `uniform` keyword. For example:
 
@@ -22,7 +22,7 @@ void main() {
 }
 ```
 
-In order to manipulate a uniform from JavaScript, the WebGL API must first be queried for its location.
+In order to manipulate a uniform from JavaScript, the WebGL API must first be queried for its location with [`getUniformLocation`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getUniformLocation). For example:
 
 ```ts
 const location: WebGLUniformLocation | null = gl.getUniformLocation(
@@ -31,7 +31,7 @@ const location: WebGLUniformLocation | null = gl.getUniformLocation(
 );
 ```
 
-A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For example:
+A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For uniforms that hold most types of data, this function is some form of [`uniform[1234][uif][v]`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniform). For matrices, this function is some form of [`uniformMatrix[234]x[234]fv`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniformMatrix). For example:
 
 ```ts
 gl.uniform4fv(location, [1, 0, 0, 1]);

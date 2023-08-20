@@ -28,7 +28,7 @@ import Translation from "./Translation.tsx";
 
 ## Rotation
 
-A rotation is performed by multiplying each vertex by a point on the unit circle. Given a rotation of $r$ radians, an equivalent point on the unit circle is $(\cos(r),\sin(r))$. To rotate an initial vector $(x,y)$ by $r$ radians, use $(x\sin(r)+y\cos(r),y\sin(r)-x\cos(r))$. For example:
+A rotation is performed by multiplying each vertex by a point on the unit circle. Given a rotation of $r$ radians, an equivalent point on the unit circle is $(\cos(r),\sin(r))$. To rotate an initial vector $(x,y)$ by $r$ radians, use $(xs+yc,ys-xc)$, where $s=\sin(r)$ and $c=\cos(r)$. For example:
 
 ```glsl
 #version 300 es
@@ -38,11 +38,11 @@ in vec4 a_position;
 uniform float u_rotation;
 
 void main() {
-	float x = a_position.x * sin(u_rotation)
-		+ a_position.y * cos(u_rotation);
+	float s = sin(u_rotation);
+	float c = cos(u_rotation);
 
-	float y = a_position.y * sin(u_rotation)
-		- a_position.x * cos(u_rotation);
+	float x = a_position.x * s + a_position.y * c;
+	float y = a_position.y * s - a_position.x * c;
 
 	gl_Position = vec4(x, y, a_position.zw);
 }
@@ -92,33 +92,11 @@ void main() {
 }
 ```
 
-Matrix multiplication is noncommutative. When two transformation matrices are multiplied to combine their transformations, the transformations of the multiplicand are applied before those of the multiplier. In order for two matrices to be multipliable, the multiplicand must be of size $m\times{n}$ and the multiplier must be of size $n\times{p}$. Note that vectors are matrices with only one column.
+Matrix multiplication is noncommutative. When two transformation matrices are multiplied to combine their transformations, the transformations of the multiplicand are applied before those of the multiplier. In order for two matrices to be multipliable, the multiplicand must be of size $m\times{n}$ and the multiplier must be of size $n\times{p}$. Note that vectors are matrices with only one column (size $q\times{1}$).
 
-Given the following matrix $m$:
+Matrices can be constructed in specific ways such that multiplying them by a vector is equivalent to one of the basic transformation algorithms outlined above.
 
-$$
-\begin{bmatrix}m_{(1,1)}&m_{(1,2)}&m_{(1,3)}&m_{(1,4)}\\m_{(2,1)}&m_{(2,2)}&m_{(2,3)}&m_{(2,4)}\\m_{(3,1)}&m_{(3,2)}&m_{(3,3)}&m_{(3,4)}\\m_{(4,1)}&m_{(4,2)}&m_{(4,3)}&m_{(4,4)}\end{bmatrix}
-$$
-
-For a vector $v=(x_0,y_0,z_0,w_0)$, the product $mv=(x_1,y_1,z_1,w_1)$ can be computed as follows:
-
-$$
-x_1=m_{(1,1)}x_0+m_{(1,2)}y_0+m_{(1,3)}z_0+m_{(1,4)}w_0
-$$
-
-$$
-y_1=m_{(2,1)}x_0+m_{(2,2)}y_0+m_{(2,3)}z_0+m_{(2,4)}w_0
-$$
-
-$$
-z_1=m_{(3,1)}x_0+m_{(3,2)}y_0+m_{(3,3)}z_0+m_{(3,4)}w_0
-$$
-
-$$
-w_1=m_{(4,1)}x_0+m_{(4,2)}y_0+m_{(4,3)}z_0+m_{(4,4)}w_0
-$$
-
-Matrices can be constructed in specific ways such that the matrix multiplication described above has the same function as various transformations.
+It can be helpful to use a library such as [glMatrix](https://glmatrix.net/) or [μMath](https://umath.lakuna.pw/) for linear algebra.
 
 ### Matrix Translation
 
@@ -128,48 +106,24 @@ $$
 \begin{bmatrix}1&0&0&x_t\\0&1&0&y_t\\0&0&1&z_t\\0&0&0&1\end{bmatrix}
 $$
 
-$$
-x_1=1x_0+0y_0+0z_0+x_t1=x_0+x_t
-$$
-
-$$
-y_1=0x_0+1y_0+0z_0+y_t1=y_0+y_t
-$$
-
-$$
-z_1=0x_0+0y_0+1z_0+z_t1=z_0+z_t
-$$
-
 ### Matrix Rotation
 
-The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $x$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $x=(1,0,0)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
 
 $$
 \begin{bmatrix}1&0&0&0\\0&c&s&0\\0&-s&c&0\\0&0&0&1\end{bmatrix}
 $$
 
-The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $y$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $y=(0,1,0)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
 
 $$
 \begin{bmatrix}c&0&-s&0\\0&1&0&0\\s&0&c&0\\0&0&0&1\end{bmatrix}
 $$
 
-The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $z$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $z=(0,0,1)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
 
 $$
 \begin{bmatrix}c&s&0&0\\-s&c&0&0\\0&0&1&0\\0&0&0&1\end{bmatrix}
-$$
-
-$$
-x_1=cx_0+sy_0+0z_0+0\cdot1=cx_0+sy_0
-$$
-
-$$
-y_1=-sx_0+cy_0+0z_0+0\cdot1=-sx_0+cy_0
-$$
-
-$$
-z_1=0x_0+0y_0+1z_0+0\cdot1=z_0
 $$
 
 The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $(x_a,y_a,z_a)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$, $s=\sin(r)$, $t=1-c$, and $l=\sqrt{{x_a}^2+{y_a}^2+{z_a}^2}$.
@@ -186,21 +140,9 @@ $$
 \begin{bmatrix}x_s&0&0&0\\0&y_s&0&0\\0&0&z_s&0\\0&0&0&1\end{bmatrix}
 $$
 
-$$
-x_1=x_sx_0+0y_0+0z_0+0\cdot1=x_sx_0
-$$
-
-$$
-y_1=0x_0+y_sy_0+0z_0+0\cdot1=y_sy_0
-$$
-
-$$
-z_1=0x_0+0y_0+z_sz_0+0\cdot1=z_sz_0
-$$
-
 ### Orthographic Projection
 
-A _projection_ is a linear transformation from a vector space to itself. An _orthographic projection_ is a projection that uses parallel lines to project its shape. A _projection matrix_ is a transformation matrix that applied a projection.
+A _projection_ is a linear transformation from a vector space to itself. An _orthographic projection_ is a projection that uses parallel lines to project its shape. A _projection matrix_ is a transformation matrix that applies a projection.
 
 An orthographic projection can be used to convert from screen space to clip space.
 
@@ -208,22 +150,6 @@ The following orthographic projection matrix converts a vector $(x_0,y_0,z_0,w_0
 
 $$
 \begin{bmatrix}\frac{-2}{l-r}&0&0&0\\0&\frac{-2}{b-t}&0&0\\0&0&\frac{2}{n-f}&0\\\frac{l+r}{l-r}&\frac{b+t}{b-t}&\frac{n+f}{n-f}&1\end{bmatrix}
-$$
-
-$$
-x_1=\frac{-2x_0}{l-r}+0y_0+0z_0+0\cdot1=\frac{-2x_0}{l-r}
-$$
-
-$$
-y_1=0x_0+\frac{-2y_0}{b-t}+0z_0+0\cdot1=\frac{-2y_0}{b-t}
-$$
-
-$$
-z_1=0x_0+0y_0+\frac{2z_0}{n-f}+0\cdot1=\frac{2z_0}{n-f}
-$$
-
-$$
-w_1=\frac{l+r}{l-r}x_0+\frac{b+t}{b-t}y_0+\frac{n+f}{n-f}z_0+1\cdot1
 $$
 
 import Matrices from "./Matrices.tsx";

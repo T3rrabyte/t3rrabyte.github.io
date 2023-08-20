@@ -6,7 +6,7 @@ You may need to read the articles about [uniforms](/a/webgl/uniforms) and [varyi
 
 A _texture_ is an array of data that can be randomly accessed. Textures are mostly used to store image data.
 
-A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the _texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent the texture on the interval $[0,1]$ from left to right, first pixel to last pixel. For example:
+A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the _texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent the texture on the interval $[0,1]$ from left to right, first pixel to last pixel (typically top to bottom). For example:
 
 ```glsl
 #version 300 es
@@ -24,7 +24,7 @@ void main() {
 }
 ```
 
-Like buffers, textures need to be bound to a binding point in order to be manipulated. The `TEXTURE_2D` binding point is used or two-dimensional textures, which can be supplied data with the `texImage2D` function. The following example creates a one-by-one pink placeholder texture, then loads an image into it.
+A [`WebGLTexture`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLTexture) can be created with [`createTexture`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createTexture). Like buffers, textures need to be bound to a binding point with [`bindTexture`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bindTexture) in order to be manipulated. The `TEXTURE_2D` binding point is used for two-dimensional textures, which can be supplied data with [`texImage2D`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D). The following example creates a one-by-one pink placeholder texture, then loads an image into it.
 
 ```ts
 const texture: WebGLTexture = gl.createTexture();
@@ -52,7 +52,7 @@ image.crossOrigin = "";
 image.src = "https://www.lakuna.pw/images/webgl-example-texture.png";
 ```
 
-To pass a texture to a sampler uniform, it must be bound to a _texture unit_ that represents it. The texture unit is passed to the shader program instead of the texture. For example:
+To pass a texture to a sampler uniform, it must be bound to a _texture unit_ that represents it. The active texture unit can be specified with [`activeTexture`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/activeTexture), after which point binding a texture to a binding point assigns it to that texture unit. The texture unit is passed to the shader program instead of the texture. For example:
 
 ```ts
 gl.activeTexture(gl.TEXTURE0);
@@ -68,19 +68,19 @@ Check out the artist of the example texture on [her website](https://www.xanycki
 
 ## Texture Parameters
 
-Textures have various parameters that can be modified. For example:
+Textures have various parameters that can be modified with variations of [`texParameter[fi]`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texParameter). For example:
 
 ```ts
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 ```
 
-The texture's behavior when using texture coordinates outside of texture space can be modified by using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respectively.
+A texture's behavior when using texture coordinates outside of texture space can be modified by using `TEXTURE_WRAP_S` and `TEXTURE_WRAP_T` for the $s$ and $t$ axes, respectively.
 
 - `REPEAT` makes the texture repeat. This is the default functionality.
 - `CLAMP_TO_EDGE` repeats the last texel.
 - `MIRRORED_REPEAT` repeats the texture, but mirrors it for each repetition.
 
-A _mipmap_ is a collection of _mips_, which are smaller versions of a texture that are used to rasterize the texture at different sizes. The way that the mipmap is generated can be specified with the minification and magnification filter parameters. The minification filter is used when drawing anything smaller than the largest mip, and the magnification filter is used when drawing anything larger than the largest mip.
+A _mipmap_ is a collection of _mips_, which are smaller versions of a texture that are used to rasterize a texture at different sizes. The way that a mipmap is generated can be specified with the minification and magnification filter parameters. A minification filter is used when drawing anything smaller than the largest mip, and a magnification filter is used when drawing anything larger than the largest mip.
 
 - `NEAREST` chooses one pixel from the largest mip.
 - `LINEAR` chooses four pixels from the largest mip and blends them.
@@ -91,7 +91,7 @@ A _mipmap_ is a collection of _mips_, which are smaller versions of a texture th
 
 Since the magnification filter is only used when drawing larger than the largest mip, it can only be `NEAREST` or `LINEAR`.
 
-In order for a texture to be rasterized, it must be _texture complete_, meaning that it either only reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with the `generateMipmap` function like this:
+In order for a texture to be rasterized, it must be _texture complete_, meaning that it either only reads the largest mip or has a complete mipmap. The easiest way to generate a complete mipmap is with [`generateMipmap`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/generateMipmap). For example:
 
 ```js
 gl.generateMipmap(gl.TEXTURE_2D);
@@ -99,7 +99,7 @@ gl.generateMipmap(gl.TEXTURE_2D);
 
 ## Texture Atlases
 
-A _texture atlas_ is a texture that contains multiple images. Using a texture atlas can simplify a shader and reduce the number of calls to rasterization functions.
+A _texture atlas_ is a texture that contains multiple images. Using a texture atlas can simplify a shader and reduce the number of calls to rasterization functions. To use a texture atlas, pass texture coordinates that bound the desired image to whichever face the image should be displayed on.
 
 import TextureAtlases from "./TextureAtlases.tsx";
 
@@ -107,7 +107,7 @@ import TextureAtlases from "./TextureAtlases.tsx";
 
 ## Data Textures
 
-Rather than loading texture data from an image, texture data can also be supplied directly. The way that the data is interpreted depends on the internal format of the texture. For example, setting the internal format to `R8` causes the texture to expect one unsigned byte per texel, which it normalizes to color space. Each internal format has a corresponding format and data type that must also be specified. For example, with an internal format of `R8`, the format must be set to `RED` and the data type must be set to `UNSIGNED_BYTE`.
+Rather than loading texture data from an image, texture data can also be supplied directly. The way that the data is interpreted depends on the internal format of the texture. For example, setting the internal format to `R8` causes the texture to expect one unsigned byte per texel, which it normalizes to color space. Each internal format has a corresponding format and data type that must also be specified. For example, with an internal format of `R8`, the format must be set to `RED` and the data type must be set to `UNSIGNED_BYTE`. For example:
 
 ```js
 const level = 0;
@@ -133,7 +133,7 @@ gl.texImage2D(
 
 Textures will be malformed if their row alignment is not a multiple of their _unpack alignment_, which specifies the expected alignment of the rows in the supplied texture data. The unpack alignment defaults to four in order to maintain backwards compatibility, but it can be set to one, two, four, or eight.
 
-For example, the texture above has a width of three pixels per row and uses one byte per pixel, meaning that each row is three bytes wide. Since three is not a multiple of two, four, or eight, the unpack alignment must be set to one like this:
+For example, the texture above has a width of three pixels per row and uses one byte per pixel, meaning that each row is three bytes wide. Since three is not a multiple of two, four, or eight, the unpack alignment must be set to one with [`pixelStorei`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/pixelStorei) like this:
 
 ```js
 gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
@@ -201,7 +201,7 @@ void main() {
 }
 ```
 
-Notice that `v_projectorTexcoord.xyz` is manually divided by `v_projectorTexcoord.w` to determine the projected texture coordinates because perspective is typically only applied automatically only to `gl_Position`.
+Notice that `v_projectorTexcoord.xyz` is manually divided by `v_projectorTexcoord.w` to determine the projected texture coordinates because perspective is only applied automatically to `gl_Position`.
 
 Also notice that rather than drawing the texture on top of existing fragments, texture projection works by checking if a fragment is within the projector's frustum and sampling from the correct texture based on that.
 

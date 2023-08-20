@@ -14,16 +14,16 @@ The _initialization step_ is executed once at the beginning of the program. It i
 
 The _rasterization step_ is executed once for each _frame_, meaning once every time that the rendering context is updated. The _frame rate_ is the speed at which new frames are rasterized. The frame rate typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
 
-The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the rendering context on the intervals $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the rendering context in pixels and $y$ is the height of the rendering context in pixels.
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the rendering context on the intervals $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the rendering context in pixels and $y$ is the height of the rendering context in pixels. **In other words, the viewport determines how clip space coordinates are mapped to pixels.**
 
 The rasterization step is typically used to clear and resize the viewport, modify dynamic data, and rasterize primitives.
 
-The `requestAnimationFrame` function can be used to execute the rasterization step as fast as the GPU can (up to a certain cap). Since the frame rate depends on the user's hardware, it is sometimes necessary to calculate it. The following example calculates the frame rate in frames per second as `frameRate`:
+The [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) function can be used to execute the rasterization step as fast as the GPU can (up to a certain cap). Since the frame rate depends on the user's hardware, it is sometimes necessary to calculate it to make animations consistent across all devices. The following example calculates the frame rate in frames per second as `frameRate`:
 
 ```ts
 let then = 0;
 
-function rasterizationStep(now) {
+function rasterizationStep(now: number): void {
 	requestAnimationFrame(rasterizationStep);
 
 	const deltaTime: number = now - then;
@@ -39,7 +39,7 @@ It is a good idea to resize the viewport every frame in case the rendering conte
 
 The rendering context has two sizes: the physical size of the canvas, which is set by CSS, and the size of the draw buffer in pixels. If the size of the draw buffer does not match the physical size of the rendering context, the rasterized primitives will appear blurry and/or stretched.
 
-The following code resizes the drawing buffer to match the canvas, then resizes the viewport to match the drawing buffer:
+The following code resizes the drawing buffer to match the canvas, then resizes the viewport to match the drawing buffer with [`viewport`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/viewport):
 
 ```ts
 canvas.width = canvas.clientWidth;
@@ -50,7 +50,7 @@ gl.viewport(0, 0, canvas.width, canvas.height);
 
 ### Clearing Color Buffers
 
-Before rasterizing a new frame, color buffers should be cleared of the fragments from the previous frame. First, a value must be set for fragments to be set to. Then, WebGL needs to be told which buffers to clear. For example, in order to clear the viewport to transparent black fragments, the following code would be used:
+Before rasterizing a new frame, color buffers should be cleared of the fragments from the previous frame. First, a value can be set for fragments to be cleared to with [`clearColor`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clearColor). Then, WebGL needs to be told which buffers to clear with [`clear`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clear). For example, in order to clear the viewport to transparent black fragments, the following code would be used:
 
 ```ts
 gl.clearColor(0, 0, 0, 0);

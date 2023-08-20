@@ -7,16 +7,19 @@ article.base {
 		grid-column: 2;
 		overflow-x: auto;
 		overflow-y: hidden;
-
-		&:is(pre:has(> code)) {
-			width: min(80ch, 100%);
-			grid-column: 1 / 4;
-			margin-left: auto;
-			margin-right: auto;
-		}
 	}
 
-	hr {
+	& > hr {
 		width: 100%;
+	}
+
+	& > pre:has(> code) {
+		grid-column: 1 / 4;
+		width: 100%;
+
+		& > code {
+			max-width: min(80ch, 100%);
+			margin: 0px auto;
+		}
 	}
 }

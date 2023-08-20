@@ -58,7 +58,7 @@ in vec3 v_directionToLight;
 in vec3 v_directionToCamera;
 
 uniform vec4 u_color;
-uniform float u_shininess;
+uniform float u_dullness;
 
 out vec4 outColor;
 
@@ -66,12 +66,11 @@ void main() {
 	vec3 normal = normalize(v_normal);
 	vec3 directionToLight = normalize(v_directionToLight);
 	vec3 directionToCamera = normalize(v_directionToCamera);
-	vec3 halfVector =
-		normalize(directionToLight + directionToCamera);
+	vec3 halfVector = normalize(directionToLight + directionToCamera);
 
 	float pointBrightness = dot(normal, directionToLight);
 	float specularBrightness = pointBrightness >= 0.0
-		? pow(dot(normal, halfVector), u_shininess)
+		? pow(dot(normal, halfVector), u_dullness)
 		: 0.0;
 
 	outColor = u_color;
@@ -205,7 +204,7 @@ export default function SpecularLighting(
 				u_lightPosition: [1, 1.4, 2],
 				u_cameraPosition: cameraPosition,
 				u_color: [1, 1, 1, 1],
-				u_shininess: 5
+				u_dullness: 5
 			});
 		};
 	}, props);
