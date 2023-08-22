@@ -6,7 +6,6 @@ import minecraftServerPreview from "#app/a/mc/preview.png";
 import SceneGraph from "#app/a/webgl/scene-graph/SceneGraph.tsx";
 import generateMetadata from "#generateMetadata";
 import type { Metadata } from "next";
-import DynamicLink from "#DynamicLink";
 import type { JSX } from "react";
 
 export default function page(): JSX.Element {
@@ -14,9 +13,9 @@ export default function page(): JSX.Element {
 		<>
 			<h1>
 				Blog{" "}
-				<DynamicLink href="/rss.xml">
+				<a href="/rss.xml">
 					<BsRss />
-				</DynamicLink>
+				</a>
 			</h1>
 			<CardList>
 				<Card href="/a/q_rsqrt">
