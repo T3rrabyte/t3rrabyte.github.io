@@ -155,7 +155,7 @@ in vec2 a_texcoord;
 
 uniform mat4 u_world;
 uniform mat4 u_viewerViewProjection;
-uniform mat4 u_projectorViewProjection;
+uniform mat4 u_textureMatrix;
 
 out vec2 v_texcoord;
 out vec4 v_projectedTexcoord;
@@ -163,10 +163,11 @@ out vec4 v_projectedTexcoord;
 void main() {
 	gl_Position = u_viewerViewProjection * u_world * a_position;
 	v_texcoord = a_texcoord;
-	v_projectedTexcoord =
-		u_projectorViewProjection * u_world * a_position;
+	v_projectedTexcoord = u_textureMatrix * u_world * a_position;
 }
 ```
+
+The _texture matrix_ is a slightly modified version of the projector's view projection matrix that also converts from clip space to texture space. It can be constructed by multiplying a matrix that translates and then scales by $\frac{1}{2}$ in each dimension by the projector's view projection matrix.
 
 The fragment shader needs to determine which texture to use at each position based on whether the position falls within the frustum of the projector. For example:
 

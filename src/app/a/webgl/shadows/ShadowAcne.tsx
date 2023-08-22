@@ -12,8 +12,7 @@ import {
 	FaceDirection,
 	TextureInternalFormat,
 	Primitive,
-	TextureMinFilter,
-	TextureMagFilter
+	Framebuffer
 } from "@lakuna/ugl";
 import {
 	identity,
@@ -26,7 +25,6 @@ import {
 	scale
 } from "@lakuna/umath/Matrix4";
 import AnimatedCanvas from "@lakuna/react-canvas";
-import domain from "#domain";
 import type { Matrix4Like } from "@lakuna/umath";
 import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 
@@ -61,20 +59,24 @@ in vec4 v_projectedTexcoord;
 uniform vec4 u_color;
 uniform sampler2D u_texture;
 uniform sampler2D u_projectedTexture;
+uniform float u_bias;
 
 out vec4 outColor;
 
 void main() {
-	vec2 projectedTexcoord = (v_projectedTexcoord.xyz / v_projectedTexcoord.w).xy;
+	vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
+	float depth = projectedTexcoord.z + u_bias;
 
 	bool inRange = projectedTexcoord.x >= 0.0
 		&& projectedTexcoord.x <= 1.0
 		&& projectedTexcoord.y >= 0.0
 		&& projectedTexcoord.y <= 1.0;
+	
+	float projectedDepth = texture(u_projectedTexture, projectedTexcoord.xy).r;
+	float shadowLight = inRange && projectedDepth <= depth ? 0.0 : 1.0;
 
-	vec4 projectedTextureColor = texture(u_projectedTexture, projectedTexcoord);
 	vec4 textureColor = texture(u_texture, v_texcoord) * u_color;
-	outColor = inRange ? projectedTextureColor : textureColor;
+	outColor = vec4(textureColor.rgb * shadowLight, textureColor.a);
 }`;
 
 const solidVss: string = `\
@@ -183,10 +185,11 @@ const frustumIndices: Uint8Array = new Uint8Array([
 	0, 4, 1, 5, 3, 7, 2, 6
 ]);
 
+const projectedTextureDim = 1024;
 const cameraDistance = 2;
 const cameraRotationX: number = -Math.PI / 5;
 
-export default function ProjectionMapping(
+export default function ShadowMaps(
 	props: DetailedHTMLProps<
 		CanvasHTMLAttributes<HTMLCanvasElement>,
 		HTMLCanvasElement
@@ -195,7 +198,7 @@ export default function ProjectionMapping(
 	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
 		const gl: Context = new Context(canvas);
 		const program: Program = Program.fromSource(gl, vss, fss);
-		const frustumProgram: Program = Program.fromSource(gl, solidVss, solidFss);
+		const solidProgram: Program = Program.fromSource(gl, solidVss, solidFss);
 
 		const planePositionBuffer: Buffer = new Buffer(gl, planePositionData);
 		const planeTexcoordBuffer: Buffer = new Buffer(gl, planeTexcoordData);
@@ -210,6 +213,11 @@ export default function ProjectionMapping(
 			],
 			planeIndices
 		);
+		const solidPlaneVao: Vao = new Vao(
+			solidProgram,
+			[new BufferInfo("a_position", planePositionBuffer, 2)],
+			planeIndices
+		);
 		const cubeVao: Vao = new Vao(
 			program,
 			[
@@ -218,8 +226,13 @@ export default function ProjectionMapping(
 			],
 			cubeIndices
 		);
+		const solidCubeVao: Vao = new Vao(
+			solidProgram,
+			[new BufferInfo("a_position", cubePositionBuffer)],
+			cubeIndices
+		);
 		const frustumVao: Vao = new Vao(
-			frustumProgram,
+			solidProgram,
 			[new BufferInfo("a_position", frustumPositionBuffer)],
 			frustumIndices
 		);
@@ -235,12 +248,23 @@ export default function ProjectionMapping(
 				)
 			)
 		);
-		const projectedTexture: Texture2d = Texture2d.fromImageUrl(
+		const projectedTexture: Texture2d = new Texture2d(
 			gl,
-			`${domain}images/webgl-example-texture.png`
+			new Mipmap(
+				new Texture2dMip(
+					null,
+					TextureInternalFormat.DEPTH_COMPONENT32F,
+					projectedTextureDim,
+					projectedTextureDim
+				)
+			)
 		);
-		projectedTexture.magFilter = TextureMagFilter.LINEAR;
-		projectedTexture.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
+
+		const framebuffer: Framebuffer = new Framebuffer(
+			gl,
+			undefined,
+			projectedTexture.face
+		);
 
 		const planeMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
 		identity(planeMatrix);
@@ -248,8 +272,9 @@ export default function ProjectionMapping(
 
 		const cubeMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
 		identity(cubeMatrix);
+		rotateY(cubeMatrix, Math.PI / 3, cubeMatrix);
 		scale(cubeMatrix, [0.1, 0.1, 0.1], cubeMatrix);
-		translate(cubeMatrix, [1, 2, 1], cubeMatrix);
+		translate(cubeMatrix, [0, 2, 1], cubeMatrix);
 
 		const projectorProjectionMatrix: Matrix4Like = new Float32Array(
 			16
@@ -300,10 +325,6 @@ export default function ProjectionMapping(
 		) as Matrix4Like;
 
 		return (now: number): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0], 1);
-			gl.cullFace = FaceDirection.BACK;
-
 			perspective(
 				Math.PI / 4,
 				canvas.width / (canvas.height || 1),
@@ -325,13 +346,38 @@ export default function ProjectionMapping(
 				viewerViewProjectionMatrix
 			);
 
+			framebuffer.with((): void => {
+				gl.resize(
+					0,
+					0,
+					projectedTexture.face.top.width as number,
+					projectedTexture.face.top.height as number
+				);
+				gl.clear([0, 0, 0, 0], 1);
+				gl.cullFace = FaceDirection.BACK;
+
+				solidPlaneVao.draw({
+					u_world: planeMatrix,
+					u_viewerViewProjection: projectorViewProjectionMatrix
+				});
+				solidCubeVao.draw({
+					u_world: cubeMatrix,
+					u_viewerViewProjection: projectorViewProjectionMatrix
+				});
+			});
+
+			gl.resize();
+			gl.clear([0, 0, 0, 0], 1);
+			gl.cullFace = FaceDirection.BACK;
+
 			planeVao.draw({
 				u_world: planeMatrix,
 				u_viewerViewProjection: viewerViewProjectionMatrix,
 				u_textureMatrix: textureMatrix,
 				u_color: [1, 0, 0, 1],
 				u_texture: texture,
-				u_projectedTexture: projectedTexture
+				u_projectedTexture: projectedTexture,
+				u_bias: -0.001
 			});
 			cubeVao.draw({
 				u_world: cubeMatrix,
@@ -339,7 +385,8 @@ export default function ProjectionMapping(
 				u_textureMatrix: textureMatrix,
 				u_color: [0, 1, 0, 1],
 				u_texture: texture,
-				u_projectedTexture: projectedTexture
+				u_projectedTexture: projectedTexture,
+				u_bias: -0.001
 			});
 			frustumVao.draw(
 				{

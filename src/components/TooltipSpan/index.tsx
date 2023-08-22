@@ -22,14 +22,14 @@ export default function HoverDialog({
 }: DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> & {
 	tooltip: ReactNode;
 }): JSX.Element {
-	const dialogReference: MutableRefObject<HTMLDialogElement | null> =
+	const dialogReference: MutableRefObject<HTMLSpanElement | null> =
 		useRef(null);
 
 	const onMouseEnterHandler: MouseEventHandler<HTMLSpanElement> = (
 		event: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>
 	): void => {
 		console.log("Enter!");
-		dialogReference.current?.show();
+		dialogReference.current?.style.setProperty("display", "inline");
 		onMouseEnter?.(event);
 	};
 
@@ -37,7 +37,7 @@ export default function HoverDialog({
 		event: MouseEvent<HTMLSpanElement, globalThis.MouseEvent>
 	): void => {
 		console.log("Leave!");
-		dialogReference.current?.close();
+		dialogReference.current?.style.setProperty("display", "none");
 		onMouseLeave?.(event);
 	};
 
@@ -49,9 +49,9 @@ export default function HoverDialog({
 			{...props}
 		>
 			{children}
-			<dialog className={style["child"]} ref={dialogReference}>
+			<span className={style["child"]} ref={dialogReference}>
 				{tooltip}
-			</dialog>
+			</span>
 		</span>
 	);
 }
