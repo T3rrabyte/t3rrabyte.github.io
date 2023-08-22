@@ -354,7 +354,7 @@ export default function ShadowMaps(
 					projectedTexture.face.top.height as number
 				);
 				gl.clear([0, 0, 0, 0], 1);
-				gl.cullFace = FaceDirection.BACK;
+				gl.cullFace = FaceDirection.FRONT;
 
 				solidPlaneVao.draw({
 					u_world: planeMatrix,
@@ -377,7 +377,7 @@ export default function ShadowMaps(
 				u_color: [1, 0, 0, 1],
 				u_texture: texture,
 				u_projectedTexture: projectedTexture,
-				u_bias: -0.001
+				u_bias: 0.001
 			});
 			cubeVao.draw({
 				u_world: cubeMatrix,
@@ -386,7 +386,7 @@ export default function ShadowMaps(
 				u_color: [0, 1, 0, 1],
 				u_texture: texture,
 				u_projectedTexture: projectedTexture,
-				u_bias: -0.001
+				u_bias: 0.001
 			});
 			frustumVao.draw(
 				{
