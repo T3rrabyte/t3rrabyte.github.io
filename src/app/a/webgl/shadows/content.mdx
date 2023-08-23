@@ -47,7 +47,7 @@ import ShadowMaps from "./ShadowMaps.tsx";
 
 ## Shadow Acne
 
-The strange patterns in the example above are called _shadow acne_ and are a result of the limited resolution of the shadow map, causing surfaces to shade themselves. It can be mitigated by adding a bias to the calculated depth of each fragment. For example:
+The strange patterns in the example above are called _shadow acne_ and are a result of the limited resolution of the shadow map causing surfaces to shade themselves. It can be mitigated by adding a bias to the calculated depth of each fragment. For example:
 
 ```glsl
 float depth = projectedTexcoord.z + u_bias;
@@ -61,15 +61,11 @@ float bias = max(
 	u_biasMinimum);
 ```
 
-Adding a bias can lead to an effect called _peter panning_ in which shadows appear to be slightly disjointed from their caster. This can be resolved by culling front faces when making the shadow map.
+Adding a bias can lead to an effect called _peter panning_ in which shadows appear to be slightly disjointed from their caster. This can be mitigated by culling front faces when making the shadow map.
 
 import ShadowAcne from "./ShadowAcne.tsx";
 
 <ShadowAcne style={{ width: "100%" }} />
-
-import SpotlightShadow from "./SpotlightShadow.tsx";
-
-<SpotlightShadow style={{ width: "100%" }} />
 
 ---
 
