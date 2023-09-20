@@ -107,7 +107,7 @@ export default function OneLiner(
 	const [i, setI]: [number, Dispatch<SetStateAction<number>>] = useState(0);
 
 	const effectCallback: EffectCallback = (): void =>
-		setI(Math.floor(Math.random() * (oneLiners.length - 2) + 1));
+		setI(Math.floor(Math.random() * (oneLiners.length - 1) + 1));
 	useEffect(effectCallback, []);
 
 	return <p {...props}>{oneLiners[i]}</p>;
