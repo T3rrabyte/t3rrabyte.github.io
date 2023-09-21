@@ -18,7 +18,7 @@ const onChange = (
 	setter: Dispatch<SetStateAction<number>>
 ): ChangeEventHandler<HTMLInputElement> => {
 	return (event: ChangeEvent<HTMLInputElement>): void => {
-		setter(parseInt(event.target.value));
+		setter(parseInt(event.target.value) || 0);
 	};
 };
 
