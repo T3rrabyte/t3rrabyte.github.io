@@ -56,10 +56,12 @@ Since binary data requires extra context in order to be interpreted correctly, W
 
 A _vertex array object_ (VAO) is a collection of information that tells attributes which buffers they should read data from and how they should do it. A VAO can be thought of as representing a type of shape. For example, every cube has the same vertex positions and can therefore use the same VAO.
 
-In order to allow an attribute to accept data from buffers, it must be enabled with [`enableVertexAttribArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/enableVertexAttribArray). Once an attribute is enabled, it can be told to read a certain buffer by a VAO. A [`WebGLVertexArrayObject`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLVertexArrayObject) can be created with [`createVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/createVertexArray) and given data with [`vertexAttribPointer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer). For example:
+In order to allow an attribute to accept data from buffers, it must be enabled with [`enableVertexAttribArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/enableVertexAttribArray). Once an attribute is enabled, it can be told to read a certain buffer by a VAO. A [`WebGLVertexArrayObject`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLVertexArrayObject) can be created with [`createVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/createVertexArray). Like buffers, VAOs must be bound with [`bindVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/bindVertexArray) in order to be manipulated. After that, they can be given data with [`vertexAttribPointer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer). For example:
 
 ```ts
 const vao: WebGLVertexArrayObject = gl.createVertexArray();
+
+gl.bindVertexArray(vao);
 
 gl.enableVertexAttribArray(location);
 
@@ -83,7 +85,7 @@ The `stride` being set to `0` tells WebGL that the data is _tightly-packed_, mea
 
 ## Rasterizing
 
-The data stored in a VAO can be rasterized by using the correct shader program with [`useProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/useProgram), binding the correct VAO with [`bindVertexArray`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/bindVertexArray), then executing one of a few rasterization functions, such as [`drawArrays`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays). For example:
+The data stored in a VAO can be rasterized by using the correct shader program with [`useProgram`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/useProgram), binding the correct VAO, then executing one of a few rasterization functions, such as [`drawArrays`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays). For example:
 
 ```ts
 gl.useProgram(program);
@@ -108,8 +110,6 @@ Imagine that you want to rasterize a rectangle (four vertices). Rectangles are n
 Indices can be added to a VAO by filling the element array buffer with unsigned integer data. For example:
 
 ```ts
-const buffer: WebGLBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 const data = new Float32Array([
 	0,
 	0.5, // Vertex 0 at (0, 0.5).
@@ -120,14 +120,7 @@ const data = new Float32Array([
 	0.7,
 	0.5 // Vertex 3 at (0.7, 0.5).
 ]);
-gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-const vao: WebGLVertexArrayObject = gl.createVertexArray();
-gl.enableVertexAttribArray(location);
-gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
-
-const indexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 const indices = new Uint8Array([
 	0,
 	1,
@@ -136,8 +129,22 @@ const indices = new Uint8Array([
 	2,
 	3 // Triangle 1 with vertices 0, 2, and 3.
 ]);
+
+const buffer: WebGLBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+const vao: WebGLVertexArrayObject = gl.createVertexArray();
+gl.bindVertexArray(vao);
+gl.enableVertexAttribArray(location);
+gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
+
+const indexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 ```
+
+Notice that `vertexAttribPointer` is not called for the element array buffer. This is because the element array buffer is a property of the currently-bound VAO rather than a global property (like the array buffer), so calling `bindBuffer` binds the element array buffer to the currently-bound VAO.
 
 When rasterizing a VAO with indices, [`drawElements`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawElements) should be called instead of `drawArrays`. For example:
 
