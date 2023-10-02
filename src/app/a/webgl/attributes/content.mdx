@@ -75,7 +75,7 @@ const offset = 0;
 gl.vertexAttribPointer(location, size, type, normalized, stride, offset);
 ```
 
-Notice that neither `buffer` nor `ARRAY_BUFFER` are passed to `vertexAttribPointer`. This is because the array buffer is automatically used, since the array buffer is the buffer that contains vertex data.
+Notice that neither `buffer` nor `ARRAY_BUFFER` are passed to `vertexAttribPointer`. This is because the array buffer is automatically used, since the array buffer is the buffer that contains vertex data. Likewise, `vao` is never passed to `vertexAttribPointer` because the currently-bound VAO is automatically used.
 
 Since `size` (the number of components that should be read for each vertex) is set to `2`, each vertex will get its `x` and `y` values from the buffer, and its `z` and `w` values will be set to their default values of `0` and `1`, respectively. Since the buffer contains six values that are read two at a time, there are three vertices' worth of data stored in the buffer.
 
