@@ -16,9 +16,6 @@ const withMdx = nextMdx({
 });
 
 export default withMdx({
-	experimental: {
-		appDir: true
-	},
 	async rewrites() {
 		return {
 			beforeFiles: [

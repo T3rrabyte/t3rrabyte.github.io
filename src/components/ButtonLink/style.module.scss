@@ -13,4 +13,8 @@ html body a.base {
 		background-color: variables.$text-color;
 		border: 1px solid variables.$fg-color;
 	}
+
+	& > svg {
+		vertical-align: top;
+	}
 }
