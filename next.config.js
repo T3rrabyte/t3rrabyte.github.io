@@ -3,6 +3,9 @@ import remarkMath from "remark-math"; // Await update for `@mdx-js/loader` that 
 import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import glsl from "highlight.js/lib/languages/glsl";
+import c from "highlight.js/lib/languages/c";
+import typescript from "highlight.js/lib/languages/typescript";
+import javascript from "highlight.js/lib/languages/javascript";
 
 const withMdx = nextMdx({
 	extension: /\.mdx?$/,
@@ -10,7 +13,10 @@ const withMdx = nextMdx({
 		remarkPlugins: [remarkMath],
 		rehypePlugins: [
 			rehypeKatex,
-			[rehypeHighlight, { detect: true, languages: { glsl } }]
+			[
+				rehypeHighlight,
+				{ detect: true, languages: { glsl, c, typescript, javascript } }
+			]
 		]
 	}
 });
