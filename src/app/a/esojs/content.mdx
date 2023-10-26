@@ -105,8 +105,8 @@ const _i = `${_Infinity_string}[${_number(3)}]`;
 In JavaScript, everything is an object. Properties of objects can be accessed using either dot notation (`foo.bar`) or bracket notation (`foo["bar"]`). We now have the letters necessary to build the string `"constructor"`, which means that we can use bracket notation to access the constructor of any object. Converting the constructor of a string yields either `"function String() { [native code] }"` or `"function String() {\n[native code]\n}"` (depending on the interpreter), which yields `"i"`, `"n"`, `"S"`, `"g"`, and `"d"` from our list of characters.
 
 ```js
-const _constructor_string =
-	`${_c}+${_o}+${_n}+${_s}+${_t}+${_r}+${_u}+${_c}` + `+${_t}+${_o}+${_r}`;
+const _constructor_string = `\
+${_c}+${_o}+${_n}+${_s}+${_t}+${_r}+${_u}+${_c}+${_t}+${_o}+${_r}`;
 
 const _empty_string = `(${_array}+${_array})`;
 
@@ -161,8 +161,8 @@ const _function = "()=>{}";
 const _function_constructor = `(${_function})[${_constructor_string}]`;
 
 const _return_escape_string =
-	`${_r}+${_e}+${_t}+${_u}+${_r}+${_n}+${_space}` +
-	`+${_e}+${_s}+${_c}+${_a}+${_p}+${_e}`;
+	`${_r}+${_e}+${_t}+${_u}+${_r}+${_n}+${_space}+${_e}+${_s}+${_c}+${_a}` +
+	`+${_p}+${_e}`;
 
 const _escape = `${_function_constructor}(${_return_escape_string})()`;
 
@@ -175,8 +175,8 @@ With this, we now have the ability to construct the string `"toCharCode"`, which
 
 ```js
 const _fromCharCode_string =
-	`${_f}+${_r}+${_o}+${_m}+${_C}+${_h}+${_a}+${_r}` +
-	`+${_C}+${_o}+${_d}+${_e}`;
+	`${_f}+${_r}+${_o}+${_m}+${_C}+${_h}+${_a}+${_r}+${_C}+${_o}+${_d}` +
+	`+${_e}`;
 
 const _string = (s) =>
 	s
