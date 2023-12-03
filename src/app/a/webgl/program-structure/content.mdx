@@ -14,7 +14,7 @@ The _initialization step_ is executed once at the beginning of the program. It i
 
 The _rasterization step_ is executed once for each _frame_, meaning once every time that the rendering context is updated. The _frame rate_ is the speed at which new frames are rasterized. The frame rate typically depends on how fast the GPU can execute the given shader programs, up to a certain cap.
 
-The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the rendering context on the intervals $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the rendering context in pixels and $y$ is the height of the rendering context in pixels. **In other words, the viewport determines how clip space coordinates are mapped to pixels.**
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the rendering context in the ranges $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the rendering context in pixels and $y$ is the height of the rendering context in pixels. **In other words, the viewport determines how clip space coordinates are mapped to pixels.**
 
 The rasterization step is typically used to clear and resize the viewport, modify dynamic data, and rasterize primitives.
 

@@ -22,4 +22,8 @@ article.base {
 			margin: 0px auto;
 		}
 	}
+
+	& > iframe {
+		margin: 0px auto;
+	}
 }

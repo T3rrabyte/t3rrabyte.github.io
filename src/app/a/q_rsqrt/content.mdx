@@ -55,7 +55,7 @@ float Q_rsqrt(float y) {
 
 In order to understand how the function works, one must first understand how floating-point variables are stored in memory. Whenever a variable is declared as a `float` in C, it is stored according to the rules of [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754). IEEE 754 was created by William Kahan, in collaboration with Intel, in the 1980s. Today, almost all computers use it to store floating-point values.
 
-IEEE 754 is based on scientific notation, in which numbers are written as a value in the interval $[1,b)$ multiplied by some power of $b$, where $b$ is the base of the number. For example, $45000_10=4.5*10^4$. The first number ($4.5$ in the example) is called the "_mantissa_", and the exponent of the $10$ ($4$) is just called the "_exponent_."
+IEEE 754 is based on scientific notation, in which numbers are written as a value in the range $[1,b)$ multiplied by some power of $b$, where $b$ is the base of the number. For example, $45000_10=4.5*10^4$. The first number ($4.5$ in the example) is called the "_mantissa_", and the exponent of the $10$ ($4$) is just called the "_exponent_."
 
 IEEE 754 floating-point values are stored in 32 bits. The first bit is the "_sign bit_." The sign bit is `0b1` if the number is negative, or `0b0` if it is positive. The sign bit comes first in order to make it easier to sort floating-point values.
 
@@ -92,7 +92,7 @@ $$
 \log_2(1+\frac{m}{2^{23}})+e-127
 $$
 
-For small values of $x$, $\log_2(1+x)\approx x$. A corrective term, $\mu$, is added to this, yielding $\log_2(1+x)\approx x+\mu$. $\mu\approx0.043$ gives the smallest average error for numbers in the range $[0,1]$. Since $\frac{m}{2^{23}}$ is in the interval $[0,1]$, the formula can be simplified further to the following:
+For small values of $x$, $\log_2(1+x)\approx x$. A corrective term, $\mu$, is added to this, yielding $\log_2(1+x)\approx x+\mu$. $\mu\approx0.043$ gives the smallest average error for numbers in the range $[0,1]$. Since $\frac{m}{2^{23}}$ is in the range $[0,1]$, the formula can be simplified further to the following:
 
 $$
 \frac{m}{2^{23}}+\mu+e-127

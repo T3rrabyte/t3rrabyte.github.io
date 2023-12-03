@@ -1,11 +1,12 @@
 import domain from "#domain";
 import type { Metadata } from "next";
+import type { TemplateString } from "next/dist/lib/metadata/types/metadata-types.js";
 
 const twitterId = "1117270419298496513";
 const authorName = "Travis Martin";
 
 export default function generateMetadata(
-	title: string,
+	title: string | TemplateString,
 	description: string,
 	imageUrl: string,
 	canonicalUrl: string
@@ -19,7 +20,6 @@ export default function generateMetadata(
 			name: authorName,
 			url: "https://www.lakuna.pw/"
 		},
-		colorScheme: "dark light",
 		creator: authorName,
 		publisher: authorName,
 		openGraph: {
@@ -32,7 +32,6 @@ export default function generateMetadata(
 			type: "website"
 		},
 		icons: "/favicon.ico",
-		themeColor: "#18CD85",
 		twitter: {
 			card: "summary",
 			title: title,

@@ -18,6 +18,10 @@ export default function page(): JSX.Element {
 				</a>
 			</h1>
 			<CardList>
+				<Card href="/a/pedit5">
+					<h2>The Dungeon</h2>
+					<p>A review of my world record speedrun of the first CRPG.</p>
+				</Card>
 				<Card href="/a/q_rsqrt">
 					<h2>Fast Inverse Square Root</h2>
 					<p>

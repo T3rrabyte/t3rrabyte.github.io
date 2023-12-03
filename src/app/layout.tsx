@@ -5,6 +5,8 @@ import Topnav from "./Topnav/index.tsx";
 import { Noto_Serif, Ubuntu, Ubuntu_Mono } from "next/font/google";
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import type { DetailedHTMLProps, HTMLAttributes, JSX } from "react";
+import generateViewport from "#generateViewport";
+import type { Viewport } from "next";
 
 const arvo: NextFontWithVariable = Noto_Serif({
 	subsets: ["latin"],
@@ -48,3 +50,5 @@ export default function layout({
 		</html>
 	);
 }
+
+export const viewport: Viewport = generateViewport();

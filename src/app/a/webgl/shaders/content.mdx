@@ -13,8 +13,8 @@ Whenever a primitive is rasterized, the vertex shader is first executed once for
 
 Both types of shaders return `vec4` values, which are vectors that contain four floating-point values. In order, the four values are referred to as `x`, `y`, `z`, and `w`.
 
-- The return value of the vertex shader represents the position of the vertex in _clip space_, which is a coordinate system that represents the rendering context on the interval $[-1,1]$. Everything outside of clip space is _clipped_ (not rasterized). The negative boundaries for each direction are left, down, and near, respectively. The first three values are automatically divided by the fourth.
-- The return value of the fragment shader represents the color of the fragment in _color space_, which organizes the red, green, blue, and alpha values of the color on the interval $[0,1]$.
+- The return value of the vertex shader represents the position of the vertex in _clip space_, which is a coordinate system that represents the rendering context in the range $[-1,1]$. Everything outside of clip space is _clipped_ (not rasterized). The negative boundaries for each direction are left, down, and near, respectively. The first three values are automatically divided by the fourth.
+- The return value of the fragment shader represents the color of the fragment in _color space_, which organizes the red, green, blue, and alpha values of the color in the range $[0,1]$.
 
 ## GLSL
 

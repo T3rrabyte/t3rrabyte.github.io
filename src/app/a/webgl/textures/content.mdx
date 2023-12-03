@@ -6,7 +6,7 @@ You may need to read the articles about [uniforms](/a/webgl/uniforms) and [varyi
 
 A _texture_ is an array of data that can be randomly accessed. Textures are mostly used to store image data.
 
-A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the _texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent the texture on the interval $[0,1]$ from left to right, first pixel to last pixel (typically top to bottom). For example:
+A _sampler_ is a uniform that is used to sample a texture. The `texture` function is used to get the _texel_ (texture element) from the given texture at the given _texture space_ coordinates, which represent the texture in the range $[0,1]$ from left to right, first pixel to last pixel (typically top to bottom). For example:
 
 ```glsl
 #version 300 es
