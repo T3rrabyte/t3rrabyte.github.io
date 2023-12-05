@@ -1,6 +1,5 @@
 import Content from "./content.mdx";
 import generateMetadata from "#generateMetadata";
-import "#katex";
 import type { Metadata } from "next";
 import type { JSX } from "react";
 
