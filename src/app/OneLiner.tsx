@@ -95,7 +95,9 @@ const oneLiners: Array<JSX.Element> = [
 	<span key={53}>{"God drinks Java."}</span>, // world.execute(me);; Mili
 	<span key={54}>{"SEE YOU SPACE COWBOY..."}</span>, // Cowboy Bebop
 	<span key={55}>{"Dodge, duck, dip, dive, and dodge."}</span>, // Dodgeball: A True Underdog Story
-	<span key={56}>{'I\'m always dreaming, believing "ideal" exists.'}</span> // Thousand Absolutes; DEMONDICE, Omega Strikers
+	<span key={56}>{'I\'m always dreaming, believing "ideal" exists.'}</span>, // Thousand Absolutes; DEMONDICE, Omega Strikers
+	<span key={57}>{"My naked heart can hear echoes, echoes."}</span>, // Avid; Hiroyuki Sawano; 86 EIGHTY-SIX
+	<span key={58}>{"I turn the page to drown you out."}</span> // Voices of the Chord; Hiroyuki Sawano; 86 EIGHTY-SIX
 ];
 
 export default function OneLiner(
