@@ -84,10 +84,14 @@ export default function HypergeometricCalculator(
 				value={k}
 				onChange={onChange(setk)}
 			/>
-			<label htmlFor="e">Chance to draw exactly {k} [card]s:</label>
-			<output id="e" name="e">{`~${(e * 100).toFixed(2)}%`}</output>
 			<label htmlFor="lt">Chance to draw less than {k} [card]s:</label>
 			<output id="lt" name="lt">{`~${(lt * 100).toFixed(2)}%`}</output>
+			<label htmlFor="lte">Chance to draw at most {k} [card]s:</label>
+			<output id="lte" name="lte">{`~${((lt + e) * 100).toFixed(2)}%`}</output>
+			<label htmlFor="e">Chance to draw exactly {k} [card]s:</label>
+			<output id="e" name="e">{`~${(e * 100).toFixed(2)}%`}</output>
+			<label htmlFor="gte">Chance to draw at least {k} [card]s:</label>
+			<output id="gte" name="gte">{`~${((gt + e) * 100).toFixed(2)}%`}</output>
 			<label htmlFor="gt">Chance to draw more than {k} [card]s:</label>
 			<output id="gt" name="gt">{`~${(gt * 100).toFixed(2)}%`}</output>
 		</form>
