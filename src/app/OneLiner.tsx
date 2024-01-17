@@ -99,7 +99,8 @@ const oneLiners: Array<JSX.Element> = [
 	<span key={57}>{"My naked heart can hear echoes, echoes."}</span>, // Avid; Hiroyuki Sawano; 86 EIGHTY-SIX
 	<span key={58}>{"I turn the page to drown you out."}</span>, // Voices of the Chord; Hiroyuki Sawano; 86 EIGHTY-SIX
 	<span key={59}>{"you cannot kill me in a way that matters"}</span>, // Mushroom shitpost
-	<span key={60}>{"There can be only one."}</span> // Highlander
+	<span key={60}>{"There can be only one."}</span>, // Highlander
+	<span key={61}>{"Greed is unlimited; freedom is a limited resource."}</span> // Iron Lotus; Mili; Library of Ruina
 ];
 
 export default function OneLiner(
