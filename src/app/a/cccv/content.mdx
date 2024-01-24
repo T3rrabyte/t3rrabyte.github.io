@@ -304,7 +304,7 @@ print_twice("One")
 print_twice("Two")
 ```
 
-In this example, the lines `One`, `One`, `Two`, and `Two` will be printed, in that order. You might notice that `print` itself is a function. `print`, along with many other functions, are automatically included in every Python program from the _Python standard library_.
+In this example, the lines `One`, `One`, `Two`, and `Two` will be printed, in that order. You might notice that `print` itself is a function. `print` is one of many functions that is automatically included in every Python program from the _Python standard library_. Other functions from the standard library include `len`, which determines the length of a list, and `str`, which _casts_ (converts) any value into a string.
 
 The `return` keyword is similar to `break`, but it is used for functions instead of loops. Executing a `return` statement from within a function causes that function to immediately exit, and the script will continue from where it was called.
 
@@ -388,7 +388,11 @@ for row in my_image:
 		do_something()
 ```
 
-For example, if we want to make an image grayscale, we can do so by setting the red, green, and blue values of each pixel to the _luminance_ of that pixel. Luminance is calculated as follows:
+### Image Processing
+
+Depending on what we want to do with an image, it can be useful to modify that image in some way ahead of time. For example, if we are trying to detect objects in order to avoid them, we only need to see their outlines - color information is irrelevant and might make it harder for an algorithm to learn.
+
+If we want to make an image grayscale, we can do so by setting the red, green, and blue values of each pixel to the _luminance_ of that pixel. Luminance is calculated as follows:
 
 $$
 l=0.2126r+0.7152g+0.0722b
@@ -415,3 +419,118 @@ for row in my_image:
 
 cv2.imwrite("b.png", my_image)
 ```
+
+Alternatively, we can just use OpenCV's built-in function for doing the same thing:
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.cvtColor(my_image, cv2.COLOR_RGB2GRAY)
+cv2.imwrite("b.png", my_image)
+```
+
+Once an image has been converted to grayscale, we can perform a further operation called _thresholding_ to convert it to black and white.
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.cvtColor(my_image, cv2.COLOR_RGB2GRAY)
+
+for row in my_image:
+	for pixel in row:
+		luminance = pixel[0]
+		if luminance > 127:
+			pixel[0] = 255
+			pixel[1] = 255
+			pixel[2] = 255
+		else:
+			pixel[0] = 0
+			pixel[1] = 0
+			pixel[2] = 0
+
+cv2.imwrite("b.png", my_image)
+```
+
+Again, OpenCV has a built-in function for performing the same action:
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.cvtColor(my_image, cv2.COLOR_RGB2GRAY)
+_, my_image = cv2.threshold(my_image, 127, 255, cv2.THRESH_BINARY)
+cv2.imwrite("b.png", my_image)
+```
+
+_Edge detection_ - that is, finding outlines - is a more complex process because it requires knowledge of surrounding pixels. For operations like this, we use a _convolution kernel_ to modify each pixel based on the pixels around it. A convolution kernel is a matrix that represents the weight of each surrounding pixel towards the product. For example, in order to blur an image, you could use a convolution kernel that gives equal weight to all of the surrounding pixels:
+
+$$
+\begin{bmatrix}\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\\\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\\\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\end{bmatrix}
+$$
+
+OpenCV provides the `blur` function for this purpose.
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.blur(my_image, (5, 5))
+cv2.imwrite("b.png", my_image)
+```
+
+import imageBlur from "./image-blur.png";
+
+<Image
+	src={imageBlur}
+	alt="Image blur."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+A similar function, `GaussianBlur`, is designed to be effective at removing [Gaussian noise](https://en.wikipedia.org/wiki/Gaussian_noise) from an image.
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.GaussianBlur(my_image, (5, 5), 0)
+cv2.imwrite("b.png", my_image)
+```
+
+We can also use convolution kernels to calculate the _intensity gradient_ of an image. The intensity gradient is a measure of how much of a difference there is from one pixel to the next.
+
+import imageGradients from "./image-gradients.jpg";
+
+<Image
+	src={imageGradients}
+	alt="Image gradients."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+This image is from [the OpenCV Python Image Gradients tutorial](https://docs.opencv.org/3.4/d5/d0f/tutorial_py_gradients.html). It demonstrates three different types of intensity gradients: Laplacian, Sobel X, and Sobel Y. Each uses a different convolution kernel. For example, the following convolution kernel can be used to calculate the Laplacian gradient of an image:
+
+$$
+\begin{bmatrix}0&1&0\\1&-4&1\\0&1&0\end{bmatrix}
+$$
+
+Using blurring and intensity gradients, we can perform [Canny edge detection](https://en.wikipedia.org/wiki/Canny_edge_detector) as follows:
+
+1. Perform Gaussian blurring in order to remove Gaussian noise from the image. This makes it less likely that we will detect a noise artifact as an edge.
+2. Determine the intensity gradient of the image. This is typically done in two parts - once for horizontal edges, and once for vertical edges.
+3. Remove pixels that aren't local maxima (can't possibly be edges).
+4. Hysteresis thresholding: remove pixels that can't be edges (based on a minimum threshold), mark pixels that must be edges (based on a maximum threshold), and determine which pixels that might be edges are actually edges (based on whether they touch other edge pixels).
+
+Again, OpenCV provides a function for this:
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+my_image = cv2.Canny(my_image, 100, 200)
+cv2.imwrite("b.png", my_image)
+```
+
+Now that we've detected all of the edges, we can finally detect the _contours_. Contours are curves that join all of the continuous points with the same intensity. They can be thought of as the subset of edges that outline things.
