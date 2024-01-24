@@ -1,0 +1,417 @@
+# Crash Course: Computer Vision
+
+This is the companion article for my presentation about computer vision at Evanston Township High School. This presentation is part of the requirements for my participation in NASA's [Lunabotics Challenge](https://www.nasa.gov/learning-resources/lunabotics-challenge/).
+
+## Computer Vision
+
+According to [Wikipedia](https://en.wikipedia.org/wiki/Computer_vision):
+
+    "Computer vision is an interdisciplinary field that deals with how computers can be made to gain high-level understanding from digital images or videos."
+
+In other words, computer vision is the field that deals with making computers see things. It is called _interdisciplinary_ because two disciplines are involved: scientists and engineers. Scientists are concerned with the theory behind artificial systems that extract information from images. Engineers apply those theories to automate tasks that the human visual system can do.
+
+Some of these tasks include:
+
+- _Scene reconstruction_: building 3D models from images and videos.
+- _Object and event detection_: detecting objects and events in images and videos.
+- _Activity and object recognition_: recognizing and classifying activities and objects in images and videos.
+- _Video tracking_: tracking the motion of an object through a video.
+- _3D pose estimation_: determining the positions of a person's limbs in an image or video.
+- _Image restoration_: improving the quality of images.
+
+Since there are unlimited possible images and computers have a limited amount of memory, it is impossible to tell a computer exactly how it should perceive every image. For this reason, it is necessary to use _machine learning_ to teach the computer how to make inferences. Machine learning is the use of an algorithm whose performance improves over time as it is exposed to more data. This is what people are typically referring to when they talk about _artificial intelligence_.
+
+### Scene Reconstruction
+
+import Image from "next/image";
+import sceneReconstruction from "./scene-reconstruction.png";
+
+<Image
+	src={sceneReconstruction}
+	alt="Scene reconstruction example."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+This image is from the [Stanford Computer Graphics Laboratory](https://graphics.stanford.edu/~mdfisher/SceneReconstruction.html). Computers understand shapes as meshes of triangles. This image shows how the computer maps a generated texture onto the mesh of triangles to create a 3D representation of the scene.
+
+### Object Recognition and Video Tracking
+
+import YoutubeVideo from "#YoutubeVideo";
+
+<YoutubeVideo src="VWdJ4BCtam8" />
+
+This video serves as an introduction to the [Jetson Orin Nano](https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/), which is the computer that will control our Lunabotics robot. The video contains several examples that demonstrate object detection and recognition and video tracking.
+
+### 3D Pose Estimation
+
+The video that is shown in the presentation is from the [National Center for Biotechnology Information](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4433345/). Notice that the man in the video is not wearing any tracking devices, so the pose estimation must be entirely based on visual input.
+
+### Image Restoration
+
+import imageRestoration from "./image-restoration.png";
+
+<Image
+	src={imageRestoration}
+	alt="Image restoration example."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+This image was restored using a project called [DeOldify](https://github.com/jantic/DeOldify). The image is "Migrant Mother," taken by Dorothea Lange in 1936.
+
+### Computer Vision and the Lunabotics Challenge
+
+import artemisArenaLayout from "./artemis-arena-layout.png";
+
+<Image
+	src={artemisArenaLayout}
+	alt="Artemis arena layout."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+This image from the [Lunabotics 2024 guidebook](https://www.nasa.gov/wp-content/uploads/2023/09/a-lunabotics-2024-guidebook-draft-ver-2.0-09.12.2023.pdf) shows an example layout of the Artemis arena. Our robot will start in the starting zone. Its goal will be to excavate as much regolith as possible from the excavation zone and dump it in the berm in the construction zone. In order to do so, it will perform [SLAM](https://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping) to navigate around rocks and craters. If we are able to fully automate the robot, we will score a ton of points in the competition in May.
+
+## Python
+
+The following crash course in Python is designed only to cover the parts of the Python language that will be needed for the basic computer vision projects later on. In case you're interested in learning more, this companion article will mention other language features that you may want to look up by yourself.
+
+_Python_ is a high-level, general-purpose scripting language. _High-level_ means that it abstracts away many of the details that a low-level language wouldn't, which makes it much easier to learn. In fact, Python is the most popular first programming language for new programmers to learn. _General-purpose_ means that it can be used to write all kinds of programs, such as web development, game development, robotics, computer vision, machine learning, and more. It is called a _scripting language_ because it is dynamic; more on that later. Because it is a scripting language, Python programs can also be called _scripts_.
+
+The [TIOBE index](https://www.tiobe.com/tiobe-index/) is a ranking of the popularity of programming languages. Python has been near the top for decades (11th place or higher since 2004), and it is now considered one of the "big four" programming languages, along with C, C++, and Java. It has also won the "Programming Language of the Year" award five times.
+
+### Getting Started
+
+If you'd like to download Python on your own computer, you can do so from [its website](https://www.python.org/). If you choose to do so, I would also highly recommend downloading an integrated development environment (IDE) to program in, such as [Visual Studio Code](https://code.visualstudio.com/).
+
+If you don't want to download Python, the best way to use it online is through [Replit](https://repl.it/). You will need to make an account to do this.
+
+### "Hello, world!"
+
+It is a tradition among programmers for the first program you write in a new language to print `Hello, world!` to the standard output (console or terminal). To do so in Python, write the following line of code:
+
+```python
+print("Hello, world!")
+```
+
+Everything inside of the quotation marks is called a _string_, which is a list of characters. You can try changing it to print out other phrases.
+
+Since Python is a [dynamic programming language](https://en.wikipedia.org/wiki/Dynamic_programming_language), we do not need to compile this program in order to run it. Instead, a program called an _interpreter_ runs the code as-is. If you're using Python on your own computer, try saving this file as `hello.py`, then run the interpreter with the following command in your terminal:
+
+```bash
+python hello.py
+```
+
+### Procedural Programming
+
+Python is a [procedural programming language](https://en.wikipedia.org/wiki/Procedural_programming), which means that Python programs are composed of a series of procedures that are executed sequentially (one at a time from top to bottom). In the following code snippet, the words `One`, `Two`, and `Three` will be printed to the standard output on different lines in that order.
+
+```python
+print("One")
+print("Two")
+print("Three")
+```
+
+### Imperative Programming
+
+Procedural programming is a type of [imperative programming](https://en.wikipedia.org/wiki/Imperative_programming). Imperative programs are composed of a series of statements that change the program's state. _Statements_ and _procedures_ refer to the same thing. For example, `print("Hello, world!")` is a statement.
+
+Another type of statement is an _assignment_ to a _variable_. Variables are values that vary. The previous examples printed _literals_, which are values that don't vary. By using the assignment operator, `=`, it is possible to assign a value to a variable. Variables can be printed just like literals:
+
+```python
+my_variable = "Hello, world!"
+print(my_variable)
+```
+
+The value of a variable can be changed by using the assignment operator again:
+
+```python
+my_variable = "One"
+my_variable = "Two"
+print(my_variable)
+```
+
+In this example, the value of the variable called `my_variable` is set to `"One"`, then it is replaced with `"Two"`. When we then print `my_variable`, the output is `Two`.
+
+### Arithmetic
+
+The arithmetic operators, `+`, `*`, `-`, and `/`, can be used to perform addition, multiplication, subtraction, and division, respectively.
+
+```python
+print(3 + 3)
+print(3 * 3)
+print(3 - 3)
+print(3 / 3)
+```
+
+Parentheses can be used to control the order of operations:
+
+```python
+print(3 * (3 + 3))
+```
+
+### Lists
+
+In addition to strings and numbers, variables can also hold _lists_ of values. Lists are created by surrounding comma-separated values with square brackets. The values inside of a list can be accessed by putting square brackets that contain the index of the value after the list. **Lists are zero-indexed**, meaning that the first value is at index zero.
+
+```python
+my_list = ["Zero", "One"]
+print(my_list[0])
+print(my_list[1])
+```
+
+Lists can hold any type of value, including other lists!
+
+```python
+my_list = ["Zero", 1, 2, [3, 4, 5]]
+print(my_list[3][0])
+```
+
+In the example above, `my_list` has another list at index `3`, so we can use yet another pair of square brackets to access elements inside of the inner list.
+
+### Structured Programming
+
+[Structured programming](https://en.wikipedia.org/wiki/Structured_programming) improves the clarity of programs through the use of conditionals, loops, blocks, and functions. _Blocks_ are sections of code that are executed together. Examples will follow.
+
+#### Conditionals
+
+_Conditionals_ are statements that execute a block of code depending on a given condition. In Python, every value is either _truthy_ or _falsy_. Empty strings, empty lists, the number `0`, and the literal value `False` are all falsy; almost every other value is truthy.
+
+`True` and `False` are called _Boolean_ values. Boolean values can be created by using the comparison operators: `==` (equals), `>` (greater than), `<` (less than), `>=` (greater than or equal to), `<=` (less than or equal to), and `!=` (not equal to).
+
+`if` statements execute a block of code if the given condition is truthy:
+
+```python
+if 1 < 2:
+	print("Correct")
+```
+
+Because `1` is less than `2`, the comparison `1 < 2` becomes the literal value `True`, so the `print` statement is executed. Notice that the `print` statement is indented from the `if` statement. In Python, indentation is used to delineate blocks.
+
+```python
+if 1 < 2:
+	print("One")
+	print("Two")
+
+if 1 > 2:
+	print("Three")
+	print("Four")
+
+print("Five")
+```
+
+In the example above, `One` and `Two` will be printed because `1` is less than `2`. `Three` and `Four` will not be printed because `1` is not greater than `2`. `Five` will be printed because it isn't inside of an `if` statement at all.
+
+`if` statements are an example of [control flow](https://en.wikipedia.org/wiki/Control_flow), which is the order in which individual statements in an imperative program are executed. Other control flow statements include `elif` ("else if") and `else` statements.
+
+```python
+if 1 > 2:
+	print("One")
+elif 1 < 2:
+	print("Two")
+else:
+	print("Three")
+```
+
+In this example, since `1 > 2` is `False`, the script will then continue on to the next conditional. Then, since `1 < 2` is `True`, it will print `Two`. After that, since one of the conditions was met, the `else` block will be skipped. If both of the previous conditions had been `False`, the `else` block would be triggered. It is possible to chain together multiple `elif` blocks before an `else` block.
+
+It is also possible to put blocks inside of other blocks. This is called _nesting_.
+
+```python
+if 1 < 2:
+	print("One")
+
+	if 1 > 2:
+		print("Two")
+
+	print("Three")
+```
+
+In this example, `One` will be printed because `1 < 2` is `True`. Then, because `1 > 2` is `False`, the second `print` statement will be skipped. Pay attention to the indentation, though: `Three` will be printed because it is only inside of the first conditional statement.
+
+#### Loops
+
+_Loops_ are used to repeat a block. `for` loops execute a block once for each value in a list.
+
+```python
+my_list = [0, 1, "Two", True, [4, 6, 8]]
+for my_value in my_list:
+	print(my_value)
+```
+
+In this example, the `print` statement will be executed once for each value in `my_list`. `my_value` will contain that value each time. On the first iteration, `my_value` will be `0`, on the second, it will be `1`, on the third, it will be `"Two"`, and so on.
+
+`while` loops execute a block while the given condition remains truthy. They are similar to `if` statements that happen multiple times.
+
+```python
+i = 0
+while i < 5:
+	print(i)
+	i = i + 1
+```
+
+In the example above, each number from `0` through `4` will be printed because `i` gets `1` larger at the end of each iteration. Then, when `i` becomes `5`, `i < 5` will be `False` and the loop will stop.
+
+`continue` and `break` statements are used to further control loops. `continue` causes the loop to immediately proceed to the next iteration, and `break` causes the loop to immediately exit entirely.
+
+```python
+my_list = [0, 0, 1, 0, 0, 0, 2, 0, 0, 3, 4, 0, 0, 5]
+for my_value in my_list:
+	if my_value == 0:
+		continue
+
+	print(my_value)
+```
+
+In this example, each integer from `1` through `5` will be printed. `0` will never be printed, because if `my_value` is `0`, the iteration will be skipped before arriving at the `print` statement.
+
+```python
+i = 0
+while True:
+	if i > 5:
+		break
+
+	print(i)
+	i = i + 1
+```
+
+In this example, each integer from `1` through `5` will be printed. `True` will never be falsy, so the loop would continue forever if it weren't for the `break` statement.
+
+#### Functions
+
+_Functions_ are subroutines, which are reusable blocks. Functions can be defined with the `def` keyword, after with point they can be _called_ (executed) from anywhere by putting a pair of parentheses after the function's name.
+
+```python
+def my_function():
+	print("One")
+	print("Two")
+
+my_function()
+my_function()
+```
+
+In this example, the lines `One`, `Two`, `One`, and `Two` will be printed, in that order.
+
+Functions can also take _arguments_ (parameters) to change what they do. Giving a value to a function is called _passing_ that value to the function.
+
+```python
+def print_twice(my_argument):
+	print(my_argument)
+	print(my_argument)
+
+print_twice("One")
+print_twice("Two")
+```
+
+In this example, the lines `One`, `One`, `Two`, and `Two` will be printed, in that order. You might notice that `print` itself is a function. `print`, along with many other functions, are automatically included in every Python program from the _Python standard library_.
+
+The `return` keyword is similar to `break`, but it is used for functions instead of loops. Executing a `return` statement from within a function causes that function to immediately exit, and the script will continue from where it was called.
+
+```python
+def print_once(my_argument):
+	print(my_argument)
+	return
+	print(my_argument)
+
+print_once("Hello, world!")
+```
+
+In this example, only one line will be printed because the function returns before it gets to the second `print` statement.
+
+The `return` keyword can also be used to make a function `return` a value to be used elsewhere in the script. For example:
+
+```python
+def multiply_by_five(my_number):
+	return my_number * 5
+
+print(multiply_by_five(3))
+```
+
+In this example, `3` is passed to `multiply_by_five`. Then, inside of `multiply_by_five`, the value of `my_number` will be `3`. `multiply_by_five` returns `3 * 5`, which is then printed from outside of the function.
+
+### Importing Code
+
+Code from other files and libraries can be imported with the `import` keyword.
+
+```python
+import cv2
+```
+
+Imagine that you have two files in the same directory. The first, `one.py`, contains the following code:
+
+```python
+my_variable = "Hello, world!"
+```
+
+The second file, `two.py`, can then import the variables and functions from `one.py` as follows:
+
+```python
+import one
+print(one.my_variable)
+```
+
+The `.` operator is used to access a variable or function that "belongs to" an imported file or library.
+
+## OpenCV
+
+[OpenCV](https://opencv.org/) is an open-source computer vision libray. It provides functions that allow us to manipulate images. If you're using Python on your own computer, install OpenCV using a terminal:
+
+```bash
+pip install opencv-python
+```
+
+Then, import it in any Python file with `import cv2`.
+
+If you're using Replit, you'll need to use [the official Python OpenCV template](https://repl.it/@scottatreplit/Python-OpenCV).
+
+### Image Manipulation
+
+Images are stored as columns of rows of pixels. Each pixel is stored as a list of three numbers representing the red, green, and blue values of the pixel, respectively. In other words, images are lists of lists of lists.
+
+Images can be loaded using the `imread` function, and they can be saved using the `imwrite` function. For example, we can copy an image called `a.png` to a file called `b.png` like this:
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+cv2.imwrite("b.png", my_image)
+```
+
+If we want to modify the image, we can do so in between the calls to `imread` and `imwrite`.
+
+We can iterate over the pixels in an image like this:
+
+```python
+for row in my_image:
+	for pixel in row:
+		do_something()
+```
+
+For example, if we want to make an image grayscale, we can do so by setting the red, green, and blue values of each pixel to the _luminance_ of that pixel. Luminance is calculated as follows:
+
+$$
+l=0.2126r+0.7152g+0.0722b
+$$
+
+Where $l$ is the luminance, $r$ is the red value, $g$ is the green value, and $b$ is the blue value.
+
+Putting it all together, we get this script to convert an image `a.png` into a grayscale version `b.png`:
+
+```python
+import cv2
+
+my_image = cv2.imread("a.png")
+
+for row in my_image:
+	for pixel in row:
+		red = pixel[0]
+		green = pixel[1]
+		blue = pixel[2]
+		luminance = red * 0.2126 + green * 0.7152 + blue * 0.0722
+		pixel[0] = luminance
+		pixel[1] = luminance
+		pixel[2] = luminance
+
+cv2.imwrite("b.png", my_image)
+```

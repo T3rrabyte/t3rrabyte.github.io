@@ -15,6 +15,14 @@
 			<link>https://www.lakuna.pw/</link>
 		</image>
 		<item>
+			<title>Crash Course: Computer Vision</title>
+			<link>https://www.lakuna.pw/a/cccv</link>
+			<description>The companion article for my presentation on computer vision and Lunabotics.</description>
+			<author>tjmartin2003@gmail.com (Travis Martin)</author>
+			<guid>https://www.lakuna.pw/a/cccv</guid>
+			<pubDate>Tue, 23 Jan 2024 23:30:00 GMT</pubDate>
+		</item>
+		<item>
 			<title>The Dungeon</title>
 			<link>https://www.lakuna.pw/a/pedit5</link>
 			<description>A review of my world record speedrun of the first CRPG.</description>
