@@ -38,7 +38,7 @@ export default withMdx({
 							value: "map.mc.lakuna.pw"
 						}
 					],
-					destination: "http://mc.lakuna.pw:8150/:path*"
+					destination: "http://mc.lakuna.pw:8154/:path*"
 				}
 			]
 		};
