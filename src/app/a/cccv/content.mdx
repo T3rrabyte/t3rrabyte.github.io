@@ -533,4 +533,53 @@ my_image = cv2.Canny(my_image, 100, 200)
 cv2.imwrite("b.png", my_image)
 ```
 
-Now that we've detected all of the edges, we can finally detect the _contours_. Contours are curves that join all of the continuous points with the same intensity. They can be thought of as the subset of edges that outline things.
+import edgeDetection from "./edge-detection.jpg";
+
+<Image
+	src={edgeDetection}
+	alt="Edge detection example."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
+
+Now that we've detected all of the edges, we can finally detect the _contours_. Contours are curves that join all of the continuous points with the same intensity. They can be thought of as the subset of edges that outline things. Conceptually, contours can be found via the following process:
+
+1. Perform edge detection on an image.
+2. Create an undirected graph of all of the edge points.
+3. Search the graph for cycles. Those cycles are contours.
+
+OpenCV provides another function for this:
+
+```python
+import cv2
+import numpy
+import random
+
+my_image = cv2.imread("a.png")
+edge_image = cv2.Canny(my_image, 100, 200)
+
+contours, hierarchy = cv2.findContours(edge_image, cv2.RETR_TREE,
+                                       cv2.CHAIN_APPROX_SIMPLE)
+
+# Create a blank image to draw the contours in.
+contour_image = numpy.zeros(my_image.shape)
+
+# Draw each contour with a different color.
+for i in range(len(hierarchy[0])):
+    red = random.random() * 0xFF
+    green = random.random() * 0xFF
+    blue = random.random() * 0xFF
+    color = (red, green, blue)
+    cv2.drawContours(contour_image, contours, i, color)
+
+cv2.imwrite("b.png", contour_image)
+```
+
+import contourDetection from "./contour-detection.png";
+
+<Image
+	src={contourDetection}
+	alt="Contour detection example."
+	style={{ width: "100%", height: "auto" }}
+	placeholder="blur"
+/>
