@@ -3,7 +3,7 @@ import Image from "next/image";
 import CardList from "#CardList";
 import Card from "#Card";
 import prepareModeratelyPreview from "./prepare-moderately.png";
-import SceneGraph from "#app/a/webgl/scene-graph/SceneGraph.tsx";
+import SpecularLighting from "#app/a/webgl/lighting/SpecularLighting.tsx";
 import generateMetadata from "#generateMetadata";
 import codehsPreview from "./codehs.png";
 import pdxPreview from "./pdx.png";
@@ -24,7 +24,7 @@ export default function page(): JSX.Element {
 			<CardList>
 				<Card>
 					<h3>μGL</h3>
-					<SceneGraph style={{ width: "100%" }} />
+					<SpecularLighting style={{ width: "100%" }} />
 					<p>A lightweight visual application framework for WebGL2.</p>
 					<p>
 						Written in <strong>TypeScript</strong>.

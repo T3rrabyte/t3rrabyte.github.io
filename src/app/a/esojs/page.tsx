@@ -10,7 +10,7 @@ export default function page(): JSX.Element {
 
 export const metadata: Metadata = generateMetadata(
 	"Esoteric JavaScript | Blog | Lakuna",
-	"JavaScript with just six unique characters.",
+	"A guide on how to write any JavaScript program with just six unique characters.",
 	"/favicon.png",
 	"/a/esojs"
 );

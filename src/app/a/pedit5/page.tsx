@@ -9,7 +9,7 @@ export default function page(): JSX.Element {
 
 export const metadata: Metadata = generateMetadata(
 	"The Dungeon | Blog | Lakuna",
-	"A review of my world record speedrun of the first CRPG.",
+	"An in-depth look at the first computer role-playing game, including a review of my world record speedrun.",
 	"/favicon.png",
 	"/a/pedit5"
 );

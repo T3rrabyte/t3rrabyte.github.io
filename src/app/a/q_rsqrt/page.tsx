@@ -11,7 +11,7 @@ export default function page(): JSX.Element {
 
 export const metadata: Metadata = generateMetadata(
 	"Fast Inverse Square Root | Blog | Lakuna",
-	"An in-depth review of the famous fast inverse square root algorithm as implemented in Quake III Arena.",
+	"An explanation of the famous fast inverse square root algorithm as it is implemented in Quake III Arena.",
 	"/favicon.png",
 	"/a/q_rsqrt"
 );
