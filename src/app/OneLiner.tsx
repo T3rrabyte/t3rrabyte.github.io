@@ -103,7 +103,13 @@ const oneLiners: Array<JSX.Element> = [
 	<span key={61}>
 		{"♪ Greed is unlimited; freedom is a limited resource ♪"}
 	</span>, // Iron Lotus; Mili; Library of Ruina
-	<span key={62}>{"♪ Some little ironies called tragedies so silently ♪"}</span> // Icon; Hiroyuki Sawano; Kabaneri of the Iron Fortress
+	<span key={62}>
+		{"♪ Some little ironies called tragedies so silently ♪"}
+	</span>, // Icon; Hiroyuki Sawano; Kabaneri of the Iron Fortress
+	<span key={63}>
+		{"♪ The course of action is merely a by-product of my focus ♪"}
+	</span>, // K21; Hiroyuki Sawano; Attack on Titan
+	<span key={64}>{"Fīat iūstitia ruat cælum"}</span> // "Let justice be done, though the heavens fall."
 ];
 
 export default function OneLiner(
