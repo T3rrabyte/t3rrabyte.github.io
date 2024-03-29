@@ -109,7 +109,7 @@ const oneLiners: Array<JSX.Element> = [
 	<span key={63}>
 		{"♪ The course of action is merely a by-product of my focus ♪"}
 	</span>, // K21; Hiroyuki Sawano; Attack on Titan
-	<span key={64}>{"Fīat iūstitia ruat cælum"}</span> // "Let justice be done, though the heavens fall."
+	<span key={64}>{"Fiat justitia ruat caelum"}</span> // "Let justice be done, though the heavens fall."
 ];
 
 export default function OneLiner(
