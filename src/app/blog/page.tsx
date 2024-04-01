@@ -6,6 +6,7 @@ import generateMetadata from "#generateMetadata";
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import contourDetection from "#app/a/cccv/contour-detection.png";
+import minecraftPreview from "#app/a/mc/preview.png";
 import Image from "next/image";
 
 export default function page(): JSX.Element {
@@ -59,7 +60,13 @@ export default function page(): JSX.Element {
 				</Card>
 				<Card href="/a/mc">
 					<h2>Minecraft Server</h2>
-					<p>My public Minecraft server.</p>
+					<p>My public Minecraft server, which can be used to test all of my mods.</p>
+					<Image
+						src={minecraftPreview}
+						alt="Minecraft server preview."
+						style={{ width: "100%", height: "auto" }}
+						placeholder="blur"
+					/>
 				</Card>
 				<Card href="/a/mtg">
 					<h2>MTG Deck Building Compendium</h2>
