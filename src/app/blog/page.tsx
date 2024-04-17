@@ -60,7 +60,10 @@ export default function page(): JSX.Element {
 				</Card>
 				<Card href="/a/mc">
 					<h2>Minecraft Server</h2>
-					<p>My public Minecraft server, which can be used to test all of my mods.</p>
+					<p>
+						My public Minecraft server, which can be used to test all of my
+						mods.
+					</p>
 					<Image
 						src={minecraftPreview}
 						alt="Minecraft server preview."
