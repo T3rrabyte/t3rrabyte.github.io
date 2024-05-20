@@ -1,5 +1,6 @@
 import nextMdx from "@next/mdx";
 import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
 import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import glsl from "highlight.js/lib/languages/glsl";
@@ -12,7 +13,7 @@ import bash from "highlight.js/lib/languages/bash";
 const withMdx = nextMdx({
 	extension: /\.mdx?$/,
 	options: {
-		remarkPlugins: [remarkMath],
+		remarkPlugins: [remarkMath, remarkGfm],
 		rehypePlugins: [
 			rehypeKatex,
 			[

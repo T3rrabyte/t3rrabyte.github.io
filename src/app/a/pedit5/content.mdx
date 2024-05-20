@@ -1,6 +1,8 @@
 # The Dungeon
 
-_The Dungeon_, perhaps better known as `pedit5`, is the first computer role-playing game and the progenitor of the dungeon crawl genre. It was developed over a four to six week period in the Fall and Winter of 1975 by Reginald "Rusty" Rutherford III for the PLATO system.
+_The Dungeon_, perhaps better known as `pedit5`[^1], is the first computer role-playing game and the progenitor of the dungeon crawl genre. It was developed over a four to six week period in the Fall and Winter of 1975 by Reginald "Rusty" Rutherford III for the PLATO system at UIUC.
+
+[^1]: The file name refers to the fifth slot owned by the Population and Energy Group.
 
 The game takes place in a dungeon. The player character is a combination of a fighter, a mage, and a cleric. The goal of the game is to amass twenty thousand experience points and then safely exit the dungeon. Experience points can be earned by finding treasure and slaying monsters.
 
@@ -51,7 +53,7 @@ Rewards for experience points are not applied until you exit the dungeon, so it 
 The following treasure can be found in the dungeon:
 
 - _Gold coins_ grant one experience point each.
-- _Silver coins_ grant one-tenth of an experience point each.
+- _Silver coins_ grant one-tenth of an experience point each (they always appear in multiples of ten).
 - _Gems_ grant between 100 and 600 experience points each.
 - _Jewelry pieces_ grant between 1,000 and 6,000 experience points each.
 - A _magic sword +1_ grants 500 experience points and increases the damage of your attacks by one.
@@ -63,7 +65,7 @@ Although I wouldn't recommend it in general, for speedrunning, I never went back
 
 The dungeon is composed of rooms and corridors separated by doors. Some doors are hidden and only have a small chance of revealing themselves as you pass. Some rooms contain treasure, monsters, or both. The format of the maze is the same every time, but the locations of monsters and treasure are randomized for each character. Additionally, there is a chance that a monster will appear after each time that you make a certain number of moves - even in corridors and rooms that you have already explored. In order to pass through a door, you must break it down. It is possible to break down hidden doors that you cannot see.
 
-The following map of the dungeon is a slightly modified version of [one created by Nathan Mahney](https://crpgadventures.blogspot.com/2014/04/the-dungeon-victory.html).
+The following map of the dungeon is a slightly modified version of [one created by Nathan Mahney](https://crpgadventures.blogspot.com/2014/04/the-dungeon-victory.html) (the original version was missing some secret doors).
 
 import Image from "next/image";
 import map from "./map.png";
@@ -120,7 +122,7 @@ The advanced cleric spells are:
 
 Specific details about each spell are in the game's manual. The spells that aren't listed here (and are listed with an asterisk in the game's manual) aren't implemented.
 
-If you have them, I recommend casting **speed** and **protection from evil** upon entering the dungeon.
+If you have them, I recommend casting **speed** and **protection from evil** upon entering the dungeon, as the former doubles the duration of the latter.
 
 ## Combat
 
@@ -142,11 +144,11 @@ Specific details about each monster are in the game's manual.
 
 I used the following combat strategy, which is a modified version of [the one published by the CRPG addict](https://crpgaddict.blogspot.com/2019/01/revisiting-dungeon-1975.html):
 
-- If the monster is at or below level 4, cast **sleep** if you have it.
+- If the monster is at or below level 4 and not undead, cast **sleep** if you have it.
 - Otherwise, if the monster is a human or a goblin, cast **hold** if you have it.
 - Otherwise, if the monster is a human or a goblin, cast **charm** if you have it.
 - Otherwise, if the monster is mythical and not a dragon, cast **dispel myth** if you have it.
-- Otherwise, if the monster is undead, cast **blastbolt** if you have it and have only one spell slot remaining.
+- Otherwise, if the monster is undead and you have only one spell slot remaining, cast **blastbolt** if you have it.
 - Otherwise, if the monster is undead, cast **magic missile** if you have it.
 - Otherwise, cast **speed** if you have it and it isn't active, cast **cure wounds** if you have it and have taken damage, cast **protection from evil** if you have it and it isn't active, cast **pray** if you have it and it isn't active, then **fight**.
 

@@ -6,7 +6,6 @@ import generateMetadata from "#generateMetadata";
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import contourDetection from "#app/a/cccv/contour-detection.png";
-import minecraftPreview from "#app/a/mc/preview.png";
 import Image from "next/image";
 
 export default function page(): JSX.Element {
@@ -33,7 +32,7 @@ export default function page(): JSX.Element {
 					/>
 				</Card>
 				<Card href="/a/pedit5">
-					<h2>The Dungeon</h2>
+					<h2><code>pedit5</code></h2>
 					<p>
 						An in-depth look at the first computer role-playing game, including
 						a review of my world record speedrun.
@@ -58,24 +57,11 @@ export default function page(): JSX.Element {
 					<p>The index of my WebGL2 tutorial.</p>
 					<SpecularLighting style={{ width: "100%" }} />
 				</Card>
-				<Card href="/a/mc">
-					<h2>Minecraft Server</h2>
-					<p>
-						My public Minecraft server, which can be used to test all of my
-						mods.
-					</p>
-					<Image
-						src={minecraftPreview}
-						alt="Minecraft server preview."
-						style={{ width: "100%", height: "auto" }}
-						placeholder="blur"
-					/>
-				</Card>
 				<Card href="/a/mtg">
 					<h2>MTG Deck Building Compendium</h2>
 					<p>
 						A summary of my knowledge about deck building for Magic: The
-						Gathering.
+						Gathering. Includes a built-in hypergeometric calculator.
 					</p>
 				</Card>
 			</CardList>

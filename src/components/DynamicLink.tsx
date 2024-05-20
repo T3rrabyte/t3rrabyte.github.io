@@ -9,7 +9,7 @@ export default function DynamicLink({
 	AnchorHTMLAttributes<HTMLAnchorElement>,
 	HTMLAnchorElement
 >): JSX.Element {
-	return href.startsWith("/") || href.startsWith(domain) ? (
+	return href.startsWith("/") || href.startsWith(domain) || href.startsWith("#") ? (
 		<Link href={href} {...props} />
 	) : (
 		<a href={href} {...props} target="_blank" rel="noreferrer noopener" />
