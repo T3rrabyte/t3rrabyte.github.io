@@ -6,6 +6,7 @@ import generateMetadata from "#generateMetadata";
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import contourDetection from "#app/a/cccv/contour-detection.png";
+import victory from "#app/a/pedit5/victory.png";
 import Image from "next/image";
 
 export default function page(): JSX.Element {
@@ -32,11 +33,19 @@ export default function page(): JSX.Element {
 					/>
 				</Card>
 				<Card href="/a/pedit5">
-					<h2><code>pedit5</code></h2>
+					<h2>
+						<code>pedit5</code>
+					</h2>
 					<p>
 						An in-depth look at the first computer role-playing game, including
 						a review of my world record speedrun.
 					</p>
+					<Image
+						src={victory}
+						alt="The victory cutscene in The Dungeon."
+						style={{ width: "100%", height: "auto" }}
+						placeholder="blur"
+					/>
 				</Card>
 				<Card href="/a/q_rsqrt">
 					<h2>Fast Inverse Square Root</h2>
