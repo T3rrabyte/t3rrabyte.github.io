@@ -40,7 +40,7 @@ const oneLiners: Array<JSX.Element> = [
 	<span key={11}>{"What was, shall be. What shall be, was."}</span>, // The Worm-in-Waiting; Horizon Signal; Stellaris
 	<span key={12}>{"♪ There's blood on the crown, go and take it ♪"}</span>, // Rise; League of Legends
 	<span key={13}>{"It's dangerous to go alone!"}</span>, // The Legend of Zelda
-	<span key={14}>{"^ ^ v v < > < > B A S"}</span>, // The Konami Code
+	<span key={14}>{"˄ ˄ ˅ ˅ ˂ ˃ ˂ ˃ B A S"}</span>, // The Konami Code
 	<span key={15}>
 		{"You are in a maze of twisty little passages, all alike."}
 	</span>, // Colossal Cave Adventure
