@@ -38,10 +38,10 @@ Since there are unlimited possible images and computers have a limited amount of
 
 ### Scene Reconstruction
 
-import Image from "next/image";
+import CustomImage from "#CustomImage";
 import sceneReconstruction from "./scene-reconstruction.png";
 
-<Image
+<CustomImage
 	src={sceneReconstruction}
 	alt="Scene reconstruction example."
 	style={{ width: "100%", height: "auto" }}
@@ -66,7 +66,7 @@ The video that is shown in the presentation is from the [National Center for Bio
 
 import imageRestoration from "./image-restoration.png";
 
-<Image
+<CustomImage
 	src={imageRestoration}
 	alt="Image restoration example."
 	style={{ width: "100%", height: "auto" }}
@@ -79,7 +79,7 @@ This image was restored using a project called [DeOldify](https://github.com/jan
 
 import artemisArenaLayout from "./artemis-arena-layout.png";
 
-<Image
+<CustomImage
 	src={artemisArenaLayout}
 	alt="Artemis arena layout."
 	style={{ width: "100%", height: "auto" }}
@@ -497,7 +497,7 @@ cv2.imwrite("b.png", my_image)
 
 import imageBlur from "./image-blur.jpg";
 
-<Image
+<CustomImage
 	src={imageBlur}
 	alt="Image blur."
 	style={{ width: "100%", height: "auto" }}
@@ -518,7 +518,7 @@ We can also use convolution kernels to calculate the _intensity gradient_ of an 
 
 import imageGradients from "./image-gradients.jpg";
 
-<Image
+<CustomImage
 	src={imageGradients}
 	alt="Image gradients."
 	style={{ width: "100%", height: "auto" }}
@@ -550,7 +550,7 @@ cv2.imwrite("b.png", my_image)
 
 import edgeDetection from "./edge-detection.jpg";
 
-<Image
+<CustomImage
 	src={edgeDetection}
 	alt="Edge detection example."
 	style={{ width: "100%", height: "auto" }}
@@ -592,7 +592,7 @@ cv2.imwrite("b.png", contour_image)
 
 import contourDetection from "./contour-detection.png";
 
-<Image
+<CustomImage
 	src={contourDetection}
 	alt="Contour detection example."
 	style={{ width: "100%", height: "auto" }}

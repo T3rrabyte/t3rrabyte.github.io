@@ -42,6 +42,7 @@
 		"#TooltipSpan": "./src/components/TooltipSpan/index.tsx",
 		"#YoutubeVideo": "./src/components/YoutubeVideo/index.tsx",
 		"#domain": "./src/domain.ts",
+		"#CustomImage": "./src/components/CustomImage.tsx",
 		"#DynamicLink": "./src/components/DynamicLink.tsx",
 		"#generateMetadata": "./src/generateMetadata.ts",
 		"#generateViewport": "./src/generateViewport.ts",

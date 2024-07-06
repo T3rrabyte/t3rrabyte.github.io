@@ -67,10 +67,10 @@ The dungeon is composed of rooms and corridors separated by doors. Some doors ar
 
 The following map of the dungeon is a slightly modified version of [one created by Nathan Mahney](https://crpgadventures.blogspot.com/2014/04/the-dungeon-victory.html) (the original version was missing some secret doors).
 
-import Image from "next/image";
+import CustomImage from "#CustomImage";
 import map from "./map.png";
 
-<Image
+<CustomImage
 	src={map}
 	alt="A map of the maze in The Dungeon."
 	style={{ width: "100%", height: "auto" }}
@@ -156,7 +156,7 @@ It is not possible to win against a significant portion of the possible monsters
 
 import victory from "./victory.png";
 
-<Image
+<CustomImage
 	src={victory}
 	alt="The victory cutscene in The Dungeon."
 	style={{ width: "100%", height: "auto" }}
