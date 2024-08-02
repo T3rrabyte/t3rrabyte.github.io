@@ -23,7 +23,7 @@ const nextConfig = {
 			afterFiles: [],
 			beforeFiles: [
 				{
-					destination: "https://mc.lakuna.pw:8145/:path*",
+					destination: "https://mc.lakuna.pw:8154/:path*",
 					has: [{ type: "host", value: "map.mc.lakuna.pw" }],
 					source: "/:path*"
 				}
