@@ -1,0 +1,167 @@
+---
+title: "Transformation"
+description: "An introduction to transformation in WebGL."
+openGraph:
+  url: "/a/webgl/transformation"
+---
+
+import Matrices from "./Matrices.tsx";
+import Rotation from "./Rotation.tsx";
+import Scaling from "./Scaling.tsx";
+import Translation from "./Translation.tsx";
+
+# Transformation
+
+You may need to read [the article about uniforms](/a/webgl/uniforms) before this one. Additionally, although it isn't necessary, it might be useful to have prior knowledge of linear algebra.
+
+---
+
+A transformation is a way to change something. There are three basic transformations: translation, rotation, and scaling.
+
+## Translation
+
+A translation is performed by adding a vector value to each vertex. For an initial vector $(x_0,y_0,z_0)$ and a translation vector $(x_t,y_t,z_t)$, the resulting vector is $(x_0+x_t,y_0+y_t,z_0+z_t)$.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec4 u_translation;
+
+void main() {
+	gl_Position = a_position + u_translation;
+}
+```
+
+<Translation style={{ width: "100%" }} />
+
+## Rotation
+
+A rotation is performed by multiplying each vertex by a point on the unit circle. Given a rotation of $r$ radians, an equivalent point on the unit circle is $(\cos(r),\sin(r))$. To rotate an initial vector $(x,y)$ by $r$ radians, use $(xs+yc,ys-xc)$, where $s=\sin(r)$ and $c=\cos(r)$.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform float u_rotation;
+
+void main() {
+	float s = sin(u_rotation);
+	float c = cos(u_rotation);
+
+	float x = a_position.x * s + a_position.y * c;
+	float y = a_position.y * s - a_position.x * c;
+
+	gl_Position = vec4(x, y, a_position.zw);
+}
+```
+
+Notice that the above code uses `a_position.zw`. This is equivalent to `vec2(a_position.z, a_position.w)`. It is possible to use any dimensions of a vector in any order to make another vector, such as `a_position.xyz` or `a_position.xzx`. This is called _swizzling_.
+
+<Rotation style={{ width: "50%", aspectRatio: "1", margin: "auto" }} />
+
+## Scaling
+
+A scaling is performed by multiplying each vertex by a vector. For an initial vector $(x_0,y_0,z_0)$ and a scaling vector $(x_s,y_s,z_s)$, the resulting vector is $(x_0x_s,y_0y_s,z_0z_s)$.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform vec4 u_scaling;
+
+void main() {
+	gl_Position = a_position * u_scaling;
+}
+```
+
+<Scaling style={{ width: "100%" }} />
+
+## Matrices
+
+Using the techniques described above works fine until you want to combine multiple, at which point a different shader is needed for each permutation of transformations.
+
+The standard approach to applying transformations is with _transformation matrices_, which are square matrices that represent transformations. By using transformation matrices, the transformations can be applied to the matrix in any order in JavaScript before being passed to the shader. To transform a vertex by a transformation matrix, simply multiply the matrix by the vertex.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_matrix;
+
+void main() {
+	gl_Position = u_matrix * a_position;
+}
+```
+
+Matrix multiplication is noncommutative. When two transformation matrices are multiplied to combine their transformations, the transformations of the multiplicand are applied before those of the multiplier. In order for two matrices to be multipliable, the multiplicand must be of size $m\times{n}$ and the multiplier must be of size $n\times{p}$. Note that vectors are matrices with only one column (size $q\times{1}$).
+
+Matrices can be constructed in specific ways such that multiplying them by a vector is equivalent to one of the basic transformation algorithms outlined above.
+
+It can be helpful to use a library such as [μMath](https://umath.lakuna.pw/) for linear algebra.
+
+### Matrix Translation
+
+Although translation is not a linear transformation, it is an affine transformation, so it can still be represented with matrices through the use of homogeneous coordinates. This is why it's necessary to use $4\times{4}$ matrices to represent 3D transformations.
+
+The following matrix translates an initial vector $(x_0,y_0,z_0)$ by $(x_t,y_t,z_t)$, resulting in a vector $(x_1,y_1,z_1)$.
+
+$$
+\begin{bmatrix}1&0&0&x_t\\0&1&0&y_t\\0&0&1&z_t\\0&0&0&1\end{bmatrix}
+$$
+
+### Matrix Rotation
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $x=(1,0,0)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+
+$$
+\begin{bmatrix}1&0&0&0\\0&c&s&0\\0&-s&c&0\\0&0&0&1\end{bmatrix}
+$$
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $y=(0,1,0)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+
+$$
+\begin{bmatrix}c&0&-s&0\\0&1&0&0\\s&0&c&0\\0&0&0&1\end{bmatrix}
+$$
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $z=(0,0,1)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$ and $s=\sin(r)$.
+
+$$
+\begin{bmatrix}c&s&0&0\\-s&c&0&0\\0&0&1&0\\0&0&0&1\end{bmatrix}
+$$
+
+The following matrix rotates an initial vector $(x_0,y_0,z_0)$ by $r$ radians around the $(x_a,y_a,z_a)$ axis, resulting in a vector $(x_1,y_1,z_1)$, where $c=\cos(r)$, $s=\sin(r)$, $t=1-c$, and $l=\sqrt{{x_a}^2+{y_a}^2+{z_a}^2}$.
+
+$$
+\begin{bmatrix}(x_al)^2t+c&y_ax_al^2t+z_als&z_ax_al^2t-y_als&0\\x_ay_al^2t-z_als&(y_al)^2t+c&z_ay_al^2t+x_als&0\\x_az_al^2t+y_als&y_az_al^2t-x_als&(z_al)^2t+c&0\\0&0&0&1\end{bmatrix}
+$$
+
+### Matrix Scaling
+
+The following matrix scales an initial vector $(x_0,y_0,z_0)$ by a scaling vector $(x_s,y_s,z_s)$, resulting in a vector $(x_1,y_1,z_1)$.
+
+$$
+\begin{bmatrix}x_s&0&0&0\\0&y_s&0&0\\0&0&z_s&0\\0&0&0&1\end{bmatrix}
+$$
+
+### Orthographic Projection
+
+A _projection_ is a linear transformation from a vector space to itself. An _orthographic projection_ is a projection that uses parallel lines to project its shape. A _projection matrix_ is a transformation matrix that applies a projection.
+
+An orthographic projection can be used to convert from screen space to clip space.
+
+The following orthographic projection matrix converts a vector $(x_0,y_0,z_0,w_0)$ to a vector $(x_1,y_1,z_1,w_1)$, where $l$, $r$, $b$, $t$, $n$, and $f$ are the left, right, bottom, top, near, and far bounds of the view frustum, respectively.
+
+$$
+\begin{bmatrix}\frac{-2}{l-r}&0&0&0\\0&\frac{-2}{b-t}&0&0\\0&0&\frac{2}{n-f}&0\\\frac{l+r}{l-r}&\frac{b+t}{b-t}&\frac{n+f}{n-f}&1\end{bmatrix}
+$$
+
+<Matrices style={{ width: "100%" }} />
+
+---
+
+The next article is about [the scene graph](/a/webgl/scene-graph).

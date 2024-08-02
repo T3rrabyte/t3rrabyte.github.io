@@ -1,0 +1,163 @@
+---
+title: "Deck Building Compendium"
+description: "A summary of my knowledge about deck building for Magic: The Gathering."
+openGraph:
+  url: "/a/mtg"
+---
+
+import HyperGeoCalc from "./HyperGeoCalc/HyperGeoCalc.tsx";
+
+# Deck Building Compendium
+
+_Magic: The Gathering_ (henceforth "Magic") is a trading card game developed by Wizards of the Coast since 1993. This article will not serve as an introduction to Magic, but rather to deck building for Magic. If you are not already familiar with the game, this article will not be helpful for you.
+
+## Planning
+
+Before you start looking at cards, it is good practice to formulate a rough idea of what the deck should be like.
+
+### Goal
+
+The _goal_ of the deck (also referred to as the _strategy_, _plan_, _win condition_, or _mission statement_) is a statement of the way that the deck intends to win the game. In the words of Magic designer Gavin Verhey:
+
+> "You're building a deck, not just a pile of cards. . . . It's an important, but subtle, distinction. A deck has a strategy. A goal. A plan. It's directly employing overall tactics. A pile of cards, on the other hand, can be incoherent. Synergies are an afterthought. You're stuck with cards pulling what you want to do in all kinds of different directions."
+
+Some things you might want to include in your mission statement are:
+
+- The color or colors in the deck.
+- The deck's _archetype_.
+- Specific game-winning combos, if any.
+
+Having a goal in mind before building your deck gives you a simple heuristic for choosing cards. For example, for the following mission statement:
+
+> This is a red-white aggressive deck that wants to attack and win quickly.
+
+You can ask yourself, "does [card] help me attack and win quickly?" If the answer is no, you should consider a different card.
+
+A deck has a _linear strategy_ when it's entirely focused on one synergy, as is common with _tribal_ and _combo_ decks. Linear decks are often faster and more powerful than other decks, but need to reach _critical mass_ by playing enough synergy to win. On the opposite end of the spectrum is a _good stuff_ deck, in which cards are chosen purely for their individual strength, disregarding synergy altogether. Since each card in a good stuff deck will provide more value than each card in the opponent's deck, the good stuff deck can easily outpace its opponent. Both linear decks and good stuff decks are perfectly valid; there is a distinction to be made between a good stuff deck and a pile of cards in that the cards in a good stuff deck are still working towards the same goal despite not complementing each other. In practice, most decks fall somewhere in the middle of the spectrum.
+
+### Theme
+
+Unlike the goal, a deck doesn't necessarily have to have a _theme_. A theme is a set of cards that complement each other, such as a creature type. A good theme will complement the deck's mission statement. For example, "Goblins" is a good theme for a mono-red aggro deck.
+
+### Color
+
+In Magic, different colors are good at different things.
+
+- _White_: life gain, untapping, protection, enchantments, tokens, exile, board wipes.
+- _Blue_: card draw, counterspells, mill, bouncing, evasion.
+- _Black_: discard, reanimation, sacrifice, life loss, creature destruction.
+- _Red_: rummaging, direct damage, haste, land and artifact destruction, fast mana.
+- _Green_: anti-flying, artifact and enchantment destruction, tokens, ramping, hexproof, temporary growth, trample, uncounterable spells.
+
+Decks can have zero, one, or many colors. Colorless decks are rare, but certain themes (such as "Eldrazi") thrive in them. Color combinations also have their own strengths.
+
+The five colors are typically arranged in a circle in the order white, blue, black, red, green to create the _color pie_ (or "_color wheel_"). This sequence of colors is referred to as "**WUBRG**", where blue is "**U**" because black is "**B**." The colors adjacent to each other are _ally_ colors, and the colors across from each other are _enemy_ colors.
+
+Combinations of two colors are typically referred to by the name of the associated _Ravnica Guild_.
+
+- _Azorius_ (**WU**)
+- _Dimir_ (**UB**)
+- _Rakdos_ (**BR**)
+- _Gruul_ (**RG**)
+- _Selesnya_ (**GW**)
+- _Orzhov_ (**WB**)
+- _Izzet_ (**UR**)
+- _Golgari_ (**BG**)
+- _Boros_ (**RW**)
+- _Simic_ (**GU**)
+
+Combinations of three colors come in two varieties: _shards_ and _wedges_. Shards are composed of a color and its two allies, with the common ally being considered the primary color. Shards are typically referred to by the name of the associated _Shard of Alara_. Wedges are composed of a color and its two enemies, with the common enemy being considered the primary color. Wedges are typically referred to by the name of the associated _Clan of Tarkir_.
+
+- _Bant_ (**GWU**)
+- _Esper_ (**WUB**)
+- _Grixis_ (**UBR**)
+- _Jund_ (**BRG**)
+- _Naya_ (**RGW**)
+- _Abzan_ (**WBG**)
+- _Jeskai_ (**URW**)
+- _Sultai_ (**BGU**)
+- _Mardu_ (**RWB**)
+- _Temur_ (**GUR**)
+
+Combinations of four colors are typically referred to by the name given to them in the Commander 2016 set.
+
+- _Artifice_ (**WUBR**)
+- _Chaos_ (**UBRG**)
+- _Aggression_ (**BRGW**)
+- _Altruism_ (**RGWU**)
+- _Growth_ (**GWUB**)
+
+Finally, decks with all five colors are frequently called "**WUBRG**" or "rainbow" decks.
+
+### Archetypes
+
+There are far too many archetypes in Magic to list them all, but most of them can be sorted into three broad categories: _aggro_, _combo_, and _control_. These categories have been referred to as the "rock, paper, scissors of Magic," with aggro beating control, control beating combo, and combo beating aggro.
+
+In general, Magic decks exist on a spectrum, with aggro decks on one end and control decks on the other. This spectrum is defined by how much a given deck wants to interact with its opponent. Aggro decks include minimal interaction and focus on dealing damage to their opponent. Control decks interact heavily. _Midrange_ decks fall in the middle of that spectrum.
+
+Combo decks are based around a set of cards that guarantees a win when played together.
+
+Examples of aggro archetypes:
+
+- _Sligh_ focuses on killing as fast as possible with cheap creatures and burn spells, especially by optimizing the deck's _mana curve_ (see below).
+- _Red Deck Wins_ focuses almost entirely on killing the opponent with burn spells.
+- _Suicide Black_ uses cheap, aggressive black creatures that typically come with large drawbacks to balance their power.
+
+Examples of combo archetypes:
+
+- _Storm_ decks use many cards with the _storm_ keyword to create spell combos.
+- _Infinite combo_ decks attempt to gather a few combo pieces that can be made to recurse infinitely when played together.
+
+Examples of control archetypes:
+
+- _Duck and cover_ plays one very potent threat (the "Duck"), with the rest of the deck focused on protecting it.
+- _Land destruction_ decks destroy their opponents' lands to prevent them from casting spells.
+- _Discard_ decks focus on emptying their opponents' hands to prevent them from casting spells.
+- _Counter_ decks focus on using counterspells to prevent opponents' spells from resolving.
+
+There are also archetypes that combine two of the categories, such as _white weenie_ (aggro-control) and _death and taxes_ (aggro-control).
+
+## Building
+
+### Composition
+
+A standard Magic deck is composed of 60 or more cards. Certain formats (such as Commander) change the minimum number of cards in a deck. In general, it is a bad idea to include more than the minimum number of cards, since each card added reduces the likelihood of drawing each other card. Except in certain special cases, a deck can only contain up to 4 copies of any given card, with the exception of basic lands (which are uncapped).
+
+Using a hypergeometric calculator, we can come to certain conclusions about the number of copies of any given card that should be included in a deck. _The rule of 8_ refers to the general rule of thumb that a deck with 8 copies of a card (typically attained by running 4 copies each of two identical cards) has reasonable consistency, yielding a 65.4% chance to draw at least one copy in your opening hand. Running 4 copies of a card gives weak consistency, with a 39.9% chance to draw at least one copy in your opening hand. You have a 52.8% chance of drawing at least one copy of a set of 4 cards by turn 4. In general:
+
+- Run 4 copies of cards that you want to draw as early and often as possible. Cards that are essential for the deck's strategy and/or good in multiples should run 4 copies.
+- Run 3 copies of cards that you want to draw in the midgame, but don't want multiples of. Since you can only control one copy of a legendary permanent at a time, it is often a good idea to run 3 copies of legendary cards.
+- Run 2 copies of cards that you don't want in your opening hand, don't want multiples of, and aren't vital to your strategy. This is usually the case for cards that are too expensive to cast normally.
+- Run 1 copy of cards that you don't want to draw naturally, but want to have access to in your deck (such as for tutoring).
+
+A hypergeometric calculator can also be used to determine the optimal amount of a given effect to include in a deck. For example, instead of calculating the odds of drawing at least one of four copies of a card, you could calculate the odds of drawing one of ten copies of any one-drop (spell that you want to play on turn one) creature with haste. This can be useful for determining the initial ratios of important effects that are fundamental to a deck's strategy.
+
+As a general rule of thumb, about 40% of the cards in a deck should be lands.
+
+Below is a hypergeometric calculator for use when deck building.
+
+<HyperGeoCalc />
+
+### Mana Curve
+
+The _mana curve_ is the result of the application of mana optimization theory (à la Paul Sligh) to deck construction. Basically, it is the idea that a deck should be constructed in a way that maximizes the probability that its player will utilize all of their available mana on any given turn. The term "curve" comes from the fact that a deck with an optimal mana curve should resemble a bell curve when you graph the converted mana costs of its cards. Having an optimized mana curve is most important to aggro decks; many control decks can all but disregard their mana curves.
+
+When building a mana curve, it is important to remember the context of the cards. If you have a card that costs one mana but that you wouldn't want to play on turn one (such as an aura), it doesn't make sense to include it among your one-drops. In these cases, think about what turn you'd ideally play that card and include it in the corresponding column instead.
+
+The mana curve is less important in constructed formats than it is in limited formats, but it is still a good thing to keep in mind.
+
+### Legality
+
+The rules for what makes a deck legal depend on the format that the deck is designed to play in. Wizards of the Coast keeps an up-to-date list of banned and restricted cards for each format on their website, along with the rules for each format.
+
+## Testing
+
+The testing phase of deck building takes the longest. It is a good idea to play dozens of games, both against real opponents and against a goldfish (a theoretical player that does nothing). The purpose of this is to ensure that the deck wins games consistently and against a variety of opponents.
+
+While testing your deck, pay attention to each card to make sure that they are all individually powerful, consistent, and efficient.
+
+- The card should consistently have an effect on the game, regardless of which common counters your opponent may play.
+- The card should provide good payoff for its cost.
+- The card should be impactful to play, no matter what other cards you have in under your control. It should never feel like a waste of a draw to draw any given card.
+
+_You can view my complete collection [here](https://www.moxfield.com/users/Lakuna)_.

@@ -2,352 +2,272 @@
 
 import {
 	Context,
-	Buffer,
-	BufferInfo,
+	Ebo,
+	Primitive,
 	Program,
 	Texture2d,
+	TextureFilter,
+	TextureFormat,
 	Vao,
-	Mipmap,
-	Texture2dMip,
-	FaceDirection,
-	TextureInternalFormat,
-	Primitive,
-	TextureMinFilter,
-	TextureMagFilter
+	Vbo
 } from "@lakuna/ugl";
 import {
+	createMatrix4Like,
 	identity,
 	invert,
 	multiply,
 	perspective,
-	translate,
 	rotateX,
 	rotateY,
-	scale
+	scale,
+	translate
 } from "@lakuna/umath/Matrix4";
-import AnimatedCanvas from "@lakuna/react-canvas";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
-import type { Matrix4Like } from "@lakuna/umath";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 in vec2 a_texcoord;
 
 uniform mat4 u_world;
-uniform mat4 u_viewerViewProjection;
-uniform mat4 u_textureMatrix;
+uniform mat4 u_viewProj;
+uniform mat4 u_texMat;
 
 out vec2 v_texcoord;
-out vec4 v_projectedTexcoord;
+out vec4 v_projTexcoord;
 
 void main() {
-	vec4 worldPosition = u_world * a_position;
-	gl_Position = u_viewerViewProjection * worldPosition;
+	vec4 worldPos = u_world * a_position;
+	gl_Position = u_viewProj * worldPos;
 	v_texcoord = a_texcoord;
-	v_projectedTexcoord = u_textureMatrix * worldPosition;
-}`;
+	v_projTexcoord = u_texMat * worldPos;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 in vec2 v_texcoord;
-in vec4 v_projectedTexcoord;
+in vec4 v_projTexcoord;
 
 uniform vec4 u_color;
 uniform sampler2D u_texture;
-uniform sampler2D u_projectedTexture;
+uniform sampler2D u_projTex;
 
 out vec4 outColor;
 
 void main() {
-	vec2 projectedTexcoord = (v_projectedTexcoord.xyz / v_projectedTexcoord.w).xy;
+	vec2 projTexcoord = (v_projTexcoord.xyz / v_projTexcoord.w).xy;
 
-	bool inRange = projectedTexcoord.x >= 0.0
-		&& projectedTexcoord.x <= 1.0
-		&& projectedTexcoord.y >= 0.0
-		&& projectedTexcoord.y <= 1.0;
+	bool inProj = projTexcoord.x >= 0.0
+		&& projTexcoord.x <= 1.0
+		&& projTexcoord.y >= 0.0
+		&& projTexcoord.y <= 1.0;
+	
+	vec4 projTexColor = texture(u_projTex, projTexcoord);
+	vec4 texColor = texture(u_texture, v_texcoord) * u_color;
+	outColor = inProj ? projTexColor : texColor;
+}
+`;
 
-	vec4 projectedTextureColor = texture(u_projectedTexture, projectedTexcoord);
-	vec4 textureColor = texture(u_texture, v_texcoord) * u_color;
-	outColor = inRange ? projectedTextureColor : textureColor;
-}`;
-
-const solidVss: string = `\
+const solidVss = `\
 #version 300 es
 
 in vec4 a_position;
 
 uniform mat4 u_world;
-uniform mat4 u_viewerViewProjection;
+uniform mat4 u_viewProj;
 
 void main() {
-	gl_Position = u_viewerViewProjection * u_world * a_position;
-}`;
+	gl_Position = u_viewProj * u_world * a_position;
+}
+`;
 
-const solidFss: string = `\
+const solidFss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 out vec4 outColor;
 
 void main() {
 	outColor = vec4(0, 0, 0, 1);
-}`;
+}
+`;
 
-const planePositionData: Float32Array = new Float32Array([
-	-1, 1, -1, -1, 1, -1, 1, 1
+const planePositionData = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
+const planeTexcoordData = new Float32Array([0, 0, 0, 10, 10, 10, 10, 0]);
+const planeIndexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
+const cubePositionData = new Float32Array([
+	-1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1,
+	1, -1, -1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1,
+	-1, 1, 1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, -1, -1, -1,
+	1, -1, -1, 1, -1, 1
 ]);
-
-const planeTexcoordData: Float32Array = new Float32Array([
-	0, 0, 0, 10, 10, 10, 10, 0
+const cubeTexcoordData = new Float32Array([
+	0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
+	0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0
 ]);
-
-const planeIndices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
-
-const cubePositionData: Float32Array = new Float32Array([
-	// Front
-	-1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1,
-
-	// Back
-	1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, -1,
-
-	// Left
-	-1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1,
-
-	// Right
-	1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1,
-
-	// Top
-	-1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1,
-
-	// Bottom
-	-1, -1, 1, -1, -1, -1, 1, -1, -1, 1, -1, 1
+const cubeIndexData = new Uint8Array([
+	0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14,
+	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
-
-const cubeTexcoordData: Float32Array = new Float32Array([
-	// Front
-	0, 0, 0, 1, 1, 1, 1, 0,
-
-	// Back
-	0, 0, 0, 1, 1, 1, 1, 0,
-
-	// Left
-	0, 0, 0, 1, 1, 1, 1, 0,
-
-	// Right
-	0, 0, 0, 1, 1, 1, 1, 0,
-
-	// Top
-	0, 0, 0, 1, 1, 1, 1, 0,
-
-	// Bottom
-	0, 0, 0, 1, 1, 1, 1, 0
-]);
-
-const cubeIndices: Uint8Array = new Uint8Array([
-	// Top
-	0, 1, 2, 0, 2, 3,
-
-	// Bottom
-	4, 5, 6, 4, 6, 7,
-
-	// Left
-	8, 9, 10, 8, 10, 11,
-
-	// Right
-	12, 13, 14, 12, 14, 15,
-
-	// Top
-	16, 17, 18, 16, 18, 19,
-
-	// Bottom
-	20, 21, 22, 20, 22, 23
-]);
-
-const frustumPositionData: Float32Array = new Float32Array([
+const frustumPositionData = new Float32Array([
 	-1, -1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, 1, 1, 1,
 	1, 1
 ]);
-
-const frustumIndices: Uint8Array = new Uint8Array([
-	0, 1, 1, 3, 3, 2, 2, 0,
-
-	4, 5, 5, 7, 7, 6, 6, 4,
-
-	0, 4, 1, 5, 3, 7, 2, 6
+const frustumIndexData = new Uint8Array([
+	0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 1, 5, 3, 7, 2, 6
 ]);
 
-const cameraDistance = 2;
-const cameraRotationX: number = -Math.PI / 5;
+export default function ProjectionMapping(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
 
-export default function ProjectionMapping(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
-		const frustumProgram: Program = Program.fromSource(gl, solidVss, solidFss);
+				const program = Program.fromSource(gl, vss, fss);
+				const solidProgram = Program.fromSource(gl, solidVss, solidFss);
 
-		const planePositionBuffer: Buffer = new Buffer(gl, planePositionData);
-		const planeTexcoordBuffer: Buffer = new Buffer(gl, planeTexcoordData);
-		const cubePositionBuffer: Buffer = new Buffer(gl, cubePositionData);
-		const cubeTexcoordBuffer: Buffer = new Buffer(gl, cubeTexcoordData);
-		const frustumPositionBuffer: Buffer = new Buffer(gl, frustumPositionData);
-		const planeVao: Vao = new Vao(
-			program,
-			[
-				new BufferInfo("a_position", planePositionBuffer, 2),
-				new BufferInfo("a_texcoord", planeTexcoordBuffer, 2)
-			],
-			planeIndices
-		);
-		const cubeVao: Vao = new Vao(
-			program,
-			[
-				new BufferInfo("a_position", cubePositionBuffer),
-				new BufferInfo("a_texcoord", cubeTexcoordBuffer, 2)
-			],
-			cubeIndices
-		);
-		const frustumVao: Vao = new Vao(
-			frustumProgram,
-			[new BufferInfo("a_position", frustumPositionBuffer)],
-			frustumIndices
-		);
+				const planePositionBuffer = new Vbo(gl, planePositionData);
+				const planeTexcoordBuffer = new Vbo(gl, planeTexcoordData);
+				const planeIndexBuffer = new Ebo(gl, planeIndexData);
+				const cubePositionBuffer = new Vbo(gl, cubePositionData);
+				const cubeTexcoordBuffer = new Vbo(gl, cubeTexcoordData);
+				const cubeIndexBuffer = new Ebo(gl, cubeIndexData);
+				const frustumPositionBuffer = new Vbo(gl, frustumPositionData);
+				const frustumIndexBuffer = new Ebo(gl, frustumIndexData);
 
-		const texture: Texture2d = new Texture2d(
-			gl,
-			new Mipmap(
-				new Texture2dMip(
+				const planeVao = new Vao(
+					program,
+					{
+						// eslint-disable-next-line camelcase
+						a_position: { size: 2, vbo: planePositionBuffer },
+						// eslint-disable-next-line camelcase
+						a_texcoord: { size: 2, vbo: planeTexcoordBuffer }
+					},
+					planeIndexBuffer
+				);
+				const cubeVao = new Vao(
+					program,
+					{
+						// eslint-disable-next-line camelcase
+						a_position: cubePositionBuffer,
+						// eslint-disable-next-line camelcase
+						a_texcoord: { size: 2, vbo: cubeTexcoordBuffer }
+					},
+					cubeIndexBuffer
+				);
+				const frustumVao = new Vao(
+					solidProgram,
+					// eslint-disable-next-line camelcase
+					{ a_position: frustumPositionBuffer },
+					frustumIndexBuffer
+				);
+
+				const texture = new Texture2d(gl);
+				texture.format = TextureFormat.LUMINANCE;
+				texture.setMip(
 					new Uint8Array([0x80, 0xc0, 0xc0, 0x80]),
-					TextureInternalFormat.LUMINANCE,
-					2,
-					2
-				)
-			)
-		);
-		const projectedTexture: Texture2d = Texture2d.fromImageUrl(
-			gl,
-			`${domain}images/webgl-example-texture.png`
-		);
-		projectedTexture.magFilter = TextureMagFilter.LINEAR;
-		projectedTexture.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
+					void 0,
+					void 0,
+					[0, 0, 2, 2]
+				);
+				texture.minFilter = TextureFilter.NEAREST;
+				texture.magFilter = TextureFilter.NEAREST;
+				const projTex = Texture2d.fromImageUrl(
+					gl,
+					`${domain}/images/webgl-example-texture.png`
+				);
 
-		const planeMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		identity(planeMatrix);
-		rotateX(planeMatrix, (Math.PI * 3) / 2, planeMatrix);
+				const planeMat = createMatrix4Like();
+				identity(planeMat);
+				rotateX(planeMat, (Math.PI * 3) / 2, planeMat);
+				const cubeMat = createMatrix4Like();
+				identity(cubeMat);
+				scale(cubeMat, [0.1, 0.1, 0.1], cubeMat);
+				translate(cubeMat, [1, 2, 1], cubeMat);
+				const projProjMat = createMatrix4Like();
+				perspective(Math.PI / 10, 1, 1, 3, projProjMat);
+				const projCamMat = createMatrix4Like();
+				identity(projCamMat);
+				rotateX(projCamMat, -Math.PI / 5, projCamMat);
+				translate(projCamMat, [0, 0, 2], projCamMat);
+				const projViewMat = createMatrix4Like();
+				invert(projCamMat, projViewMat);
+				const projViewProjMat = createMatrix4Like();
+				multiply(projProjMat, projViewMat, projViewProjMat);
+				const texMat = createMatrix4Like();
+				identity(texMat);
+				translate(texMat, [0.5, 0.5, 0.5], texMat);
+				scale(texMat, [0.5, 0.5, 0.5], texMat);
+				multiply(texMat, projViewProjMat, texMat);
+				const frustumMat = createMatrix4Like();
+				invert(projViewProjMat, frustumMat);
+				const camProjMat = createMatrix4Like();
+				const camCamMat = createMatrix4Like();
+				const camViewMat = createMatrix4Like();
+				const camViewProjMat = createMatrix4Like();
 
-		const cubeMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		identity(cubeMatrix);
-		scale(cubeMatrix, [0.1, 0.1, 0.1], cubeMatrix);
-		translate(cubeMatrix, [1, 2, 1], cubeMatrix);
+				return (now) => {
+					gl.resize();
+					gl.doCullFace = true;
+					gl.doDepthTest = true;
+					gl.clear();
 
-		const projectorProjectionMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		perspective(Math.PI / 10, 1, 1, 3, projectorProjectionMatrix);
+					const w = canvas.width;
+					const h = canvas.height;
+					perspective(Math.PI / 4, w / (h || 1), 0.1, 5, camProjMat);
+					identity(camCamMat);
+					rotateY(camCamMat, now * 0.0003, camCamMat);
+					rotateX(camCamMat, -Math.PI / 5, camCamMat);
+					translate(camCamMat, [0, 0, 2], camCamMat);
+					invert(camCamMat, camViewMat);
+					multiply(camProjMat, camViewMat, camViewProjMat);
 
-		const projectorCameraMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		identity(projectorCameraMatrix);
-		rotateX(projectorCameraMatrix, cameraRotationX, projectorCameraMatrix);
-		translate(
-			projectorCameraMatrix,
-			[0, 0, cameraDistance],
-			projectorCameraMatrix
-		);
+					planeVao.draw({
+						// eslint-disable-next-line camelcase
+						u_color: [1, 0, 0, 1],
+						// eslint-disable-next-line camelcase
+						u_projTex: projTex,
+						// eslint-disable-next-line camelcase
+						u_texMat: texMat,
+						// eslint-disable-next-line camelcase
+						u_texture: texture,
+						// eslint-disable-next-line camelcase
+						u_viewProj: camViewProjMat,
+						// eslint-disable-next-line camelcase
+						u_world: planeMat
+					});
 
-		const projectorViewMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		invert(projectorCameraMatrix, projectorViewMatrix);
+					cubeVao.draw({
+						// eslint-disable-next-line camelcase
+						u_color: [0, 1, 0, 1],
+						// eslint-disable-next-line camelcase
+						u_projTex: projTex,
+						// eslint-disable-next-line camelcase
+						u_texMat: texMat,
+						// eslint-disable-next-line camelcase
+						u_texture: texture,
+						// eslint-disable-next-line camelcase
+						u_viewProj: camViewProjMat,
+						// eslint-disable-next-line camelcase
+						u_world: cubeMat
+					});
 
-		const projectorViewProjectionMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		multiply(
-			projectorProjectionMatrix,
-			projectorViewMatrix,
-			projectorViewProjectionMatrix
-		);
-
-		const textureMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		identity(textureMatrix);
-		translate(textureMatrix, [0.5, 0.5, 0.5], textureMatrix);
-		scale(textureMatrix, [0.5, 0.5, 0.5], textureMatrix);
-		multiply(textureMatrix, projectorViewProjectionMatrix, textureMatrix);
-
-		const frustumMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		invert(projectorViewProjectionMatrix, frustumMatrix);
-
-		const viewerProjectionMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		const viewerCameraMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		const viewerViewMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		const viewerViewProjectionMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-
-		return (now: number): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0], 1);
-			gl.cullFace = FaceDirection.BACK;
-
-			perspective(
-				Math.PI / 4,
-				canvas.width / (canvas.height || 1),
-				0.1,
-				5,
-				viewerProjectionMatrix
-			);
-
-			identity(viewerCameraMatrix);
-			rotateY(viewerCameraMatrix, now * 0.0003, viewerCameraMatrix);
-			rotateX(viewerCameraMatrix, cameraRotationX, viewerCameraMatrix);
-			translate(viewerCameraMatrix, [0, 0, cameraDistance], viewerCameraMatrix);
-
-			invert(viewerCameraMatrix, viewerViewMatrix);
-
-			multiply(
-				viewerProjectionMatrix,
-				viewerViewMatrix,
-				viewerViewProjectionMatrix
-			);
-
-			planeVao.draw({
-				u_world: planeMatrix,
-				u_viewerViewProjection: viewerViewProjectionMatrix,
-				u_textureMatrix: textureMatrix,
-				u_color: [1, 0, 0, 1],
-				u_texture: texture,
-				u_projectedTexture: projectedTexture
-			});
-			cubeVao.draw({
-				u_world: cubeMatrix,
-				u_viewerViewProjection: viewerViewProjectionMatrix,
-				u_textureMatrix: textureMatrix,
-				u_color: [0, 1, 0, 1],
-				u_texture: texture,
-				u_projectedTexture: projectedTexture
-			});
-			frustumVao.draw(
-				{
-					u_world: frustumMatrix,
-					u_viewerViewProjection: viewerViewProjectionMatrix
-				},
-				Primitive.LINES
-			);
-		};
-	}, props);
+					frustumVao.draw(
+						// eslint-disable-next-line camelcase
+						{ u_viewProj: camViewProjMat, u_world: frustumMat },
+						Primitive.LINES
+					);
+				};
+			}}
+			{...props}
+		/>
+	);
 }

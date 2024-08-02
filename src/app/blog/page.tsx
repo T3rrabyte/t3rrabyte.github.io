@@ -1,86 +1,65 @@
-import { BsRss } from "react-icons/bs";
-import CardList from "#CardList";
 import Card from "#Card";
-import SpecularLighting from "#app/a/webgl/lighting/SpecularLighting.tsx";
-import generateMetadata from "#generateMetadata";
-import type { Metadata } from "next";
-import type { JSX } from "react";
-import contourDetection from "#app/a/cccv/contour-detection.png";
-import victory from "#app/a/pedit5/victory.png";
-import Image from "next/image";
+import CardList from "#CardList";
+import Image from "#Image";
+import PhongLighting from "../a/webgl/lighting/PhongLighting";
+import contourDetection from "../a/cccv/opengraph-image.png";
+import victoryScreen from "../a/pedit5/opengraph-image.png";
 
-export default function page(): JSX.Element {
+export default function Page() {
 	return (
 		<>
-			<h1>
-				Blog{" "}
-				<a href="/rss.xml">
-					<BsRss />
-				</a>
-			</h1>
+			<h1>{"Blog"}</h1>
 			<CardList>
 				<Card href="/a/cccv">
-					<h2>Crash Course: Computer Vision</h2>
+					<h2>{"Crash Course: Computer Vision"}</h2>
 					<p>
-						The companion article for my presentation on computer vision and
-						Lunabotics.
+						{
+							"The companion article for my presentation about computer vision and Lunabotics."
+						}
 					</p>
 					<Image
 						src={contourDetection}
-						alt="Contour detection example."
-						style={{ width: "100%", height: "auto" }}
-						placeholder="blur"
+						alt="An example of contour detection."
 					/>
 				</Card>
 				<Card href="/a/pedit5">
 					<h2>
-						<code>pedit5</code>
+						<code>{"pedit5"}</code>
 					</h2>
-					<p>
-						An in-depth look at the first computer role-playing game, including
-						a review of my world record speedrun.
-					</p>
+					<p>{"A guide to beating the world's first CRPG."}</p>
 					<Image
-						src={victory}
+						src={victoryScreen}
 						alt="The victory cutscene in The Dungeon."
-						style={{ width: "100%", height: "auto" }}
-						placeholder="blur"
 					/>
 				</Card>
 				<Card href="/a/q_rsqrt">
-					<h2>Fast Inverse Square Root</h2>
+					<h2>{"Fast Inverse Square Root"}</h2>
 					<p>
-						An explanation of the famous fast inverse square root algorithm as
-						it is implemented in Quake III Arena.
+						{
+							"An analysis of the famous fast multiplicative inverse square root algorithm as it is implemented in Quake III Arena."
+						}
 					</p>
 				</Card>
 				<Card href="/a/esojs">
-					<h2>Esoteric JavaScript</h2>
+					<h2>{"Esoteric JavaScript"}</h2>
 					<p>
-						A guide on how to write any JavaScript program with just six unique
-						characters.
+						{
+							"A guide on how to write any JavaScript program with just six unique characters."
+						}
 					</p>
 				</Card>
 				<Card href="/a/webgl">
-					<h2>WebGL2 Tutorial</h2>
-					<p>The index of my WebGL2 tutorial.</p>
-					<SpecularLighting style={{ width: "100%" }} />
-				</Card>
-				<Card href="/a/mtg">
-					<h2>MTG Deck Building Compendium</h2>
-					<p>
-						A summary of my knowledge about deck building for Magic: The
-						Gathering. Includes a built-in hypergeometric calculator.
-					</p>
+					<h2>{"WebGL2 Tutorial"}</h2>
+					<p>{"The table of contents for my WebGL2 tutorial series."}</p>
+					<PhongLighting style={{ width: "100%" }} />
 				</Card>
 			</CardList>
 		</>
 	);
 }
 
-export const metadata: Metadata = generateMetadata(
-	"Blog | Lakuna",
-	"Travis Martin's blog.",
-	"/favicon.png",
-	"/blog"
-);
+export const metadata = {
+	description: "Travis Martin's blog.",
+	openGraph: { url: "/blog" },
+	title: "Blog"
+};

@@ -1,0 +1,36 @@
+@use "../../styles/variables";
+
+nav.topnav {
+	& > ul {
+		background-color: variables.$fg-color;
+		color: variables.$text-color;
+		list-style-type: none;
+		margin: 0px;
+		padding: 0px;
+		overflow: hidden;
+
+		& > li {
+			display: inline-block;
+
+			& > a,
+			& > button {
+				background-color: variables.$fg-color;
+				color: variables.$text-color;
+				text-decoration: none;
+				display: inline-block;
+				padding: 8px 16px;
+				font-size: 1.5em;
+				cursor: pointer;
+				border: none;
+				border-radius: 0px;
+
+				&:hover {
+					background-color: variables.$bg-color;
+					color: variables.$text-color;
+					border: none;
+					border-radius: 0px;
+				}
+			}
+		}
+	}
+}

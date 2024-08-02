@@ -2,209 +2,162 @@
 
 import {
 	Context,
-	Buffer,
-	BufferInfo,
+	Ebo,
 	Program,
+	TextureCubemap,
+	TextureFilter,
 	Vao,
-	FaceDirection,
-	Cubemap,
-	TextureMinFilter,
-	TextureMagFilter
+	Vbo
 } from "@lakuna/ugl";
+import { createMatrix3Like, normalFromMatrix4 } from "@lakuna/umath/Matrix3";
 import {
+	createMatrix4Like,
+	getTranslation,
 	identity,
 	invert,
 	multiply,
 	perspective,
-	translate,
-	rotateZ,
 	rotateY,
-	getTranslation,
-	type Matrix4Like
+	rotateZ,
+	translate
 } from "@lakuna/umath/Matrix4";
-import { normalFromMatrix4 } from "@lakuna/umath/Matrix3";
-import AnimatedCanvas from "@lakuna/react-canvas";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
+import { createVector3Like } from "@lakuna/umath/Vector3";
 import domain from "#domain";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
-import type { Matrix3Like, Vector3Like } from "@lakuna/umath";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 in vec3 a_normal;
 
-uniform mat4 u_viewProjection;
-uniform mat4 u_world;
-uniform mat3 u_normal;
+uniform mat4 u_viewProjMat;
+uniform mat4 u_worldMat;
+uniform mat3 u_normalMat;
 
-out vec3 v_surfacePosition;
+out vec3 v_worldPos;
 out vec3 v_normal;
 
 void main() {
-	gl_Position = u_viewProjection * u_world * a_position;
-	v_surfacePosition = (u_world * a_position).xyz;
-	v_normal = u_normal * a_normal;
-}`;
+	vec4 worldPos = u_worldMat * a_position;
+	gl_Position = u_viewProjMat * worldPos;
+	v_worldPos = worldPos.xyz;
+	v_normal = u_normalMat * a_normal;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
-in vec3 v_surfacePosition;
+in vec3 v_worldPos;
 in vec3 v_normal;
 
 uniform samplerCube u_texture;
-uniform vec3 u_cameraPosition;
+uniform vec3 u_camPos;
 
 out vec4 outColor;
 
 void main() {
 	vec3 normal = normalize(v_normal);
-	vec3 cameraToSurfaceDirection = normalize(v_surfacePosition - u_cameraPosition);
-	vec3 reflectionDirection = reflect(cameraToSurfaceDirection, normal);
-	outColor = texture(u_texture, reflectionDirection);
-}`;
+	vec3 camToSurfaceDir = normalize(v_worldPos - u_camPos);
+	vec3 reflectDir = reflect(camToSurfaceDir, normal);
+	outColor = texture(u_texture, reflectDir);
+}
+`;
 
-const positionData: Float32Array = new Float32Array([
-	// Front
-	-1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1,
-
-	// Back
-	1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, -1,
-
-	// Left
-	-1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1,
-
-	// Right
-	1, 1, 1, 1, -1, 1, 1, -1, -1, 1, 1, -1,
-
-	// Top
-	-1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1,
-
-	// Bottom
-	-1, -1, 1, -1, -1, -1, 1, -1, -1, 1, -1, 1
+const positionData = new Float32Array([
+	-1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, -1, -1, -1, -1, -1, -1,
+	1, -1, -1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1,
+	-1, 1, 1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, -1, -1, -1,
+	1, -1, -1, 1, -1, 1
+]);
+const normalData = new Float32Array([
+	0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+	-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0,
+	1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0
+]);
+const indexData = new Uint8Array([
+	0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14,
+	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
 
-const normalData: Float32Array = new Float32Array([
-	// Front
-	0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+export default function EnvironmentMaps(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
 
-	// Back
-	0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+				const program = Program.fromSource(gl, vss, fss);
 
-	// Left
-	-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+				const positionBuffer = new Vbo(gl, positionData);
+				const normalBuffer = new Vbo(gl, normalData);
+				const indexBuffer = new Ebo(gl, indexData);
 
-	// Right
-	1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+				const vao = new Vao(
+					program,
+					{
+						// eslint-disable-next-line camelcase
+						a_normal: normalBuffer,
+						// eslint-disable-next-line camelcase
+						a_position: positionBuffer
+					},
+					indexBuffer
+				);
 
-	// Top
-	0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+				const texture = TextureCubemap.fromImageUrls(
+					gl,
+					`${domain}/images/webgl-example-environment-map/px.png`,
+					`${domain}/images/webgl-example-environment-map/nx.png`,
+					`${domain}/images/webgl-example-environment-map/py.png`,
+					`${domain}/images/webgl-example-environment-map/ny.png`,
+					`${domain}/images/webgl-example-environment-map/pz.png`,
+					`${domain}/images/webgl-example-environment-map/nz.png`
+				);
+				texture.minFilter = TextureFilter.LINEAR_MIPMAP_LINEAR;
+				texture.magFilter = TextureFilter.LINEAR;
 
-	// Bottom
-	0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0
-]);
+				const camMat = identity(createMatrix4Like());
+				translate(camMat, [0, 0, 5], camMat);
+				const camPos = getTranslation(camMat, createVector3Like());
+				const viewMat = invert(camMat, createMatrix4Like());
+				const worldMat = createMatrix4Like();
+				const projMat = createMatrix4Like();
+				const viewProjMat = createMatrix4Like();
+				const normalMat = createMatrix3Like();
 
-const indices: Uint8Array = new Uint8Array([
-	// Top
-	0, 1, 2, 0, 2, 3,
+				return (now) => {
+					gl.resize();
+					gl.doCullFace = true;
+					gl.doDepthTest = true;
+					gl.clear();
 
-	// Bottom
-	4, 5, 6, 4, 6, 7,
+					const w = canvas.width;
+					const h = canvas.height;
+					perspective(Math.PI / 4, w / (h || 1), 1, 10, projMat);
+					multiply(projMat, viewMat, viewProjMat);
+					identity(worldMat);
+					rotateY(worldMat, now * 0.0001, worldMat);
+					rotateZ(worldMat, now * 0.0002, worldMat);
+					normalFromMatrix4(worldMat, normalMat);
 
-	// Left
-	8, 9, 10, 8, 10, 11,
-
-	// Right
-	12, 13, 14, 12, 14, 15,
-
-	// Top
-	16, 17, 18, 16, 18, 19,
-
-	// Bottom
-	20, 21, 22, 20, 22, 23
-]);
-
-export default function Cameras(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
-
-		const positionBuffer: Buffer = new Buffer(gl, positionData);
-		const normalBuffer: Buffer = new Buffer(gl, normalData);
-		const vao: Vao = new Vao(
-			program,
-			[
-				new BufferInfo("a_position", positionBuffer),
-				new BufferInfo("a_normal", normalBuffer)
-			],
-			indices
-		);
-
-		const texture: Cubemap = Cubemap.fromImageUrls(
-			gl,
-			`${domain}images/webgl-example-environment-map/px.png`,
-			`${domain}images/webgl-example-environment-map/nx.png`,
-			`${domain}images/webgl-example-environment-map/py.png`,
-			`${domain}images/webgl-example-environment-map/ny.png`,
-			`${domain}images/webgl-example-environment-map/pz.png`,
-			`${domain}images/webgl-example-environment-map/nz.png`
-		);
-		texture.minFilter = TextureMinFilter.LINEAR_MIPMAP_LINEAR;
-		texture.magFilter = TextureMagFilter.LINEAR;
-
-		const cameraMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		identity(cameraMatrix);
-		translate(cameraMatrix, [0, 0, 5], cameraMatrix);
-
-		const viewMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		invert(cameraMatrix, viewMatrix);
-
-		const cameraPosition: Vector3Like = new Float32Array(3) as Vector3Like;
-		getTranslation(cameraMatrix, cameraPosition);
-
-		const matrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		const projectionMatrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		const viewProjectionMatrix: Matrix4Like = new Float32Array(
-			16
-		) as Matrix4Like;
-		const normalMatrix: Matrix3Like = new Float32Array(9) as Matrix3Like;
-
-		return (now: number): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0], 1);
-			gl.cullFace = FaceDirection.BACK;
-
-			perspective(
-				Math.PI / 4,
-				canvas.width / (canvas.height || 1),
-				1,
-				10,
-				projectionMatrix
-			);
-
-			multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
-
-			identity(matrix);
-			rotateY(matrix, now * 0.0001, matrix);
-			rotateZ(matrix, now * 0.0002, matrix);
-
-			normalFromMatrix4(matrix, normalMatrix);
-
-			vao.draw({
-				u_viewProjection: viewProjectionMatrix,
-				u_world: matrix,
-				u_normal: normalMatrix,
-				u_texture: texture,
-				u_cameraPosition: cameraPosition
-			});
-		};
-	}, props);
+					vao.draw({
+						// eslint-disable-next-line camelcase
+						u_camPos: camPos,
+						// eslint-disable-next-line camelcase
+						u_normalMat: normalMat,
+						// eslint-disable-next-line camelcase
+						u_texture: texture,
+						// eslint-disable-next-line camelcase
+						u_viewProjMat: viewProjMat,
+						// eslint-disable-next-line camelcase
+						u_worldMat: worldMat
+					});
+				};
+			}}
+			{...props}
+		/>
+	);
 }

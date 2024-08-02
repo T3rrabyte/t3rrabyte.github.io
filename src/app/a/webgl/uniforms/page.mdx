@@ -1,0 +1,50 @@
+---
+title: "Uniforms"
+description: "An introduction to uniforms in WebGL."
+openGraph:
+  url: "/a/webgl/uniforms"
+---
+
+import Uniforms from "./Uniforms.tsx";
+
+# Uniforms
+
+You may need to read [the article about attributes](/a/webgl/attributes) before this one.
+
+---
+
+Another way to pass data to the GPU is with _uniforms_, which are variables that are uniform across each vertex. They can be defined in both vertex and fragment shaders.
+
+Uniforms are declared using the `uniform` keyword.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+uniform vec4 u_color;
+
+out vec4 outColor;
+
+void main() {
+	outColor = u_color;
+}
+```
+
+In order to manipulate a uniform from JavaScript, the WebGL API must first be queried for its location with [`getUniformLocation`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getUniformLocation).
+
+```js
+const location = gl.getUniformLocation(program, "u_color");
+```
+
+A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For uniforms that hold most types of data, this function is some form of [`uniform[1234][uif][v]`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniform). For matrices, this function is some form of [`uniformMatrix[234]x[234]fv`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniformMatrix).
+
+```js
+gl.uniform4fv(location, [1, 0, 0, 1]);
+```
+
+<Uniforms style={{ width: "100%" }} />
+
+---
+
+The next article is about [varyings](/a/webgl/varyings).

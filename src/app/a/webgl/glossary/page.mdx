@@ -1,0 +1,162 @@
+---
+title: "Glossary"
+description: "The glossary of my WebGL tutorial series."
+openGraph:
+  url: "/a/webgl/glossary"
+---
+
+# Glossary
+
+## A
+
+- [Aliasing](/a/webgl/framebuffers): an effect that reduces the quality of images that are under-sampled.
+- [Ambient lighting](/a/webgl/lighting): lighting that is applied equally to all surfaces regardless of normal.
+- [Antialiasing](/a/webgl/framebuffers): a process for reducing aliasing.
+- [Attribute](/a/webgl/attributes): a type of variable that is used to pass vertex-specific data to vertex shaders. They read data from buffers.
+
+## B
+
+- [Binding point](/a/webgl/attributes): a pointer with a specific purpose.
+- [Bitmap image](/a/webgl/shaders): an image that is stored as an array of fragments.
+- [Buffer](/a/webgl/attributes): an array of binary data.
+
+## C
+
+- [Camera matrix](/a/webgl/3d): a matrix that represents the transformation of a camera.
+- [Clip space](/a/webgl/shaders): a coordinate system that represents the canvas in the range $[-1,1]$ on each axis. The negative boundaries for each direction are left, down, and near, respectively.
+- [Clipped](/a/webgl/shaders): refers to a fragment that has been discarded due to being located outside of clip space.
+- [Color buffer](/a/webgl/shaders): a region of a framebuffer that holds color data.
+- [Color space](/a/webgl/shaders): a coordinate system that organizes each of the red, green, blue, and alpha values of colors in the range $[0,1]$.
+- [Context](/a/webgl/program-structure): the collection of variables that define how OpenGL should operate.
+- [Cubemap](/a/webgl/cubemaps): a type of texture that consists of six faces.
+
+## D
+
+- [Depth buffer](/a/webgl/3d): a buffer that stores the depth of fragments.
+- [Depth test](/a/webgl/3d): the test that compares the depth of an incoming fragment to the depth of the existing fragment.
+- [Diffuse lighting](/a/webgl/lighting): lighting that comes uniformly from one direction.
+- [Directional lighting](/a/webgl/lighting): diffuse lighting.
+- [Dot limit](/a/webgl/lighting): the cosine of a limit.
+- [Draw buffer](/a/webgl/shaders): the color buffer that contains the fragments that are rendered to the canvas.
+
+## E
+
+- [Element buffer object](/a/webgl/attributes): a buffer that contains index data; an EBO.
+- [Environment map](/a/webgl/cubemaps): a cubemap that represents the environment of a scene. Commonly used to approximate reflections.
+
+## F
+
+- [Fragment](/a/webgl/shaders): a discrete visual unit. If the resolution of the canvas matches its physical size, each fragment is equivalent to a pixel.
+- [Fragment interpolation](/a/webgl/varyings): the process of interpolating the value that is stored in a varying between fragments.
+- [Fragment shader](/a/webgl/shaders): a shader that computes fragment colors.
+- [Frame](/a/webgl/program-structure): short for "framebuffer;" typically used to refer to the data in a framebuffer at a specific instant, as in "frames per second."
+- [Framebuffer](/a/webgl/shaders): a portion of contiguous memory.
+- [Frame rate](/a/webgl/program-structure): the rate at which the default framebuffer is written to.
+
+## G
+
+- [Geometry shader](/a/webgl/shaders): a type of shader that modifies a set of vertices. It does not exist in WebGL.
+- [GLSL](/a/webgl/shaders): the OpenGL Shading Language; a strictly-typed language.
+
+## H
+
+- [Half vector](/a/webgl/lighting): a vector that sits halfway between two other vectors.
+
+## I
+
+- [Indexed drawing](/a/webgl/attributes): drawing data as specified by a VAO by using the indices in the attached EBO.
+- [Initialization step](/a/webgl/program-structure): a step that is executed once at the beginning of a program.
+
+## L
+
+- [Limit](/a/webgl/lighting): the angle from the direction of a cone to its sides.
+- [Location](/a/webgl/attributes): a pointer to a variable in a shader program.
+
+## M
+
+- [Mip](/a/webgl/textures): a smaller version of a texture that is used to sample that texture at different sizes.
+- [Mipmap](/a/webgl/textures): a collection of mips.
+- [Multisampling](/a/webgl/framebuffers): a form of antialiasing.
+
+## N
+
+- [Normal](/a/webgl/lighting): a unit vector that represents the direction that a surface is facing.
+- [Normal matrix](/a/webgl/lighting): the inverse transpose of the rotation portion of a transformation matrix. Multiplying normals by a normal matrix has a similar effect to multiplying positions by a transformation matrix, except that it allows the normals to remain correct even when the corresponding vertices are scaled.
+- [Normalized device coordinates](/a/webgl/shaders): clip space coordinates.
+
+## O
+
+- [OpenGL](/a/webgl/intro): the specification for an API that can be used to render 3D scenes.
+- [Orthographic projection](/a/webgl/transformation): a projection that uses parallel lines to project its shape.
+
+## P
+
+- [Peter panning](/a/webgl/shadows): an effect resulting from adding a bias to fragment depth that causes shadows to appear slightly disjointed from their caster.
+- [Perspective projection](/a/webgl/3d): a projection that scales its shape based on its distance from the camera.
+- [Phong lighting model](/a/webgl/lighting): a simplified lighting model with three components (ambient, diffuse, and specular).
+- [Pixel](/a/webgl/intro): a discrete unit that is used to represent visual information; a picture element.
+- [Point lighting](/a/webgl/lighting): lighting that extends in every direction from a point.
+- [Polygon culling](/a/webgl/3d): the process of discarding polygons based on their orientation.
+- [Primitive](/a/webgl/intro): points, lines, and triangles; shapes that are understood by computers.
+- [Primitive assembly](/a/webgl/shaders): the rendering stage during which vertices are put together to form a primitive.
+- [Projection](/a/webgl/transformation): a linear transformation from a vector space to itself.
+- [Projection mapping](/a/webgl/textures): the process of projecting an image onto a surface.
+- [Projection matrix](/a/webgl/transformation): a transformation matrix that applies a projection.
+
+## R
+
+- [Rasterization](/a/webgl/intro): the process of computing the mapping from scene geometry (primitives) to fragments.
+- [Rasterization stage](/a/webgl/shaders): the rendering stage during which a primitive is mapped to fragments.
+- [Render step](/a/webgl/program-structure): a step that is executed once on each frame.
+- [Renderbuffer](/a/webgl/framebuffers): an object that contains an image and is optimized for use as a render target.
+
+## S
+
+- [Sampler](/a/webgl/textures): a uniform that is used to sample a texture.
+- [Sampling](/a/webgl/textures): the process of retrieving a texel from a texture.
+- [Scene graph](/a/webgl/scene-graph): a general data structure that arranges the local representation of a graphical scene; a collection of nodes in a tree structure, with each node having one parent and a non-negative number of children.
+- [Screen space](/a/webgl/program-structure): a coordinate system that represents the canvas in the ranges $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the canvas in fragments and $y$ is the height of the canvas in fragments. The negative boundaries for each direction are left and up, respectively.
+- [Shader](/a/webgl/shaders): a function that runs on the GPU.
+- [Shader program](/a/webgl/shaders): a vertex shader and a fragment shader that are linked together and used to render primitives.
+- [Shadow acne](/a/webgl/shadows): a visual artifact resulting from the limited resolution of a shadow map.
+- [Shadow map](/a/webgl/shadows): a texture that contains depth data from the point of view of a light source.
+- [Skybox](/a/webgl/cubemaps): a cubemap that represents the background of a scene.
+- [Specular lighting](/a/webgl/lighting): lighting that results from light reflecting off of a shiny surface.
+- [Spot lighting](/a/webgl/lighting): lighting that extends from a point in a cone.
+- [Swizzling](/a/webgl/transformation): the process of accessing the components of a vector using a specific shorthand syntax.
+
+## T
+
+- [Texel](/a/webgl/textures): a discrete point of data in a texture; a texture element.
+- [Texture](/a/webgl/textures): an array of data that can be randomly accessed. Primarily used to store image data.
+- [Texture atlas](/a/webgl/textures): a texture that contains multiple images.
+- [Texture complete](/a/webgl/textures): the property of a texture that allows it to be rendered. In order for a texture to be texture complete, it must either have a complete mipmap or only sample its largest mip.
+- [Texture matrix](/a/webgl/textures): a modified view projection matrix that also converts from clip space to texture space.
+- [Texture space](/a/webgl/textures): a coordinate system that represents a texture in the range $[0,1]$ on each axis. The negative boundaries for each direction are left and down, respectively.
+- [Texture unit](/a/webgl/textures): a value that represents a texture and is passed to a shader program in its stead.
+- [Tightly-packed](/a/webgl/attributes): describes data in which the number of bytes from the start of one element to the next is the same as the byte size of the element.
+- [Transformation matrix](/a/webgl/transformation): a matrix that represents transformations.
+
+## U
+
+- [Uniform](/a/webgl/uniforms): a type of variable that is uniform across each vertex.
+- [Unpack alignment](/a/webgl/textures): a property that specifies the expected alignment of the rows in supplied texture data.
+
+## V
+
+- [Varying](/a/webgl/varyings): a type of variable that varies between each vertex.
+- [Vertex array object](/a/webgl/attributes): a collection of information that tells attributes which buffers they should read data from and how they should do it; a VAO.
+- [Vertex buffer object](/a/webgl/attributes): a buffer that contains vertex data; a VBO.
+- [Vertex shader](/a/webgl/shaders): a shader that computes vertex positions.
+- [View direction matrix](/a/webgl/cubemaps): a view matrix with the translation component removed.
+- [View direction projection matrix](/a/webgl/cubemaps): a product of a projection matrix and a view direction matrix.
+- [View matrix](/a/webgl/3d): an inverse of a camera matrix; a matrix that represents the transformation that would move a scene into the view of a camera.
+- [View projection matrix](/a/webgl/3d): a product of a projection matrix and a view matrix; a matrix that can be used to apply perspective and move a scene into the view of a camera.
+- [Viewport](/a/webgl/program-structure): a rectangle that specifies the affine transformation of the horizontal and vertical axes from clip space to screen space.
+
+## W
+
+- [WebGL](/a/webgl/intro): a specification for an API that can be used to render 3D scenes. Based on OpenGL, but designed to work in the browser.
+- [WebGL API](/a/webgl/intro): the API that allows developers to work with WebGL via JavaScript.
+- [World matrix](/a/webgl/scene-graph): a transformation matrix that represents the transformation of a node in a scene graph relative to the origin.
+- [World view projection matrix](/a/webgl/3d): a product of a view projection matrix and a world matrix; a matrix that transforms vertices to appear from the point of view of a camera.

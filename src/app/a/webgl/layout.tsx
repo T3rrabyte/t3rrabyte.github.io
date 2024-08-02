@@ -1,13 +1,14 @@
 import "#highlight";
 import "#katex";
-import type { ReactNode, JSX } from "react";
+import type { LayoutProps } from "#Props";
 
-// TODO: Link to index and glossary on every page.
-
-export default function layout({
-	children
-}: {
-	children: ReactNode;
-}): JSX.Element {
-	return <>{children}</>;
+export default function Layout({ children }: LayoutProps) {
+	return children;
 }
+
+export const metadata = {
+	title: {
+		default: "Article",
+		template: "%s | WebGL Tutorial | Lakuna"
+	}
+};

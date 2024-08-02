@@ -1,0 +1,21 @@
+@use "../../styles/variables";
+
+a.button-link {
+	color: variables.$text-color;
+	background-color: variables.$fg-color;
+	border: 1px solid variables.$text-color;
+	border-radius: 100px;
+	padding: 10px;
+	text-decoration: none;
+
+	&:hover {
+		color: variables.$fg-color;
+		background-color: variables.$text-color;
+		border: 1px solid variables.$fg-color;
+	}
+
+	// Align icons within button links properly.
+	& > svg {
+		vertical-align: top;
+	}
+}

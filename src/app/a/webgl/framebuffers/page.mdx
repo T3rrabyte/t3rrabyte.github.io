@@ -1,0 +1,104 @@
+---
+title: "Framebuffers"
+description: "An introduction to framebuffers in WebGL."
+openGraph:
+  url: "/a/webgl/framebuffers"
+---
+
+import Framebuffers from "./Framebuffers.tsx";
+
+# Framebuffers
+
+You may need to read [the article about textures](/a/webgl/textures) before this one.
+
+---
+
+A framebuffer can be thought of as a collection of attachments, where each attachment is a buffers with a specific purpose. They can be used to render to textures and _renderbuffers_, which are objects that contain images. Renderbuffers differ from textures in that they support more formats but can't be sampled. Renderbuffers also support _multisampling_, which is a process for reducing _aliasing_, which is an effect that reduces the quality of images that are under-sampled. This means that multisampling is a form of _antialiasing_. As the name implies, renderbuffers are optimized for use as render targets.
+
+A [`WebGLRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderbuffer) can be created with [`createRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createRenderbuffer).
+
+```js
+const renderbuffer = gl.createRenderbuffer();
+```
+
+Like textures and buffers, renderbuffers must be bound to a binding point with [`bindRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bindRenderbuffer) in order to be accessed by functions. Renderbuffers have only one binding point (`RENDERBUFFER`). The renderbuffer's data store can be created and initialized with [`renderbufferStorage`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/renderbufferStorage).
+
+```js
+gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, 0x100, 0x100);
+```
+
+A [`WebGLFramebuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLFramebuffer) can be created with [`createFramebuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createFramebuffer).
+
+```js
+const framebuffer = gl.createFramebuffer();
+```
+
+Like textures and buffers, framebuffers must be bound to a binding point with [`bindFramebuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/bindFramebuffer) in order to be accessed by functions. Framebuffers have three binding points:
+
+- `DRAW_FRAMEBUFFER`, which causes functions that modify attachments to target the attachments of the framebuffer.
+- `READ_FRAMEBUFFER`, which causes functions that read from attachments to target the attachments of the framebuffer.
+- `FRAMEBUFFER`, which causes functions that read from or modify attachments to target the attachments of the framebuffer.
+
+In other words, functions that modify what is being rendered (such as `clear`, `drawElements`, and `drawArrays`) will always modify the currently-bound `DRAW_FRAMEBUFFER`. There is a default framebuffer that is rendered to the canvas. When no framebuffer is explicitly attached to any of the framebuffer binding points, the default framebuffer is used. In order to use the default framebuffer, simply attach `null` to the desired binding point.
+
+Attachments can be added using [`framebufferTexture2D`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/framebufferTexture2D), [`framebufferRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/framebufferRenderbuffer), and [`framebufferTextureLayer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/framebufferTextureLayer). **Every attachment in a framebuffer must have the same dimensions.**
+
+```js
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+gl.framebufferTexture2D(
+	gl.FRAMEBUFFER,
+	gl.COLOR_ATTACHMENT0,
+	gl.TEXTURE_2D,
+	texture,
+	0
+);
+```
+
+## Rendering to Textures
+
+Rather than writing to the default framebuffer and having that data rendered to the rendering context, it is possible to write to a custom framebuffer to store that data in textures or renderbuffers.
+
+<Framebuffers style={{ width: "100%" }} />
+
+Notice that framebuffers don't have all of the attachments that the default one does by default. For example, in order to use depth testing in a framebuffer, it needs to be given a depth attachment (`DEPTH_ATTACHMENT`). You'll also usually want at least one color attachment (`COLOR_ATTACHMENT0`).
+
+```js
+const color = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, color);
+gl.texImage2D(
+	gl.TEXTURE_2D,
+	0,
+	gl.RGBA,
+	0x100,
+	0x100,
+	0,
+	gl.RGBA,
+	gl.UNSIGNED_BYTE,
+	null
+);
+
+const depth = gl.createRenderbuffer();
+gl.bindRenderbuffer(gl.RENDERBUFFER, depth);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, 0x100, 0x100);
+
+const framebuffer = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+gl.framebufferTexture2D(
+	gl.FRAMEBUFFER,
+	gl.COLOR_ATTACHMENT0,
+	gl.TEXTURE_2D,
+	color,
+	0
+);
+gl.framebufferRenderbuffer(
+	gl.FRAMEBUFFER,
+	gl.DEPTH_ATTACHMENT,
+	gl.RENDERBUFFER,
+	depth
+);
+```
+
+---
+
+The next article is about [lighting](/a/webgl/lighting).

@@ -1,0 +1,28 @@
+@use "variables";
+
+// A general-purpose mixin that can be used to make an if/else media query block.
+@mixin media-query-boolean($query) {
+	@media #{$query} {
+		@content (true);
+	}
+
+	@media not #{$query} {
+		@content (false);
+	}
+}
+
+// An implementation of `media-query-boolean` specifically for checking the user's preferred theme.
+@mixin is-light-theme {
+	@include media-query-boolean("(prefers-color-scheme: light)") using
+		($is-light-theme) {
+		@content ($is-light-theme);
+	}
+}
+
+// An implementation of `media-query-boolean` specifically for checking if the viewport is mobile-sized.
+@mixin is-mobile {
+	@include media-query-boolean("(max-width: #{variables.$mobile-breakpoint})")
+		using ($is-mobile) {
+		@content ($is-mobile);
+	}
+}

@@ -1,0 +1,37 @@
+---
+title: "Introduction"
+description: "The introduction to my WebGL2 tutorial series."
+openGraph:
+  url: "/a/webgl/intro"
+---
+
+# Introduction to WebGL
+
+This article assumes that you have an advanced understanding of JavaScript, but assumes nothing about your prior knowledge of computer graphics.
+
+---
+
+Computers represent visual information in discrete units called _pixels_.
+
+Computers understand all shapes as collections of points, lines, and triangles. Collectively, these are referred to as _primitives_.
+
+The process of computing the mapping from scene geometry (primitives) to pixels (actually fragments, more in the next article) is called _rasterization_. Compared to other rendering techniques (such as ray tracing), rasterization is extremely fast and therefore best suited for use in real-time applications such as video games.
+
+_OpenGL_ is a specification for an API that can be used to render 3D scenes. _WebGL_ is a specification that is based on OpenGL but is designed to work in the browser. The WebGL 2.0 specification (based on OpenGL ES 3.00) can be found [here](https://registry.khronos.org/webgl/specs/latest/2.0/).
+
+## The WebGL API
+
+The _WebGL API_ allows developers to interface with WebGL via JavaScript. It can be accessed through the [`WebGL2RenderingContext`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext) class, which can be instantiated with the [`HTMLCanvasElement.getContext`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext) method.
+
+```js
+const canvas = document.querySelector("canvas");
+const gl = canvas.getContext("webgl2");
+```
+
+Documentation for the WebGL API can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+
+It can be helpful to use a library such as [μGL](https://ugl.lakuna.pw/) to make working with the WebGL API less tedious.
+
+---
+
+The next article is about [shaders](/a/webgl/shaders).

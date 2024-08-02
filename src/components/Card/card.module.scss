@@ -1,0 +1,26 @@
+@use "../../styles/variables";
+
+div.card,
+a.card {
+	background-color: variables.$fg-color;
+	color: variables.$text-color;
+	border-radius: 10px;
+	flex: 1;
+	min-width: 300px;
+	max-width: 500px;
+	text-decoration: none;
+
+	div.content-wrapper {
+		padding: 10px;
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			text-align: center;
+			color: variables.$text-color;
+		}
+	}
+}

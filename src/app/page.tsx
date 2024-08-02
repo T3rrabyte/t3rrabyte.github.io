@@ -1,10 +1,7 @@
-import OneLiner from "./OneLiner.tsx";
-import Socials from "./Socials/index.tsx";
-import generateMetadata from "#generateMetadata";
-import type { Metadata } from "next";
-import type { JSX } from "react";
+import OneLiner from "#OneLiner";
+import Socials from "#Socials";
 
-export default function page(): JSX.Element {
+export default function Page() {
 	return (
 		<>
 			<h1 style={{ textAlign: "center" }}>Travis Martin</h1>
@@ -15,9 +12,8 @@ export default function page(): JSX.Element {
 	);
 }
 
-export const metadata: Metadata = generateMetadata(
-	"Lakuna",
-	"Travis Martin's website.",
-	"/favicon.png",
-	"/"
-);
+export const metadata = {
+	description: "Travis Martin's website.",
+	openGraph: { url: "/" },
+	title: "Lakuna"
+};

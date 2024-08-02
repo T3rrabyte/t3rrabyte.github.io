@@ -1,59 +1,85 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
-import AnimatedCanvas from "@lakuna/react-canvas";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
+import { Context, Ebo, Program, Vao, Vbo } from "@lakuna/ugl";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 
 uniform vec4 u_translation;
 
+out vec4 v_color;
+
 void main() {
 	gl_Position = a_position + u_translation;
-}`;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 out vec4 outColor;
 
 void main() {
 	outColor = vec4(0, 0, 0, 1);
-}`;
+}
+`;
 
-const data: Float32Array = new Float32Array([
-	-0.2, 0.2, -0.2, -0.2, 0.2, -0.2, 0.2, 0.2
+const positionData = new Float32Array([
+	// Point 0 at (-0.2, 0.2)
+	-0.2, 0.2,
+
+	// Point 1 at (-0.2, -0.2)
+	-0.2, -0.2,
+
+	// Point 2 at (0.2, -0.2)
+	0.2, -0.2,
+
+	// Point 3 at (0.2, 0.2)
+	0.2, 0.2
 ]);
 
-const indices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
+const indexData = new Uint8Array([
+	// Triangle 0
+	0, 1, 2,
 
-export default function Translation(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
+	// Triangle 1
+	0, 2, 3
+]);
 
-		const buffer: Buffer = new Buffer(gl, data);
-		const vao: Vao = new Vao(
-			program,
-			[new BufferInfo("a_position", buffer, 2)],
-			indices
-		);
+export default function Translation(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
 
-		return (now: number): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0]);
+				const program = Program.fromSource(gl, vss, fss);
 
-			vao.draw({ u_translation: [0.8 * Math.cos(now * 0.001), 0, 0, 0] });
-		};
-	}, props);
+				const positionBuffer = new Vbo(gl, positionData);
+				const indexBuffer = new Ebo(gl, indexData);
+
+				const rectVao = new Vao(
+					program,
+					// eslint-disable-next-line camelcase
+					{ a_position: { size: 2, vbo: positionBuffer } },
+					indexBuffer
+				);
+
+				return (now) => {
+					gl.resize();
+					gl.clear();
+					rectVao.draw({
+						// eslint-disable-next-line camelcase
+						u_translation: [0.8 * Math.cos(now * 0.001), 0, 0, 0]
+					});
+				};
+			}}
+			{...props}
+		/>
+	);
 }

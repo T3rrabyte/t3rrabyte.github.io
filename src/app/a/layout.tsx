@@ -1,8 +1,13 @@
-import style from "./style.module.scss";
-import type { DetailedHTMLProps, HTMLAttributes } from "react";
+import type { LayoutProps } from "#Props";
+import style from "./layout.module.scss";
 
-export default function layout({
-	children
-}: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>): JSX.Element {
-	return <article className={style["base"]}>{children}</article>;
+export default function Layout({ children }: LayoutProps) {
+	return <article className={style["content"]}>{children}</article>;
 }
+
+export const metadata = {
+	title: {
+		default: "Article",
+		template: "%s | Blog | Lakuna"
+	}
+};

@@ -1,54 +1,75 @@
-import "./global.scss";
-import style from "./style.module.scss";
-import Gtag from "./Gtag.tsx";
-import Topnav from "./Topnav/index.tsx";
+import "#global";
+// eslint-disable-next-line camelcase
 import { Noto_Serif, Ubuntu, Ubuntu_Mono } from "next/font/google";
-import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
-import type { DetailedHTMLProps, HTMLAttributes, JSX } from "react";
-import generateViewport from "#generateViewport";
-import type { Viewport } from "next";
+import Gtag from "#Gtag";
+import type { LayoutProps } from "#Props";
+import Topnav from "#Topnav";
+import domain from "#domain";
+import style from "./layout.module.scss";
 
-const arvo: NextFontWithVariable = Noto_Serif({
+// eslint-disable-next-line new-cap
+const fontSerif = Noto_Serif({
+	fallback: ["Times New Roman", "Times", "serif"],
 	subsets: ["latin"],
-	variable: "--font-serif",
-	fallback: ["Times New Roman", "serif"]
+	variable: "--font-serif"
 });
 
-const ubuntu: NextFontWithVariable = Ubuntu({
-	weight: "400", // google/fonts#6592
+// TODO: Switch to Ubuntu Sans when Next.js 15 comes out.
+// eslint-disable-next-line new-cap
+const fontSansSerif = Ubuntu({
+	fallback: ["Arial", "Helvetica", "sans-serif"],
 	subsets: ["latin"],
 	variable: "--font-sans-serif",
-	fallback: ["Arial", "sans-serif"]
+	weight: "400"
 });
 
-const ubuntuMono: NextFontWithVariable = Ubuntu_Mono({
-	weight: "400", // google/fonts#6593
+// TODO: Switch to Ubuntu Sans Mono when Next.js 15 comes out.
+// eslint-disable-next-line new-cap
+const fontMonospace = Ubuntu_Mono({
+	fallback: ["Courier New", "Courier", "monospace"],
 	subsets: ["latin"],
 	variable: "--font-monospace",
-	fallback: ["Courier New", "monospace"],
-	adjustFontFallback: false // Bugged in Next.js version 13.4.19.
+	weight: "400"
 });
 
-export default function layout({
-	children
-}: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>): JSX.Element {
+export default function Layout({ children }: LayoutProps) {
 	return (
 		<html
 			lang="en-US"
-			className={`${arvo.variable} ${ubuntu.variable} ${ubuntuMono.variable}`}
+			className={`${fontSerif.variable} ${fontSansSerif.variable} ${fontMonospace.variable}`}
 		>
-			<body>
-				<div className={style["spacer"]}>
-					<header>
-						<Topnav />
-					</header>
-					<main>{children}</main>
-					<footer className={style["footer"]} />
-				</div>
+			<body className={style["spacer"]}>
+				<header>
+					<Topnav />
+				</header>
+				<main>{children}</main>
+				<footer></footer>
 			</body>
 			<Gtag id="G-HHPHD31E3M" />
 		</html>
 	);
 }
 
-export const viewport: Viewport = generateViewport();
+export const viewport = {
+	colorScheme: "dark light",
+	themeColor: "#18CD85"
+};
+
+export const metadata = {
+	authors: [{ name: "Travis Martin", url: domain }],
+	creator: "Travis Martin",
+	metadataBase: new URL(domain),
+	openGraph: {
+		siteName: "Lakuna",
+		type: "website"
+	},
+	publisher: "Travis Martin",
+	title: {
+		default: "Page",
+		template: "%s | Lakuna"
+	},
+	twitter: {
+		creatorId: "1117270419298496513",
+		siteId: "1117270419298496513"
+	}
+};

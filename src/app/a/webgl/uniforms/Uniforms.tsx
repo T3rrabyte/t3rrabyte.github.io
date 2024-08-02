@@ -1,22 +1,23 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
-import AnimatedCanvas from "@lakuna/react-canvas";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
+import { Context, Ebo, Program, Vao, Vbo } from "@lakuna/ugl";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 
 void main() {
 	gl_Position = a_position;
-}`;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 uniform vec4 u_color;
 
@@ -24,34 +25,59 @@ out vec4 outColor;
 
 void main() {
 	outColor = u_color;
-}`;
+}
+`;
 
-const data: Float32Array = new Float32Array([0, 0.5, 0, 0, 0.7, 0, 0.7, 0.5]);
+const positionData = new Float32Array([
+	// Point 0 at (0, 0.5)
+	0, 0.5,
 
-const indices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
+	// Point 1 at (0, 0)
+	0, 0,
 
-export default function Uniforms(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
+	// Point 2 at (0.7, 0)
+	0.7, 0,
 
-		const buffer: Buffer = new Buffer(gl, data);
-		const vao: Vao = new Vao(
-			program,
-			[new BufferInfo("a_position", buffer, 2)],
-			indices
-		);
+	// Point 3 at (0.7, 0.5)
+	0.7, 0.5
+]);
 
-		return (): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0]);
+const indexData = new Uint8Array([
+	// Triangle 0
+	0, 1, 2,
 
-			vao.draw({ u_color: [1, 0, 0, 1] });
-		};
-	}, props);
+	// Triangle 1
+	0, 2, 3
+]);
+
+export default function Indices(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
+
+				const program = Program.fromSource(gl, vss, fss);
+
+				const positionBuffer = new Vbo(gl, positionData);
+				const indexBuffer = new Ebo(gl, indexData);
+
+				const rectVao = new Vao(
+					program,
+					// eslint-disable-next-line camelcase
+					{ a_position: { size: 2, vbo: positionBuffer } },
+					indexBuffer
+				);
+
+				return () => {
+					gl.resize();
+					gl.clear();
+					rectVao.draw({
+						// eslint-disable-next-line camelcase
+						u_color: [1, 0, 0, 1]
+					});
+				};
+			}}
+			{...props}
+		/>
+	);
 }

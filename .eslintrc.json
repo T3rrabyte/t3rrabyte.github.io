@@ -1,14 +1,43 @@
 {
+	"extends": [
+		"eslint:all",
+		"plugin:@typescript-eslint/strict-type-checked",
+		"plugin:@typescript-eslint/stylistic-type-checked",
+		"next/core-web-vitals",
+		"plugin:prettier/recommended"
+	],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": "latest",
-		"sourceType": "module"
+		"project": true,
+		"tsconfigRootDir": "."
 	},
 	"plugins": ["@typescript-eslint"],
-	"extends": [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"next",
-		"prettier"
-	]
+	"root": true,
+	"rules": {
+		"@typescript-eslint/no-shadow": "error",
+		"complexity": "off",
+		"id-length": "off",
+		"max-depth": "off",
+		"max-lines": "off",
+		"max-lines-per-function": "off",
+		"max-nested-callbacks": "off",
+		"max-params": "off",
+		"max-statements": "off",
+		"no-bitwise": "off",
+		"no-continue": "off",
+		"no-div-regex": "off",
+		"no-inline-comments": "off",
+		"no-label-var": "off",
+		"no-labels": "off",
+		"no-magic-numbers": "off",
+		"no-nested-ternary": "off",
+		"no-plusplus": "off",
+		"no-shadow": "off",
+		"no-ternary": "off",
+		"no-undef-init": "off",
+		"no-void": "off",
+		"no-warning-comments": "off",
+		"one-var": ["error", "never"]
+	}
 }

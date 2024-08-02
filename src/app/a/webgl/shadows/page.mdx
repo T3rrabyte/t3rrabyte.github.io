@@ -1,0 +1,84 @@
+---
+title: "Shadows"
+description: "An introduction to some techniques that are used to emulate shadows in WebGL."
+openGraph:
+  url: "/a/webgl/shadows"
+---
+
+import ShadowAcne from "./ShadowAcne.tsx";
+import ShadowMaps from "./ShadowMaps.tsx";
+
+# Shadows
+
+You may need to read the articles about [cubemaps](/a/webgl/cubemaps) and [framebuffers](/a/webgl/framebuffers) before this one.
+
+---
+
+## Shadow Maps
+
+The most common way to render shadows is with _shadow maps_, which are textures that contain depth data from the point of view of a light source. A shadow map can be created by rendering a scene to a framebuffer with a depth attachment from the point of view of the light source. The fragment's depth is stored in the first (`r`) channel of the depth texture.
+
+Any surface that falls within the frustum of the projection but has a lower depth value than the shadow map at that position is in shadow.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+in vec2 v_texcoord;
+in vec4 v_projTexcoord;
+
+uniform vec4 u_color;
+uniform sampler2D u_texture;
+uniform sampler2D u_projTexture;
+
+out vec4 outColor;
+
+void main() {
+	vec3 projTexcoord = v_projTexcoord.xyz / v_projTexcoord.w;
+	float depth = projTexcoord.z;
+
+	bool inShadow = projTexcoord.x >= 0.0
+		&& projTexcoord.x <= 1.0
+		&& projTexcoord.y >= 0.0
+		&& projTexcoord.y <= 1.0;
+
+	float projDepth = texture(u_projTexture, projTexcoord.xy).r;
+	float shadowLight = inShadow && projDepth <= depth ? 0.0 : 1.0;
+
+	outColor = texture(u_texture, v_texcoord) * u_color;
+	outColor.rgb *= shadowLight;
+}
+```
+
+<ShadowMaps style={{ width: "100%" }} />
+
+## Shadow Acne
+
+The strange patterns in the example above are called _shadow acne_ and are a result of the limited resolution of the shadow map causing surfaces to shade themselves. The visual effect of shadow acne can be mitigated by adding a bias to the calculated depth of each fragment.
+
+```glsl
+float depth = projTexcoord.z + u_bias;
+```
+
+The bias required to remove shadow acne from a surface depends on the angle from the light source to that surface, so varying the bias value based on that angle can improve the appearance of the scene.
+
+```glsl
+float bias =
+	max(u_biasFactor * (1.0 - dot(v_normal, u_lightDir)), u_biasMinimum);
+```
+
+Adding a bias can lead to an effect called _peter panning_ in which shadows appear to be slightly disjointed from their caster. The visual effect of peter panning can be mitigated by culling front faces when rendering the shadow map.
+
+<ShadowAcne style={{ width: "100%" }} />
+
+---
+
+This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+
+- [Shadows](https://xem.github.io/articles/webgl-guide-part-2.html#3b).
+- [Shadows Tutorial Continuation](https://github.com/gfxfundamentals/webgl2-fundamentals/issues/99).
+
+---
+
+The next article is about [fog](/a/webgl/fog).

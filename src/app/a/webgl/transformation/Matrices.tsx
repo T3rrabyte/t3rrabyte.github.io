@@ -1,93 +1,104 @@
 "use client";
 
-import { Context, Buffer, BufferInfo, Program, Vao } from "@lakuna/ugl";
-import AnimatedCanvas from "@lakuna/react-canvas";
+import { Context, Ebo, Program, Vao, Vbo } from "@lakuna/ugl";
 import {
+	createMatrix4Like,
 	ortho,
-	translate,
 	rotateZ,
 	scale,
-	type Matrix4Like
+	translate
 } from "@lakuna/umath/Matrix4";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 
 uniform mat4 u_matrix;
 
+out vec4 v_color;
+
 void main() {
 	gl_Position = u_matrix * a_position;
-}`;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 out vec4 outColor;
 
 void main() {
 	outColor = vec4(0, 0, 0, 1);
-}`;
+}
+`;
 
-const data: Float32Array = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
+const positionData = new Float32Array([
+	// Point 0 at (-1, 1)
+	-1, 1,
 
-const indices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
+	// Point 1 at (-1, -1)
+	-1, -1,
 
-const scalingSpeed = 0.001;
+	// Point 2 at (1, -1)
+	1, -1,
 
-export default function Matrices(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
+	// Point 3 at (1, 1)
+	1, 1
+]);
 
-		const buffer: Buffer = new Buffer(gl, data);
-		const vao: Vao = new Vao(
-			program,
-			[new BufferInfo("a_position", buffer, 2)],
-			indices
-		);
+const indexData = new Uint8Array([
+	// Triangle 0
+	0, 1, 2,
 
-		const matrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
-		let canvasMin = 0;
+	// Triangle 1
+	0, 2, 3
+]);
 
-		return (now: number): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0]);
+export default function Matrices(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
 
-			canvasMin = Math.min(canvas.width, canvas.height);
+				const program = Program.fromSource(gl, vss, fss);
 
-			ortho(
-				-canvas.width / 2,
-				canvas.width / 2,
-				-canvas.height / 2,
-				canvas.height / 2,
-				-1,
-				1,
-				matrix
-			);
-			rotateZ(matrix, now * 0.001, matrix);
-			translate(matrix, [100, 0, 0], matrix);
-			rotateZ(matrix, now * 0.002, matrix);
-			scale(
-				matrix,
-				[
-					((1 + Math.cos(now * scalingSpeed) / 2) * canvasMin) / 10,
-					((1 + Math.cos(now * scalingSpeed) / 2) * canvasMin) / 10,
-					1
-				],
-				matrix
-			);
+				const positionBuffer = new Vbo(gl, positionData);
+				const indexBuffer = new Ebo(gl, indexData);
 
-			vao.draw({ u_matrix: matrix });
-		};
-	}, props);
+				const rectVao = new Vao(
+					program,
+					// eslint-disable-next-line camelcase
+					{ a_position: { size: 2, vbo: positionBuffer } },
+					indexBuffer
+				);
+
+				const matrix = createMatrix4Like();
+
+				return (now) => {
+					gl.resize();
+					gl.clear();
+
+					const w = canvas.width;
+					const h = canvas.height;
+					ortho(-w / 2, w / 2, -h / 2, h / 2, -1, 1, matrix);
+					rotateZ(matrix, now * 0.001, matrix);
+					translate(matrix, [100, 0, 0], matrix);
+					rotateZ(matrix, now * 0.002, matrix);
+					const s = ((1 + Math.cos(now * 0.001) / 2) * Math.min(w, h)) / 10;
+					scale(matrix, [s, s, 1], matrix);
+
+					rectVao.draw({
+						// eslint-disable-next-line camelcase
+						u_matrix: matrix
+					});
+				};
+			}}
+			{...props}
+		/>
+	);
 }

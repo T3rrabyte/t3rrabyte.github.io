@@ -1,0 +1,113 @@
+---
+title: "Cubemaps"
+description: "An introduction to cubemaps in WebGL."
+openGraph:
+  url: "/a/webgl/cubemaps"
+---
+
+import EnvironmentMaps from "./EnvironmentMaps.tsx";
+import Skyboxes from "./Skyboxes.tsx";
+
+# Cubemaps
+
+You may need to read the articles about [lighting](/a/webgl/lighting) and [textures](/a/webgl/textures) before this one.
+
+---
+
+A _cubemap_ is a type of texture that consists of six faces, each referenced by their direction from the center of a cube. Cubemaps are sampled using normals that represent the direction from the origin to the desired texel (rather than texture coordinates). A cubemap can be sampled using a `samplerCube` variable.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+in vec3 v_normal;
+
+uniform samplerCube u_texture;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	outColor = texture(u_texture, normal);
+}
+```
+
+## Environment Maps
+
+The most common thing that cubemaps are used for are _environment maps_, which represent the environment of a scene. Environment maps are a way to approximate reflections. If a fragment shader knows the position and normal of its fragment relative to the origin, it can use the `reflect` function to calculate a reflection.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+in vec3 v_worldPos;
+in vec3 v_normal;
+
+uniform samplerCube u_texture;
+uniform vec3 u_camPos;
+
+out vec4 outColor;
+
+void main() {
+	vec3 normal = normalize(v_normal);
+	vec3 camToSurfaceDir = normalize(v_worldPos - u_camPos);
+	vec3 reflectDir = reflect(camToSurfaceDir, normal);
+	outColor = texture(u_texture, reflectDir);
+}
+```
+
+<EnvironmentMaps style={{ width: "100%" }} />
+
+You can find the source of the example texture [here](https://polyhaven.com/a/leadenhall_market).
+
+## Skyboxes
+
+A _skybox_ is a cubemap that represents the background of a scene (often a sky). Skyboxes can be implemented by using the inverse of the view projection matrix to sample the skybox onto a plane that covers the entire rendering context.
+
+The vertex shader should ensure that the skybox is always at the back of the depth buffer.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+
+out vec4 v_position;
+
+void main() {
+	gl_Position = a_position;
+	gl_Position.z = 1.0;
+
+	v_position = a_position;
+}
+```
+
+The skybox is treated as being infinitely far away from the camera, so calculations involving it should use a _view direction matrix_, which is a view matrix with the translation component removed.
+
+A fragment shader can multiply a fragment's position by the inverse of a _view direction projection matrix_ (a product of a projection matrix a view direction matrix) to undo it. Then, it needs to manually divide the `xyz` vector by `w` to apply perspective. The result can be sampled from the environment map to make a skybox.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+in vec4 v_position;
+
+uniform samplerCube u_texture;
+uniform mat4 u_inverseViewDirProjMat;
+
+out vec4 outColor;
+
+void main() {
+	vec4 t = u_inverseViewDirProjMat * v_position;
+	vec3 skyboxNormal = normalize(t.xyz / t.w);
+	outColor = texture(u_texture, skyboxNormal);
+}
+```
+
+<Skyboxes style={{ width: "100%" }} />
+
+---
+
+The next article is about [shadows](/a/webgl/shadows).

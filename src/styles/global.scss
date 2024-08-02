@@ -1,0 +1,111 @@
+@use "variables";
+@use "mixins";
+
+:root {
+	@include mixins.is-light-theme using ($is-light-theme) {
+		@if $is-light-theme {
+			--bg-color: #{variables.$cultured};
+			--fg-color: #{variables.$gainsboro};
+			--text-color: #{variables.$raisin-black};
+			--highlight-color: #{variables.$may-green};
+			--italic-color: #{variables.$dark-magenta};
+			--bold-color: #{variables.$sweet-brown};
+			color-scheme: light;
+		} @else {
+			--bg-color: #{variables.$raisin-black};
+			--fg-color: #{variables.$jet};
+			--text-color: #{variables.$silver-chalice};
+			--highlight-color: #{variables.$emerald};
+			--italic-color: #{variables.$light-salmon};
+			--bold-color: #{variables.$old-gold};
+			color-scheme: dark;
+		}
+	}
+
+	font-family: variables.$font-sans-serif;
+	color: variables.$text-color;
+	background-color: variables.$bg-color;
+	tab-size: 4;
+}
+
+a {
+	color: variables.$highlight-color;
+}
+
+b,
+strong {
+	color: variables.$bold-color;
+}
+
+blockquote {
+	font-family: variables.$font-serif;
+}
+
+body {
+	margin: 0px;
+}
+
+button {
+	color: variables.$text-color;
+	background-color: variables.$fg-color;
+	border: 1px solid variables.$text-color;
+	border-radius: 10px;
+	padding: 6px 8px;
+
+	&:hover {
+		color: variables.$fg-color;
+		background-color: variables.$text-color;
+		border: 1px solid variables.$fg-color;
+	}
+}
+
+caption {
+	color: variables.$highlight-color;
+}
+
+code {
+	font-family: variables.$font-monospace;
+
+	*:not(pre) > & {
+		background-color: variables.$fg-color;
+		padding: 2px;
+	}
+}
+
+em,
+i {
+	color: variables.$italic-color;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: variables.$highlight-color;
+}
+
+hr {
+	border-color: variables.$highlight-color;
+}
+
+main {
+	margin: 8px;
+}
+
+pre {
+	font-family: variables.$font-monospace;
+}
+
+samp {
+	font-family: variables.$font-monospace;
+}
+
+table,
+th,
+td {
+	border: 1px solid variables.$highlight-color;
+	border-collapse: collapse;
+	padding: 5px;
+}

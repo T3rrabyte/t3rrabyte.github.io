@@ -1,0 +1,24 @@
+---
+title: "Scene Graph"
+description: "An introduction to the scene graph data structure as it relates to OpenGL."
+openGraph:
+  url: "/a/webgl/scene-graph"
+---
+
+import SceneGraph from "./SceneGraph.tsx";
+
+# Scene Graph
+
+You may need to read [the article about transformation](/a/webgl/transformation) before this one.
+
+---
+
+A _scene graph_ is a general data structure that arranges the logical representation of a graphical scene. It is a collection of nodes in a tree structure, with each node having one parent and a non-negative number of children. Only the top node has no parent.
+
+Each node's transformation matrix is multiplied by all of its ancestors' to generate its _world matrix_, which represents its actual position in a scene relative to the origin. The transformation matrix represents its position relative to its parent.
+
+<SceneGraph style={{ width: "100%" }} />
+
+---
+
+The next article is about [3D](/a/webgl/3d).

@@ -1,143 +1,80 @@
-import DynamicLink from "#DynamicLink";
-import Image from "next/image";
-import CardList from "#CardList";
 import Card from "#Card";
-import prepareModeratelyPreview from "./prepare-moderately.png";
-import SpecularLighting from "#app/a/webgl/lighting/SpecularLighting.tsx";
-import generateMetadata from "#generateMetadata";
-import codehsPreview from "./codehs.png";
-import pdxPreview from "./pdx.png";
-import type { JSX } from "react";
+import CardList from "#CardList";
+import Image from "#Image";
+import Link from "#Link";
+import PhongLighting from "../a/webgl/lighting/PhongLighting";
+import codehsLogo from "./codehs.png";
 
-export default function page(): JSX.Element {
+export default function Page() {
 	return (
 		<>
-			<h1>Portfolio</h1>
+			<h1>{"Portfolio"}</h1>
 			<p>
-				You can find more of my code on{" "}
-				<DynamicLink href="https://github.com/Lakuna">
-					my GitHub account
-				</DynamicLink>
-				.
+				{"You can find more of my code on "}
+				<Link href="https://github.com/Lakuna">{"my GitHub account"}</Link>
+				{" and my work history on "}
+				<Link href="https://www.linkedin.com/in/t-j-m/">
+					{"my LinkedIn account"}
+				</Link>
+				{"."}
 			</p>
-			<h2>Projects</h2>
+			<h2>{"Projects"}</h2>
 			<CardList>
-				<Card>
-					<h3>μGL</h3>
-					<SpecularLighting style={{ width: "100%" }} />
-					<p>A lightweight visual application framework for WebGL2.</p>
+				<Card href="https://ugl.lakuna.pw/">
+					<h3>{"μGL"}</h3>
+					<PhongLighting style={{ width: "100%" }} />
 					<p>
-						Written in <strong>TypeScript</strong>.
+						{
+							"A low-level WebGL2 library that is designed to simplify the developer experience and reduce unnecessary calls to the GPU."
+						}
 					</p>
-					<p>
-						The source code is available on{" "}
-						<DynamicLink href="https://github.com/Lakuna/ugl">
-							its GitHub repository
-						</DynamicLink>
-						, and the documentation is on{" "}
-						<DynamicLink href="https://ugl.lakuna.pw/">its website</DynamicLink>
-						.
-					</p>
+					<ul>
+						<li>{"Automatically disregards redundant API calls."}</li>
+						<li>
+							{"Completely abstracts away the management of binding points."}
+						</li>
+						<li>
+							{
+								"Provides sensible default parameters to simplify common operations."
+							}
+						</li>
+						<li>{"Hides vestigial parameters."}</li>
+						<li>{"More completely documented than the WebGL2 API."}</li>
+					</ul>
 				</Card>
-				<Card>
-					<h3>μMath</h3>
-					<p>A lightweight math library.</p>
-					<p>
-						Written in <strong>TypeScript</strong>.
-					</p>
-					<p>
-						The source code is available on{" "}
-						<DynamicLink href="https://github.com/Lakuna/umath">
-							its GitHub repository
-						</DynamicLink>
-						, and the documentation is on{" "}
-						<DynamicLink href="https://umath.lakuna.pw/">
-							its website
-						</DynamicLink>
-						.
-					</p>
+				<Card href="https://umath.lakuna.pw/">
+					<h3>{"μMath"}</h3>
+					<p>{"A math library that includes a variety of common functions."}</p>
+					<ul>
+						<li>
+							{
+								"Includes a fast linear algebra API that is optimized for physics- and graphics-related operations."
+							}
+						</li>
+						<li>
+							{
+								"Includes a slow linear algebra API that is optimized for developer experience."
+							}
+						</li>
+					</ul>
 				</Card>
-				<Card>
-					<h3>My website</h3>
+				<Card href="https://codehs.com/">
+					<h3>{"CodeHS"}</h3>
+					<Image src={codehsLogo} alt="The CodeHS logo." />
 					<p>
-						This website, which has gone through several iterations since it was
-						first put online on <time>November 13, 2017</time>.
+						{
+							"I worked as an intern at CodeHS where, among other things, I implemented the Scratch sandbox, which is used to start teaching children how to code."
+						}
 					</p>
 					<p>
-						Written in <strong>TypeScript</strong>, <strong>JSX</strong>, and{" "}
-						<strong>Sass</strong> with{" "}
-						<DynamicLink href={"https://nextjs.org/"}>Next.js</DynamicLink> and{" "}
-						<DynamicLink href={"https://reactjs.org/"}>React</DynamicLink>.
+						{
+							"Other projects that I made significant contributions to include the new sidebar, user settings page, and course completion certificates."
+						}
 					</p>
 					<p>
-						The source code is available on{" "}
-						<DynamicLink href="https://github.com/Lakuna/Lakuna.github.io">
-							its GitHub repository
-						</DynamicLink>
-						.
-					</p>
-				</Card>
-				<Card>
-					<h3>CodeHS</h3>
-					<Image
-						src={codehsPreview}
-						alt="CodeHS preview."
-						style={{ width: "100%", height: "auto" }}
-						placeholder="blur"
-					/>
-					<p>
-						I worked at{" "}
-						<DynamicLink href="https://codehs.com/">CodeHS</DynamicLink> as an
-						intern. The majority of my work was done in <strong>Python</strong>,
-						but parts also used <strong>JavaScript</strong> and{" "}
-						<strong>TypeScript</strong>.
-					</p>
-				</Card>
-				<Card>
-					<h3>PDX</h3>
-					<div style={{ textAlign: "center" }}>
-						<Image
-							src={pdxPreview}
-							alt="PDX preview."
-							style={{ width: "50%", height: "auto" }}
-							placeholder="blur"
-						/>
-					</div>
-					<p>
-						I worked at PDX as an intern. All of my work was done in{" "}
-						<strong>Java</strong>.
-					</p>
-				</Card>
-				<Card>
-					<h3>Prepare Moderately</h3>
-					<Image
-						src={prepareModeratelyPreview}
-						alt="Prepare Moderately preview."
-						style={{ width: "100%", height: "auto" }}
-						placeholder="blur"
-					/>
-					<p>
-						A mod for the real-time strategy game{" "}
-						<DynamicLink href="https://rimworldgame.com/">RimWorld</DynamicLink>
-						.
-					</p>
-					<p>
-						Written in <strong>C#</strong> with{" "}
-						<DynamicLink href="https://github.com/pardeike/Harmony">
-							Harmony
-						</DynamicLink>
-						.
-					</p>
-					<p>
-						The source code is available on{" "}
-						<DynamicLink href="https://github.com/Lakuna/RimWorld-Prepare-Moderately">
-							its GitHub repository
-						</DynamicLink>
-						, and it can be downloaded from{" "}
-						<DynamicLink href="https://steamcommunity.com/sharedfiles/filedetails/?id=2057362949">
-							its Steam Workshop page
-						</DynamicLink>
-						.
+						{
+							"Fun fact: I chose the line that is displayed on the header of the CodeHS landing page."
+						}
 					</p>
 				</Card>
 			</CardList>
@@ -145,9 +82,8 @@ export default function page(): JSX.Element {
 	);
 }
 
-export const metadata = generateMetadata(
-	"Portfolio | Lakuna",
-	"Travis Martin's software development portfolio.",
-	"/favicon.png",
-	"/portfolio"
-);
+export const metadata = {
+	description: "Travis Martin's portfolio.",
+	openGraph: { url: "/portfolio" },
+	title: "Portfolio"
+};

@@ -1,0 +1,95 @@
+---
+title: "Program Structure"
+description: "A reference page for the typical structure of a program that uses OpenGL."
+openGraph:
+  url: "/a/webgl/program-structure"
+---
+
+# Program Structure
+
+You may need to read [the article about shaders](/a/webgl/shaders) before this one.
+
+---
+
+OpenGL (and, by extension, WebGL) is a state machine. The collection of variables that define how OpenGL should operate is commonly referred to as the OpenGL _context_. The majority of the calls to the OpenGL API are to change its state, with only a few final calls being made to actually render that state.
+
+## Initialization Step
+
+The _initialization step_ is executed once at the beginning of the program. It is typically used to get the rendering context, compile shaders, link shader programs, and prepare static data.
+
+## Render Step
+
+The _render step_ is executed once per _frame_ (framebuffer). The _frame rate_ is the rate at which the framebuffer is written to.
+
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the canvas in the ranges $[0,x]$ and $[0,y]$ on the horizontal and vertical axes, respectively, where $x$ is the width of the rendering context in fragments and $y$ is the height of the rendering context in fragments. The negative boundaries for each direction are left and up, respectively. In other words, the viewport determines how clip space coordinates are mapped to fragments.
+
+The render step is typically used to modify the context and rasterize.
+
+The [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) function can be used to execute the render step as fast as the GPU is able to. Since the frame rate depends on the user's hardware, it is sometimes necessary to calculate it to make animations consistent across all devices.
+
+```js
+let then = 0;
+
+function renderStep(now) {
+	requestAnimationFrame(renderStep);
+
+	const deltaTime = now - then;
+	then = now;
+	const frameRate = 1000 / deltaTime;
+}
+requestAnimationFrame(renderStep);
+```
+
+### Resizing the Viewport
+
+Every canvas has two sizes: the physical size of the canvas in pixels and the size of the draw buffer in fragments. If the size of the draw buffer does not match the physical size of the canvas, the size of fragments will differ from the size of pixels, causing the rendered primitives to appear blurry and/or stretched. Therefore, it is a good idea to resize the draw buffer every frame in case the physical size of the canvas changes.
+
+If the size of the viewport is smaller than that of the draw buffer, only part of the canvas will be utilized. If the size of the viewport is larger than that of the draw buffer, only part of the draw buffer will be utilized. In most cases, it is a good idea to resize the viewport every frame to match the size of the draw buffer (and, by extension, the canvas).
+
+```js
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+
+gl.viewport(0, 0, canvas.width, canvas.height);
+```
+
+### Clearing Color Buffers
+
+Before rendering a new frame, the draw buffer should be cleared of the fragments from the previous frame. A value can be set for fragments in the draw buffer to be cleared to with [`clearColor`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clearColor). WebGL can be told which buffers to clear with [`clear`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clear).
+
+```js
+gl.clearColor(0, 0, 0, 0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+```
+
+## Cheat Sheet
+
+A typical program that uses the OpenGL API follows this structure:
+
+- Initialization step:
+  - Create static data.
+  - Create the context.
+  - Compile shaders.
+  - Link shader programs.
+  - Look up variable locations.
+  - Create and fill buffers.
+  - Create VAOs. For each attribute in each VAO:
+    - Enable the attribute.
+    - Bind a buffer to the attribute.
+    - Specify the layout of the buffer.
+  - Create and fill textures.
+- Render step:
+  - Resize the drawing buffer.
+  - Set global state.
+  - Clear framebuffers.
+  - For each object in the scene:
+    - Update global state.
+    - Use its shader program.
+    - Bind its VAO.
+    - Set uniform values.
+    - Assign textures to texture units.
+    - Render.
+
+---
+
+The next article is about [attributes](/a/webgl/attributes).

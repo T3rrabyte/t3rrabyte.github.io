@@ -1,0 +1,9 @@
+form.hyper-geo-calc {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 10px;
+
+	& > label {
+		text-align: right;
+	}
+}

@@ -1,37 +1,31 @@
 "use client";
 
-import {
-	Context,
-	Buffer,
-	BufferInfo,
-	Program,
-	Texture2d,
-	Vao
-} from "@lakuna/ugl";
-import { identity, scale, type Matrix4Like } from "@lakuna/umath/Matrix4";
-import AnimatedCanvas from "@lakuna/react-canvas";
+import { Context, Ebo, Program, Texture2d, Vao, Vbo } from "@lakuna/ugl";
+import { createMatrix4Like, identity, scale } from "@lakuna/umath/Matrix4";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
-import type { CanvasHTMLAttributes, DetailedHTMLProps, JSX } from "react";
 
-const vss: string = `\
+const vss = `\
 #version 300 es
 
 in vec4 a_position;
 in vec2 a_texcoord;
 
-uniform mat4 u_matrix;
+uniform mat4 u_world;
 
 out vec2 v_texcoord;
 
 void main() {
-	gl_Position = u_matrix * a_position;
+	gl_Position = u_world * a_position;
 	v_texcoord = a_texcoord;
-}`;
+}
+`;
 
-const fss: string = `\
+const fss = `\
 #version 300 es
 
-precision highp float;
+precision mediump float;
 
 in vec2 v_texcoord;
 
@@ -41,58 +35,63 @@ out vec4 outColor;
 
 void main() {
 	outColor = texture(u_texture, v_texcoord);
-}`;
+}
+`;
 
-const positionData: Float32Array = new Float32Array([
-	-1, 1, -1, -1, 1, -1, 1, 1
-]);
+const positionData = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
 
-const texcoordData: Float32Array = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
+const texcoordData = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
 
-const indices: Uint8Array = new Uint8Array([0, 1, 2, 0, 2, 3]);
+const indexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
 
-export default function Textures(
-	props: DetailedHTMLProps<
-		CanvasHTMLAttributes<HTMLCanvasElement>,
-		HTMLCanvasElement
-	>
-): JSX.Element {
-	return AnimatedCanvas((canvas: HTMLCanvasElement): FrameRequestCallback => {
-		const gl: Context = new Context(canvas);
-		const program: Program = Program.fromSource(gl, vss, fss);
+export default function Textures(props: Props<HTMLCanvasElement>) {
+	return (
+		<ReactCanvas
+			init={(canvas) => {
+				const gl = new Context(canvas);
 
-		const positionBuffer: Buffer = new Buffer(gl, positionData);
-		const texcoordBuffer: Buffer = new Buffer(gl, texcoordData);
-		const vao: Vao = new Vao(
-			program,
-			[
-				new BufferInfo("a_position", positionBuffer, 2),
-				new BufferInfo("a_texcoord", texcoordBuffer, 2)
-			],
-			indices
-		);
+				const program = Program.fromSource(gl, vss, fss);
 
-		const texture: Texture2d = Texture2d.fromImageUrl(
-			gl,
-			`${domain}images/webgl-example-texture.png`
-		);
+				const positionBuffer = new Vbo(gl, positionData);
+				const texcoordBuffer = new Vbo(gl, texcoordData);
+				const indexBuffer = new Ebo(gl, indexData);
 
-		const matrix: Matrix4Like = new Float32Array(16) as Matrix4Like;
+				const planeVao = new Vao(
+					program,
+					{
+						// eslint-disable-next-line camelcase
+						a_position: { size: 2, vbo: positionBuffer },
+						// eslint-disable-next-line camelcase
+						a_texcoord: { size: 2, vbo: texcoordBuffer }
+					},
+					indexBuffer
+				);
 
-		return (): void => {
-			gl.resize();
-			gl.clear([0, 0, 0, 0]);
+				const texture = Texture2d.fromImageUrl(
+					gl,
+					`${domain}/images/webgl-example-texture.png`
+				);
 
-			identity(matrix);
-			scale(
-				matrix,
-				canvas.width > canvas.height
-					? [canvas.height / (canvas.width || 1), 1, 1]
-					: [1, canvas.width / (canvas.height || 1), 1],
-				matrix
-			);
+				const matrix = createMatrix4Like();
 
-			vao.draw({ u_matrix: matrix, u_texture: texture });
-		};
-	}, props);
+				return () => {
+					gl.resize();
+					gl.clear();
+
+					identity(matrix);
+					const w = canvas.width;
+					const h = canvas.height;
+					scale(
+						matrix,
+						w > h ? [h / (w || 1), 1, 1] : [1, w / (h || 1), 1],
+						matrix
+					);
+
+					// eslint-disable-next-line camelcase
+					planeVao.draw({ u_texture: texture, u_world: matrix });
+				};
+			}}
+			{...props}
+		/>
+	);
 }

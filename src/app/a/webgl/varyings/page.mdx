@@ -1,0 +1,54 @@
+---
+title: "Varyings"
+description: "An introduction to varyings in WebGL."
+openGraph:
+  url: "/a/webgl/varyings"
+---
+
+import Varyings from "./Varyings.tsx";
+
+# Varyings
+
+You may need to read [the article about attributes](/a/webgl/attributes) before this one.
+
+---
+
+Another way to pass data to the GPU is with _varyings_, which are variables that vary between vertices. They are outputs from vertex shaders and inputs to fragment shaders, so they are declared using the `out` and `in` keywords, respectively.
+
+A varying must be declared in both the vertex shader and the fragment shader.
+
+```glsl
+#version 300 es
+
+in vec4 a_position;
+in vec4 a_color;
+
+out vec4 v_color;
+
+void main() {
+	gl_Position = a_position;
+	v_color = a_color;
+}
+```
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+in vec4 v_color;
+
+out vec4 outColor;
+
+void main() {
+	outColor = v_color;
+}
+```
+
+The value of the varying for a fragment is interpolated between the values passed to that varying from the vertices in the primitive that contains it. This process is called _fragment interpolation_.
+
+<Varyings style={{ width: "100%" }} />
+
+---
+
+The next article covers [transformation](/a/webgl/transformation).
