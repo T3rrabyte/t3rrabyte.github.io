@@ -7,7 +7,6 @@ import {
 	fromTranslation,
 	identity,
 	invert,
-	multiply,
 	perspective,
 	rotateX,
 	rotateY,
@@ -22,12 +21,16 @@ const vss = `\
 in vec4 a_position;
 in vec4 a_color;
 
-uniform mat4 u_world;
+uniform mat4 u_projMat;
+uniform mat4 u_viewMat;
+uniform mat4 u_worldMat;
 
 out vec4 v_color;
+out vec4 v_worldViewPos;
 
 void main() {
-	gl_Position = u_world * a_position;
+	v_worldViewPos = u_viewMat * u_worldMat * a_position;
+	gl_Position = u_projMat * v_worldViewPos;
 	v_color = a_color;
 }
 `;
@@ -38,11 +41,18 @@ const fss = `\
 precision mediump float;
 
 in vec4 v_color;
+in vec4 v_worldViewPos;
+
+uniform vec4 u_fogColor;
+uniform float u_fogNear;
+uniform float u_fogFar;
 
 out vec4 outColor;
 
 void main() {
-	outColor = v_color;
+	float fogDepth = length(v_worldViewPos);
+	float fogAmount = smoothstep(u_fogNear, u_fogFar, fogDepth);
+	outColor = mix(v_color, u_fogColor, fogAmount);
 }
 `;
 
@@ -85,7 +95,7 @@ const colorData = new Uint8Array([
 	160, 160, 220
 ]);
 
-export default function Cameras(props: Props<HTMLCanvasElement>) {
+export default function Fog(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
@@ -103,7 +113,7 @@ export default function Cameras(props: Props<HTMLCanvasElement>) {
 					a_position: positionBuffer
 				});
 
-				const matrices: Matrix4Like[] = [];
+				const matrices: (Float32Array & Matrix4Like)[] = [];
 				for (let i = 0; i < 5; i++) {
 					const r = (i * Math.PI * 2) / 5;
 					const s = Math.sin(r);
@@ -116,7 +126,6 @@ export default function Cameras(props: Props<HTMLCanvasElement>) {
 				const proj = createMatrix4Like();
 				const cam = createMatrix4Like();
 				const view = createMatrix4Like();
-				const viewProj = createMatrix4Like();
 
 				return (now) => {
 					gl.resize();
@@ -132,13 +141,22 @@ export default function Cameras(props: Props<HTMLCanvasElement>) {
 					rotateX(cam, (Math.PI * 9) / 10, cam);
 					translate(cam, [0, 0, 500], cam);
 					invert(cam, view);
-					multiply(proj, view, viewProj);
 
 					for (const matrix of matrices) {
-						multiply(viewProj, matrix, cam);
-
-						// eslint-disable-next-line camelcase
-						fVao.draw({ u_world: cam });
+						fVao.draw({
+							// eslint-disable-next-line camelcase
+							u_fogColor: [0, 0, 0, 0],
+							// eslint-disable-next-line camelcase
+							u_fogFar: 500,
+							// eslint-disable-next-line camelcase
+							u_fogNear: 300,
+							// eslint-disable-next-line camelcase
+							u_projMat: proj,
+							// eslint-disable-next-line camelcase
+							u_viewMat: view,
+							// eslint-disable-next-line camelcase
+							u_worldMat: matrix
+						});
 					}
 				};
 			}}

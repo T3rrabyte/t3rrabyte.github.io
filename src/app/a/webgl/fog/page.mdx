@@ -5,16 +5,39 @@ openGraph:
   url: "/a/webgl/fog"
 ---
 
+import Fog from "./Fog.tsx";
+
 # Fog
 
 You may need to read the articles about [3D](/a/webgl/3d) and [varyings](/a/webgl/varings) before this one.
 
 ---
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+Fog can be emulated by mixing the output color with a fog color **that matches the background color**.
 
-- [Fog](https://webgl2fundamentals.org/webgl/lessons/webgl-fog.html).
-- [Fog](https://xem.github.io/articles/webgl-guide-part-2.html#4a).
+```glsl
+outColor = mix(u_color, u_fogColor, u_fogAmount);
+```
+
+_Distance fog_ is used to obscure the far end of the camera's view frustum so that the scene doesn't appear to end abruptly. The depth of each fragment can be determined by first multiplying its position by a _world view matrix_.
+
+```glsl
+v_worldViewPos = u_view * u_world * a_position;
+```
+
+Since this position is relative to the camera, the magnitude of the vector is equivalent to the fragment's distance from the camera.
+
+```glsl
+float fogDepth = length(v_worldViewPos);
+```
+
+The depth fog can easily be given a starting and ending distance using the built-in `smoothstep` function.
+
+```glsl
+float fogAmount = smoothstep(u_fogNear, u_fogFar, fogDepth);
+```
+
+<Fog style={{ width: "100%" }} />
 
 ---
 
