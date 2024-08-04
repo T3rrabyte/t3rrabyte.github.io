@@ -5,16 +5,35 @@ openGraph:
   url: "/a/webgl/transparency"
 ---
 
+import Blending from "./Blending.tsx";
+
 # Transparency
 
 You may need to read [the article about 3D](/a/webgl/3d) before this one.
 
 ---
 
-This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+By default, when drawing a transparent primitive in WebGL, the primitive's color will be blended with the background color of the DOM (not of the canvas) based on its alpha value. This can be changed by enabling _blending_.
 
-- [Text textures](https://webgl2fundamentals.org/webgl/lessons/webgl-text-texture.html)
-- [Transparency and alpha blending](https://xem.github.io/articles/webgl-guide-part-2.html#1a).
+```js
+gl.enable(gl.BLEND);
+```
+
+The behavior of blending can be modified by changing the _blend function_. For example, for a fragment color $f$, a background color $b$, and an alpha value $a$, the blended color can be set to $fa+b(1-a)$ by using `SRC_ALPHA` as the source blending factor and `ONE_MINUS_SRC_ALPHA` as the destination blending factor.
+
+```js
+gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+```
+
+<Blending style={{ width: "100%" }} />
+
+When rendering multiple layered transparent primitives, the final fragment color will only be correct if the primitives are rendered in order from farthest to nearest. For this reason, it is typical to first render all of the transparent objects in the scene in order from farthest to nearest, then to render all of the opaque objects in a scene in order from nearest to farthest. For 3D transparent objects, the depth test and polygon culling need to be disabled so that the far side of the object is rendered.
+
+If you attempt to load an image with transparency into a texture, WebGL will set the alpha value to `1.0` by default. One alternative to this behavior is to enable _alpha premultiplication_, which causes each of the `rgb` channels to be multiplied by the alpha value when the image is loaded.
+
+```js
+gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+```
 
 ---
 
