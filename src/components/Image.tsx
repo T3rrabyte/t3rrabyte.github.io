@@ -45,7 +45,7 @@ export type PlainImageProps = DetailedHTMLProps<
 export default function Image({
 	alt = "",
 	src,
-	style = { height: "auto", width: "100%" },
+	style = {},
 	width,
 	height,
 	...props
@@ -65,6 +65,10 @@ export default function Image({
 			: typeof height === "string"
 				? parseInt(height, 10)
 				: void 0;
+	style.display ??= "block";
+	style.height ??= "auto";
+	style.margin ??= "auto";
+	style.width ??= "100%";
 
 	return (
 		<NextImage

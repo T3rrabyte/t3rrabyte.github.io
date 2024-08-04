@@ -30,6 +30,7 @@ export default function Page() {
 					<Image
 						src={victoryScreen}
 						alt="The victory cutscene in The Dungeon."
+						style={{ width: "75%" }}
 					/>
 				</Card>
 				<Card href="/a/q_rsqrt">

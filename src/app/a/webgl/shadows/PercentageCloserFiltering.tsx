@@ -3,6 +3,7 @@
 import {
 	Context,
 	Ebo,
+	Face,
 	Framebuffer,
 	FramebufferAttachment,
 	Primitive,
@@ -60,20 +61,29 @@ in vec4 v_projTexcoord;
 uniform vec4 u_color;
 uniform sampler2D u_texture;
 uniform sampler2D u_projTexture;
+uniform float u_bias;
 
 out vec4 outColor;
 
 void main() {
 	vec3 projTexcoord = v_projTexcoord.xyz / v_projTexcoord.w;
-	float depth = projTexcoord.z;
+	float depth = projTexcoord.z + u_bias;
 
 	bool inShadow = projTexcoord.x >= 0.0
 		&& projTexcoord.x <= 1.0
 		&& projTexcoord.y >= 0.0
 		&& projTexcoord.y <= 1.0;
 
-	float projDepth = texture(u_projTexture, projTexcoord.xy).r;
-	float shadowLight = inShadow && projDepth <= depth ? 0.0 : 1.0;
+	float shadowLight = 0.0;
+	vec2 texelSize = 1.0 / vec2(textureSize(u_projTexture, 0));
+	for (int x = -1; x <= 1; x++) {
+		for (int y = -1; y <= 1; y++) {
+			float projDepth = texture(u_projTexture,
+				projTexcoord.xy + vec2(x, y) * texelSize).r;
+			shadowLight += inShadow && projDepth <= depth ? 0.0 : 1.0;
+		}
+	}
+	shadowLight /= 9.0;
 
 	outColor = texture(u_texture, v_texcoord) * u_color;
 	outColor.rgb *= shadowLight;
@@ -130,7 +140,7 @@ const frustumIndexData = new Uint8Array([
 	0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 1, 5, 3, 7, 2, 6
 ]);
 
-export default function ShadowMaps(props: Props<HTMLCanvasElement>) {
+export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
@@ -260,6 +270,7 @@ export default function ShadowMaps(props: Props<HTMLCanvasElement>) {
 
 					gl.fitViewport(framebuffer);
 					gl.doCullFace = true;
+					gl.cullFace = Face.FRONT;
 					gl.doDepthTest = true;
 					gl.clear(true, true, false, framebuffer);
 
@@ -281,10 +292,13 @@ export default function ShadowMaps(props: Props<HTMLCanvasElement>) {
 
 					gl.fitViewport();
 					gl.doCullFace = true;
+					gl.cullFace = Face.BACK;
 					gl.doDepthTest = true;
 					gl.clear();
 
 					planeVao.draw({
+						// eslint-disable-next-line camelcase
+						u_bias: 0.008,
 						// eslint-disable-next-line camelcase
 						u_color: [1, 0, 0, 1],
 						// eslint-disable-next-line camelcase
@@ -300,6 +314,8 @@ export default function ShadowMaps(props: Props<HTMLCanvasElement>) {
 					});
 
 					cubeVao.draw({
+						// eslint-disable-next-line camelcase
+						u_bias: 0.012,
 						// eslint-disable-next-line camelcase
 						u_color: [0, 1, 0, 1],
 						// eslint-disable-next-line camelcase

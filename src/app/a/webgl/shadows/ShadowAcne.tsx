@@ -19,6 +19,7 @@ import {
 	identity,
 	invert,
 	multiply,
+	ortho,
 	perspective,
 	rotateX,
 	rotateY,
@@ -205,7 +206,7 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 
 				const projTexture = new Texture2d(gl);
 				projTexture.format = TextureFormat.DEPTH_COMPONENT32F;
-				projTexture.setMip(void 0, 0, void 0, [0, 0, 0x400, 0x400]);
+				projTexture.setMip(void 0, 0, void 0, [0, 0, 0x80, 0x80]);
 				projTexture.minFilter = TextureFilter.NEAREST;
 				projTexture.magFilter = TextureFilter.NEAREST;
 
@@ -217,9 +218,12 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 				const cubeMat = identity(createMatrix4Like());
 				scale(cubeMat, [0.1, 0.1, 0.1], cubeMat);
 				translate(cubeMat, [1, 2, 1], cubeMat);
-				const lightProjMat = perspective(
-					Math.PI / 10,
-					1,
+				rotateY(cubeMat, Math.PI / 4, cubeMat);
+				const lightProjMat = ortho(
+					-0.5,
+					0.5,
+					-0.5,
+					0.5,
 					1,
 					3,
 					createMatrix4Like()
@@ -286,7 +290,7 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 
 					planeVao.draw({
 						// eslint-disable-next-line camelcase
-						u_bias: 0.001,
+						u_bias: 0.005,
 						// eslint-disable-next-line camelcase
 						u_color: [1, 0, 0, 1],
 						// eslint-disable-next-line camelcase
@@ -303,7 +307,7 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 
 					cubeVao.draw({
 						// eslint-disable-next-line camelcase
-						u_bias: 0.002,
+						u_bias: 0.005,
 						// eslint-disable-next-line camelcase
 						u_color: [0, 1, 0, 1],
 						// eslint-disable-next-line camelcase

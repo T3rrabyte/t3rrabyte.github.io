@@ -13,7 +13,7 @@ You may need to read [the article about textures](/a/webgl/textures) before this
 
 ---
 
-A framebuffer can be thought of as a collection of attachments, where each attachment is a buffers with a specific purpose. They can be used to render to textures and _renderbuffers_, which are objects that contain images. Renderbuffers differ from textures in that they support more formats but can't be sampled. Renderbuffers also support _multisampling_, which is a process for reducing _aliasing_, which is an effect that reduces the quality of images that are under-sampled. This means that multisampling is a form of _antialiasing_. As the name implies, renderbuffers are optimized for use as render targets.
+A framebuffer can be thought of as a collection of attachments, where each attachment is a buffers with a specific purpose. They can be used to render to textures and _renderbuffers_, which are objects that contain images. Renderbuffers differ from textures in that they support more formats but can't be sampled. Renderbuffers also support _multisampling_, which is a process for reducing _aliasing_, which is an effect that reduces the quality of images that are under-sampled. This means that multisampling is a form of _anti-aliasing_. As the name implies, renderbuffers are optimized for use as render targets.
 
 A [`WebGLRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderbuffer) can be created with [`createRenderbuffer`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/createRenderbuffer).
 
