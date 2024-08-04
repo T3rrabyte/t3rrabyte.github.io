@@ -31,11 +31,28 @@ Since this position is relative to the camera, the magnitude of the vector is eq
 float fogDepth = length(v_worldViewPos);
 ```
 
+On a low-powered GPU, `gl_FragCoord.z` can be used instead to get a cheap approximation of the fragment's distance from the camera.
+
 The depth fog can easily be given a starting and ending distance using the built-in `smoothstep` function.
 
 ```glsl
 float fogAmount = smoothstep(u_fogNear, u_fogFar, fogDepth);
 ```
+
+To make the fog look more realistic, it can instead be given an exponential thickness.
+
+```glsl
+float fogDensity2 = u_fogDensity * u_fogDensity;
+float fogDepth2 = fogDepth * fogDepth;
+float fogAmount = 1.0 - exp2(-fogDensity2 * fogDepth2 * 1.442695);
+fogAmount = clamp(fogAmount, 0.0, 1.0);
+```
+
+The constant `1.442695` comes from the formula for converting between the binary logarithm and the natural logarithm.
+
+$$
+\log_2n\approx1.442695\ln{n}
+$$
 
 <Fog style={{ width: "100%" }} />
 

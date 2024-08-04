@@ -44,14 +44,13 @@ in vec4 v_color;
 in vec4 v_worldViewPos;
 
 uniform vec4 u_fogColor;
-uniform float u_fogNear;
-uniform float u_fogFar;
+uniform float u_fogDensity;
 
 out vec4 outColor;
 
 void main() {
 	float fogDepth = length(v_worldViewPos);
-	float fogAmount = smoothstep(u_fogNear, u_fogFar, fogDepth);
+	float fogAmount = clamp(1.0 - exp2(-u_fogDensity * u_fogDensity * fogDepth * fogDepth * 1.442695), 0.0, 1.0);
 	outColor = mix(v_color, u_fogColor, fogAmount);
 }
 `;
@@ -147,9 +146,7 @@ export default function Fog(props: Props<HTMLCanvasElement>) {
 							// eslint-disable-next-line camelcase
 							u_fogColor: [0, 0, 0, 0],
 							// eslint-disable-next-line camelcase
-							u_fogFar: 500,
-							// eslint-disable-next-line camelcase
-							u_fogNear: 300,
+							u_fogDensity: 0.003,
 							// eslint-disable-next-line camelcase
 							u_projMat: proj,
 							// eslint-disable-next-line camelcase
