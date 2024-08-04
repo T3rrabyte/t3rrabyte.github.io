@@ -73,7 +73,7 @@ void main() {
 		&& projTexcoord.y <= 1.0;
 
 	float projDepth = texture(u_projTexture, projTexcoord.xy).r;
-	float shadowLight = inShadow && projDepth <= depth ? 0.0 : 1.0;
+	float shadowLight = inShadow && projDepth <= depth ? 0.2 : 1.0;
 
 	outColor = texture(u_texture, v_texcoord) * u_color;
 	outColor.rgb *= shadowLight;

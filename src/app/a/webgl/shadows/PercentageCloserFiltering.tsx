@@ -16,6 +16,7 @@ import {
 } from "@lakuna/ugl";
 import {
 	createMatrix4Like,
+	getTranslation,
 	identity,
 	invert,
 	multiply,
@@ -28,24 +29,31 @@ import {
 } from "@lakuna/umath/Matrix4";
 import type { Props } from "#Props";
 import ReactCanvas from "@lakuna/react-canvas";
+import { createVector3Like } from "@lakuna/umath/Vector3";
 
 const vss = `\
 #version 300 es
 
 in vec4 a_position;
+in vec3 a_normal;
 in vec2 a_texcoord;
 
 uniform mat4 u_viewProjMat;
 uniform mat4 u_worldMat;
 uniform mat4 u_texMat;
+uniform vec3 u_lightPos;
 
 out vec2 v_texcoord;
+out vec3 v_normal;
+out vec3 v_dirToLight;
 out vec4 v_projTexcoord;
 
 void main() {
 	vec4 worldPos = u_worldMat * a_position;
 	gl_Position = u_viewProjMat * worldPos;
 	v_texcoord = a_texcoord;
+	v_normal = a_normal;
+	v_dirToLight = u_lightPos - worldPos.xyz;
 	v_projTexcoord = u_texMat * worldPos;
 }
 `;
@@ -56,18 +64,23 @@ const fss = `\
 precision mediump float;
 
 in vec2 v_texcoord;
+in vec3 v_normal;
+in vec3 v_dirToLight;
 in vec4 v_projTexcoord;
 
 uniform vec4 u_color;
 uniform sampler2D u_texture;
 uniform sampler2D u_projTexture;
-uniform float u_bias;
+uniform float u_biasMin;
+uniform float u_biasMax;
 
 out vec4 outColor;
 
 void main() {
 	vec3 projTexcoord = v_projTexcoord.xyz / v_projTexcoord.w;
-	float depth = projTexcoord.z + u_bias;
+	vec3 dirToLight = normalize(v_dirToLight);
+	float bias = max(u_biasMax * (1.0 - dot(v_normal, dirToLight)), u_biasMin);
+	float depth = projTexcoord.z + bias;
 
 	bool inShadow = projTexcoord.x >= 0.0
 		&& projTexcoord.x <= 1.0
@@ -80,7 +93,7 @@ void main() {
 		for (int y = -1; y <= 1; y++) {
 			float projDepth = texture(u_projTexture,
 				projTexcoord.xy + vec2(x, y) * texelSize).r;
-			shadowLight += inShadow && projDepth <= depth ? 0.0 : 1.0;
+			shadowLight += inShadow && projDepth <= depth ? 0.2 : 1.0;
 		}
 	}
 	shadowLight /= 9.0;
@@ -121,6 +134,11 @@ const cubePositionData = new Float32Array([
 	-1, 1, 1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, -1, -1, -1,
 	1, -1, -1, 1, -1, 1
 ]);
+const cubeNormalData = new Float32Array([
+	0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+	-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0,
+	1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0
+]);
 const cubeTexcoordData = new Float32Array([
 	0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
 	0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0
@@ -130,6 +148,7 @@ const cubeIndexData = new Uint8Array([
 	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
 const planePositionData = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
+const planeNormalData = new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]);
 const planeTexcoordData = new Float32Array([0, 0, 0, 10, 10, 10, 10, 0]);
 const planeIndexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
 const frustumPositionData = new Float32Array([
@@ -140,7 +159,9 @@ const frustumIndexData = new Uint8Array([
 	0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 1, 5, 3, 7, 2, 6
 ]);
 
-export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
+export default function PercentageCloserFiltering(
+	props: Props<HTMLCanvasElement>
+) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
@@ -150,9 +171,11 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 				const solidProgram = Program.fromSource(gl, solidVss, solidFss);
 
 				const cubePositionBuffer = new Vbo(gl, cubePositionData);
+				const cubeNormalBuffer = new Vbo(gl, cubeNormalData);
 				const cubeTexcoordBuffer = new Vbo(gl, cubeTexcoordData);
 				const cubeIndexBuffer = new Ebo(gl, cubeIndexData);
 				const planePositionBuffer = new Vbo(gl, planePositionData);
+				const planeNormalBuffer = new Vbo(gl, planeNormalData);
 				const planeTexcoordBuffer = new Vbo(gl, planeTexcoordData);
 				const planeIndexBuffer = new Ebo(gl, planeIndexData);
 				const frustumPositionBuffer = new Vbo(gl, frustumPositionData);
@@ -161,6 +184,8 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 				const cubeVao = new Vao(
 					program,
 					{
+						// eslint-disable-next-line camelcase
+						a_normal: cubeNormalBuffer,
 						// eslint-disable-next-line camelcase
 						a_position: cubePositionBuffer,
 						// eslint-disable-next-line camelcase
@@ -172,6 +197,8 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 				const planeVao = new Vao(
 					program,
 					{
+						// eslint-disable-next-line camelcase
+						a_normal: planeNormalBuffer,
 						// eslint-disable-next-line camelcase
 						a_position: { size: 2, vbo: planePositionBuffer },
 						// eslint-disable-next-line camelcase
@@ -239,6 +266,7 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 				const lightCamMat = identity(createMatrix4Like());
 				rotateX(lightCamMat, -Math.PI / 5, lightCamMat);
 				translate(lightCamMat, [0, 0, 2], lightCamMat);
+				const lightPos = getTranslation(lightCamMat, createVector3Like());
 				const lightViewMat = invert(lightCamMat, createMatrix4Like());
 				const lightViewProjMat = multiply(
 					lightProjMat,
@@ -298,9 +326,13 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 
 					planeVao.draw({
 						// eslint-disable-next-line camelcase
-						u_bias: 0.008,
+						u_biasMax: 0,
+						// eslint-disable-next-line camelcase
+						u_biasMin: 0,
 						// eslint-disable-next-line camelcase
 						u_color: [1, 0, 0, 1],
+						// eslint-disable-next-line camelcase
+						u_lightPos: lightPos,
 						// eslint-disable-next-line camelcase
 						u_projTexture: projTexture,
 						// eslint-disable-next-line camelcase
@@ -315,9 +347,13 @@ export default function ShadowAcne(props: Props<HTMLCanvasElement>) {
 
 					cubeVao.draw({
 						// eslint-disable-next-line camelcase
-						u_bias: 0.012,
+						u_biasMax: 0.01,
+						// eslint-disable-next-line camelcase
+						u_biasMin: 0,
 						// eslint-disable-next-line camelcase
 						u_color: [0, 1, 0, 1],
+						// eslint-disable-next-line camelcase
+						u_lightPos: lightPos,
 						// eslint-disable-next-line camelcase
 						u_projTexture: projTexture,
 						// eslint-disable-next-line camelcase

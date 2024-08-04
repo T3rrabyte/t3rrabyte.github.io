@@ -69,7 +69,7 @@ float depth = projTexcoord.z + u_bias;
 The bias required to remove shadow acne from a surface depends on the angle from the light source to that surface, so varying the bias value based on that angle can improve the appearance of the scene.
 
 ```glsl
-float bias = max(u_biasMax * (1.0 - dot(v_normal, u_lightDir)), u_biasMin);
+float bias = max(u_biasMax * (1.0 - dot(v_normal, dirToLight)), u_biasMin);
 ```
 
 Adding a bias can lead to an effect called _peter panning_ in which shadows appear to be slightly disjointed from their caster. The visual effect of peter panning can be mitigated by culling front faces when rendering the shadow map.
