@@ -126,7 +126,7 @@ export default function Skyboxes(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
-				const gl = new Context(canvas);
+				const gl = Context.get(canvas);
 
 				const program = Program.fromSource(gl, vss, fss);
 				const skyboxProgram = Program.fromSource(gl, skyboxVss, skyboxFss);

@@ -1,6 +1,5 @@
 "use client";
 
-import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
 import {
 	type Matrix4Like,
 	createMatrix4Like,
@@ -13,6 +12,7 @@ import {
 	rotateY,
 	translate
 } from "@lakuna/umath/Matrix4";
+import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
 import type { Props } from "#Props";
 import ReactCanvas from "@lakuna/react-canvas";
 
@@ -89,7 +89,7 @@ export default function Cameras(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
-				const gl = new Context(canvas);
+				const gl = Context.get(canvas);
 
 				const program = Program.fromSource(gl, vss, fss);
 

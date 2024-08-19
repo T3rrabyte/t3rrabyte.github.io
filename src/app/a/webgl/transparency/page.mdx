@@ -6,10 +6,11 @@ openGraph:
 ---
 
 import Blending from "./Blending.tsx";
+import DualDepthPeeling from "./DualDepthPeeling.tsx";
 
 # Transparency
 
-You may need to read [the article about 3D](/a/webgl/3d) before this one.
+You may need to read [the article about shadows](/a/webgl/shadows) before this one.
 
 ---
 
@@ -19,7 +20,11 @@ By default, when drawing a transparent primitive in WebGL, the primitive's color
 gl.enable(gl.BLEND);
 ```
 
-The behavior of blending can be modified by changing the _blend function_. For example, for a fragment color $f$, a background color $b$, and an alpha value $a$, the blended color can be set to $fa+b(1-a)$ by using `SRC_ALPHA` as the source blending factor and `ONE_MINUS_SRC_ALPHA` as the destination blending factor.
+The behavior of blending can be modified by changing the _blend function_. For a fragment (source) color $C_{src}$, a background (destination) color $C_{dst}$, and a fragment (source) alpha value $A_{src}$, the following equation accurately blends the color value $C$ from back to front.
+
+$$
+C = C_{src}A_{src} + C_{dst}(1 - A_{src})
+$$
 
 ```js
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -27,13 +32,196 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 <Blending style={{ width: "100%" }} />
 
-When rendering multiple layered transparent primitives, the final fragment color will only be correct if the primitives are rendered in order from farthest to nearest. For this reason, it is typical to first render all of the transparent objects in the scene in order from farthest to nearest, then to render all of the opaque objects in a scene in order from nearest to farthest. For 3D transparent objects, the depth test and polygon culling need to be disabled so that the far side of the object is rendered.
+When rendering multiple layered transparent primitives, the final fragment color will only be correct if the primitives are rendered in order from farthest to nearest. For this reason, it is typical to first render all of the opaque objects in a scene in order from nearest to farthest, then to render all of the transparent objects in the scene in order from farthest to nearest with depth buffer updating turned off. Depth buffer updating can be turned off by setting the depth mask.
+
+```js
+gl.depthMask(false);
+```
+
+For 3D transparent objects, polygon culling needs to be disabled so that the far side of the object is rendered.
 
 If you attempt to load an image with transparency into a texture, WebGL will set the alpha value to `1.0` by default. One alternative to this behavior is to enable _alpha premultiplication_, which causes each of the `rgb` channels to be multiplied by the alpha value when the image is loaded.
 
 ```js
 gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 ```
+
+## Order-Independent Transparency
+
+Since it is possible for multiple transparent objects to intersect, it is sometimes not enough to sort objects by their distance from the camera; instead, each transparent fragment needs to be sorted individually. _Order-independent transparency_ (OIT) is a class of techniques for rendering transparency which do not require rendering geometry in sorted order.
+
+- _Exact OIT_ accurately computes the final color, which requires that all fragments be sorted.
+- _Approximate OIT_ computes an approximation of the correct final color, but executes much faster.
+
+### Depth Peeling
+
+One simple method of exact OIT is _depth peeling_, in which an implicit sort is used to extract multiple depth layers. With $n$ rendering passes, up to $n$ layers of transparent fragments can be accurately rendered. On each successive pass, the color and depth of the next-nearest fragment is recorded. Two depth buffers are used to compare the previous fragment with the current one: one depth buffer is writable and is used to store the fragment data, while the other one is used only for comparison and thus can be read-only (a shadow map).
+
+A faster version of depth peeling is _dual depth peeling_, which allows rendering $n$ layers of transparent fragments with $\frac{n}{2}+1$ render passes by rendering both the next-farthest and the next-nearest fragment on each pass. Dual depth peeling requires the use of two additional framebuffers, each of which has three color attachments:
+
+- A color attachment that uses one channel to store the negative front depth and another channel to store the back depth.
+- A color attachment that stores the color of the front fragment.
+- A color attachment that stores the color of the back fragment.
+
+The primary shader program takes in a depth texture, a front color texture, and a back color texture, and outputs a depth value, a front color, and a back color.
+
+```glsl
+uniform sampler2D u_depthTex;
+uniform sampler2D u_frontColorTex;
+uniform sampler2D u_backColorTex;
+
+layout(location = 0) out vec2 outDepth;
+layout(location = 1) out vec4 outFrontColor;
+layout(location = 2) out vec4 outBackColor;
+```
+
+**Note that the usage of layout qualifiers is mandatory when outputting multiple values.**
+
+The `gl_FragCoord` input variable can be used to determine the depth and position of the current fragment.
+
+```glsl
+float depth = gl_FragCoord.z;
+ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+```
+
+Then, the position of the current fragment can be used to query the other depth peeling framebuffer for its depth, front color, and back color values. Dual depth peeling works by alternating render passes between the depth peeling framebuffers, so this is equivalent to querying for the "previous" depth and color values.
+
+```glsl
+vec2 lastDepth = texelFetch(u_depthTex, fragCoord, 0).rg;
+vec4 lastFrontColor = texelFetch(u_frontColorTex, fragCoord, 0);
+vec4 lastBackColor = texelFetch(u_backColorTex, fragCoord, 0);
+
+float nearDepth = -lastDepth.r;
+float farDepth = lastDepth.g;
+```
+
+`texelFetch` is similar to `texture`, except that it uses non-normalized texture coordinates and doesn't filter the texel.
+
+Before we get to any conditional logic, we need to assign values to each of the output variables in case we decide not to render the current fragment.
+
+- The first channel of the depth should be set to any value less than -1 in order to ensure that it is always less than any negative depth value that is put into that channel later. Likewise, the second channel should be set to any value less than 0.
+- The front and back colors should be set to the existing front and back colors, respectively, so that they doesn't change the result.
+
+```glsl
+outDepth = vec2(-2.0);
+outFrontColor = lastFrontColor;
+outBackColor = lastBackColor;
+```
+
+If the fragment isn't between `nearDepth` and `farDepth`, it has already been factored into one of the color buffers. In this case, we don't want to make any further modifications.
+
+```glsl
+if (depth < nearDepth || depth > farDepth) {
+	return;
+}
+```
+
+If the fragment is strictly between `nearDepth` and `farDepth`, it needs to be processed on a later rendering pass. In this case, we restrict the depth range to indicate the fragment's status to subsequent passes.
+
+```glsl
+if (depth > nearDepth && depth < farDepth) {
+	outDepth = vec2(-depth, depth);
+	return;
+}
+```
+
+This works because we render the scene with the `MAX` blend equation, which causes the maximum of the source and destination values to be stored in the depth texture. In other words, once all of the objects in the scene have been rendered for a given pass, the depth texture will contain the depths of the next-nearest and next-farthest fragments that need to be rendered. This is also why the next-farthest depth value is stored as a negative number.
+
+The blend equation can be set with [`blendEquation`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquation).
+
+```js
+gl.blendEquation(gl.MAX);
+```
+
+After this point, two possibilities remain. If `depth == nearDepth`, the current fragment belongs to the near layer that is to be processed on this render pass. In this case, the front-to-back blending equation must be used. As mentioned before, we use the `MAX` blend equation for this shader program, so we need to implement the front-to-back blending equation manually.
+
+For a source color $C_{src}$, a destination color $C_{dst}$, a source alpha value $A_{src}$, and a destination alpha value $A_{dst}$, and assuming an initial value of $A_{dst} = 1$, the following equations accurately blend the color value $C$ and the alpha value $A$ from front to back.
+
+$$
+C = C_{src}A_{src}A_{dst} + C_{dst}
+$$
+
+$$
+A = (1 - A_{src})A_{dst}
+$$
+
+Making some modifications to account for an initial value of $A_{dst} = 1$ yields the following code.
+
+```glsl
+if (depth == nearDepth) {
+	float alphaFactor = 1.0 - lastFrontColor.a;
+	outFrontColor.rgb += u_color.rgb * u_color.a * alphaFactor;
+	outFrontColor.a = 1.0 - alphaFactor * (1.0 - u_color.a);
+	return;
+}
+```
+
+Or, equivalently:
+
+```glsl
+if (depth == nearDepth) {
+	outFrontColor += (1.0 - lastFrontColor.a) * u_color.a;
+	outFrontColor.rgb *= u_color.rgb;
+	return;
+}
+```
+
+Otherwise, `depth == farDepth`, so the current fragment belongs to the far layer that is to be processed on this render pass.
+
+```glsl
+float alphaFactor = 1.0 - u_color.a;
+outBackColor.rgb = u_color.a * u_color.rgb + alphaFactor * outBackColor.rgb;
+outBackColor.a = u_color.a + alphaFactor * outBackColor.a;
+```
+
+At the beginning of the frame, the color targets should be cleared to all zeros (clearing to the background color will come later).
+
+In order to clear only certain attachments of a framebuffer, modify that framebuffer's draw buffers with [`drawBuffers`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/drawBuffers). Attachments that are not listed among the draw buffers cannot be written to with methods like `clear` or `drawElements`.
+
+```js
+gl.drawBuffers([gl.NONE, gl.COLOR_ATTACHMENT1, gl.COLOR_ATTACHMENT2]);
+```
+
+Choose one framebuffer to be the first to write to (`fbo[0]`), and the other will be the first to read from (`fbo[1]`).
+
+Clear the first channel of `fbo[0]` to any value less than -1 and the second channel to any value less than 0. This is to ensure that any depth values that may be written to those channels are greater than the initial value.
+
+Clear the first channel of `fbo[1]` to any value greater than 0 and the second channel to any value greater than 1. This is to ensure that any depth values that may be written to those channels are less than the initial value.
+
+On the first pass, render the scene to only the depth attachment of `fbo[0]` in order to initialize the near and far depths.
+
+On each pass `i` (starting at zero, excluding the initial pass):
+
+- `fbo[1 - i % 2]` is the write framebuffer. Clear its color attachments to all zeros and its depth channels to any value less than -1 and any value less than 0, respectively.
+- `fbo[i % 2]` is the read framebuffer.
+- Render the scene to the write framebuffer, using all three attachments as draw buffers.
+
+Finally, once all of the render passes are complete, a simple shader program is used to blend the back and front color textures on a fullscreen quad.
+
+```glsl
+#version 300 es
+
+precision mediump float;
+
+uniform sampler2D u_frontColorTex;
+uniform sampler2D u_backColorTex;
+
+out vec4 outColor;
+
+void main() {
+	ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+
+	vec4 frontColor = texelFetch(u_frontColorTex, fragCoord, 0);
+	vec4 backColor = texelFetch(u_backColorTex, fragCoord, 0);
+
+	outColor.rgb = frontColor.rgb + (1.0 - frontColor.a) * backColor.rgb;
+	outColor.a = frontColor.a + backColor.a;
+}
+```
+
+Clear the default framebuffer to the background color, then pass the color buffers of the last write framebuffer to this shader program and render a fullscreen quad to produce the final result.
+
+<DualDepthPeeling style={{ width: "100%" }} />
 
 ---
 

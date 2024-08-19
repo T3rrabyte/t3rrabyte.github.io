@@ -22,7 +22,7 @@ float y = 1 / sqrt(x);
 
 The primary use of determining the inverse square root of a number is for normalizing vectors (maintaining their direction while setting their magnitude to 1). Normalized vectors are useful in computer graphics and physics simulations because, just like the number 1, multiplying by them doesn't change the magnitude of other vectors (while still modifying their direction).
 
-Vectors can be normalized by dividing them by their magnitudes. The magnitude of a vector is determined by taking the square root of the sum of the squares of its components (the two-dimensional version of this is called the [Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem): $\sqrt{a^2+b^2}$). In other words, multiplying a vector by its inverse square root (the inverse of its magnitude) normalizes it.
+Vectors can be normalized by dividing them by their magnitudes. The magnitude of a vector is determined by taking the square root of the sum of the squares of its components (the two-dimensional version of this is called the [Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem): $\sqrt{a^2 + b^2}$). In other words, multiplying a vector by its inverse square root (the inverse of its magnitude) normalizes it.
 
 The thing that makes fast inverse square root so important is, as the name implies, the computation speed of the algorithm. Division is very slow compared to the other basic arithmetic operations, so it is important to minimize its use. Even a small improvement means a lot in a function like fast inverse square root, which could be used hundreds or thousands of times per second.
 
@@ -45,54 +45,54 @@ float Q_rsqrt(float y) {
 
 In order to understand how the function works, one must first understand how floating-point variables are stored in memory. Whenever a variable is declared as a `float` in C, it is stored according to the rules of [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754). IEEE 754 was created by William Kahan, in collaboration with Intel, in the 1980s. Today, almost all computers use it to store floating-point values.
 
-IEEE 754 is based on scientific notation, in which numbers are written as a value in the range $[1,b)$ multiplied by some power of $b$, where $b$ is the base of the number. For example, $45000_{10}=4.5*10^4$. The first number ($4.5$ in the example) is called the "_mantissa_", and the exponent of the $10$ ($4$) is just called the "_exponent_."
+IEEE 754 is based on scientific notation, in which numbers are written as a value in the range $[1, b)$ multiplied by some power of $b$, where $b$ is the base of the number. For example, $45000_{10} = 4.5 * 10^4$. The first number ($4.5$ in the example) is called the "_mantissa_", and the exponent of the $10$ ($4$) is just called the "_exponent_."
 
 IEEE 754 floating-point values are stored in 32 bits. The first bit is the "_sign bit_." The sign bit is `0b1` if the number is negative, or `0b0` if it is positive. The sign bit comes first in order to make it easier to sort floating-point values.
 
-The next 8 bits encode the exponent. This number is right-aligned. Rather than using _two's complement_ (which is a way to store signed integers where the first bit represents the negative of its typical value), the exponent is "biased" by adding $b^{n-1}-1=127$, where $b=2$ is the base and $n=8$ is the number of bits in the exponent, to its value, such that the smallest representable exponent is represented as `0b00000001`. This is done so that larger numbers visibly appear larger, and to make floating-point values easier to sort.
+The next 8 bits encode the exponent. This number is right-aligned. Rather than using _two's complement_ (which is a way to store signed integers where the first bit represents the negative of its typical value), the exponent is "biased" by adding $b^{n - 1} - 1 = 127$, where $b = 2$ is the base and $n = 8$ is the number of bits in the exponent, to its value, such that the smallest representable exponent is represented as `0b00000001`. This is done so that larger numbers visibly appear larger, and to make floating-point values easier to sort.
 
-The final 23 bits encode the mantissa. These bits are left-aligned, with each bit representing $\frac{1}{2^n}$, where $n$ is the index of the bit. Since computers store values in base-two (binary) rather than base-ten (decimal), the mantissa is instead multiplied by a power of 2, and must fall in the range $[1,2)$. Since the integer portion of the mantissa is guaranteed to be 1 by definition, it doesn't need to be stored.
+The final 23 bits encode the mantissa. These bits are left-aligned, with each bit representing $\frac{1}{2^n}$, where $n$ is the index of the bit. Since computers store values in base-two (binary) rather than base-ten (decimal), the mantissa is instead multiplied by a power of 2, and must fall in the range $[1, 2)$. Since the integer portion of the mantissa is guaranteed to be 1 by definition, it doesn't need to be stored.
 
 Since it would be impossible to represent $0$ with the standard described above, IEEE 754 also includes a few special rules:
 
-- If the exponent field is all zeros, the number is "_denormalized_," which means that the exponent becomes $1-b$, where $b$ is the bias, and the integer $1$ is not added to the mantissa.
+- If the exponent field is all zeros, the number is "_denormalized_," which means that the exponent becomes $1 - b$, where $b$ is the bias, and the integer $1$ is not added to the mantissa.
 - If the exponent field is all ones and the mantissa is all zeros, the value represented is infinity.
 - If the exponent field is all ones and the mantissa is not all zeros, the value represented is not a number.
 
-For example, to store the number $3.75=1.875*2^1$ in IEEE 754:
+For example, to store the number $3.75 = 1.875 * 2 ^ 1$ in IEEE 754:
 
 - The number is positive, so the sign bit is `0b0`.
 - The exponent is $1$. Adding the bias of $127$, this means that the represented value must be $128$, or `0b10000000`.
-- The mantissa is $1.875$. Since the integer part doesn't need to be represented, the bits represent $0.875=\frac{7}{8}=\frac{1}{2}+\frac{1}{4}+\frac{1}{8}$, or `0b11100000000000000000000`.
+- The mantissa is $1.875$. Since the integer part doesn't need to be represented, the bits represent $0.875 = \frac{7}{8} = \frac{1}{2} + \frac{1}{4} + \frac{1}{8}$, or `0b11100000000000000000000`.
 - All together, $3.75$ is represented as `0b01000000011100000000000000000000`.
 
 ### The Magic Constant
 
-Since the floating-point values that fast inverse square root is designed to work with are always positive (the square root of a negative number is imaginary), the sign bit is always `0b0`, so it can be disregarded. Since the 8-bit exponent is followed by the 23-bit mantissa, if given a binary exponent $e$ and a binary mantissa $m$, the IEEE 754 representation of a floating-point number can be calculated as $2^{23}e+m$, since multiplying $e$ by $2^{23}$ shifts it 23 binary digits to the left. Reverse-engineering this formula yields the following equation for the values of the IEEE 754 representations of the mantissa $m$ and the exponent $e$ for a given number $x$:
+Since the floating-point values that fast inverse square root is designed to work with are always positive (the square root of a negative number is imaginary), the sign bit is always `0b0`, so it can be disregarded. Since the 8-bit exponent is followed by the 23-bit mantissa, if given a binary exponent $x$ and a binary mantissa $m$, the IEEE 754 representation of a floating-point number can be calculated as $2^{23}x + m$, since multiplying $x$ by $2^{23}$ shifts it 23 binary digits to the left. Reverse-engineering this formula yields the following equation for the values of the IEEE 754 representations of the mantissa $m$ and the exponent $p$ for a given number $n$:
 
 $$
-x=(1+\frac{m}{2^{23}})*2^{e-127}
+n = (1 + \frac{m}{2^{23}}) * 2^{p - 127}
 $$
 
 Where $127$ comes from the bias in the exponent bits. For example:
 
 $$
-3.75=(1+\frac{11100000000000000000000_2}{2^{23}})*2^{10000000_2-127}
+3.75 = (1 + \frac{11100000000000000000000_2}{2^{23}}) * 2^{10000000_2 - 127}
 $$
 
 Taking the binary logarithm of the above equation and simplifying yields the following equation:
 
 $$
-\log_2(x)=\log_2(1+\frac{m}{2^{23}})+e-127
+\log_2(n) = \log_2(1 + \frac{m}{2^{23}}) + p - 127
 $$
 
-For small values of $x$, $\log_2(1+x)\approx x$. A corrective term, $\mu$, is added to this, yielding $\log_2(1+x)\approx{x}+\mu$. $\mu\approx0.043$ gives the smallest average error for numbers in the range $[0,1]$. Since $\frac{m}{2^{23}}$ is in the range $[0,1]$, the equation can be simplified further as follows:
+For small values of $x$, $\log_2(1 + x) \approx x$. A corrective term, $\mu$, is added to this, yielding $\log_2(1 + x) \approx x + \mu$. $\mu \approx 0.043$ gives the smallest average error for numbers in the range $[0, 1]$. Since $\frac{m}{2^{23}}$ is in the range $[0, 1]$, the equation can be simplified further as follows:
 
 $$
-\log_2(x)=\frac{m}{2^{23}}+\mu+e-127=\frac{2^{23}e+m}{2^{23}}+\mu-127
+\log_2(n) = \frac{m}{2^{23}} + \mu + p - 127 = \frac{2^{23}p + m}{2^{23}} + \mu - 127
 $$
 
-The appearance of $2^{23}e+m$ here is important because, as explained previously, that is the IEEE 754 representation of $x$. In other words, the IEEE 754 representation of a number is its own binary logarithm, albeit scaled and shifted by some constants.
+The appearance of $2^{23}p + m$ here is important because, as explained previously, that is the IEEE 754 representation of $n$. In other words, the IEEE 754 representation of a number is its own binary logarithm, albeit scaled and shifted by some constants.
 
 ### Evil Floating-Point Bit-Level Hacking
 
@@ -114,12 +114,12 @@ y = *(float*)&i;
 
 ### Applying the Magic Constant
 
-Recall that halving the exponent of a number yields the square root of that number ($x^{\frac{1}{2}}=\sqrt{x}$), and that negating the exponent yields its multiplicative inverse ($x^{-1}=\frac{1}{x}$). Therefore, $x^{-\frac{1}{2}}=\frac{1}{\sqrt{x}}$.
+Recall that halving the exponent of a number yields the square root of that number ($x^{\frac{1}{2}} = \sqrt{x}$), and that negating the exponent yields its multiplicative inverse ($x^{-1} = \frac{1}{x}$). Therefore, $x^{-\frac{1}{2}} = \frac{1}{\sqrt{x}}$.
 
 As explained in a prior section, `i` now contains the binary logarithm of `y` (scaled and shifted by some constants). Using this fact, it is possible to simplify the algorithm by finding the binary logarithm of the multiplicative inverse square root of `y`, rather than finding the multiplicative inverse square root of `y` directly.
 
 $$
-\log_2(\frac{1}{\sqrt{y}})=\log_2(y^{-\frac{1}{2}})=-\frac{\log_2(y)}{2}
+\log_2(\frac{1}{\sqrt{y}}) = \log_2(y^{-\frac{1}{2}}) = -\frac{\log_2(y)}{2}
 $$
 
 The third line of code is as follows:
@@ -131,28 +131,28 @@ i = 0x5f3759df - (i >> 1);
 The `- (i >> 1)` part of the line is effectively halving the binary logarithm of `y`, while the constant `0x5f3759DF` comes from the scaling and shifting applied to the binary logarithm previously. The constant can be reverse-engineered as the function $\Gamma$ as follows:
 
 $$
-\Gamma=\frac{1}{\sqrt{y}}
+\Gamma = \frac{1}{\sqrt{y}}
 $$
 
 Find the binary logarithm of both sides:
 
 $$
-\log_2(\Gamma)=\log_2(\frac{1}{\sqrt{y}})=-\frac{\log_2(y)}{2}
+\log_2(\Gamma) = \log_2(\frac{1}{\sqrt{y}}) = -\frac{\log_2(y)}{2}
 $$
 
 Replace both sides with the bit representation:
 
 $$
-\frac{2^{23}e_\Gamma+m_\Gamma}{2^{23}}+\mu-127=-\frac{\frac{2^{23}e_y+m_y}{2^{23}}+\mu-127}{2}
+\frac{2^{23}p_\Gamma + m_\Gamma}{2^{23}} + \mu - 127 = -\frac{\frac{2^{23}p_y + m_y}{2^{23}} + \mu - 127}{2}
 $$
 
 Solve for the bits of $\Gamma$:
 
 $$
-2^{23}e_\Gamma+m_\Gamma=\frac{3(2^{23})(127-\mu)-(2^{23}e_y+m_y)}{2}
+2^{23}p_\Gamma + m_\Gamma = \frac{3(2^{23})(127 - \mu) - (2^{23}p_y + m_y)}{2}
 $$
 
-$-\frac{2^{23}e_y+m_y}{2}$ is equivalent to `- (i >> 1)` in the code, which leaves $\frac{3(2^{23})(127-\mu)}{2}$, which makes up the constant `0x5f3759DF`.
+$-\frac{2^{23}p_y + m_y}{2}$ is equivalent to `- (i >> 1)` in the code, which leaves $\frac{3(2^{23})(127 - \mu)}{2}$, which makes up the constant `0x5f3759DF`.
 
 ### Newton's Method
 
@@ -167,5 +167,5 @@ y *= 1.5f - x2 * y * y;
 ```
 
 $$
-f(y)=\frac{1}{y^2}-x\implies{y=\frac{1}{\sqrt{x}}}
+f(y) = \frac{1}{y^2} - x \implies y = \frac{1}{\sqrt{x}}
 $$

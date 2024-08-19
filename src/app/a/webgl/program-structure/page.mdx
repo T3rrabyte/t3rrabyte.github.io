@@ -21,7 +21,7 @@ The _initialization step_ is executed once at the beginning of the program. It i
 
 The _render step_ is executed once per _frame_ (framebuffer). The _frame rate_ is the rate at which the framebuffer is written to.
 
-The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the canvas in the ranges $[0,x]$ and $[0,y]$ on the horizontal and vertical axes, respectively, where $x$ is the width of the rendering context in fragments and $y$ is the height of the rendering context in fragments. The negative boundaries for each direction are left and up, respectively. In other words, the viewport determines how clip space coordinates are mapped to fragments.
+The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the canvas in the ranges $[0, x]$ and $[0, y]$ on the horizontal and vertical axes, respectively, where $x$ is the width of the rendering context in fragments and $y$ is the height of the rendering context in fragments. The negative boundaries for each direction are left and up, respectively. In other words, the viewport determines how clip space coordinates are mapped to fragments.
 
 The render step is typically used to modify the context and rasterize.
 

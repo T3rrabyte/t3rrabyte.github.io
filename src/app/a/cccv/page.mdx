@@ -392,7 +392,7 @@ Depending on what we want to do with an image, it can be useful to modify that i
 If we want to make an image grayscale, we can do so by setting the red, green, and blue values of each pixel to the _luminance_ of that pixel. Luminance is calculated as follows:
 
 $$
-l=0.2126r+0.7152g+0.0722b
+l = 0.2126r + 0.7152g + 0.0722b
 $$
 
 Where $l$ is the luminance, $r$ is the red value, $g$ is the green value, and $b$ is the blue value.
@@ -462,7 +462,11 @@ cv2.imwrite("b.png", my_image)
 _Edge detection_ - that is, finding outlines - is a more complex process because it requires knowledge of surrounding pixels. For operations like this, we use a _convolution kernel_ to modify each pixel based on the pixels around it. A convolution kernel is a matrix that represents the weight of each surrounding pixel towards the product. For example, in order to blur an image, you could use a convolution kernel that gives equal weight to all of the surrounding pixels:
 
 $$
-\begin{bmatrix}\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\\\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\\\frac{1}{9}&\frac{1}{9}&\frac{1}{9}\end{bmatrix}
+\begin{bmatrix}
+\frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\
+\frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\
+\frac{1}{9} & \frac{1}{9} & \frac{1}{9}
+\end{bmatrix}
 $$
 
 OpenCV provides the `blur` function for this purpose.
@@ -494,7 +498,11 @@ We can also use convolution kernels to calculate the _intensity gradient_ of an 
 This image is from [the OpenCV Python Image Gradients tutorial](https://docs.opencv.org/3.4/d5/d0f/tutorial_py_gradients.html). It demonstrates three different types of intensity gradients: Laplacian, Sobel X, and Sobel Y. Each uses a different convolution kernel. For example, the following convolution kernel can be used to calculate the Laplacian gradient of an image:
 
 $$
-\begin{bmatrix}0&1&0\\1&-4&1\\0&1&0\end{bmatrix}
+\begin{bmatrix}
+0 & 1 & 0 \\
+1 & -4 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
 $$
 
 Using blurring and intensity gradients, we can perform [Canny edge detection](https://en.wikipedia.org/wiki/Canny_edge_detector) as follows:

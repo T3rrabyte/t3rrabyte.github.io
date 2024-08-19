@@ -88,7 +88,7 @@ export default function EnvironmentMaps(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
-				const gl = new Context(canvas);
+				const gl = Context.get(canvas);
 
 				const program = Program.fromSource(gl, vss, fss);
 

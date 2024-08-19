@@ -20,10 +20,10 @@ The GPU is in charge of processing graphics-related code, so we need some way of
 
 One vertex shader and one fragment shader can be linked together to create a _shader program_, which can be used to render primitives. The exact process for rendering a primitive with a shader program is as follows:
 
-1. The vertex shader runs a certain amount of times depending on what type of primitive is being rendered. Each time it runs, it computes the position of a vertex in _clip space_, which is a coordinate system that represents the canvas in the range $[-1,1]$ on each axis. The negative boundaries for each direction are left, down, and near, respectively. Clip space coordinates are also sometimes called _normalized device coordinates_.
+1. The vertex shader runs a certain amount of times depending on what type of primitive is being rendered. Each time it runs, it computes the position of a vertex in _clip space_, which is a coordinate system that represents the canvas in the range $[-1, 1]$ on each axis. The negative boundaries for each direction are left, down, and near, respectively. Clip space coordinates are also sometimes called _normalized device coordinates_.
 2. Once enough vertices have had their positions computed to assemble a primitive, the _primitive assembly_ stage does so.
 3. In the _rasterization stage_, the primitive is mapped to fragments. Fragments that are outside of clip space are _clipped_ (discarded).
-4. The fragment shader runs once for each remaining fragment. Each time it runs, it computes the color of the fragment in _color space_, which organizes each of the red, green, blue, and alpha values of the color in the range $[0,1]$.
+4. The fragment shader runs once for each remaining fragment. Each time it runs, it computes the color of the fragment in _color space_, which organizes each of the red, green, blue, and alpha values of the color in the range $[0, 1]$.
 5. Various tests are performed on the fragments, such as the depth and stencil tests, as well as blending. More on all of those in a later article.
 
 In other versions of OpenGL, there is another type of shader called a _geometry shader_ that runs between the vertex shader and the primitive assembly stage. Although geometry shaders do not exist in WebGL, their functionality can be emulated somewhat with the `gl_VertexID` variable in the vertex shader.

@@ -13,6 +13,7 @@ openGraph:
 - [Alpha premultiplication](/a/webgl/transparency): the process of multiplying the red, green, and blue channels by the alpha value when image data is supplied to a texture.
 - [Ambient lighting](/a/webgl/lighting): lighting that is applied equally to all surfaces regardless of normal.
 - [Anti-aliasing](/a/webgl/framebuffers): a process for reducing aliasing.
+- [Approximate OIT](/a/webgl/transparency): OIT that computes an approximation of the correct final color.
 - [Attribute](/a/webgl/attributes): a type of variable that is used to pass vertex-specific data to vertex shaders. They read data from buffers.
 
 ## B
@@ -26,27 +27,30 @@ openGraph:
 ## C
 
 - [Camera matrix](/a/webgl/3d): a matrix that represents the transformation of a camera.
-- [Clip space](/a/webgl/shaders): a coordinate system that represents the canvas in the range $[-1,1]$ on each axis. The negative boundaries for each direction are left, down, and near, respectively.
+- [Clip space](/a/webgl/shaders): a coordinate system that represents the canvas in the range $[-1, 1]$ on each axis. The negative boundaries for each direction are left, down, and near, respectively.
 - [Clipped](/a/webgl/shaders): refers to a fragment that has been discarded due to being located outside of clip space.
 - [Color buffer](/a/webgl/shaders): a region of a framebuffer that holds color data.
-- [Color space](/a/webgl/shaders): a coordinate system that organizes each of the red, green, blue, and alpha values of colors in the range $[0,1]$.
+- [Color space](/a/webgl/shaders): a coordinate system that organizes each of the red, green, blue, and alpha values of colors in the range $[0, 1]$.
 - [Context](/a/webgl/program-structure): the collection of variables that define how OpenGL should operate.
 - [Cubemap](/a/webgl/cubemaps): a type of texture that consists of six faces.
 
 ## D
 
 - [Depth buffer](/a/webgl/3d): a buffer that stores the depth of fragments.
+- [Depth peeling](/a/webgl/transparency): a simple method of exact OIT in which an implicit sort is used to extract multiple depth layers.
 - [Depth test](/a/webgl/3d): the test that compares the depth of an incoming fragment to the depth of the existing fragment.
 - [Diffuse lighting](/a/webgl/lighting): lighting that comes uniformly from one direction.
 - [Directional lighting](/a/webgl/lighting): diffuse lighting.
 - [Distance fog](/a/webgl/fog): fog that obscures the far end of the camera's view frustum.
 - [Dot limit](/a/webgl/lighting): the cosine of a limit.
 - [Draw buffer](/a/webgl/shaders): the color buffer that contains the fragments that are rendered to the canvas.
+- [Dual depth peeling](/a/webgl/transparency): a faster version of depth peeling that renders twice as many layers of transparent fragments with the same number of passes.
 
 ## E
 
 - [Element buffer object](/a/webgl/attributes): a buffer that contains index data; an EBO.
 - [Environment map](/a/webgl/cubemaps): a cubemap that represents the environment of a scene. Commonly used to approximate reflections.
+- [Exact OIT](/a/webgl/transparency): OIT that accurately computes the final color.
 
 ## F
 
@@ -54,7 +58,7 @@ openGraph:
 - [Fragment interpolation](/a/webgl/varyings): the process of interpolating the value that is stored in a varying between fragments.
 - [Fragment shader](/a/webgl/shaders): a shader that computes fragment colors.
 - [Frame](/a/webgl/program-structure): short for "framebuffer;" typically used to refer to the data in a framebuffer at a specific instant, as in "frames per second."
-- [Framebuffer](/a/webgl/shaders): a portion of contiguous memory.
+- [Framebuffer](/a/webgl/shaders): a portion of contiguous memory; an FBO.
 - [Frame rate](/a/webgl/program-structure): the rate at which the default framebuffer is written to.
 
 ## G
@@ -92,6 +96,7 @@ openGraph:
 ## O
 
 - [OpenGL](/a/webgl/intro): the specification for an API that can be used to render 3D scenes.
+- [Order-independent transparency](/a/webgl/transparency): a class of techniques for rendering transparency which do not require rendering geometry in sorted order; OIT.
 - [Orthographic projection](/a/webgl/transformation): a projection that uses parallel lines to project its shape.
 
 ## P
@@ -121,7 +126,7 @@ openGraph:
 - [Sampler](/a/webgl/textures): a uniform that is used to sample a texture.
 - [Sampling](/a/webgl/textures): the process of retrieving a texel from a texture.
 - [Scene graph](/a/webgl/scene-graph): a general data structure that arranges the local representation of a graphical scene; a collection of nodes in a tree structure, with each node having one parent and a non-negative number of children.
-- [Screen space](/a/webgl/program-structure): a coordinate system that represents the canvas in the ranges $[0,x]$ and $[0,y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the canvas in fragments and $y$ is the height of the canvas in fragments. The negative boundaries for each direction are left and up, respectively.
+- [Screen space](/a/webgl/program-structure): a coordinate system that represents the canvas in the ranges $[0, x]$ and $[0, y]$ for horizontal and vertical coordinates, respectively, where $x$ is the width of the canvas in fragments and $y$ is the height of the canvas in fragments. The negative boundaries for each direction are left and up, respectively.
 - [Shader](/a/webgl/shaders): a function that runs on the GPU.
 - [Shader program](/a/webgl/shaders): a vertex shader and a fragment shader that are linked together and used to render primitives.
 - [Shadow acne](/a/webgl/shadows): a visual artifact resulting from the limited resolution of a shadow map.
@@ -138,7 +143,7 @@ openGraph:
 - [Texture atlas](/a/webgl/textures): a texture that contains multiple images.
 - [Texture complete](/a/webgl/textures): the property of a texture that allows it to be rendered. In order for a texture to be texture complete, it must either have a complete mipmap or only sample its largest mip.
 - [Texture matrix](/a/webgl/textures): a modified view projection matrix that also converts from clip space to texture space.
-- [Texture space](/a/webgl/textures): a coordinate system that represents a texture in the range $[0,1]$ on each axis. The negative boundaries for each direction are left and down, respectively.
+- [Texture space](/a/webgl/textures): a coordinate system that represents a texture in the range $[0, 1]$ on each axis. The negative boundaries for each direction are left and down, respectively.
 - [Texture unit](/a/webgl/textures): a value that represents a texture and is passed to a shader program in its stead.
 - [Tightly-packed](/a/webgl/attributes): describes data in which the number of bytes from the start of one element to the next is the same as the byte size of the element.
 - [Transformation matrix](/a/webgl/transformation): a matrix that represents transformations.

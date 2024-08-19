@@ -92,7 +92,7 @@ export default function Blending(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
-				const gl = new Context(canvas);
+				const gl = Context.get(canvas);
 
 				const program = Program.fromSource(gl, vss, fss);
 
@@ -110,6 +110,8 @@ export default function Blending(props: Props<HTMLCanvasElement>) {
 
 				return (now) => {
 					gl.resize();
+					gl.doDepthTest = true;
+					gl.depthMask = false;
 					gl.doBlend = true;
 					gl.blendFunction = [
 						BlendFunction.SRC_ALPHA,
