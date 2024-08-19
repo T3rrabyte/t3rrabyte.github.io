@@ -1,5 +1,6 @@
 "use client";
 
+import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
 import {
 	type Matrix4Like,
 	createMatrix4Like,
@@ -12,7 +13,6 @@ import {
 	rotateY,
 	translate
 } from "@lakuna/umath/Matrix4";
-import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
 import type { Props } from "#Props";
 import ReactCanvas from "@lakuna/react-canvas";
 
