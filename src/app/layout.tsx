@@ -52,7 +52,7 @@ export default function Layout({ children }: LayoutProps) {
 
 export const viewport = {
 	colorScheme: "dark light",
-	themeColor: "#18CD85"
+	themeColor: "#50c878"
 };
 
 export const metadata = {
