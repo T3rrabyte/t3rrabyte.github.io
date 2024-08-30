@@ -4,20 +4,30 @@
 :root {
 	@include mixins.is-light-theme using ($is-light-theme) {
 		@if $is-light-theme {
-			--bg-color: #{variables.$cultured};
-			--fg-color: #{variables.$gainsboro};
-			--text-color: #{variables.$raisin-black};
-			--highlight-color: #{variables.$may-green};
-			--italic-color: #{variables.$dark-magenta};
-			--bold-color: #{variables.$sweet-brown};
+			--bg-color: #{variables.$alabaster};
+			--fg-color: #{variables.$mercury};
+			--text-color: #{variables.$emperor};
+			--alt-text-color: #{variables.$tundora};
+			--highlight-color: #{variables.$parsley};
+			--highlight-color-2: #{variables.$cello};
+			--highlight-color-3: #{variables.$clover};
+			--highlight-color-4: #{variables.$sapphire};
+			--italic-color: #{variables.$stiletto};
+			--bold-color: #{variables.$eminence};
+			--bold-bold-color: #{variables.$honey-flower};
 			color-scheme: light;
 		} @else {
-			--bg-color: #{variables.$raisin-black};
-			--fg-color: #{variables.$jet};
+			--bg-color: #{variables.$eerie-black};
+			--fg-color: #{variables.$mine-shaft};
 			--text-color: #{variables.$silver-chalice};
+			--alt-text-color: #{variables.$silver};
 			--highlight-color: #{variables.$emerald};
-			--italic-color: #{variables.$light-salmon};
-			--bold-color: #{variables.$old-gold};
+			--highlight-color-2: #{variables.$half-baked};
+			--highlight-color-3: #{variables.$celery};
+			--highlight-color-4: #{variables.$dull-lavender};
+			--italic-color: #{variables.$shilo};
+			--bold-color: #{variables.$wisteria};
+			--bold-bold-color: #{variables.$french-lilac};
 			color-scheme: dark;
 		}
 	}

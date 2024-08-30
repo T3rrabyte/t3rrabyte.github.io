@@ -1,14 +1,98 @@
-@use "mixins";
-@use "sass:meta";
+@use "variables";
 
-@include mixins.is-light-theme using ($is-light-theme) {
-	@if $is-light-theme {
-		@include meta.load-css(
-			"node_modules/highlight.js/styles/panda-syntax-light.css"
-		);
-	} @else {
-		@include meta.load-css(
-			"node_modules/highlight.js/styles/panda-syntax-dark.css"
-		);
+// Custom highlight.js color theme, based loosely on Panda.
+pre > code.hljs {
+	display: block;
+	overflow-x: auto;
+	padding: 1em;
+	color: variables.$text-color;
+	background: variables.$fg-color;
+
+	& > .hljs-emphasis {
+		font-style: italic;
+	}
+
+	& > .hljs-strong {
+		font-weight: bold;
+	}
+
+	& > .hljs-link {
+		text-decoration: underline;
+	}
+
+	& > .hljs-comment,
+	& > .hljs-quote {
+		color: variables.$alt-text-color;
+		font-style: italic;
+	}
+
+	& > .hljs-params {
+		color: variables.$alt-text-color;
+	}
+
+	& > .hljs-punctuation,
+	& > .hljs-attr {
+		color: variables.$text-color;
+	}
+
+	& > .hljs-selector-tag,
+	& > .hljs-name,
+	& > .hljs-meta {
+		color: variables.$italic-color;
+	}
+
+	& > .hljs-operator,
+	& > .hljs-char.escape_ {
+		color: variables.$highlight-color-4;
+	}
+
+	& > .hljs-keyword,
+	& > .hljs-deletion {
+		color: variables.$bold-color;
+	}
+
+	& > .hljs-regexp,
+	& > .hljs-selector-pseudo,
+	& > .hljs-selector-attr,
+	& > .hljs-variable.language_ {
+		color: variables.$bold-bold-color;
+	}
+
+	& > .hljs-subst,
+	& > .hljs-property,
+	& > .hljs-code,
+	& > .hljs-formula,
+	& > .hljs-section,
+	& > .hljs-title.function_ {
+		color: variables.$highlight-color-2;
+	}
+
+	& > .hljs-string,
+	& > .hljs-symbol,
+	& > .hljs-bullet,
+	& > .hljs-addition,
+	& > .hljs-selector-class,
+	& > .hljs-title.class_,
+	& > .hljs-title.class_.inherited__,
+	& > .hljs-meta > .hljs-string {
+		color: variables.$highlight-color;
+	}
+
+	& > .hljs-variable,
+	& > .hljs-template-variable,
+	& > .hljs-number,
+	& > .hljs-literal,
+	& > .hljs-type,
+	& > .hljs-link,
+	& > .hljs-built_in,
+	& > .hljs-title,
+	& > .hljs-selector-id,
+	& > .hljs-tag,
+	& > .hljs-doctag,
+	& > .hljs-attribute,
+	& > .hljs-template-tag,
+	& > .hljs-meta > .hljs-keyword,
+	& > .hljs-punctuation {
+		color: variables.$highlight-color-3;
 	}
 }
