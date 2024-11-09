@@ -34,12 +34,12 @@ const vss = `\
 in vec4 a_position;
 in vec2 a_texcoord;
 
-uniform mat4 u_world;
+uniform mat4 u_matrix;
 
 out vec2 v_texcoord;
 
 void main() {
-	gl_Position = u_world * a_position;
+	gl_Position = u_matrix * a_position;
 	v_texcoord = a_texcoord;
 }
 `;
@@ -173,9 +173,9 @@ export default function Framebuffers(props: Props<HTMLCanvasElement>) {
 					cubeVao.draw(
 						{
 							// eslint-disable-next-line camelcase
-							u_texture: redTexture,
+							u_matrix: redMat,
 							// eslint-disable-next-line camelcase
-							u_world: redMat
+							u_texture: redTexture
 						},
 						void 0,
 						void 0,
@@ -185,9 +185,9 @@ export default function Framebuffers(props: Props<HTMLCanvasElement>) {
 					cubeVao.draw(
 						{
 							// eslint-disable-next-line camelcase
-							u_texture: greenTexture,
+							u_matrix: greenMat,
 							// eslint-disable-next-line camelcase
-							u_world: greenMat
+							u_texture: greenTexture
 						},
 						void 0,
 						void 0,
@@ -195,15 +195,13 @@ export default function Framebuffers(props: Props<HTMLCanvasElement>) {
 					);
 
 					gl.fitViewport();
-					gl.doCullFace = true;
-					gl.doDepthTest = true;
 					gl.clear([0, 0, 0, 0]);
 
 					cubeVao.draw({
 						// eslint-disable-next-line camelcase
-						u_texture: renderTexture,
+						u_matrix: blueMat,
 						// eslint-disable-next-line camelcase
-						u_world: blueMat
+						u_texture: renderTexture
 					});
 				};
 			}}

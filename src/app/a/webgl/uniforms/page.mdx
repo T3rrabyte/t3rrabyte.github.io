@@ -37,7 +37,7 @@ In order to manipulate a uniform from JavaScript, the WebGL API must first be qu
 const location = gl.getUniformLocation(program, "u_color");
 ```
 
-A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For uniforms that hold most types of data, this function is some form of [`uniform[1234][uif][v]`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniform). For matrices, this function is some form of [`uniformMatrix[234]x[234]fv`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniformMatrix).
+A uniform's value can be updated by calling the function that corresponds to the type of data that it holds. For uniforms that hold most types of data, this function is some form of [`uniform[1234][uif][v]`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniform). For matrices, this function is some form of [`uniformMatrix[234]x[234]fv`](https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext/uniformMatrix). Each uniform's value is stored as part of the corresponding shader program's state, so this must be done after enabling the corresponding shader program.
 
 ```js
 gl.uniform4fv(location, [1, 0, 0, 1]);

@@ -106,7 +106,7 @@ It can be helpful to use a library such as [μMath](https://umath.lakuna.pw/) fo
 
 ### Matrix Translation
 
-Although translation is not a linear transformation, it is an affine transformation, so it can still be represented with matrices through the use of homogeneous coordinates. This is why it's necessary to use $4 \times 4$ matrices to represent 3D transformations.
+Although translation is not a linear transformation, it is an affine transformation, so it can still be represented with matrices through the use of homogeneous coordinates. This is why it's necessary to use $4 \times 4$ matrices and 4D vectors to represent 3D transformations.
 
 The following matrix translates an initial vector $(x_0, y_0, z_0)$ by $(x_t, y_t, z_t)$, resulting in a vector $(x_1, y_1, z_1)$.
 
@@ -118,6 +118,22 @@ $$
 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
+
+To see why this works, we can write out the steps of the matrix-vector multiplication, treating the fourth component of the vector as a 1 (since it is used to scale the entire vector).
+
+$$
+x_1 = x_0 * 1 + y_0 * 0 + z_0 * 0 + 1 * x_t = x_0 + x_t
+$$
+
+$$
+y_1 = x_0 * 0 + y_0 * 1 + z_0 * 0 + 1 * y_t = y_0 + y_t
+$$
+
+$$
+z_1 = x_0 * 0 + y_0 * 0 + z_0 * 1 + 1 * z_t = z_0 + z_t
+$$
+
+Notice that this yields the same formula for translation from the beginning of this article. This can also be done with all of the following transformation matrices to see how they result in the proper transformation.
 
 ### Matrix Rotation
 

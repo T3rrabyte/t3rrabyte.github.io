@@ -29,12 +29,12 @@ const vss = `\
 in vec4 a_position;
 in vec2 a_texcoord;
 
-uniform mat4 u_world;
+uniform mat4 u_matrix;
 
 out vec2 v_texcoord;
 
 void main() {
-	gl_Position = u_world * a_position;
+	gl_Position = u_matrix * a_position;
 	v_texcoord = a_texcoord;
 }
 `;
@@ -128,7 +128,7 @@ export default function TextureAtlases(props: Props<HTMLCanvasElement>) {
 					multiply(viewProj, matrix, matrix);
 
 					// eslint-disable-next-line camelcase
-					cubeVao.draw({ u_texture: texture, u_world: matrix });
+					cubeVao.draw({ u_matrix: matrix, u_texture: texture });
 				};
 			}}
 			{...props}

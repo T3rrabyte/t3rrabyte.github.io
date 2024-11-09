@@ -26,16 +26,7 @@ void main() {
 }
 `;
 
-const positionData = new Float32Array([
-	// Point 0 at (0, 0.5)
-	0, 0.5,
-
-	// Point 1 at (0, 0)
-	0, 0,
-
-	// Point 2 at (0.7, 0)
-	0.7, 0
-]);
+const positionData = new Float32Array([0, 0.5, 0, 0, 0.7, 0]);
 
 export default function Indices(props: Props<HTMLCanvasElement>) {
 	return (

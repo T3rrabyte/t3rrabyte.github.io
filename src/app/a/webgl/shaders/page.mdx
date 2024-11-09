@@ -95,6 +95,13 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 }
 ```
 
+It is good practice to delete WebGL objects as soon as you are done with them, such as shaders after they have been linked into a shader program.
+
+```js
+gl.deleteShader(vertexShader);
+gl.deleteShader(fragmentShader);
+```
+
 ---
 
 The next article is about [program structure](/a/webgl/program-structure).

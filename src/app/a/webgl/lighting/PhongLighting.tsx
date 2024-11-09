@@ -27,8 +27,8 @@ const vss = `\
 in vec4 a_position;
 in vec3 a_normal;
 
-uniform mat4 u_viewProjMat;
-uniform mat4 u_worldMat;
+uniform mat4 u_viewProj;
+uniform mat4 u_world;
 uniform mat3 u_normalMat;
 uniform vec3 u_lightPos;
 uniform vec3 u_camPos;
@@ -38,8 +38,8 @@ out vec3 v_dirToLight;
 out vec3 v_dirToCam;
 
 void main() {
-	vec4 worldPos = u_worldMat * a_position;
-	gl_Position = u_viewProjMat * worldPos;
+	vec4 worldPos = u_world * a_position;
+	gl_Position = u_viewProj * worldPos;
 
 	v_normal = u_normalMat * a_normal;
 
@@ -108,7 +108,7 @@ export default function PhongLighting(props: Props<HTMLCanvasElement>) {
 				const normalBuffer = new Vbo(gl, normalData);
 				const indexBuffer = new Ebo(gl, indexData);
 
-				const vao = new Vao(
+				const cubeVao = new Vao(
 					program,
 					{
 						// eslint-disable-next-line camelcase
@@ -145,7 +145,7 @@ export default function PhongLighting(props: Props<HTMLCanvasElement>) {
 					rotateY(worldMat, now * 0.001, worldMat);
 					normalFromMatrix4(worldMat, normalMat);
 
-					vao.draw({
+					cubeVao.draw({
 						// eslint-disable-next-line camelcase
 						u_ambientBrightness: 0.1,
 						// eslint-disable-next-line camelcase
@@ -161,9 +161,9 @@ export default function PhongLighting(props: Props<HTMLCanvasElement>) {
 						// eslint-disable-next-line camelcase
 						u_reverseLightDir: reverseLightDir,
 						// eslint-disable-next-line camelcase
-						u_viewProjMat: viewProjMat,
+						u_viewProj: viewProjMat,
 						// eslint-disable-next-line camelcase
-						u_worldMat: worldMat
+						u_world: worldMat
 					});
 				};
 			}}

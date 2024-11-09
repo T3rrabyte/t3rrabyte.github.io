@@ -22,12 +22,12 @@ const vss = `\
 in vec4 a_position;
 in vec4 a_color;
 
-uniform mat4 u_world;
+uniform mat4 u_worldViewProj;
 
 out vec4 v_color;
 
 void main() {
-	gl_Position = u_world * a_position;
+	gl_Position = u_worldViewProj * a_position;
 	v_color = a_color;
 }
 `;
@@ -138,7 +138,7 @@ export default function Cameras(props: Props<HTMLCanvasElement>) {
 						multiply(viewProj, matrix, cam);
 
 						// eslint-disable-next-line camelcase
-						fVao.draw({ u_world: cam });
+						fVao.draw({ u_worldViewProj: cam });
 					}
 				};
 			}}

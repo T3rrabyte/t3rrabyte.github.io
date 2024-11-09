@@ -92,10 +92,8 @@ export default function Matrices(props: Props<HTMLCanvasElement>) {
 					const s = ((1 + Math.cos(now * 0.001) / 2) * Math.min(w, h)) / 10;
 					scale(matrix, [s, s, 1], matrix);
 
-					rectVao.draw({
-						// eslint-disable-next-line camelcase
-						u_matrix: matrix
-					});
+					// eslint-disable-next-line camelcase
+					rectVao.draw({ u_matrix: matrix });
 				};
 			}}
 			{...props}

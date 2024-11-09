@@ -176,7 +176,7 @@ const colorData = new Uint8Array([
 	220, 0x80
 ]);
 
-export default function DualDepthPeeling(props: Props<HTMLCanvasElement>) {
+export default function WeightedBlended(props: Props<HTMLCanvasElement>) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

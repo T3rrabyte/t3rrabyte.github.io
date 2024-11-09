@@ -74,10 +74,8 @@ export default function Scaling(props: Props<HTMLCanvasElement>) {
 					gl.resize();
 					gl.clear();
 					const scale = 2 + Math.cos(now * 0.001);
-					rectVao.draw({
-						// eslint-disable-next-line camelcase
-						u_scaling: [scale, scale, 1, 1]
-					});
+					// eslint-disable-next-line camelcase
+					rectVao.draw({ u_scaling: [scale, scale, 1, 1] });
 				};
 			}}
 			{...props}

@@ -79,10 +79,8 @@ export default function Rotation(props: Props<HTMLCanvasElement>) {
 				return (now) => {
 					gl.resize();
 					gl.clear();
-					rectVao.draw({
-						// eslint-disable-next-line camelcase
-						u_rotation: now * 0.001
-					});
+					// eslint-disable-next-line camelcase
+					rectVao.draw({ u_rotation: now * 0.001 });
 				};
 			}}
 			{...props}

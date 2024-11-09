@@ -19,7 +19,7 @@ The _initialization step_ is executed once at the beginning of the program. It i
 
 ## Render Step
 
-The _render step_ is executed once per _frame_ (framebuffer). The _frame rate_ is the rate at which the framebuffer is written to.
+The _render step_ is executed once per _frame_ (the content of a framebuffer). The _frame rate_ is the rate at which the framebuffer is written to.
 
 The _viewport_ specifies the affine transformation of the horizontal and vertical axes from clip space to _screen space_, which is a coordinate system that represents the canvas in the ranges $[0, x]$ and $[0, y]$ on the horizontal and vertical axes, respectively, where $x$ is the width of the rendering context in fragments and $y$ is the height of the rendering context in fragments. The negative boundaries for each direction are left and up, respectively. In other words, the viewport determines how clip space coordinates are mapped to fragments.
 
@@ -68,7 +68,7 @@ A typical program that uses the OpenGL API follows this structure:
 
 - Initialization step:
   - Create static data.
-  - Create the context.
+  - Create the rendering context.
   - Compile shaders.
   - Link shader programs.
   - Look up variable locations.
@@ -83,11 +83,11 @@ A typical program that uses the OpenGL API follows this structure:
   - Set global state.
   - Clear framebuffers.
   - For each object in the scene:
+    - Assign textures to texture units.
     - Update global state.
     - Use its shader program.
-    - Bind its VAO.
     - Set uniform values.
-    - Assign textures to texture units.
+    - Bind its VAO.
     - Render.
 
 ---

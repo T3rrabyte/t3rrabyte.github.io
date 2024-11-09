@@ -32,6 +32,8 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 <Blending style={{ width: "100%" }} />
 
+Note that OpenGL versions below 4.0 (and, by extension, WebGL2) don't support setting per-buffer blending functions, so it is necessary to work around this limitation in later examples in this article.
+
 When rendering multiple layered transparent primitives, the final fragment color will only be correct if the primitives are rendered in order from farthest to nearest. For this reason, it is typical to first render all of the opaque objects in a scene in order from nearest to farthest, then to render all of the transparent objects in the scene in order from farthest to nearest with depth buffer updating turned off. Depth buffer updating can be turned off by setting the depth mask.
 
 ```js
@@ -53,11 +55,13 @@ Since it is possible for multiple transparent objects to intersect, it is someti
 - _Exact OIT_ accurately computes the final color, which requires that all fragments be sorted.
 - _Approximate OIT_ computes an approximation of the correct final color, but executes much faster.
 
+One method of exact OIT, [dual depth peeling](https://developer.download.nvidia.com/SDK/10/opengl/src/dual_depth_peeling/doc/DualDepthPeeling.pdf) will be covered in detail below. Some methods of approximate OIT include [weighted, blended OIT](https://jcgt.org/published/0002/02/09/) and [phenomenological scattering](https://casual-effects.com/research/McGuire2016Transparency/McGuire2016Transparency.pdf).
+
 ### Depth Peeling
 
 One simple method of exact OIT is _depth peeling_, in which an implicit sort is used to extract multiple depth layers. With $n$ rendering passes, up to $n$ layers of transparent fragments can be accurately rendered. On each successive pass, the color and depth of the next-nearest fragment is recorded. Two depth buffers are used to compare the previous fragment with the current one: one depth buffer is writable and is used to store the fragment data, while the other one is used only for comparison and thus can be read-only (a shadow map).
 
-A faster version of depth peeling is _dual depth peeling_, which allows rendering $n$ layers of transparent fragments with $\frac{n}{2}+1$ render passes by rendering both the next-farthest and the next-nearest fragment on each pass. Dual depth peeling requires the use of two additional framebuffers, each of which has three color attachments:
+A faster version of depth peeling is _dual depth peeling_, which allows rendering $n$ layers of transparent fragments with $\frac{n}{2}+1$ 3D render passes (plus one 2D composition pass) by rendering both the next-farthest and the next-nearest fragment on each pass. Dual depth peeling requires the use of two additional framebuffers, each of which has three color attachments:
 
 - A color attachment that uses one channel to store the negative front depth and another channel to store the back depth.
 - A color attachment that stores the color of the front fragment.
