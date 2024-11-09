@@ -18,23 +18,23 @@ export type ImageProps = Omit<
 > & {
 	src: string | StaticImport;
 	alt: string;
-	width?: number | `${number}` | undefined;
-	height?: number | `${number}` | undefined;
-	fill?: boolean | undefined;
-	loader?: ImageLoader | undefined;
-	quality?: number | `${number}` | undefined;
-	priority?: boolean | undefined;
+	width?: number | `${number}`;
+	height?: number | `${number}`;
+	fill?: boolean;
+	loader?: ImageLoader;
+	quality?: number | `${number}`;
+	priority?: boolean;
 	loading?: "eager" | "lazy" | undefined;
-	placeholder?: PlaceholderValue | undefined;
-	blurDataURL?: string | undefined;
-	unoptimized?: boolean | undefined;
-	overrideSrc?: string | undefined;
-	onLoadingComplete?: OnLoadingComplete | undefined;
-	layout?: string | undefined;
-	objectFit?: string | undefined;
-	objectPosition?: string | undefined;
-	lazyBoundary?: string | undefined;
-	lazyRoot?: string | undefined;
+	placeholder?: PlaceholderValue;
+	blurDataURL?: string;
+	unoptimized?: boolean;
+	overrideSrc?: string;
+	onLoadingComplete?: OnLoadingComplete;
+	layout?: string;
+	objectFit?: string;
+	objectPosition?: string;
+	lazyBoundary?: string;
+	lazyRoot?: string;
 } & RefAttributes<HTMLImageElement | null>;
 
 export type PlainImageProps = DetailedHTMLProps<
@@ -50,35 +50,37 @@ export default function Image({
 	height,
 	...props
 }: ImageProps | PlainImageProps) {
-	const actualSrc = src ?? "";
-	const placeholder =
-		"placeholder" in props ? (props.placeholder ?? "blur") : "blur";
-	const actualWidth =
-		typeof width === "number"
-			? width
-			: typeof width === "string"
-				? parseInt(width, 10)
-				: void 0;
-	const actualHeight =
-		typeof height === "number"
-			? height
-			: typeof height === "string"
-				? parseInt(height, 10)
-				: void 0;
+	// Apply default styling.
 	style.display ??= "block";
 	style.height ??= "auto";
 	style.margin ??= "auto";
 	style.width ??= "100%";
 
-	return (
-		<NextImage
-			alt={alt}
-			src={actualSrc}
-			style={style}
-			width={actualWidth}
-			height={actualHeight}
-			placeholder={placeholder}
-			{...props}
-		/>
-	);
+	// Recombine arguments into one object (so that default arguments can be applied).
+	const actualProps: ImageProps = {
+		alt,
+		src: src ?? "",
+		style,
+		...props
+	};
+
+	// Apply width if present.
+	if (typeof width === "number") {
+		actualProps.width = width;
+	} else if (typeof width === "string") {
+		actualProps.width = parseInt(width, 10);
+	}
+
+	// Apply height if present.
+	if (typeof height === "number") {
+		actualProps.height = height;
+	} else if (typeof height === "string") {
+		actualProps.height = parseInt(height, 10);
+	}
+
+	// Apply default placeholder type unless specified.
+	actualProps.placeholder =
+		"placeholder" in props ? (props.placeholder ?? "blur") : "blur";
+
+	return <NextImage {...actualProps} />;
 }

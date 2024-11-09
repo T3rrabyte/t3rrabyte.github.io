@@ -17,6 +17,4 @@ export type IframeProps = DetailedHTMLProps<
 
 export interface LayoutProps {
 	children: ReactNode;
-
-	params?: Record<string, string>;
 }
