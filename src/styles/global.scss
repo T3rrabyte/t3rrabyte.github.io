@@ -2,6 +2,11 @@
 @use "mixins";
 
 :root {
+	font-family: variables.$font-sans-serif;
+	color: variables.$text-color;
+	background-color: variables.$bg-color;
+	tab-size: 4;
+
 	@include mixins.is-light-theme using ($is-light-theme) {
 		@if $is-light-theme {
 			--bg-color: #{variables.$alabaster};
@@ -31,11 +36,6 @@
 			color-scheme: dark;
 		}
 	}
-
-	font-family: variables.$font-sans-serif;
-	color: variables.$text-color;
-	background-color: variables.$bg-color;
-	tab-size: 4;
 }
 
 a {
