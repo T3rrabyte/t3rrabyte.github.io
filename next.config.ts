@@ -9,9 +9,12 @@ import rehypeKatex from "rehype-katex";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMath from "remark-math";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// TODO: Update to ESLint flat config once Next.js supports it.
+// TODO: Remove `overrides` in `package.json` once everything fully supports React 19.
+
+const nextConfig: NextConfig = {
 	experimental: {
 		// TODO: Enable once the Rust-based MDX compiler supports extensions.
 		mdxRs: false

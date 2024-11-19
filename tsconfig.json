@@ -1,7 +1,7 @@
 {
 	"include": [
 		"next-env.d.ts",
-		"next.config.js",
+		"next.config.ts",
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts"
@@ -23,19 +23,19 @@
 		"strict": true,
 
 		// Modules
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"resolveJsonModule": true,
+		"module": "esnext", // Next.js required.
+		"moduleResolution": "bundler", // Next.js required.
+		"resolveJsonModule": true, // Next.js required.
 
 		// Emit
-		"noEmit": true,
+		"noEmit": true, // Next.js required.
 
 		// JavaScript Support
-		"allowJs": true,
-		"checkJs": true,
+		"allowJs": true, // Next.js required.
+		"checkJs": true, // Next.js required.
 
 		// Editor Support
-		"plugins": [{ "name": "next" }],
+		"plugins": [{ "name": "next" }], // Next.js required.
 
 		// Interop Constraints
 		"esModuleInterop": true,
@@ -45,8 +45,8 @@
 		// N/A
 
 		// Language and Environment
-		"jsx": "preserve",
-		"lib": ["dom", "dom.iterable", "esnext"],
+		"jsx": "preserve", // Next.js required.
+		"lib": ["dom", "dom.iterable", "esnext"], // Next.js required.
 		"target": "esnext",
 
 		// Compiler Diagnostics
@@ -54,7 +54,7 @@
 
 		// Projects
 		"composite": true,
-		"incremental": true,
+		"incremental": true, // Next.js required.
 
 		// Output Formatting
 		// N/A
