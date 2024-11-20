@@ -1,6 +1,13 @@
 "use client";
 
-import { Context, Ebo, Program, Texture2d, Vao, Vbo } from "@lakuna/ugl";
+import {
+	Context,
+	ElementBuffer,
+	Program,
+	Texture2d,
+	VertexArray,
+	VertexBuffer
+} from "@lakuna/ugl";
 import { createMatrix4Like, identity, scale } from "@lakuna/umath/Matrix4";
 import type { Props } from "#Props";
 import ReactCanvas from "@lakuna/react-canvas";
@@ -52,11 +59,11 @@ export default function Textures(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const texcoordBuffer = new Vbo(gl, texcoordData);
-				const indexBuffer = new Ebo(gl, indexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const texcoordBuffer = new VertexBuffer(gl, texcoordData);
+				const indexBuffer = new ElementBuffer(gl, indexData);
 
-				const quadVao = new Vao(
+				const quadVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase

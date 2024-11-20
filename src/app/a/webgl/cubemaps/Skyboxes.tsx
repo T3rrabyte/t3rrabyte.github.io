@@ -2,13 +2,13 @@
 
 import {
 	Context,
-	Ebo,
+	ElementBuffer,
 	Program,
 	TestFunction,
 	TextureCubemap,
 	TextureFilter,
-	Vao,
-	Vbo
+	VertexArray,
+	VertexBuffer
 } from "@lakuna/ugl";
 import { createMatrix3Like, normalFromMatrix4 } from "@lakuna/umath/Matrix3";
 import {
@@ -131,13 +131,13 @@ export default function Skyboxes(props: Props<HTMLCanvasElement>) {
 				const program = Program.fromSource(gl, vss, fss);
 				const skyboxProgram = Program.fromSource(gl, skyboxVss, skyboxFss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const normalBuffer = new Vbo(gl, normalData);
-				const indexBuffer = new Ebo(gl, indexData);
-				const planePositionBuffer = new Vbo(gl, planePositionData);
-				const planeIndexBuffer = new Ebo(gl, planeIndexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const normalBuffer = new VertexBuffer(gl, normalData);
+				const indexBuffer = new ElementBuffer(gl, indexData);
+				const planePositionBuffer = new VertexBuffer(gl, planePositionData);
+				const planeIndexBuffer = new ElementBuffer(gl, planeIndexData);
 
-				const vao = new Vao(
+				const vao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase
@@ -148,7 +148,7 @@ export default function Skyboxes(props: Props<HTMLCanvasElement>) {
 					indexBuffer
 				);
 
-				const skyboxVao = new Vao(
+				const skyboxVao = new VertexArray(
 					skyboxProgram,
 					// eslint-disable-next-line camelcase
 					{ a_position: { size: 2, vbo: planePositionBuffer } },

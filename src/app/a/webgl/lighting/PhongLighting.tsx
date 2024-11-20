@@ -1,6 +1,12 @@
 "use client";
 
-import { Context, Ebo, Program, Vao, Vbo } from "@lakuna/ugl";
+import {
+	Context,
+	ElementBuffer,
+	Program,
+	VertexArray,
+	VertexBuffer
+} from "@lakuna/ugl";
 import { createMatrix3Like, normalFromMatrix4 } from "@lakuna/umath/Matrix3";
 import {
 	createMatrix4Like,
@@ -104,11 +110,11 @@ export default function PhongLighting(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const normalBuffer = new Vbo(gl, normalData);
-				const indexBuffer = new Ebo(gl, indexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const normalBuffer = new VertexBuffer(gl, normalData);
+				const indexBuffer = new ElementBuffer(gl, indexData);
 
-				const cubeVao = new Vao(
+				const cubeVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase

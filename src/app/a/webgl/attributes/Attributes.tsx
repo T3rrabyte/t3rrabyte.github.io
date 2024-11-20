@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
+import { Context, Program, VertexArray, VertexBuffer } from "@lakuna/ugl";
 import type { Props } from "#Props";
 import ReactCanvas from "@lakuna/react-canvas";
 
@@ -36,9 +36,9 @@ export default function Indices(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
 
-				const rectVao = new Vao(
+				const rectVao = new VertexArray(
 					program,
 					// eslint-disable-next-line camelcase
 					{ a_position: { size: 2, vbo: positionBuffer } }

@@ -5,14 +5,14 @@
 import {
 	BlendEquation,
 	Context,
-	Ebo,
+	ElementBuffer,
 	Framebuffer,
 	Program,
 	Texture2d,
 	TextureFilter,
 	TextureFormat,
-	Vao,
-	Vbo
+	VertexArray,
+	VertexBuffer
 } from "@lakuna/ugl";
 import {
 	createMatrix4Like,
@@ -189,19 +189,19 @@ export default function DualDepthPeeling(props: Props<HTMLCanvasElement>) {
 				);
 				const finalProgram = Program.fromSource(gl, finalVss, finalFss);
 
-				const planePositionBuffer = new Vbo(gl, planePositionData);
-				const planeIndexBuffer = new Ebo(gl, planeIndexData);
-				const positionBuffer = new Vbo(gl, positionData);
-				const colorBuffer = new Vbo(gl, colorData);
+				const planePositionBuffer = new VertexBuffer(gl, planePositionData);
+				const planeIndexBuffer = new ElementBuffer(gl, planeIndexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const colorBuffer = new VertexBuffer(gl, colorData);
 
-				const depthPeelVao = new Vao(depthPeelProgram, {
+				const depthPeelVao = new VertexArray(depthPeelProgram, {
 					// eslint-disable-next-line camelcase
 					a_color: { normalized: true, size: 4, vbo: colorBuffer },
 					// eslint-disable-next-line camelcase
 					a_position: positionBuffer
 				});
 
-				const finalPlaneVao = new Vao(
+				const finalPlaneVao = new VertexArray(
 					finalProgram,
 					// eslint-disable-next-line camelcase
 					{ a_position: { size: 2, vbo: planePositionBuffer } },

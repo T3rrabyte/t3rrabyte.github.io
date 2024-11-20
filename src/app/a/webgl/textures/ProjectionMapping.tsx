@@ -2,14 +2,14 @@
 
 import {
 	Context,
-	Ebo,
+	ElementBuffer,
 	Primitive,
 	Program,
 	Texture2d,
 	TextureFilter,
 	TextureFormat,
-	Vao,
-	Vbo
+	VertexArray,
+	VertexBuffer
 } from "@lakuna/ugl";
 import {
 	createMatrix4Like,
@@ -134,16 +134,16 @@ export default function ProjectionMapping(props: Props<HTMLCanvasElement>) {
 				const program = Program.fromSource(gl, vss, fss);
 				const solidProgram = Program.fromSource(gl, solidVss, solidFss);
 
-				const planePositionBuffer = new Vbo(gl, planePositionData);
-				const planeTexcoordBuffer = new Vbo(gl, planeTexcoordData);
-				const planeIndexBuffer = new Ebo(gl, planeIndexData);
-				const cubePositionBuffer = new Vbo(gl, cubePositionData);
-				const cubeTexcoordBuffer = new Vbo(gl, cubeTexcoordData);
-				const cubeIndexBuffer = new Ebo(gl, cubeIndexData);
-				const frustumPositionBuffer = new Vbo(gl, frustumPositionData);
-				const frustumIndexBuffer = new Ebo(gl, frustumIndexData);
+				const planePositionBuffer = new VertexBuffer(gl, planePositionData);
+				const planeTexcoordBuffer = new VertexBuffer(gl, planeTexcoordData);
+				const planeIndexBuffer = new ElementBuffer(gl, planeIndexData);
+				const cubePositionBuffer = new VertexBuffer(gl, cubePositionData);
+				const cubeTexcoordBuffer = new VertexBuffer(gl, cubeTexcoordData);
+				const cubeIndexBuffer = new ElementBuffer(gl, cubeIndexData);
+				const frustumPositionBuffer = new VertexBuffer(gl, frustumPositionData);
+				const frustumIndexBuffer = new ElementBuffer(gl, frustumIndexData);
 
-				const planeVao = new Vao(
+				const planeVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase
@@ -153,7 +153,7 @@ export default function ProjectionMapping(props: Props<HTMLCanvasElement>) {
 					},
 					planeIndexBuffer
 				);
-				const cubeVao = new Vao(
+				const cubeVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase
@@ -163,7 +163,7 @@ export default function ProjectionMapping(props: Props<HTMLCanvasElement>) {
 					},
 					cubeIndexBuffer
 				);
-				const frustumVao = new Vao(
+				const frustumVao = new VertexArray(
 					solidProgram,
 					// eslint-disable-next-line camelcase
 					{ a_position: frustumPositionBuffer },

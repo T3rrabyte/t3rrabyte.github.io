@@ -2,7 +2,7 @@
 
 import {
 	Context,
-	Ebo,
+	ElementBuffer,
 	Framebuffer,
 	FramebufferAttachment,
 	Program,
@@ -11,8 +11,8 @@ import {
 	Texture2d,
 	TextureFilter,
 	TextureFormat,
-	Vao,
-	Vbo
+	VertexArray,
+	VertexBuffer
 } from "@lakuna/ugl";
 import {
 	createMatrix4Like,
@@ -83,11 +83,11 @@ export default function Framebuffers(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const texcoordBuffer = new Vbo(gl, texcoordData);
-				const indexBuffer = new Ebo(gl, indexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const texcoordBuffer = new VertexBuffer(gl, texcoordData);
+				const indexBuffer = new ElementBuffer(gl, indexData);
 
-				const cubeVao = new Vao(
+				const cubeVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase

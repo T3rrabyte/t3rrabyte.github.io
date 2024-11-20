@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, Program, Vao, Vbo } from "@lakuna/ugl";
+import { Context, Program, VertexArray, VertexBuffer } from "@lakuna/ugl";
 import {
 	type Matrix4Like,
 	createMatrix4Like,
@@ -102,10 +102,10 @@ export default function Fog(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const colorBuffer = new Vbo(gl, colorData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const colorBuffer = new VertexBuffer(gl, colorData);
 
-				const fVao = new Vao(program, {
+				const fVao = new VertexArray(program, {
 					// eslint-disable-next-line camelcase
 					a_color: { normalized: true, vbo: colorBuffer },
 					// eslint-disable-next-line camelcase

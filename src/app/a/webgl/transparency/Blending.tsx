@@ -1,6 +1,12 @@
 "use client";
 
-import { BlendFunction, Context, Program, Vao, Vbo } from "@lakuna/ugl";
+import {
+	BlendFunction,
+	Context,
+	Program,
+	VertexArray,
+	VertexBuffer
+} from "@lakuna/ugl";
 import {
 	createMatrix4Like,
 	perspective,
@@ -96,10 +102,10 @@ export default function Blending(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const colorBuffer = new Vbo(gl, colorData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const colorBuffer = new VertexBuffer(gl, colorData);
 
-				const fVao = new Vao(program, {
+				const fVao = new VertexArray(program, {
 					// eslint-disable-next-line camelcase
 					a_color: { normalized: true, size: 4, vbo: colorBuffer },
 					// eslint-disable-next-line camelcase

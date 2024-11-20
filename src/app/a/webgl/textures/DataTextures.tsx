@@ -2,13 +2,13 @@
 
 import {
 	Context,
-	Ebo,
+	ElementBuffer,
 	Program,
 	Texture2d,
 	TextureFilter,
 	TextureFormat,
-	Vao,
-	Vbo
+	VertexArray,
+	VertexBuffer
 } from "@lakuna/ugl";
 import { createMatrix4Like, identity, scale } from "@lakuna/umath/Matrix4";
 import type { Props } from "#Props";
@@ -60,11 +60,11 @@ export default function DataTextures(props: Props<HTMLCanvasElement>) {
 
 				const program = Program.fromSource(gl, vss, fss);
 
-				const positionBuffer = new Vbo(gl, positionData);
-				const texcoordBuffer = new Vbo(gl, texcoordData);
-				const indexBuffer = new Ebo(gl, indexData);
+				const positionBuffer = new VertexBuffer(gl, positionData);
+				const texcoordBuffer = new VertexBuffer(gl, texcoordData);
+				const indexBuffer = new ElementBuffer(gl, indexData);
 
-				const quadVao = new Vao(
+				const quadVao = new VertexArray(
 					program,
 					{
 						// eslint-disable-next-line camelcase
