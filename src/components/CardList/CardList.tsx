@@ -7,12 +7,11 @@ export default function CardList({
 }: Props<HTMLDivElement>) {
 	const cardListClassName = style["card-list"];
 
-	const fullClassName =
-		typeof cardListClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? cardListClassName
-				: `${cardListClassName} ${className}`;
+	const fullClassName = cardListClassName
+		? className
+			? `${cardListClassName} ${className}`
+			: cardListClassName
+		: className;
 
 	return <div className={fullClassName} {...props} />;
 }

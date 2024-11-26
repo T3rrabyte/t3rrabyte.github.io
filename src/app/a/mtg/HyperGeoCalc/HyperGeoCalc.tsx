@@ -23,12 +23,11 @@ export default function HyperGeoCalc({
 }: Props<HTMLFormElement>) {
 	const hyperGeoCalcClassName = style["hyper-geo-calc"];
 
-	const fullClassName =
-		typeof hyperGeoCalcClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? hyperGeoCalcClassName
-				: `${hyperGeoCalcClassName} ${className}`;
+	const fullClassName = hyperGeoCalcClassName
+		? className
+			? `${hyperGeoCalcClassName} ${className}`
+			: hyperGeoCalcClassName
+		: className;
 
 	const [N, setN] = useState(60);
 	const [K, setK] = useState(4);

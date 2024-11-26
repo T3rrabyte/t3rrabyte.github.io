@@ -101,12 +101,11 @@ export default function OneLiner({
 }: Props<HTMLParagraphElement>) {
 	const oneLinerClassName = style["one-liner"];
 
-	const fullClassName =
-		typeof oneLinerClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? oneLinerClassName
-				: `${oneLinerClassName} ${className}`;
+	const fullClassName = oneLinerClassName
+		? className
+			? `${oneLinerClassName} ${className}`
+			: oneLinerClassName
+		: className;
 
 	const [i, setI] = useState(0);
 

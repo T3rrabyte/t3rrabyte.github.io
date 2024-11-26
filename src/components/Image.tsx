@@ -67,14 +67,14 @@ export default function Image({
 	// Apply width if present.
 	if (typeof width === "number") {
 		actualProps.width = width;
-	} else if (typeof width === "string") {
+	} else if (width) {
 		actualProps.width = parseInt(width, 10);
 	}
 
 	// Apply height if present.
 	if (typeof height === "number") {
 		actualProps.height = height;
-	} else if (typeof height === "string") {
+	} else if (height) {
 		actualProps.height = parseInt(height, 10);
 	}
 

@@ -5,12 +5,11 @@ import style from "./topnav.module.scss";
 export default function Topnav({ className, ...props }: Props<HTMLElement>) {
 	const topnavClassName = style["topnav"];
 
-	const fullClassName =
-		typeof topnavClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? topnavClassName
-				: `${topnavClassName} ${className}`;
+	const fullClassName = topnavClassName
+		? className
+			? `${topnavClassName} ${className}`
+			: topnavClassName
+		: className;
 
 	return (
 		<nav className={fullClassName} {...props}>

@@ -9,12 +9,11 @@ export default function Socials({
 }: Props<HTMLUListElement>) {
 	const socialsClassName = style["socials"];
 
-	const fullClassName =
-		typeof socialsClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? socialsClassName
-				: `${socialsClassName} ${className}`;
+	const fullClassName = socialsClassName
+		? className
+			? `${socialsClassName} ${className}`
+			: socialsClassName
+		: className;
 
 	return (
 		<ul className={fullClassName} {...props}>

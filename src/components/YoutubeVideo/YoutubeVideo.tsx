@@ -16,19 +16,17 @@ export default function YoutubeVideo({
 }: IframeProps) {
 	const youtubeVideoClassName = style["youtube-video"];
 
-	const fullClassName =
-		typeof youtubeVideoClassName === "undefined"
-			? className
-			: typeof className === "undefined"
-				? youtubeVideoClassName
-				: `${youtubeVideoClassName} ${className}`;
+	const fullClassName = youtubeVideoClassName
+		? className
+			? `${youtubeVideoClassName} ${className}`
+			: youtubeVideoClassName
+		: className;
 
-	const actualSrc =
-		typeof src === "undefined"
-			? ""
-			: /^https?:\/\//iu.test(src)
-				? src
-				: `https://www.youtube-nocookie.com/embed/${src}`;
+	const actualSrc = src
+		? /^https?:\/\//iu.test(src)
+			? src
+			: `https://www.youtube-nocookie.com/embed/${src}`
+		: "";
 
 	return (
 		<iframe
