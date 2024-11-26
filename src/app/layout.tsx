@@ -1,42 +1,16 @@
 import "#global";
-// eslint-disable-next-line camelcase
-import { Noto_Serif, Ubuntu, Ubuntu_Mono } from "next/font/google";
+import { monospace, sansSerif, serif } from "#font";
 import Gtag from "#Gtag";
 import type { LayoutProps } from "#Props";
 import Topnav from "#Topnav";
 import domain from "#domain";
 import style from "./layout.module.scss";
 
-// eslint-disable-next-line new-cap
-const fontSerif = Noto_Serif({
-	fallback: ["Times New Roman", "Times", "serif"],
-	subsets: ["latin"],
-	variable: "--font-serif"
-});
-
-// TODO: Switch to Ubuntu Sans when Next.js 15 comes out.
-// eslint-disable-next-line new-cap
-const fontSansSerif = Ubuntu({
-	fallback: ["Arial", "Helvetica", "sans-serif"],
-	subsets: ["latin"],
-	variable: "--font-sans-serif",
-	weight: "400"
-});
-
-// TODO: Switch to Ubuntu Sans Mono when Next.js 15 comes out.
-// eslint-disable-next-line new-cap
-const fontMonospace = Ubuntu_Mono({
-	fallback: ["Courier New", "Courier", "monospace"],
-	subsets: ["latin"],
-	variable: "--font-monospace",
-	weight: "400"
-});
-
 export default function Layout({ children }: LayoutProps) {
 	return (
 		<html
 			lang="en-US"
-			className={`${fontSerif.variable} ${fontSansSerif.variable} ${fontMonospace.variable}`}
+			className={`${serif.variable} ${sansSerif.variable} ${monospace.variable}`}
 		>
 			<body className={style["spacer"]}>
 				<header>

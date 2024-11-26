@@ -54,6 +54,7 @@
 		"#Image": "./src/components/Image.tsx",
 		"#Link": "./src/components/Link.tsx",
 		"#domain": "./src/scripts/domain.ts",
+		"#font": "./src/scripts/font.ts",
 		"#Props": "./src/scripts/Props.ts",
 		"#global": "./src/styles/global.scss",
 		"#highlight": "./src/styles/highlight.scss",
