@@ -7,9 +7,21 @@ openGraph:
 
 # GPGPU
 
-You may need to read [the article about textures](/a/webgl/textures) before this one.
+You may need to read [the article about framebuffers](/a/webgl/framebuffers) before this one.
 
 ---
+
+General-purpose GPU (GPGPU) refers to doing work with the GPU other than rendering scenes. GPGPU work can be performed both via textures and via buffers.
+
+## GPGPU With Textures
+
+Previous articles have already covered writing to textures and reading from textures via framebuffers. From that point, the only new thing that needs to be done to perform GPGPU work is to read data from a texture on the CPU. This can be achieved with [`readPixels`](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels).
+
+This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
+
+- [GPGPU](https://webgl2fundamentals.org/webgl/lessons/webgl-gpgpu.html).
+
+## GPGPU With Buffers
 
 This article is a work-in-progress. In the meantime, consider reading these other articles about the same topic:
 

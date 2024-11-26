@@ -13,7 +13,7 @@ You may need to read the articles about [textures](/a/webgl/textures) and [trans
 
 ---
 
-Text rendering is an extremely complex topic that I can only barely scratch the surface of. As such, I will only be covering the most basic of scenarios in this article. If you'd like to learn more about why text rendering is so difficult, consider reading ["Text Rendering Hates You"](https://faultlore.com/blah/text-hates-you/). If you want to do more complex text rendering within a 3D environment, it is typical to use software like [Slug](https://sluglibrary.com/) to do the heavy lifting for you.
+Text rendering is an extremely complex topic that I can only barely scratch the surface of. As such, I will only be covering the most basic of scenarios in this article. If you'd like to learn more about why text rendering is so difficult, consider reading ["Text Rendering Hates You."](https://faultlore.com/blah/text-hates-you/) If you want to do more complex text rendering within a 3D environment, it is typical to use software like [Slug](https://sluglibrary.com/) to do the heavy lifting for you.
 
 Simply put, text is typically rendered in OpenGL by rendering a transparent textured quad, with the texture being a representation of the desired text. For applications that only need to render a small set of predefined strings, it is trivial to create corresponding textures ahead of time. Otherwise, some effort is required to enable developers to generate textures on the fly.
 
