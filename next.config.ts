@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
 			],
 			fallback: []
 		};
+	},
+	sassOptions: {
+		// TODO: Remove once vercel/next.js#71638 is fixed.
+		silenceDeprecations: ["legacy-js-api"]
 	}
 };
 

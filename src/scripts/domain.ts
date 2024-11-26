@@ -2,7 +2,7 @@
 
 const domain =
 	process.env["VERCEL_ENV"] === "development" ||
-	process.env["NODE_ENV"] === "development"
+	process.env.NODE_ENV === "development"
 		? `http://localhost:${process.env["PORT"] ?? "3000"}`
 		: "https://www.lakuna.pw";
 

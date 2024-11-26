@@ -1,19 +1,16 @@
 "use client";
 
-import domain from "#domain";
-import type { Props } from "#Props";
-import ReactCanvas from "@lakuna/react-canvas";
 import {
 	BlendFunction,
 	BufferUsage,
 	Context,
 	ElementBuffer,
 	Program,
+	type Rectangle,
 	Texture2d,
 	TextureFilter,
 	VertexArray,
-	VertexBuffer,
-	type Rectangle
+	VertexBuffer
 } from "@lakuna/ugl";
 import {
 	createMatrix4Like,
@@ -25,6 +22,9 @@ import {
 	scale,
 	translate
 } from "@lakuna/umath/Matrix4";
+import type { Props } from "#Props";
+import ReactCanvas from "@lakuna/react-canvas";
+import domain from "#domain";
 
 const vss = `\
 #version 300 es
@@ -189,12 +189,11 @@ class TextQuad extends VertexArray {
 	 * @internal
 	 */
 	private resize(length: number): [Uint32Array, Float32Array, Float32Array] {
-		const ebo = this.ebo;
-		if (!ebo) {
+		if (!this.ebo) {
 			throw new Error("Text quad element buffer not defined.");
 		}
 
-		const currentLength = ebo.data.byteLength / 4 / 6; // `Uint32Array` has 4 bytes per element. Letters each require 6 indices.
+		const currentLength = this.ebo.data.byteLength / 4 / 6; // `Uint32Array` has 4 bytes per element. Letters each require 6 indices.
 		if (currentLength < length) {
 			// Current arrays are not large enough; return new ones.
 
@@ -222,7 +221,7 @@ class TextQuad extends VertexArray {
 		}
 
 		return [
-			ebo.data as Uint32Array,
+			this.ebo.data as Uint32Array,
 			posBuffer.data as Float32Array,
 			texcoordBuffer.data as Float32Array
 		];
@@ -235,11 +234,26 @@ class TextQuad extends VertexArray {
 	private textCache?: string;
 
 	/** The string displayed by this text quad. */
-	public get text(): string | undefined {
-		return this.textCache;
+	public get text(): string {
+		return this.textCache ?? "";
 	}
 
 	public set text(value: string) {
+		// Ensure that the necessary attributes are present.
+		const posAttr = this.getAttribute("a_position");
+		if (!posAttr) {
+			throw new Error("Position attribute is missing.");
+		}
+
+		const texcoordAttr = this.getAttribute("a_texcoord");
+		if (!texcoordAttr) {
+			throw new Error("Texture coordinate attribute is missing.");
+		}
+
+		if (!this.ebo) {
+			throw new Error("Element buffer is missing.");
+		}
+
 		// Count the number of actual displayable characters in the string.
 		let length = 0;
 		for (const c of value) {
@@ -256,11 +270,8 @@ class TextQuad extends VertexArray {
 		let y = 0;
 		let currentLineHeight = 0;
 		let width = 0; // The maximum width of the texture.
-		let j = 0; // Basically `i` but only increments for visible glyphs.
-		for (let i = 0; i < value.length; i++) {
-			// Get the next character.
-			const c = value[i];
-
+		let j = 0; // Only increments for visible glyphs.
+		for (const c of value) {
 			// Skip if there is no character.
 			if (!c) {
 				continue;
@@ -277,37 +288,60 @@ class TextQuad extends VertexArray {
 			// Add the character's glyph to the data. This configuration allows for visible newline characters.
 			if (glyph) {
 				// Positions.
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 0] = x;
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 1] = y + glyph[3];
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 2] = x;
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 3] = y;
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 4] = x + glyph[2];
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 5] = y;
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 6] = x + glyph[2];
+				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 7] = y + glyph[3];
 
 				// Texture coordinates.
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 0] = glyph[0];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 1] = glyph[1];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 2] = glyph[0];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 3] = glyph[1] + glyph[3];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 4] = glyph[0] + glyph[2];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 5] = glyph[1] + glyph[3];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 6] = glyph[0] + glyph[2];
+				// eslint-disable-next-line prefer-destructuring
 				texData[j * 4 * 2 + 7] = glyph[1];
 
 				// Indices.
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 0] = j * 4 + 0;
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 1] = j * 4 + 1;
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 2] = j * 4 + 2;
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 3] = j * 4 + 0;
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 4] = j * 4 + 2;
+				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 5] = j * 4 + 3;
 
 				// Update cursor.
 				j++;
 				x += glyph[2];
 				if (glyph[3] > currentLineHeight) {
+					// eslint-disable-next-line prefer-destructuring
 					currentLineHeight = glyph[3];
 				}
 			}
@@ -327,14 +361,21 @@ class TextQuad extends VertexArray {
 		// Scale data.
 		for (let i = 0; i < j * 4 * 2; i += 2) {
 			// Scale down so that texture coordinates are represented in texture space.
-			texData[i + 0]! /= this.texture.texture.width;
-			texData[i + 1]! /= this.texture.texture.height;
+			const u = texData[i + 0];
+			if (u) {
+				texData[i + 0] = u / this.texture.texture.width;
+			}
+
+			const v = texData[i + 1];
+			if (v) {
+				texData[i + 1] = v / this.texture.texture.height;
+			}
 		}
 
 		// Update the buffer data on the GPU.
-		this.getAttribute("a_position")!.data = posData;
-		this.getAttribute("a_texcoord")!.data = texData;
-		this.ebo!.data = indexData;
+		posAttr.data = posData;
+		texcoordAttr.data = texData;
+		this.ebo.data = indexData;
 
 		// Update dimension information.
 		this.widthCache = width;
@@ -379,7 +420,7 @@ export default function GlyphTextures(props: Props<HTMLCanvasElement>) {
 				glyphTexture.minFilter = TextureFilter.NEAREST;
 				glyphTexture.magFilter = TextureFilter.NEAREST;
 
-				const textQuad = new TextQuad({ texture: glyphTexture, glyphs });
+				const textQuad = new TextQuad({ glyphs, texture: glyphTexture });
 
 				const projMat = createMatrix4Like();
 				const camMat = createMatrix4Like();
@@ -421,12 +462,13 @@ export default function GlyphTextures(props: Props<HTMLCanvasElement>) {
 					multiply(viewProjMat, textMat, textMat);
 
 					// eslint-disable-next-line camelcase
-					quadVao.draw({ u_worldViewProjMat: quadMat, u_texture: texture });
+					quadVao.draw({ u_texture: texture, u_worldViewProjMat: quadMat });
 
-					// eslint-disable-next-line camelcase
 					textQuad.draw({
-						u_worldViewProjMat: textMat,
-						u_texture: glyphTexture
+						// eslint-disable-next-line camelcase
+						u_texture: glyphTexture,
+						// eslint-disable-next-line camelcase
+						u_worldViewProjMat: textMat
 					});
 				};
 			}}
