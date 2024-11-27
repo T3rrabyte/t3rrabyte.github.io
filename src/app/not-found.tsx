@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export default function NotFound() {
 	return (
 		<>
@@ -9,7 +11,7 @@ export default function NotFound() {
 	);
 }
 
-export const metadata = {
+export const metadata: Metadata = {
 	description: "Page not found.",
 	title: "404 Not Found"
 };
