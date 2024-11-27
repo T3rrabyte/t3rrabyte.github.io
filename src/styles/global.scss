@@ -88,11 +88,8 @@ button {
 
 code {
 	font-family: variables.$font-monospace;
-
-	*:not(pre) > & {
-		background-color: variables.$fg-color;
-		padding: 2px;
-	}
+	background-color: variables.$fg-color;
+	padding: 2px;
 }
 
 pre,

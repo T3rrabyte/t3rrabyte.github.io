@@ -1,5 +1,7 @@
 @use "variables";
+@use "mixins";
 
+// TODO: Make this better.
 // Custom highlight.js color theme, based loosely on Panda.
 pre > code.hljs {
 	display: block;
@@ -7,6 +9,18 @@ pre > code.hljs {
 	padding: 1em;
 	color: variables.$text-color;
 	background: variables.$fg-color;
+	border-radius: 10px;
+
+	@include mixins.is-light-theme using ($is-light-theme) {
+		@if $is-light-theme {
+			$shadow-x: 2px;
+			$shadow-y: 2px;
+			margin: 0px $shadow-x $shadow-y;
+			box-shadow:
+				1px 1px 2px #3a3a443d,
+				$shadow-x $shadow-y 4px #5a5b6a3d;
+		}
+	}
 
 	& > .hljs-emphasis {
 		font-style: italic;

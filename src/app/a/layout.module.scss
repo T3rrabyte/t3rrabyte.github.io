@@ -1,3 +1,5 @@
+@use "../../styles/mixins";
+
 article.content {
 	display: grid;
 	grid-template-columns: 1fr min(65ch, 100%) 1fr;
@@ -13,17 +15,12 @@ article.content {
 		width: 100%;
 	}
 
-	& > pre:has(> code) {
+	& > pre,
+	& > img,
+	& > iframe {
 		grid-column: 1 / 4;
 		width: 100%;
-
-		& > code {
-			max-width: min(80ch, 100%);
-			margin: 0px auto;
-		}
-	}
-
-	& > iframe {
+		max-width: min(80ch, 100%);
 		margin: 0px auto;
 	}
 }
