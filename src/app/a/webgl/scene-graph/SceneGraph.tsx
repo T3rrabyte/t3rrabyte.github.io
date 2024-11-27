@@ -14,7 +14,7 @@ import {
 	scale,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -65,7 +65,7 @@ const indexData = new Uint8Array([
 	0, 2, 3
 ]);
 
-export default function SceneGraph(props: Props<HTMLCanvasElement>) {
+export default function SceneGraph(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

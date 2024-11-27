@@ -1,27 +1,12 @@
-import type {
-	AnchorHTMLAttributes,
-	DetailedHTMLProps,
-	ReactNode,
-	RefAttributes
-} from "react";
 import {
 	default as NextLink,
 	type LinkProps as NextLinkProps
 } from "next/link";
+import type { JSX } from "react";
 import domain from "#domain";
 
 // Equivalent to the props that can be passed to a Next.js link.
-export type LinkProps = Omit<
-	AnchorHTMLAttributes<HTMLAnchorElement>,
-	keyof NextLinkProps
-> &
-	NextLinkProps & { children?: ReactNode } & RefAttributes<HTMLAnchorElement>;
-
-// Props from a default HTML anchor element.
-export type AnchorProps = DetailedHTMLProps<
-	AnchorHTMLAttributes<HTMLAnchorElement>,
-	HTMLAnchorElement
->;
+export type LinkProps = NextLinkProps | JSX.IntrinsicElements["a"];
 
 export default function Link({
 	href = "",
@@ -29,7 +14,7 @@ export default function Link({
 	onTouchStart,
 	onClick,
 	...props
-}: LinkProps | AnchorProps) {
+}: LinkProps) {
 	const hrefString = typeof href === "string" ? href : (href.href ?? "");
 
 	// Events cannot be passed to client components.

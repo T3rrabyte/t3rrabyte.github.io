@@ -21,7 +21,7 @@ import {
 	rotateZ,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 import { epsilon } from "@lakuna/umath";
 
@@ -176,7 +176,9 @@ const colorData = new Uint8Array([
 	220, 0x80
 ]);
 
-export default function DualDepthPeeling(props: Props<HTMLCanvasElement>) {
+export default function DualDepthPeeling(
+	props: JSX.IntrinsicElements["canvas"]
+) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

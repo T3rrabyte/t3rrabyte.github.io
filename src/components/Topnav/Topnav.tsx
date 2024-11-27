@@ -1,8 +1,11 @@
+import type { JSX } from "react";
 import Link from "#Link";
-import type { Props } from "#Props";
 import style from "./topnav.module.scss";
 
-export default function Topnav({ className, ...props }: Props<HTMLElement>) {
+export default function Topnav({
+	className,
+	...props
+}: JSX.IntrinsicElements["nav"]) {
 	const topnavClassName = style["topnav"];
 
 	const fullClassName = topnavClassName

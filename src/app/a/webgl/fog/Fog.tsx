@@ -12,7 +12,7 @@ import {
 	rotateY,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -94,7 +94,7 @@ const colorData = new Uint8Array([
 	160, 160, 220
 ]);
 
-export default function Fog(props: Props<HTMLCanvasElement>) {
+export default function Fog(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import Link from "#Link";
-import type { Props } from "#Props";
 import style from "./one-liner.module.scss";
 
 const oneLiners = [
@@ -98,7 +97,7 @@ const oneLiners = [
 export default function OneLiner({
 	className,
 	...props
-}: Props<HTMLParagraphElement>) {
+}: JSX.IntrinsicElements["p"]) {
 	const oneLinerClassName = style["one-liner"];
 
 	const fullClassName = oneLinerClassName

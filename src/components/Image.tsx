@@ -1,46 +1,7 @@
-import type {
-	DetailedHTMLProps,
-	ImgHTMLAttributes,
-	RefAttributes
-} from "react";
-import type {
-	ImageLoader,
-	OnLoadingComplete,
-	PlaceholderValue,
-	StaticImport
-} from "next/dist/shared/lib/get-img-props";
-import { default as NextImage } from "next/image";
+import NextImage, { type ImageProps as NextImageProps } from "next/image";
+import type { JSX } from "react";
 
-// Equivalent to the props that can be passed to a Next.js image.
-export type ImageProps = Omit<
-	DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
-	"height" | "width" | "loading" | "ref" | "alt" | "src" | "srcSet"
-> & {
-	src: string | StaticImport;
-	alt: string;
-	width?: number | `${number}`;
-	height?: number | `${number}`;
-	fill?: boolean;
-	loader?: ImageLoader;
-	quality?: number | `${number}`;
-	priority?: boolean;
-	loading?: "eager" | "lazy" | undefined;
-	placeholder?: PlaceholderValue;
-	blurDataURL?: string;
-	unoptimized?: boolean;
-	overrideSrc?: string;
-	onLoadingComplete?: OnLoadingComplete;
-	layout?: string;
-	objectFit?: string;
-	objectPosition?: string;
-	lazyBoundary?: string;
-	lazyRoot?: string;
-} & RefAttributes<HTMLImageElement | null>;
-
-export type PlainImageProps = DetailedHTMLProps<
-	ImgHTMLAttributes<HTMLImageElement>,
-	HTMLImageElement
->;
+export type ImageProps = NextImageProps | JSX.IntrinsicElements["img"];
 
 export default function Image({
 	alt = "",
@@ -49,7 +10,7 @@ export default function Image({
 	width,
 	height,
 	...props
-}: ImageProps | PlainImageProps) {
+}: ImageProps) {
 	// Apply default styling.
 	style.display ??= "block";
 	style.height ??= "auto";

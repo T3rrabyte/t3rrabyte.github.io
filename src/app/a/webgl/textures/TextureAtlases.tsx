@@ -19,7 +19,7 @@ import {
 	rotateY,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
 
@@ -73,7 +73,7 @@ const indexData = new Uint8Array([
 	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
 
-export default function TextureAtlases(props: Props<HTMLCanvasElement>) {
+export default function TextureAtlases(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

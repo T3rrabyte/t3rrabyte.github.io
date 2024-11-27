@@ -22,7 +22,7 @@ import {
 	scale,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
 
@@ -384,7 +384,7 @@ class TextQuad extends VertexArray {
 	}
 }
 
-export default function GlyphTextures(props: Props<HTMLCanvasElement>) {
+export default function GlyphTextures(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

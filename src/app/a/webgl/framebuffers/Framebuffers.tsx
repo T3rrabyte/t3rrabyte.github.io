@@ -25,7 +25,7 @@ import {
 	rotateZ,
 	translate
 } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -75,7 +75,7 @@ const indexData = new Uint8Array([
 	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
 
-export default function Framebuffers(props: Props<HTMLCanvasElement>) {
+export default function Framebuffers(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

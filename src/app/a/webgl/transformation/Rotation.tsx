@@ -7,7 +7,7 @@ import {
 	VertexArray,
 	VertexBuffer
 } from "@lakuna/ugl";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -64,7 +64,7 @@ const indexData = new Uint8Array([
 	0, 2, 3
 ]);
 
-export default function Rotation(props: Props<HTMLCanvasElement>) {
+export default function Rotation(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

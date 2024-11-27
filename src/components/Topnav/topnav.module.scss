@@ -1,6 +1,15 @@
 @use "../../styles/variables";
+@use "../../styles/mixins";
 
 nav.topnav {
+	@include mixins.is-light-theme using ($is-light-theme) {
+		@if $is-light-theme {
+			box-shadow:
+				0px 1px 2px #3a3a443d,
+				0px 2px 4px #5a5b6a3d;
+		}
+	}
+
 	& > ul {
 		background-color: variables.$fg-color;
 		color: variables.$text-color;

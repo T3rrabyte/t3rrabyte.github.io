@@ -1,12 +1,12 @@
 import { BsGithub, BsLinkedin, BsTwitch } from "react-icons/bs";
 import ButtonLink from "#ButtonLink";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import style from "./socials.module.scss";
 
 export default function Socials({
 	className,
 	...props
-}: Props<HTMLUListElement>) {
+}: JSX.IntrinsicElements["ul"]) {
 	const socialsClassName = style["socials"];
 
 	const fullClassName = socialsClassName

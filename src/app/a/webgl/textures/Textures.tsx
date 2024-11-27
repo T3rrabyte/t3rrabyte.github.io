@@ -9,7 +9,7 @@ import {
 	VertexBuffer
 } from "@lakuna/ugl";
 import { createMatrix4Like, identity, scale } from "@lakuna/umath/Matrix4";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 import domain from "#domain";
 
@@ -51,7 +51,7 @@ const texcoordData = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
 
 const indexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
 
-export default function Textures(props: Props<HTMLCanvasElement>) {
+export default function Textures(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

@@ -55,7 +55,7 @@
 		"#Link": "./src/components/Link.tsx",
 		"#domain": "./src/scripts/domain.ts",
 		"#font": "./src/scripts/font.ts",
-		"#Props": "./src/scripts/Props.ts",
+		"#LayoutProps": "./src/scripts/LayoutProps.ts",
 		"#global": "./src/styles/global.scss",
 		"#highlight": "./src/styles/highlight.scss",
 		"#katex": "./src/styles/katex.scss"

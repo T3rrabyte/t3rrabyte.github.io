@@ -2,7 +2,7 @@ import "#global";
 import type { Metadata, Viewport } from "next";
 import { monospace, sansSerif, serif } from "#font";
 import Gtag from "#Gtag";
-import type { LayoutProps } from "#Props";
+import type LayoutProps from "#LayoutProps";
 import Topnav from "#Topnav";
 import domain from "#domain";
 import style from "./layout.module.scss";

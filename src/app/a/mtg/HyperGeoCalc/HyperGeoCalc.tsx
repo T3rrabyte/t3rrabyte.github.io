@@ -3,12 +3,12 @@
 import {
 	type ChangeEvent,
 	type Dispatch,
+	type JSX,
 	type SetStateAction,
 	useEffect,
 	useState
 } from "react";
 import { hypergeometricPmf, summation } from "@lakuna/umath";
-import type { Props } from "#Props";
 import style from "./hyper-geo-calc.module.scss";
 
 const onChange =
@@ -20,7 +20,7 @@ const onChange =
 export default function HyperGeoCalc({
 	className,
 	...props
-}: Props<HTMLFormElement>) {
+}: JSX.IntrinsicElements["form"]) {
 	const hyperGeoCalcClassName = style["hyper-geo-calc"];
 
 	const fullClassName = hyperGeoCalcClassName

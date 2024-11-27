@@ -1,4 +1,4 @@
-import type { IframeProps } from "#Props";
+import type { JSX } from "react";
 import style from "./youtube-video.module.scss";
 
 export default function YoutubeVideo({
@@ -13,7 +13,7 @@ export default function YoutubeVideo({
 	src,
 	className,
 	...props
-}: IframeProps) {
+}: JSX.IntrinsicElements["iframe"]) {
 	const youtubeVideoClassName = style["youtube-video"];
 
 	const fullClassName = youtubeVideoClassName

@@ -7,7 +7,7 @@ import {
 	VertexArray,
 	VertexBuffer
 } from "@lakuna/ugl";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -58,7 +58,7 @@ const indexData = new Uint8Array([
 	0, 2, 3
 ]);
 
-export default function Translation(props: Props<HTMLCanvasElement>) {
+export default function Translation(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

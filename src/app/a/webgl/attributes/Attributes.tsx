@@ -1,7 +1,7 @@
 "use client";
 
 import { Context, Program, VertexArray, VertexBuffer } from "@lakuna/ugl";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -28,7 +28,7 @@ void main() {
 
 const positionData = new Float32Array([0, 0.5, 0, 0, 0.7, 0]);
 
-export default function Indices(props: Props<HTMLCanvasElement>) {
+export default function Indices(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {

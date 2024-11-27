@@ -1,6 +1,6 @@
 import "#highlight";
 import "#katex";
-import type { LayoutProps } from "#Props";
+import type LayoutProps from "#LayoutProps";
 
 export default function Layout({ children }: LayoutProps) {
 	return children;

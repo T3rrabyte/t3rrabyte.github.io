@@ -24,7 +24,7 @@ import {
 	fromValues,
 	normalize
 } from "@lakuna/umath/Vector3";
-import type { Props } from "#Props";
+import type { JSX } from "react";
 import ReactCanvas from "@lakuna/react-canvas";
 
 const vss = `\
@@ -102,7 +102,7 @@ const indexData = new Uint8Array([
 	15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
 ]);
 
-export default function PhongLighting(props: Props<HTMLCanvasElement>) {
+export default function PhongLighting(props: JSX.IntrinsicElements["canvas"]) {
 	return (
 		<ReactCanvas
 			init={(canvas) => {
