@@ -38,7 +38,15 @@
 	}
 }
 
-a {
+a,
+hr,
+caption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	color: variables.$highlight-color;
 }
 
@@ -47,12 +55,21 @@ strong {
 	color: variables.$bold-color;
 }
 
+i,
+em {
+	color: variables.$italic-color;
+}
+
 blockquote {
 	font-family: variables.$font-serif;
 }
 
 body {
 	margin: 0px;
+}
+
+main {
+	margin: 8px;
 }
 
 button {
@@ -69,10 +86,6 @@ button {
 	}
 }
 
-caption {
-	color: variables.$highlight-color;
-}
-
 code {
 	font-family: variables.$font-monospace;
 
@@ -80,28 +93,6 @@ code {
 		background-color: variables.$fg-color;
 		padding: 2px;
 	}
-}
-
-em,
-i {
-	color: variables.$italic-color;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	color: variables.$highlight-color;
-}
-
-hr {
-	border-color: variables.$highlight-color;
-}
-
-main {
-	margin: 8px;
 }
 
 pre,

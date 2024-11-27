@@ -1,4 +1,5 @@
 import "#global";
+import type { Metadata, Viewport } from "next";
 import { monospace, sansSerif, serif } from "#font";
 import Gtag from "#Gtag";
 import type { LayoutProps } from "#Props";
@@ -24,12 +25,12 @@ export default function Layout({ children }: LayoutProps) {
 	);
 }
 
-export const viewport = {
+export const viewport: Viewport = {
 	colorScheme: "dark light",
 	themeColor: "#50c878"
 };
 
-export const metadata = {
+export const metadata: Metadata = {
 	authors: [{ name: "Travis Martin", url: domain }],
 	creator: "Travis Martin",
 	metadataBase: new URL(domain),

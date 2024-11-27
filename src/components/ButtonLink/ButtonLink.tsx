@@ -1,4 +1,4 @@
-import Link, { type LinkProps } from "../Link";
+import Link, { type LinkProps } from "#Link";
 import style from "./button-link.module.scss";
 
 export default function ButtonLink({ className, ...props }: LinkProps) {

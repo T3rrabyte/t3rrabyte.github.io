@@ -1,6 +1,7 @@
 import Card from "#Card";
 import CardList from "#CardList";
 import Image from "#Image";
+import type { Metadata } from "next";
 import PhongLighting from "../a/webgl/lighting/PhongLighting";
 import contourDetection from "../a/cccv/opengraph-image.png";
 import victoryScreen from "../a/pedit5/opengraph-image.png";
@@ -59,7 +60,7 @@ export default function Page() {
 	);
 }
 
-export const metadata = {
+export const metadata: Metadata = {
 	description: "Travis Martin's blog.",
 	openGraph: { url: "/blog" },
 	title: "Blog"

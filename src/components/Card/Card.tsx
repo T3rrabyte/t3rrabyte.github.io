@@ -1,4 +1,4 @@
-import Link, { type LinkProps } from "../Link";
+import Link, { type LinkProps } from "#Link";
 import type { Props } from "#Props";
 import style from "./card.module.scss";
 

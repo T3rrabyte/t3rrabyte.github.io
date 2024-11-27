@@ -2,6 +2,7 @@ import Card from "#Card";
 import CardList from "#CardList";
 import Image from "#Image";
 import Link from "#Link";
+import type { Metadata } from "next";
 import PhongLighting from "../a/webgl/lighting/PhongLighting";
 import codehsLogo from "./codehs.png";
 
@@ -82,7 +83,7 @@ export default function Page() {
 	);
 }
 
-export const metadata = {
+export const metadata: Metadata = {
 	description: "Travis Martin's portfolio.",
 	openGraph: { url: "/portfolio" },
 	title: "Portfolio"
