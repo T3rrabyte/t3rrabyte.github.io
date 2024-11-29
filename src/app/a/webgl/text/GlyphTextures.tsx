@@ -62,7 +62,7 @@ const quadPosData = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
 const quadTexcoordData = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
 const quadIndexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
 
-const glyphs = new Map<string, Rectangle>([
+const glyphs = new Map<string, Rectangle & number[]>([
 	["A", [0, 0, 8, 8]],
 	["B", [8, 0, 8, 8]],
 	["C", [16, 0, 8, 8]],
@@ -111,11 +111,11 @@ interface GlyphTexture {
 	texture: Texture2d;
 
 	/** The list of glyphs in the texture atlas mapped to their locations within the texture atlas in pixel space. */
-	glyphs: Map<string, Rectangle>;
+	glyphs: Map<string, Rectangle & number[]>;
 }
 
 /**
- * A quad that displays text. Width is always `1`, height is adjusted to maintain aspect ratio.
+ * A quad that displays text.
  * @public
  */
 class TextQuad extends VertexArray {
@@ -287,62 +287,41 @@ class TextQuad extends VertexArray {
 
 			// Add the character's glyph to the data. This configuration allows for visible newline characters.
 			if (glyph) {
+				const [u, v, w, h] = glyph;
+
 				// Positions.
-				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 0] = x;
-				// eslint-disable-next-line prefer-destructuring
-				posData[j * 4 * 2 + 1] = y + glyph[3];
-				// eslint-disable-next-line prefer-destructuring
+				posData[j * 4 * 2 + 1] = y + h;
 				posData[j * 4 * 2 + 2] = x;
-				// eslint-disable-next-line prefer-destructuring
 				posData[j * 4 * 2 + 3] = y;
-				// eslint-disable-next-line prefer-destructuring
-				posData[j * 4 * 2 + 4] = x + glyph[2];
-				// eslint-disable-next-line prefer-destructuring
+				posData[j * 4 * 2 + 4] = x + w;
 				posData[j * 4 * 2 + 5] = y;
-				// eslint-disable-next-line prefer-destructuring
-				posData[j * 4 * 2 + 6] = x + glyph[2];
-				// eslint-disable-next-line prefer-destructuring
-				posData[j * 4 * 2 + 7] = y + glyph[3];
+				posData[j * 4 * 2 + 6] = x + w;
+				posData[j * 4 * 2 + 7] = y + h;
 
 				// Texture coordinates.
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 0] = glyph[0];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 1] = glyph[1];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 2] = glyph[0];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 3] = glyph[1] + glyph[3];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 4] = glyph[0] + glyph[2];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 5] = glyph[1] + glyph[3];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 6] = glyph[0] + glyph[2];
-				// eslint-disable-next-line prefer-destructuring
-				texData[j * 4 * 2 + 7] = glyph[1];
+				texData[j * 4 * 2 + 0] = u;
+				texData[j * 4 * 2 + 1] = v;
+				texData[j * 4 * 2 + 2] = u;
+				texData[j * 4 * 2 + 3] = v + h;
+				texData[j * 4 * 2 + 4] = u + w;
+				texData[j * 4 * 2 + 5] = v + h;
+				texData[j * 4 * 2 + 6] = u + w;
+				texData[j * 4 * 2 + 7] = v;
 
 				// Indices.
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 0] = j * 4 + 0;
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 1] = j * 4 + 1;
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 2] = j * 4 + 2;
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 3] = j * 4 + 0;
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 4] = j * 4 + 2;
-				// eslint-disable-next-line prefer-destructuring
 				indexData[j * 6 + 5] = j * 4 + 3;
 
 				// Update cursor.
 				j++;
-				x += glyph[2];
-				if (glyph[3] > currentLineHeight) {
-					// eslint-disable-next-line prefer-destructuring
-					currentLineHeight = glyph[3];
+				x += w;
+				if (h > currentLineHeight) {
+					currentLineHeight = h;
 				}
 			}
 
