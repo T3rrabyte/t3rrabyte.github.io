@@ -1,7 +1,6 @@
 import "#global";
 import type { Metadata, Viewport } from "next";
 import { monospace, sansSerif, serif } from "#font";
-import Gtag from "#Gtag";
 import type LayoutProps from "#LayoutProps";
 import Topnav from "#Topnav";
 import domain from "#domain";
@@ -20,7 +19,6 @@ export default function Layout({ children }: LayoutProps) {
 				<main>{children}</main>
 				<footer></footer>
 			</body>
-			<Gtag id="G-HHPHD31E3M" />
 		</html>
 	);
 }

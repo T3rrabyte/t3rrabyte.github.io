@@ -1,7 +1,7 @@
 @use "variables";
 @use "mixins";
 
-// TODO: Make this better.
+// TODO: Make this better - clean up Sass variables to add separate ones just for Syntax highlighting.
 // Custom highlight.js color theme, based loosely on Panda.
 pre > code.hljs {
 	display: block;

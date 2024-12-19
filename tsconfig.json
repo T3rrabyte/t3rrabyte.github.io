@@ -1,10 +1,11 @@
 {
 	"include": [
-		"next-env.d.ts",
-		"next.config.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		".next/types/**/*.ts"
+		"next-env.d.ts", // Next.js required.
+		"next.config.ts", // Next.js required.
+		"**/*.ts", // Next.js required.
+		"**/*.tsx", // Next.js required.
+		".next/types/**/*.ts", // Next.js required.
+		"**/*"
 	],
 	"exclude": ["node_modules"],
 	"compilerOptions": {

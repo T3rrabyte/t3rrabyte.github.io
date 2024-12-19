@@ -9,16 +9,20 @@ import rehypeKatex from "rehype-katex";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMath from "remark-math";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import type { NextConfig } from "next";
 
-// TODO: Update to ESLint flat config once Next.js supports it.
-// TODO: Remove `overrides` in `package.json` once everything fully supports React 19.
-
-const nextConfig: NextConfig = {
-	experimental: {
-		// TODO: Enable once the Rust-based MDX compiler supports extensions.
-		mdxRs: false
-	},
+export default createMDX({
+	options: {
+		rehypePlugins: [
+			rehypeKatex,
+			[rehypeHighlight, { languages: { bash, c, glsl, javascript, python } }]
+		],
+		remarkPlugins: [
+			remarkFrontmatter,
+			[remarkMdxFrontmatter, { name: "metadata" }],
+			remarkMath
+		]
+	}
+})({
 	pageExtensions: ["mdx", "ts", "tsx"],
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async rewrites() {
@@ -33,25 +37,5 @@ const nextConfig: NextConfig = {
 			],
 			fallback: []
 		};
-	},
-	sassOptions: {
-		// TODO: Remove once vercel/next.js#71638 is fixed.
-		silenceDeprecations: ["legacy-js-api"]
-	}
-};
-
-const withMDX = createMDX({
-	options: {
-		rehypePlugins: [
-			rehypeKatex,
-			[rehypeHighlight, { languages: { bash, c, glsl, javascript, python } }]
-		],
-		remarkPlugins: [
-			remarkFrontmatter,
-			[remarkMdxFrontmatter, { name: "metadata" }],
-			remarkMath
-		]
 	}
 });
-
-export default withMDX(nextConfig);
