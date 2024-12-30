@@ -1,14 +1,11 @@
-@use "../../styles/mixins";
-
 article.content {
 	display: grid;
 	grid-template-columns: 1fr min(65ch, 100%) 1fr;
 	font-size: 1.2em;
 
 	& > * {
-		grid-column: 2;
-		overflow-x: auto;
-		overflow-y: hidden;
+		grid-column: 2 / 3;
+		overflow: auto hidden;
 	}
 
 	& > hr {

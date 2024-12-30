@@ -22,20 +22,4 @@ export default createMDX({
 			remarkMath
 		]
 	}
-})({
-	pageExtensions: ["mdx", "ts", "tsx"],
-	// eslint-disable-next-line @typescript-eslint/require-await
-	async rewrites() {
-		return {
-			afterFiles: [],
-			beforeFiles: [
-				{
-					destination: "http://mc.lakuna.pw:8154/:path*",
-					has: [{ type: "host", value: "map.mc.lakuna.pw" }],
-					source: "/:path*"
-				}
-			],
-			fallback: []
-		};
-	}
-});
+})({ pageExtensions: ["mdx", "ts", "tsx"] });
