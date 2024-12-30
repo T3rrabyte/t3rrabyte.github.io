@@ -13,6 +13,7 @@ import {
 	VertexBuffer
 } from "@lakuna/ugl";
 import {
+	type Matrix4Like,
 	createMatrix4Like,
 	identity,
 	invert,
@@ -62,7 +63,7 @@ const quadPosData = new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]);
 const quadTexcoordData = new Float32Array([0, 0, 0, 1, 1, 1, 1, 0]);
 const quadIndexData = new Uint8Array([0, 1, 2, 0, 2, 3]);
 
-const glyphs = new Map<string, Rectangle & number[]>([
+const defaultGlyphs = new Map<string, Rectangle & number[]>([
 	["A", [0, 0, 8, 8]],
 	["B", [8, 0, 8, 8]],
 	["C", [16, 0, 8, 8]],
@@ -102,68 +103,108 @@ const glyphs = new Map<string, Rectangle & number[]>([
 	["-", [32, 32, 8, 8]],
 	["×", [40, 32, 8, 8]],
 	["!", [48, 32, 8, 8]],
-	["©", [56, 32, 8, 8]]
+	["©", [56, 32, 8, 8]],
+	[" ", [0, 0, 8, 0]] // Just make spaces have no height since they aren't on the bitmap font.
 ]);
-
-/** A texture atlas containing glyphs. */
-interface GlyphTexture {
-	/** The texture atlas. */
-	texture: Texture2d;
-
-	/** The list of glyphs in the texture atlas mapped to their locations within the texture atlas in pixel space. */
-	glyphs: Map<string, Rectangle & number[]>;
-}
 
 /**
  * A quad that displays text.
  * @public
  */
-class TextQuad extends VertexArray {
+class TextQuad {
 	/**
 	 * Create a text quad.
-	 * @param texture - The glyph texture to use with the text quad.
+	 * @param texture - The glyph texture (texture atlas) to use with the text quad.
+	 * @param glyphs - The glyph map that corresponds to the glyph texture.
 	 */
-	constructor(texture: GlyphTexture) {
-		// Create shader program.
-		const program = Program.fromSource(texture.texture.context, vss, fss);
-
-		// Create VBOs.
-		const posBuffer = new VertexBuffer(
-			texture.texture.context,
-			0,
-			BufferUsage.DYNAMIC_DRAW
-		);
-		const texcoordBuffer = new VertexBuffer(
-			texture.texture.context,
-			0,
-			BufferUsage.DYNAMIC_DRAW
-		);
-
-		// Create VAO.
-		super(
-			program,
-			{
-				// eslint-disable-next-line camelcase
-				a_position: { size: 2, vbo: posBuffer },
-				// eslint-disable-next-line camelcase
-				a_texcoord: { size: 2, vbo: texcoordBuffer }
-			},
-			new ElementBuffer(texture.texture.context, 0, BufferUsage.DYNAMIC_DRAW)
-		);
-
+	constructor(texture: Texture2d, glyphs: Map<string, Rectangle & number[]>) {
 		this.texture = texture;
+		this.glyphs = glyphs;
 		this.widthCache = 0;
 		this.heightCache = 0;
+		this.textCache = "";
+		this.lettersToRender = this.textCache.length;
+		this.program = Program.fromSource(texture.context, vss, fss);
+		this.posBuffer = new VertexBuffer(
+			texture.context,
+			new Float32Array(),
+			BufferUsage.DYNAMIC_DRAW
+		);
+		this.texcoordBuffer = new VertexBuffer(
+			texture.context,
+			new Float32Array(),
+			BufferUsage.DYNAMIC_DRAW
+		);
+		this.ebo = new ElementBuffer(
+			texture.context,
+			new Uint8Array(),
+			BufferUsage.DYNAMIC_DRAW
+		);
+		this.vao = new VertexArray(
+			this.program,
+			{
+				// eslint-disable-next-line camelcase
+				a_position: { size: 2, vbo: this.posBuffer },
+				// eslint-disable-next-line camelcase
+				a_texcoord: { size: 2, vbo: this.texcoordBuffer }
+			},
+			this.ebo
+		);
 	}
 
-	/** The glyph texture to use with this text quad. */
-	private texture: GlyphTexture;
+	/**
+	 * The glyph texture (texture atlas) to use with the text quad.
+	 * @internal
+	 */
+	private texture;
+
+	/**
+	 * The glyph map that corresponds to the glyph texture.
+	 * @internal
+	 */
+	private glyphs;
+
+	/**
+	 * The position data buffer.
+	 * @internal
+	 */
+	private posBuffer;
+
+	/**
+	 * The texture coordinate data buffer.
+	 * @internal
+	 */
+	private texcoordBuffer;
+
+	/**
+	 * The element buffer object (indices).
+	 * @internal
+	 */
+	private ebo;
+
+	/**
+	 * The shader program to use for rendering this text quad.
+	 * @internal
+	 */
+	private program;
+
+	/**
+	 * The vertex array object of this text quad.
+	 * @internal
+	 */
+	private vao;
+
+	/**
+	 * The number of letters to render on this text quad.
+	 * @internal
+	 */
+	private lettersToRender;
 
 	/**
 	 * The width of the text on this quad.
 	 * @internal
 	 */
-	private widthCache: number;
+	private widthCache;
 
 	/** The width of the text on this quad. */
 	public get width() {
@@ -174,7 +215,7 @@ class TextQuad extends VertexArray {
 	 * The height of the text on this quad.
 	 * @internal
 	 */
-	private heightCache: number;
+	private heightCache;
 
 	/** The height of the text on this quad. */
 	public get height() {
@@ -189,10 +230,6 @@ class TextQuad extends VertexArray {
 	 * @internal
 	 */
 	private resize(length: number): [Uint32Array, Float32Array, Float32Array] {
-		if (!this.ebo) {
-			throw new Error("Text quad element buffer not defined.");
-		}
-
 		const currentLength = this.ebo.data.byteLength / 4 / 6; // `Uint32Array` has 4 bytes per element. Letters each require 6 indices.
 		if (currentLength < length) {
 			// Current arrays are not large enough; return new ones.
@@ -208,22 +245,10 @@ class TextQuad extends VertexArray {
 			];
 		}
 
-		const posBuffer = this.getAttribute("a_position");
-		if (!posBuffer) {
-			throw new Error("Text quad position vertex buffer not defined.");
-		}
-
-		const texcoordBuffer = this.getAttribute("a_texcoord");
-		if (!texcoordBuffer) {
-			throw new Error(
-				"Text quad texture coordinate vertex buffer not defined."
-			);
-		}
-
 		return [
 			this.ebo.data as Uint32Array,
-			posBuffer.data as Float32Array,
-			texcoordBuffer.data as Float32Array
+			this.posBuffer.data as Float32Array,
+			this.texcoordBuffer.data as Float32Array
 		];
 	}
 
@@ -231,33 +256,23 @@ class TextQuad extends VertexArray {
 	 * The string displayed by this text quad.
 	 * @internal
 	 */
-	private textCache?: string;
+	private textCache;
 
 	/** The string displayed by this text quad. */
 	public get text(): string {
-		return this.textCache ?? "";
+		return this.textCache;
 	}
 
 	public set text(value: string) {
-		// Ensure that the necessary attributes are present.
-		const posAttr = this.getAttribute("a_position");
-		if (!posAttr) {
-			throw new Error("Position attribute is missing.");
-		}
-
-		const texcoordAttr = this.getAttribute("a_texcoord");
-		if (!texcoordAttr) {
-			throw new Error("Texture coordinate attribute is missing.");
-		}
-
-		if (!this.ebo) {
-			throw new Error("Element buffer is missing.");
+		// Skip if the text is already correct.
+		if (value === this.text) {
+			return;
 		}
 
 		// Count the number of actual displayable characters in the string.
 		let length = 0;
 		for (const c of value) {
-			if (this.texture.glyphs.has(c)) {
+			if (this.glyphs.has(c)) {
 				length++;
 			}
 		}
@@ -278,7 +293,7 @@ class TextQuad extends VertexArray {
 			}
 
 			// Get the character's glyph.
-			const glyph = this.texture.glyphs.get(c);
+			const glyph = this.glyphs.get(c);
 
 			// Skip unknown characters.
 			if (!glyph && c !== "\n") {
@@ -342,24 +357,40 @@ class TextQuad extends VertexArray {
 			// Scale down so that texture coordinates are represented in texture space.
 			const u = texData[i + 0];
 			if (u) {
-				texData[i + 0] = u / this.texture.texture.width;
+				texData[i + 0] = u / this.texture.width;
 			}
 
 			const v = texData[i + 1];
 			if (v) {
-				texData[i + 1] = v / this.texture.texture.height;
+				texData[i + 1] = v / this.texture.height;
 			}
 		}
 
 		// Update the buffer data on the GPU.
-		posAttr.data = posData;
-		texcoordAttr.data = texData;
+		this.posBuffer.data = posData;
+		this.texcoordBuffer.data = texData;
 		this.ebo.data = indexData;
 
 		// Update dimension information.
 		this.widthCache = width;
 		this.heightCache = height;
 		this.textCache = value;
+		this.lettersToRender = j;
+	}
+
+	/**
+	 * Render this text quad.
+	 * @param worldViewProjMat - The world view projection matrix to render with.
+	 */
+	public render(worldViewProjMat: Matrix4Like & Float32Array) {
+		this.vao.draw(
+			// eslint-disable-next-line camelcase
+			{ u_texture: this.texture, u_worldViewProjMat: worldViewProjMat },
+			void 0,
+			void 0,
+			void 0,
+			this.lettersToRender * 6
+		);
 	}
 }
 
@@ -399,7 +430,7 @@ export default function GlyphTextures(props: JSX.IntrinsicElements["canvas"]) {
 				glyphTexture.minFilter = TextureFilter.NEAREST;
 				glyphTexture.magFilter = TextureFilter.NEAREST;
 
-				const textQuad = new TextQuad({ glyphs, texture: glyphTexture });
+				const textQuad = new TextQuad(glyphTexture, defaultGlyphs);
 
 				const projMat = createMatrix4Like();
 				const camMat = createMatrix4Like();
@@ -443,12 +474,7 @@ export default function GlyphTextures(props: JSX.IntrinsicElements["canvas"]) {
 					// eslint-disable-next-line camelcase
 					quadVao.draw({ u_texture: texture, u_worldViewProjMat: quadMat });
 
-					textQuad.draw({
-						// eslint-disable-next-line camelcase
-						u_texture: glyphTexture,
-						// eslint-disable-next-line camelcase
-						u_worldViewProjMat: textMat
-					});
+					textQuad.render(textMat);
 				};
 			}}
 			{...props}
